@@ -15,7 +15,7 @@ public class ModItemGroups {
 	public static final ItemGroup POKEBLOCKS = Registry.register(Registries.ITEM_GROUP,
 			new Identifier(Pokeblocks.MOD_ID, "pokeblocks"),
 			FabricItemGroup.builder()
-					.displayName(Text.translatable("pokeblocks.pokedoll_calyrex"))
+					.displayName(Text.translatable("itemgroup.pokeblocks"))
 					.icon(() -> new ItemStack(ModItems.ANIMATED_BLOCK_ITEM))
 					.entries(((displayContext, entries) -> {
 						entries.add(ModBlocks.POKEDOLL_CALYREX);
