@@ -1,5 +1,7 @@
 package dev.mrshawn.pokeblocks;
 
+import dev.mrshawn.pokeblocks.block.ModBlocks;
+import dev.mrshawn.pokeblocks.item.ModItemGroups;
 import net.fabricmc.api.ModInitializer;
 
 import org.slf4j.Logger;
@@ -12,6 +14,7 @@ public class Pokeblocks implements ModInitializer {
 
 	@Override
 	public void onInitialize() {
-		LOGGER.info("Hello Fabric world!");
+		ModItemGroups.registerItemGroups();
+		ModBlocks.registerModBlocks();
 	}
 }
