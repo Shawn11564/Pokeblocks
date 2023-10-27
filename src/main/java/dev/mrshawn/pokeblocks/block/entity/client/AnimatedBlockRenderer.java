@@ -7,7 +7,7 @@ import software.bernie.geckolib.renderer.GeoBlockRenderer;
 public class AnimatedBlockRenderer extends GeoBlockRenderer<AnimatedBlockEntity> {
 
 	public AnimatedBlockRenderer(BlockEntityRendererFactory.Context context) {
-		super(new AnimatedBlockModel());
+		super(new PokedollCalyrexBlockModel());
 	}
 
 }

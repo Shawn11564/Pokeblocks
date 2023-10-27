@@ -5,7 +5,7 @@ import dev.mrshawn.pokeblocks.block.entity.AnimatedBlockEntity;
 import net.minecraft.util.Identifier;
 import software.bernie.geckolib.model.GeoModel;
 
-public class AnimatedBlockModel extends GeoModel<AnimatedBlockEntity> {
+public class PokedollCalyrexBlockModel extends GeoModel<AnimatedBlockEntity> {
 
 	@Override
 	public Identifier getModelResource(AnimatedBlockEntity animatable) {
@@ -14,7 +14,7 @@ public class AnimatedBlockModel extends GeoModel<AnimatedBlockEntity> {
 
 	@Override
 	public Identifier getTextureResource(AnimatedBlockEntity animatable) {
-		return new Identifier(Pokeblocks.MOD_ID, "textures/block/pokedoll_calyrex.png");
+		return new Identifier(Pokeblocks.MOD_ID, "textures/block/pokedoll_calyrex_texture.png");
 	}
 
 	@Override
