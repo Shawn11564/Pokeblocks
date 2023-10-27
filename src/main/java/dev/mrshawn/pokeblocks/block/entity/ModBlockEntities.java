@@ -2,6 +2,8 @@ package dev.mrshawn.pokeblocks.block.entity;
 
 import dev.mrshawn.pokeblocks.Pokeblocks;
 import dev.mrshawn.pokeblocks.block.ModBlocks;
+import dev.mrshawn.pokeblocks.block.entity.impl.PokedollCalyrexBlockEntity;
+import dev.mrshawn.pokeblocks.block.entity.impl.PokedollShinyCalyrexBlockEntity;
 import net.fabricmc.fabric.api.object.builder.v1.block.entity.FabricBlockEntityTypeBuilder;
 import net.minecraft.block.entity.BlockEntityType;
 import net.minecraft.registry.Registries;

@@ -1,6 +1,6 @@
 package dev.mrshawn.pokeblocks.block.entity.client;
 
-import dev.mrshawn.pokeblocks.block.entity.PokedollShinyCalyrexBlockEntity;
+import dev.mrshawn.pokeblocks.block.entity.impl.PokedollShinyCalyrexBlockEntity;
 import net.minecraft.client.render.block.entity.BlockEntityRendererFactory;
 import software.bernie.geckolib.renderer.GeoBlockRenderer;
 

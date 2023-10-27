@@ -2,6 +2,7 @@ package dev.mrshawn.pokeblocks.block.entity;
 
 import net.minecraft.block.BlockState;
 import net.minecraft.block.entity.BlockEntity;
+import net.minecraft.block.entity.BlockEntityType;
 import net.minecraft.util.math.BlockPos;
 import software.bernie.geckolib.animatable.GeoBlockEntity;
 import software.bernie.geckolib.core.animatable.GeoAnimatable;
@@ -11,12 +12,12 @@ import software.bernie.geckolib.core.animation.*;
 import software.bernie.geckolib.core.object.PlayState;
 import software.bernie.geckolib.util.RenderUtils;
 
-public class PokedollCalyrexBlockEntity extends BlockEntity implements GeoBlockEntity {
-	
+public class PokeBlockEntity extends BlockEntity implements GeoBlockEntity {
+
 	private AnimatableInstanceCache cache = new SingletonAnimatableInstanceCache(this);
-	
-	public PokedollCalyrexBlockEntity(BlockPos pos, BlockState state) {
-		super(ModBlockEntities.POKEDOLL_CALYREX_BLOCK_ENTITY, pos, state);
+
+	public PokeBlockEntity(BlockEntityType<?> type, BlockPos pos, BlockState state) {
+		super(type, pos, state);
 	}
 
 	@Override
