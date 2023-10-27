@@ -1,6 +1,6 @@
 package dev.mrshawn.pokeblocks.item.custom;
 
-import dev.mrshawn.pokeblocks.item.client.AnimatedBlockItemRenderer;
+import dev.mrshawn.pokeblocks.item.client.PokedollShinyCalyrexBlockItemRenderer;
 import net.minecraft.block.Block;
 import net.minecraft.client.render.item.BuiltinModelItemRenderer;
 import net.minecraft.item.BlockItem;
@@ -17,12 +17,12 @@ import software.bernie.geckolib.util.RenderUtils;
 import java.util.function.Consumer;
 import java.util.function.Supplier;
 
-public class AnimatedBlockItem extends BlockItem implements GeoItem {
+public class PokedollShinyCalyrexBlockItem extends BlockItem implements GeoItem {
 
 	private AnimatableInstanceCache cache = new SingletonAnimatableInstanceCache(this);
 	private final Supplier<Object> renderProvider = GeoItem.makeRenderer(this);
 
-	public AnimatedBlockItem(Block block, Settings settings) {
+	public PokedollShinyCalyrexBlockItem(Block block, Settings settings) {
 		super(block, settings);
 		SingletonGeoAnimatable.registerSyncedAnimatable(this);
 	}
@@ -30,7 +30,7 @@ public class AnimatedBlockItem extends BlockItem implements GeoItem {
 	@Override
 	public void createRenderer(Consumer<Object> consumer) {
 		consumer.accept(new RenderProvider() {
-			private final AnimatedBlockItemRenderer renderer = new AnimatedBlockItemRenderer();
+			private final PokedollShinyCalyrexBlockItemRenderer renderer = new PokedollShinyCalyrexBlockItemRenderer();
 			@Override
 			public BuiltinModelItemRenderer getCustomRenderer() {
 				return this.renderer;
@@ -49,7 +49,7 @@ public class AnimatedBlockItem extends BlockItem implements GeoItem {
 	}
 
 	private <T extends GeoAnimatable> PlayState predicate(AnimationState<T> animatedBlockEntityAnimationState) {
-		animatedBlockEntityAnimationState.getController().setAnimation(RawAnimation.begin().then("animation.pokedoll_calyrex.new", Animation.LoopType.LOOP));
+		animatedBlockEntityAnimationState.getController().setAnimation(RawAnimation.begin().then("animation.generic", Animation.LoopType.LOOP));
 		return PlayState.CONTINUE;
 	}
 

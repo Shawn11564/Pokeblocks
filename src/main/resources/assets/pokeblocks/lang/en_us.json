@@ -1,7 +1,9 @@
 {
   "item.pokeblocks.pokedoll_calyrex": "Calyrex Pokedoll",
+  "item.pokeblocks.pokedoll_shiny_calyrex": "Shiny Calyrex Pokedoll",
 
   "block.pokeblocks.pokedoll_calyrex": "Calyrex Pokedoll",
+  "block.pokeblocks.pokedoll_shiny_calyrex": "Shiny Calyrex Pokedoll",
 
   "itemgroup.pokeblocks": "Pokeblocks"
 }

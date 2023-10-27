@@ -11,12 +11,12 @@ import software.bernie.geckolib.core.animation.*;
 import software.bernie.geckolib.core.object.PlayState;
 import software.bernie.geckolib.util.RenderUtils;
 
-public class AnimatedBlockEntity extends BlockEntity implements GeoBlockEntity {
+public class PokedollCalyrexBlockEntity extends BlockEntity implements GeoBlockEntity {
 	
 	private AnimatableInstanceCache cache = new SingletonAnimatableInstanceCache(this);
 	
-	public AnimatedBlockEntity(BlockPos pos, BlockState state) {
-		super(ModBlockEntities.ANIMATED_BLOCK_ENTITY, pos, state);
+	public PokedollCalyrexBlockEntity(BlockPos pos, BlockState state) {
+		super(ModBlockEntities.POKEDOLL_CALYREX_BLOCK_ENTITY, pos, state);
 	}
 
 	@Override
@@ -25,7 +25,7 @@ public class AnimatedBlockEntity extends BlockEntity implements GeoBlockEntity {
 	}
 
 	private <T extends GeoAnimatable> PlayState predicate(AnimationState<T> animatedBlockEntityAnimationState) {
-		animatedBlockEntityAnimationState.getController().setAnimation(RawAnimation.begin().then("animation.pokedoll_calyrex.new", Animation.LoopType.LOOP));
+		animatedBlockEntityAnimationState.getController().setAnimation(RawAnimation.begin().then("animation.generic", Animation.LoopType.LOOP));
 		return PlayState.CONTINUE;
 	}
 

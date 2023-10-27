@@ -16,9 +16,10 @@ public class ModItemGroups {
 			new Identifier(Pokeblocks.MOD_ID, "pokeblocks"),
 			FabricItemGroup.builder()
 					.displayName(Text.translatable("itemgroup.pokeblocks"))
-					.icon(() -> new ItemStack(ModItems.ANIMATED_BLOCK_ITEM))
+					.icon(() -> new ItemStack(ModItems.POKEDOLL_CALYREX_BLOCK_ITEM))
 					.entries(((displayContext, entries) -> {
 						entries.add(ModBlocks.POKEDOLL_CALYREX);
+						entries.add(ModBlocks.POKEDOLL_SHINY_CALYREX);
 					}))
 					.build()
 	);

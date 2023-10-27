@@ -1,5 +1,5 @@
 {
-  "parent": "pokeblocks:block/pokedoll_calyrex",
+  "parent": "pokeblocks:block/pokedoll_shiny_calyrex",
   "display": {
     "thirdperson_righthand": {
       "rotation": [0, 135, 0],

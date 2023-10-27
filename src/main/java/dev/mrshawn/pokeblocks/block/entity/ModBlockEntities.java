@@ -10,13 +10,19 @@ import net.minecraft.util.Identifier;
 
 public class ModBlockEntities {
 
-	public static BlockEntityType<AnimatedBlockEntity> ANIMATED_BLOCK_ENTITY;
+	public static BlockEntityType<PokedollCalyrexBlockEntity> POKEDOLL_CALYREX_BLOCK_ENTITY;
+	public static BlockEntityType<PokedollShinyCalyrexBlockEntity> POKEDOLL_SHINY_CALYREX_BLOCK_ENTITY;
 
 	public static void registerAllBlockEntities() {
-		ANIMATED_BLOCK_ENTITY = Registry.register(Registries.BLOCK_ENTITY_TYPE,
+		POKEDOLL_CALYREX_BLOCK_ENTITY = Registry.register(Registries.BLOCK_ENTITY_TYPE,
 				new Identifier(Pokeblocks.MOD_ID, "pokedoll_calyrex"),
-				FabricBlockEntityTypeBuilder.create(AnimatedBlockEntity::new,
+				FabricBlockEntityTypeBuilder.create(PokedollCalyrexBlockEntity::new,
 								ModBlocks.POKEDOLL_CALYREX).build());
+
+		POKEDOLL_SHINY_CALYREX_BLOCK_ENTITY = Registry.register(Registries.BLOCK_ENTITY_TYPE,
+				new Identifier(Pokeblocks.MOD_ID, "pokedoll_shiny_calyrex"),
+				FabricBlockEntityTypeBuilder.create(PokedollShinyCalyrexBlockEntity::new,
+						ModBlocks.POKEDOLL_SHINY_CALYREX).build());
 	}
 
 }

@@ -1,25 +1,25 @@
 package dev.mrshawn.pokeblocks.item.client;
 
 import dev.mrshawn.pokeblocks.Pokeblocks;
-import dev.mrshawn.pokeblocks.item.custom.AnimatedBlockItem;
+import dev.mrshawn.pokeblocks.item.custom.PokedollCalyrexBlockItem;
 import net.minecraft.util.Identifier;
 import software.bernie.geckolib.model.GeoModel;
 
-public class PokedollCalyrexBlockItemModel extends GeoModel<AnimatedBlockItem> {
+public class PokedollCalyrexBlockItemModel extends GeoModel<PokedollCalyrexBlockItem> {
 
 	@Override
-	public Identifier getModelResource(AnimatedBlockItem animatable) {
+	public Identifier getModelResource(PokedollCalyrexBlockItem animatable) {
 		return new Identifier(Pokeblocks.MOD_ID, "geo/pokedoll_calyrex.geo.json");
 	}
 
 	@Override
-	public Identifier getTextureResource(AnimatedBlockItem animatable) {
+	public Identifier getTextureResource(PokedollCalyrexBlockItem animatable) {
 		return new Identifier(Pokeblocks.MOD_ID, "textures/block/pokedoll_calyrex_texture.png");
 	}
 
 	@Override
-	public Identifier getAnimationResource(AnimatedBlockItem animatable) {
-		return new Identifier(Pokeblocks.MOD_ID, "animations/pokedoll_calyrex.animation.json");
+	public Identifier getAnimationResource(PokedollCalyrexBlockItem animatable) {
+		return new Identifier(Pokeblocks.MOD_ID, "animations/generic.animation.json");
 	}
 
 }
