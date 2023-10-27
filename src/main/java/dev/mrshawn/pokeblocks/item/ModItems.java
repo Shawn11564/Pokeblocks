@@ -2,8 +2,6 @@ package dev.mrshawn.pokeblocks.item;
 
 import dev.mrshawn.pokeblocks.Pokeblocks;
 import dev.mrshawn.pokeblocks.block.ModBlocks;
-import dev.mrshawn.pokeblocks.item.custom.PokedollCalyrexBlockItem;
-import dev.mrshawn.pokeblocks.item.custom.PokedollShinyCalyrexBlockItem;
 import net.fabricmc.fabric.api.item.v1.FabricItemSettings;
 import net.minecraft.item.Item;
 import net.minecraft.registry.Registries;
