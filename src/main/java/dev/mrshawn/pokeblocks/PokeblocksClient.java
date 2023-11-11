@@ -1,7 +1,12 @@
 package dev.mrshawn.pokeblocks;
 
 import dev.mrshawn.pokeblocks.block.entity.ModBlockEntities;
-import dev.mrshawn.pokeblocks.block.entity.client.*;
+import dev.mrshawn.pokeblocks.block.entity.client.bulbasaur.PokedollBulbasaurBlockRenderer;
+import dev.mrshawn.pokeblocks.block.entity.client.bulbasaur.PokedollShinyBulbasaurBlockRenderer;
+import dev.mrshawn.pokeblocks.block.entity.client.calyrex.animated.PokedollCalyrexAnimatedBlockRenderer;
+import dev.mrshawn.pokeblocks.block.entity.client.calyrex.PokedollCalyrexBlockRenderer;
+import dev.mrshawn.pokeblocks.block.entity.client.calyrex.animated.PokedollShinyCalyrexAnimatedBlockRenderer;
+import dev.mrshawn.pokeblocks.block.entity.client.calyrex.PokedollShinyCalyrexBlockRenderer;
 import net.fabricmc.api.ClientModInitializer;
 import net.minecraft.client.render.block.entity.BlockEntityRendererFactories;
 

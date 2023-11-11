@@ -2,7 +2,12 @@ package dev.mrshawn.pokeblocks.item;
 
 import dev.mrshawn.pokeblocks.Pokeblocks;
 import dev.mrshawn.pokeblocks.block.ModBlocks;
-import dev.mrshawn.pokeblocks.item.custom.*;
+import dev.mrshawn.pokeblocks.item.custom.bulbasaur.PokedollBulbasaurBlockItem;
+import dev.mrshawn.pokeblocks.item.custom.bulbasaur.PokedollShinyBulbasaurBlockItem;
+import dev.mrshawn.pokeblocks.item.custom.calyrex.PokedollCalyrexBlockItem;
+import dev.mrshawn.pokeblocks.item.custom.calyrex.PokedollShinyCalyrexBlockItem;
+import dev.mrshawn.pokeblocks.item.custom.calyrex.animated.PokedollCalyrexAnimatedBlockItem;
+import dev.mrshawn.pokeblocks.item.custom.calyrex.animated.PokedollShinyCalyrexAnimatedBlockItem;
 import net.fabricmc.fabric.api.item.v1.FabricItemSettings;
 import net.minecraft.item.Item;
 import net.minecraft.registry.Registries;
