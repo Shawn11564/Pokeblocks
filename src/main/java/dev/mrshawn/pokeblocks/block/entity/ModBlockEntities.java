@@ -5,6 +5,7 @@ import dev.mrshawn.pokeblocks.block.ModBlocks;
 import dev.mrshawn.pokeblocks.block.entity.bulbasaur.PokedollBulbasaurBlockEntity;
 import dev.mrshawn.pokeblocks.block.entity.bulbasaur.PokedollShinyBulbasaurBlockEntity;
 import dev.mrshawn.pokeblocks.block.entity.bulbasaur.posed.PokedollBulbasaurPosedBlockEntity;
+import dev.mrshawn.pokeblocks.block.entity.bulbasaur.posed.PokedollShinyBulbasaurPosedBlockEntity;
 import dev.mrshawn.pokeblocks.block.entity.calyrex.PokedollCalyrexBlockEntity;
 import dev.mrshawn.pokeblocks.block.entity.calyrex.PokedollShinyCalyrexBlockEntity;
 import dev.mrshawn.pokeblocks.block.entity.calyrex.animated.PokedollCalyrexAnimatedBlockEntity;
@@ -24,6 +25,7 @@ public class ModBlockEntities {
 	public static BlockEntityType<PokedollBulbasaurBlockEntity> POKEDOLL_BULBASAUR_BLOCK_ENTITY;
 	public static BlockEntityType<PokedollShinyBulbasaurBlockEntity> POKEDOLL_SHINY_BULBASAUR_BLOCK_ENTITY;
 	public static BlockEntityType<PokedollBulbasaurPosedBlockEntity> POKEDOLL_BULBASAUR_POSED_BLOCK_ENTITY;
+	public static BlockEntityType<PokedollShinyBulbasaurPosedBlockEntity> POKEDOLL_SHINY_BULBASAUR_POSED_BLOCK_ENTITY;
 
 	public static void registerAllBlockEntities() {
 		POKEDOLL_CALYREX_BLOCK_ENTITY = Registry.register(Registries.BLOCK_ENTITY_TYPE,
@@ -60,6 +62,11 @@ public class ModBlockEntities {
 				new Identifier(Pokeblocks.MOD_ID, "pokedoll_bulbasaur_posed"),
 				FabricBlockEntityTypeBuilder.create(PokedollBulbasaurPosedBlockEntity::new,
 						ModBlocks.POKEDOLL_BULBASAUR_POSED).build());
+
+		POKEDOLL_SHINY_BULBASAUR_POSED_BLOCK_ENTITY = Registry.register(Registries.BLOCK_ENTITY_TYPE,
+				new Identifier(Pokeblocks.MOD_ID, "pokedoll_shiny_bulbasaur_posed"),
+				FabricBlockEntityTypeBuilder.create(PokedollShinyBulbasaurPosedBlockEntity::new,
+						ModBlocks.POKEDOLL_SHINY_BULBASAUR_POSED).build());
 	}
 
 }

@@ -6,7 +6,7 @@
 			"bones": {
 				"pokedoll_calyrex": {
 					"rotation": {
-						"vector": ["Math.cos(query.anim_time * 70) - 1", "Math.cos(query.anim_time * 120) - 1", "Math.cos(query.anim_time * 100) - 1"]
+						"vector": ["Math.cos(query.anim_time * 70) - 1", "Math.cos(query.anim_time * 120) - 1", 0]
 					},
 					"position": {
 						"vector": [0, "Math.cos(query.anim_time * 100) * 0.5 +7.5", -3]

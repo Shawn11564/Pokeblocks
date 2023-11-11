@@ -4,6 +4,7 @@ import dev.mrshawn.pokeblocks.Pokeblocks;
 import dev.mrshawn.pokeblocks.block.custom.bulbasaur.PokedollBulbasaurBlock;
 import dev.mrshawn.pokeblocks.block.custom.bulbasaur.PokedollShinyBulbasaurBlock;
 import dev.mrshawn.pokeblocks.block.custom.bulbasaur.posed.PokedollBulbasaurPosedBlock;
+import dev.mrshawn.pokeblocks.block.custom.bulbasaur.posed.PokedollShinyBulbasaurPosedBlock;
 import dev.mrshawn.pokeblocks.block.custom.calyrex.PokedollCalyrexBlock;
 import dev.mrshawn.pokeblocks.block.custom.calyrex.PokedollShinyCalyrexBlock;
 import dev.mrshawn.pokeblocks.block.custom.calyrex.animated.PokedollCalyrexAnimatedBlock;
@@ -40,6 +41,9 @@ public class ModBlocks {
 
 	public static final Block POKEDOLL_BULBASAUR_POSED = Registry.register(Registries.BLOCK, new Identifier(Pokeblocks.MOD_ID, "pokedoll_bulbasaur_posed"),
 			new PokedollBulbasaurPosedBlock(FabricBlockSettings.copy(Blocks.WHITE_WOOL).nonOpaque()));
+
+	public static final Block POKEDOLL_SHINY_BULBASAUR_POSED = Registry.register(Registries.BLOCK, new Identifier(Pokeblocks.MOD_ID, "pokedoll_shiny_bulbasaur_posed"),
+			new PokedollShinyBulbasaurPosedBlock(FabricBlockSettings.copy(Blocks.WHITE_WOOL).nonOpaque()));
 
 	private static Block registerBlock(String name, Block block) {
 		registerBlockItem(name, block);
