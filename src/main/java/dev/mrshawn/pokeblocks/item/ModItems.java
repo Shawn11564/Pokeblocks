@@ -26,6 +26,9 @@ public class ModItems {
 	public static final Item POKEDOLL_BULBASAUR_BLOCK_ITEM = registerItem("pokedoll_bulbasaur",
 			new PokedollBulbasaurBlockItem(ModBlocks.POKEDOLL_BULBASAUR, new FabricItemSettings()));
 
+	public static final Item POKEDOLL_SHINY_BULBASAUR_BLOCK_ITEM = registerItem("pokedoll_shiny_bulbasaur",
+			new PokedollShinyBulbasaurBlockItem(ModBlocks.POKEDOLL_SHINY_BULBASAUR, new FabricItemSettings()));
+
 	private static Item registerItem(String name, Item item) {
 		return Registry.register(Registries.ITEM, new Identifier(Pokeblocks.MOD_ID, name), item);
 	}

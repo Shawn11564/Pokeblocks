@@ -14,6 +14,7 @@ public class PokeblocksClient implements ClientModInitializer {
 		BlockEntityRendererFactories.register(ModBlockEntities.POKEDOLL_CALYREX_ANIMATED_BLOCK_ENTITY, PokedollCalyrexAnimatedBlockRenderer::new);
 		BlockEntityRendererFactories.register(ModBlockEntities.POKEDOLL_SHINY_CALYREX_ANIMATED_BLOCK_ENTITY, PokedollShinyCalyrexAnimatedBlockRenderer::new);
 		BlockEntityRendererFactories.register(ModBlockEntities.POKEDOLL_BULBASAUR_BLOCK_ENTITY, PokedollBulbasaurBlockRenderer::new);
+		BlockEntityRendererFactories.register(ModBlockEntities.POKEDOLL_SHINY_BULBASAUR_BLOCK_ENTITY, PokedollShinyBulbasaurBlockRenderer::new);
 	}
 
 }

@@ -4,12 +4,14 @@
   "item.pokeblocks.pokedoll_calyrex_animated": "Animated Calyrex Pokedoll",
   "item.pokeblocks.pokedoll_shiny_calyrex_animated": "Animated Shiny Calyrex Pokedoll",
   "item.pokeblocks.pokedoll_bulbasaur": "Bulbasaur Pokedoll",
+  "item.pokeblocks.pokedoll_shiny_bulbasaur": "Shiny Bulbasaur Pokedoll",
 
   "block.pokeblocks.pokedoll_calyrex": "Calyrex Pokedoll",
   "block.pokeblocks.pokedoll_shiny_calyrex": "Shiny Calyrex Pokedoll",
   "block.pokeblocks.pokedoll_calyrex_animated": "Animated Calyrex Pokedoll",
   "block.pokeblocks.pokedoll_shiny_calyrex_animated": "Animated Shiny Calyrex Pokedoll",
   "block.pokeblocks.pokedoll_bulbasaur": "Bulbasaur Pokedoll",
+  "block.pokeblocks.pokedoll_shiny_bulbasaur": "Shiny Bulbasaur Pokedoll",
 
   "itemgroup.pokeblocks": "Pokeblocks"
 }

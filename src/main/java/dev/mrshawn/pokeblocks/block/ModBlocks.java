@@ -29,6 +29,9 @@ public class ModBlocks {
 	public static final Block POKEDOLL_BULBASAUR = Registry.register(Registries.BLOCK, new Identifier(Pokeblocks.MOD_ID, "pokedoll_bulbasaur"),
 			new PokedollBulbasaurBlock(FabricBlockSettings.copy(Blocks.WHITE_WOOL).nonOpaque()));
 
+	public static final Block POKEDOLL_SHINY_BULBASAUR = Registry.register(Registries.BLOCK, new Identifier(Pokeblocks.MOD_ID, "pokedoll_shiny_bulbasaur"),
+			new PokedollShinyBulbasaurBlock(FabricBlockSettings.copy(Blocks.WHITE_WOOL).nonOpaque()));
+
 	private static Block registerBlock(String name, Block block) {
 		registerBlockItem(name, block);
 		return Registry.register(Registries.BLOCK, new Identifier(Pokeblocks.MOD_ID, name), block);
