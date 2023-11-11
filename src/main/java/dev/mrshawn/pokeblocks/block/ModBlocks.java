@@ -1,6 +1,7 @@
 package dev.mrshawn.pokeblocks.block;
 
 import dev.mrshawn.pokeblocks.Pokeblocks;
+import dev.mrshawn.pokeblocks.block.custom.PokedollCalyrexAnimatedBlock;
 import dev.mrshawn.pokeblocks.block.custom.PokedollCalyrexBlock;
 import dev.mrshawn.pokeblocks.block.custom.PokedollShinyCalyrexBlock;
 import net.fabricmc.fabric.api.item.v1.FabricItemSettings;
@@ -20,6 +21,9 @@ public class ModBlocks {
 
 	public static final Block POKEDOLL_SHINY_CALYREX = Registry.register(Registries.BLOCK, new Identifier(Pokeblocks.MOD_ID, "pokedoll_shiny_calyrex"),
 			new PokedollShinyCalyrexBlock(FabricBlockSettings.copy(Blocks.WHITE_WOOL).nonOpaque()));
+
+	public static final Block POKEDOLL_CALYREX_ANIMATED = Registry.register(Registries.BLOCK, new Identifier(Pokeblocks.MOD_ID, "pokedoll_calyrex_animated"),
+			new PokedollCalyrexAnimatedBlock(FabricBlockSettings.copy(Blocks.WHITE_WOOL).nonOpaque()));
 
 	private static Block registerBlock(String name, Block block) {
 		registerBlockItem(name, block);

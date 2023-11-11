@@ -20,6 +20,7 @@ public class ModItemGroups {
 					.entries(((displayContext, entries) -> {
 						entries.add(ModBlocks.POKEDOLL_CALYREX);
 						entries.add(ModBlocks.POKEDOLL_SHINY_CALYREX);
+						entries.add(ModBlocks.POKEDOLL_CALYREX_ANIMATED);
 					}))
 					.build()
 	);

@@ -1,6 +1,7 @@
 package dev.mrshawn.pokeblocks;
 
 import dev.mrshawn.pokeblocks.block.entity.ModBlockEntities;
+import dev.mrshawn.pokeblocks.block.entity.client.PokedollCalyrexAnimatedBlockRenderer;
 import dev.mrshawn.pokeblocks.block.entity.client.PokedollCalyrexBlockRenderer;
 import dev.mrshawn.pokeblocks.block.entity.client.PokedollShinyCalyrexBlockRenderer;
 import net.fabricmc.api.ClientModInitializer;
@@ -12,6 +13,7 @@ public class PokeblocksClient implements ClientModInitializer {
 	public void onInitializeClient() {
 		BlockEntityRendererFactories.register(ModBlockEntities.POKEDOLL_CALYREX_BLOCK_ENTITY, PokedollCalyrexBlockRenderer::new);
 		BlockEntityRendererFactories.register(ModBlockEntities.POKEDOLL_SHINY_CALYREX_BLOCK_ENTITY, PokedollShinyCalyrexBlockRenderer::new);
+		BlockEntityRendererFactories.register(ModBlockEntities.POKEDOLL_CALYREX_ANIMATED_BLOCK_ENTITY, PokedollCalyrexAnimatedBlockRenderer::new);
 	}
 
 }

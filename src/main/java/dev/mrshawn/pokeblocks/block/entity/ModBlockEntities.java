@@ -12,6 +12,7 @@ public class ModBlockEntities {
 
 	public static BlockEntityType<PokedollCalyrexBlockEntity> POKEDOLL_CALYREX_BLOCK_ENTITY;
 	public static BlockEntityType<PokedollShinyCalyrexBlockEntity> POKEDOLL_SHINY_CALYREX_BLOCK_ENTITY;
+	public static BlockEntityType<PokedollCalyrexAnimatedBlockEntity> POKEDOLL_CALYREX_ANIMATED_BLOCK_ENTITY;
 
 	public static void registerAllBlockEntities() {
 		POKEDOLL_CALYREX_BLOCK_ENTITY = Registry.register(Registries.BLOCK_ENTITY_TYPE,
@@ -23,6 +24,11 @@ public class ModBlockEntities {
 				new Identifier(Pokeblocks.MOD_ID, "pokedoll_shiny_calyrex"),
 				FabricBlockEntityTypeBuilder.create(PokedollShinyCalyrexBlockEntity::new,
 						ModBlocks.POKEDOLL_SHINY_CALYREX).build());
+
+		POKEDOLL_CALYREX_ANIMATED_BLOCK_ENTITY = Registry.register(Registries.BLOCK_ENTITY_TYPE,
+				new Identifier(Pokeblocks.MOD_ID, "pokedoll_calyrex_animated"),
+				FabricBlockEntityTypeBuilder.create(PokedollCalyrexAnimatedBlockEntity::new,
+						ModBlocks.POKEDOLL_CALYREX_ANIMATED).build());
 	}
 
 }
