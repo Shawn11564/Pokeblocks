@@ -1,10 +1,7 @@
 package dev.mrshawn.pokeblocks.block;
 
 import dev.mrshawn.pokeblocks.Pokeblocks;
-import dev.mrshawn.pokeblocks.block.custom.PokedollCalyrexAnimatedBlock;
-import dev.mrshawn.pokeblocks.block.custom.PokedollCalyrexBlock;
-import dev.mrshawn.pokeblocks.block.custom.PokedollShinyCalyrexAnimatedBlock;
-import dev.mrshawn.pokeblocks.block.custom.PokedollShinyCalyrexBlock;
+import dev.mrshawn.pokeblocks.block.custom.*;
 import net.fabricmc.fabric.api.item.v1.FabricItemSettings;
 import net.fabricmc.fabric.api.object.builder.v1.block.FabricBlockSettings;
 import net.minecraft.block.Block;
@@ -28,6 +25,9 @@ public class ModBlocks {
 
 	public static final Block POKEDOLL_SHINY_CALYREX_ANIMATED = Registry.register(Registries.BLOCK, new Identifier(Pokeblocks.MOD_ID, "pokedoll_shiny_calyrex_animated"),
 			new PokedollShinyCalyrexAnimatedBlock(FabricBlockSettings.copy(Blocks.WHITE_WOOL).nonOpaque()));
+
+	public static final Block POKEDOLL_BULBASAUR = Registry.register(Registries.BLOCK, new Identifier(Pokeblocks.MOD_ID, "pokedoll_bulbasaur"),
+			new PokedollBulbasaurBlock(FabricBlockSettings.copy(Blocks.WHITE_WOOL).nonOpaque()));
 
 	private static Block registerBlock(String name, Block block) {
 		registerBlockItem(name, block);
