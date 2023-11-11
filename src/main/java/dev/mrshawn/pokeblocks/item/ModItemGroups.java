@@ -24,6 +24,7 @@ public class ModItemGroups {
 						entries.add(ModBlocks.POKEDOLL_SHINY_CALYREX_ANIMATED);
 						entries.add(ModBlocks.POKEDOLL_BULBASAUR);
 						entries.add(ModBlocks.POKEDOLL_SHINY_BULBASAUR);
+						entries.add(ModBlocks.POKEDOLL_BULBASAUR_POSED);
 					}))
 					.build()
 	);

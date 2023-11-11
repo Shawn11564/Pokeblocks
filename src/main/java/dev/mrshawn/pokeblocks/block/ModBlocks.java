@@ -3,10 +3,11 @@ package dev.mrshawn.pokeblocks.block;
 import dev.mrshawn.pokeblocks.Pokeblocks;
 import dev.mrshawn.pokeblocks.block.custom.bulbasaur.PokedollBulbasaurBlock;
 import dev.mrshawn.pokeblocks.block.custom.bulbasaur.PokedollShinyBulbasaurBlock;
-import dev.mrshawn.pokeblocks.block.custom.calyrex.animated.PokedollCalyrexAnimatedBlock;
+import dev.mrshawn.pokeblocks.block.custom.bulbasaur.posed.PokedollBulbasaurPosedBlock;
 import dev.mrshawn.pokeblocks.block.custom.calyrex.PokedollCalyrexBlock;
-import dev.mrshawn.pokeblocks.block.custom.calyrex.animated.PokedollShinyCalyrexAnimatedBlock;
 import dev.mrshawn.pokeblocks.block.custom.calyrex.PokedollShinyCalyrexBlock;
+import dev.mrshawn.pokeblocks.block.custom.calyrex.animated.PokedollCalyrexAnimatedBlock;
+import dev.mrshawn.pokeblocks.block.custom.calyrex.animated.PokedollShinyCalyrexAnimatedBlock;
 import net.fabricmc.fabric.api.item.v1.FabricItemSettings;
 import net.fabricmc.fabric.api.object.builder.v1.block.FabricBlockSettings;
 import net.minecraft.block.Block;
@@ -36,6 +37,9 @@ public class ModBlocks {
 
 	public static final Block POKEDOLL_SHINY_BULBASAUR = Registry.register(Registries.BLOCK, new Identifier(Pokeblocks.MOD_ID, "pokedoll_shiny_bulbasaur"),
 			new PokedollShinyBulbasaurBlock(FabricBlockSettings.copy(Blocks.WHITE_WOOL).nonOpaque()));
+
+	public static final Block POKEDOLL_BULBASAUR_POSED = Registry.register(Registries.BLOCK, new Identifier(Pokeblocks.MOD_ID, "pokedoll_bulbasaur_posed"),
+			new PokedollBulbasaurPosedBlock(FabricBlockSettings.copy(Blocks.WHITE_WOOL).nonOpaque()));
 
 	private static Block registerBlock(String name, Block block) {
 		registerBlockItem(name, block);

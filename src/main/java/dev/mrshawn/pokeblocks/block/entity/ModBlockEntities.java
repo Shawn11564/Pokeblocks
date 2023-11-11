@@ -4,10 +4,11 @@ import dev.mrshawn.pokeblocks.Pokeblocks;
 import dev.mrshawn.pokeblocks.block.ModBlocks;
 import dev.mrshawn.pokeblocks.block.entity.bulbasaur.PokedollBulbasaurBlockEntity;
 import dev.mrshawn.pokeblocks.block.entity.bulbasaur.PokedollShinyBulbasaurBlockEntity;
-import dev.mrshawn.pokeblocks.block.entity.calyrex.animated.PokedollCalyrexAnimatedBlockEntity;
+import dev.mrshawn.pokeblocks.block.entity.bulbasaur.posed.PokedollBulbasaurPosedBlockEntity;
 import dev.mrshawn.pokeblocks.block.entity.calyrex.PokedollCalyrexBlockEntity;
-import dev.mrshawn.pokeblocks.block.entity.calyrex.animated.PokedollShinyCalyrexAnimatedBlockEntity;
 import dev.mrshawn.pokeblocks.block.entity.calyrex.PokedollShinyCalyrexBlockEntity;
+import dev.mrshawn.pokeblocks.block.entity.calyrex.animated.PokedollCalyrexAnimatedBlockEntity;
+import dev.mrshawn.pokeblocks.block.entity.calyrex.animated.PokedollShinyCalyrexAnimatedBlockEntity;
 import net.fabricmc.fabric.api.object.builder.v1.block.entity.FabricBlockEntityTypeBuilder;
 import net.minecraft.block.entity.BlockEntityType;
 import net.minecraft.registry.Registries;
@@ -22,6 +23,7 @@ public class ModBlockEntities {
 	public static BlockEntityType<PokedollShinyCalyrexAnimatedBlockEntity> POKEDOLL_SHINY_CALYREX_ANIMATED_BLOCK_ENTITY;
 	public static BlockEntityType<PokedollBulbasaurBlockEntity> POKEDOLL_BULBASAUR_BLOCK_ENTITY;
 	public static BlockEntityType<PokedollShinyBulbasaurBlockEntity> POKEDOLL_SHINY_BULBASAUR_BLOCK_ENTITY;
+	public static BlockEntityType<PokedollBulbasaurPosedBlockEntity> POKEDOLL_BULBASAUR_POSED_BLOCK_ENTITY;
 
 	public static void registerAllBlockEntities() {
 		POKEDOLL_CALYREX_BLOCK_ENTITY = Registry.register(Registries.BLOCK_ENTITY_TYPE,
@@ -53,6 +55,11 @@ public class ModBlockEntities {
 				new Identifier(Pokeblocks.MOD_ID, "pokedoll_shiny_bulbasaur"),
 				FabricBlockEntityTypeBuilder.create(PokedollShinyBulbasaurBlockEntity::new,
 						ModBlocks.POKEDOLL_SHINY_BULBASAUR).build());
+
+		POKEDOLL_BULBASAUR_POSED_BLOCK_ENTITY = Registry.register(Registries.BLOCK_ENTITY_TYPE,
+				new Identifier(Pokeblocks.MOD_ID, "pokedoll_bulbasaur_posed"),
+				FabricBlockEntityTypeBuilder.create(PokedollBulbasaurPosedBlockEntity::new,
+						ModBlocks.POKEDOLL_BULBASAUR_POSED).build());
 	}
 
 }
