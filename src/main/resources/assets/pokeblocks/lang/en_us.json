@@ -7,6 +7,8 @@
   "item.pokeblocks.pokedoll_shiny_bulbasaur": "Shiny Bulbasaur Pokedoll",
   "item.pokeblocks.pokedoll_bulbasaur_posed": "Posing Bulbasaur Pokedoll",
   "item.pokeblocks.pokedoll_shiny_bulbasaur_posed": "Posing Shiny Bulbasaur Pokedoll",
+  "item.pokeblocks.pokedoll_squirtle": "Squirtle Pokedoll",
+  "item.pokeblocks.pokedoll_charmander": "Charmander Pokedoll",
 
   "block.pokeblocks.pokedoll_calyrex": "Calyrex Pokedoll",
   "block.pokeblocks.pokedoll_shiny_calyrex": "Shiny Calyrex Pokedoll",
@@ -16,6 +18,8 @@
   "block.pokeblocks.pokedoll_shiny_bulbasaur": "Shiny Bulbasaur Pokedoll",
   "block.pokeblocks.pokedoll_bulbasaur_posed": "Posing Bulbasaur Pokedoll",
   "block.pokeblocks.pokedoll_shiny_bulbasaur_posed": "Posing Shiny Bulbasaur Pokedoll",
+  "block.pokeblocks.pokedoll_squirtle": "Squirtle Pokedoll",
+  "block.pokeblocks.pokedoll_charmander": "Charmander Pokedoll",
 
   "itemgroup.pokeblocks": "Pokeblocks"
 }

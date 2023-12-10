@@ -1,6 +1,6 @@
-package dev.mrshawn.pokeblocks.block.custom.calyrex.animated;
+package dev.mrshawn.pokeblocks.block.custom.charmander;
 
-import dev.mrshawn.pokeblocks.block.entity.calyrex.animated.PokedollCalyrexAnimatedBlockEntity;
+import dev.mrshawn.pokeblocks.block.entity.charmander.PokedollCharmanderBlockEntity;
 import net.minecraft.block.BlockRenderType;
 import net.minecraft.block.BlockState;
 import net.minecraft.block.BlockWithEntity;
@@ -9,16 +9,16 @@ import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.BlockView;
 import org.jetbrains.annotations.Nullable;
 
-public class PokedollCalyrexAnimatedBlock extends BlockWithEntity {
+public class PokedollCharmanderBlock extends BlockWithEntity {
 
-	public PokedollCalyrexAnimatedBlock(Settings settings) {
+	public PokedollCharmanderBlock(Settings settings) {
 		super(settings);
 	}
 
 	@Nullable
 	@Override
 	public BlockEntity createBlockEntity(BlockPos pos, BlockState state) {
-		return new PokedollCalyrexAnimatedBlockEntity(pos, state);
+		return new PokedollCharmanderBlockEntity(pos, state);
 	}
 
 	@Override

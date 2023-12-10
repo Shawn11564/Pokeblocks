@@ -10,6 +10,8 @@ import dev.mrshawn.pokeblocks.block.entity.calyrex.PokedollCalyrexBlockEntity;
 import dev.mrshawn.pokeblocks.block.entity.calyrex.PokedollShinyCalyrexBlockEntity;
 import dev.mrshawn.pokeblocks.block.entity.calyrex.animated.PokedollCalyrexAnimatedBlockEntity;
 import dev.mrshawn.pokeblocks.block.entity.calyrex.animated.PokedollShinyCalyrexAnimatedBlockEntity;
+import dev.mrshawn.pokeblocks.block.entity.charmander.PokedollCharmanderBlockEntity;
+import dev.mrshawn.pokeblocks.block.entity.squirtle.PokedollSquirtleBlockEntity;
 import net.fabricmc.fabric.api.object.builder.v1.block.entity.FabricBlockEntityTypeBuilder;
 import net.minecraft.block.entity.BlockEntityType;
 import net.minecraft.registry.Registries;
@@ -26,6 +28,8 @@ public class ModBlockEntities {
 	public static BlockEntityType<PokedollShinyBulbasaurBlockEntity> POKEDOLL_SHINY_BULBASAUR_BLOCK_ENTITY;
 	public static BlockEntityType<PokedollBulbasaurPosedBlockEntity> POKEDOLL_BULBASAUR_POSED_BLOCK_ENTITY;
 	public static BlockEntityType<PokedollShinyBulbasaurPosedBlockEntity> POKEDOLL_SHINY_BULBASAUR_POSED_BLOCK_ENTITY;
+	public static BlockEntityType<PokedollSquirtleBlockEntity> POKEDOLL_SQUIRTLE_BLOCK_ENTITY;
+	public static BlockEntityType<PokedollCharmanderBlockEntity> POKEDOLL_CHARMANDER_BLOCK_ENTITY;
 
 	public static void registerAllBlockEntities() {
 		POKEDOLL_CALYREX_BLOCK_ENTITY = Registry.register(Registries.BLOCK_ENTITY_TYPE,
@@ -67,6 +71,16 @@ public class ModBlockEntities {
 				new Identifier(Pokeblocks.MOD_ID, "pokedoll_shiny_bulbasaur_posed"),
 				FabricBlockEntityTypeBuilder.create(PokedollShinyBulbasaurPosedBlockEntity::new,
 						ModBlocks.POKEDOLL_SHINY_BULBASAUR_POSED).build());
+
+		POKEDOLL_SQUIRTLE_BLOCK_ENTITY = Registry.register(Registries.BLOCK_ENTITY_TYPE,
+				new Identifier(Pokeblocks.MOD_ID, "pokedoll_squirtle"),
+				FabricBlockEntityTypeBuilder.create(PokedollSquirtleBlockEntity::new,
+						ModBlocks.POKEDOLL_SQUIRTLE).build());
+
+		POKEDOLL_CHARMANDER_BLOCK_ENTITY = Registry.register(Registries.BLOCK_ENTITY_TYPE,
+				new Identifier(Pokeblocks.MOD_ID, "pokedoll_charmander"),
+				FabricBlockEntityTypeBuilder.create(PokedollCharmanderBlockEntity::new,
+						ModBlocks.POKEDOLL_CHARMANDER).build());
 	}
 
 }

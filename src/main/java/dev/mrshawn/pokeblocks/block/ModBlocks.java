@@ -9,6 +9,8 @@ import dev.mrshawn.pokeblocks.block.custom.calyrex.PokedollCalyrexBlock;
 import dev.mrshawn.pokeblocks.block.custom.calyrex.PokedollShinyCalyrexBlock;
 import dev.mrshawn.pokeblocks.block.custom.calyrex.animated.PokedollCalyrexAnimatedBlock;
 import dev.mrshawn.pokeblocks.block.custom.calyrex.animated.PokedollShinyCalyrexAnimatedBlock;
+import dev.mrshawn.pokeblocks.block.custom.charmander.PokedollCharmanderBlock;
+import dev.mrshawn.pokeblocks.block.custom.squirtle.PokedollSquirtleBlock;
 import net.fabricmc.fabric.api.item.v1.FabricItemSettings;
 import net.fabricmc.fabric.api.object.builder.v1.block.FabricBlockSettings;
 import net.minecraft.block.Block;
@@ -44,6 +46,11 @@ public class ModBlocks {
 
 	public static final Block POKEDOLL_SHINY_BULBASAUR_POSED = Registry.register(Registries.BLOCK, new Identifier(Pokeblocks.MOD_ID, "pokedoll_shiny_bulbasaur_posed"),
 			new PokedollShinyBulbasaurPosedBlock(FabricBlockSettings.copy(Blocks.WHITE_WOOL).nonOpaque()));
+
+	public static final Block POKEDOLL_SQUIRTLE = Registry.register(Registries.BLOCK, new Identifier(Pokeblocks.MOD_ID, "pokedoll_squirtle"),
+			new PokedollSquirtleBlock(FabricBlockSettings.copy(Blocks.WHITE_WOOL).nonOpaque()));
+	public static final Block POKEDOLL_CHARMANDER = Registry.register(Registries.BLOCK, new Identifier(Pokeblocks.MOD_ID, "pokedoll_charmander"),
+			new PokedollCharmanderBlock(FabricBlockSettings.copy(Blocks.WHITE_WOOL).nonOpaque()));
 
 	private static Block registerBlock(String name, Block block) {
 		registerBlockItem(name, block);

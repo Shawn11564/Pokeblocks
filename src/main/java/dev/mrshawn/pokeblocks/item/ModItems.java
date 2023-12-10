@@ -10,6 +10,8 @@ import dev.mrshawn.pokeblocks.item.custom.calyrex.PokedollCalyrexBlockItem;
 import dev.mrshawn.pokeblocks.item.custom.calyrex.PokedollShinyCalyrexBlockItem;
 import dev.mrshawn.pokeblocks.item.custom.calyrex.animated.PokedollCalyrexAnimatedBlockItem;
 import dev.mrshawn.pokeblocks.item.custom.calyrex.animated.PokedollShinyCalyrexAnimatedBlockItem;
+import dev.mrshawn.pokeblocks.item.custom.charmander.PokedollCharmanderBlockItem;
+import dev.mrshawn.pokeblocks.item.custom.squirtle.PokedollSquirtleBlockItem;
 import net.fabricmc.fabric.api.item.v1.FabricItemSettings;
 import net.minecraft.item.Item;
 import net.minecraft.registry.Registries;
@@ -41,6 +43,12 @@ public class ModItems {
 
 	public static final Item POKEDOLL_SHINY_BULBASAUR_POSED_BLOCK_ITEM = registerItem("pokedoll_shiny_bulbasaur_posed",
 			new PokedollShinyBulbasaurPosedBlockItem(ModBlocks.POKEDOLL_SHINY_BULBASAUR_POSED, new FabricItemSettings()));
+
+	public static final Item POKEDOLL_SQUIRTLE_BLOCK_ITEM = registerItem("pokedoll_squirtle",
+			new PokedollSquirtleBlockItem(ModBlocks.POKEDOLL_SQUIRTLE, new FabricItemSettings()));
+
+	public static final Item POKEDOLL_CHARMANDER_BLOCK_ITEM = registerItem("pokedoll_charmander",
+			new PokedollCharmanderBlockItem(ModBlocks.POKEDOLL_CHARMANDER, new FabricItemSettings()));
 
 	private static Item registerItem(String name, Item item) {
 		return Registry.register(Registries.ITEM, new Identifier(Pokeblocks.MOD_ID, name), item);

@@ -9,6 +9,8 @@ import dev.mrshawn.pokeblocks.block.entity.client.calyrex.animated.PokedollCalyr
 import dev.mrshawn.pokeblocks.block.entity.client.calyrex.PokedollCalyrexBlockRenderer;
 import dev.mrshawn.pokeblocks.block.entity.client.calyrex.animated.PokedollShinyCalyrexAnimatedBlockRenderer;
 import dev.mrshawn.pokeblocks.block.entity.client.calyrex.PokedollShinyCalyrexBlockRenderer;
+import dev.mrshawn.pokeblocks.block.entity.client.charmander.PokedollCharmanderBlockRenderer;
+import dev.mrshawn.pokeblocks.block.entity.client.squirtle.PokedollSquirtleBlockRenderer;
 import net.fabricmc.api.ClientModInitializer;
 import net.minecraft.client.render.block.entity.BlockEntityRendererFactories;
 
@@ -24,6 +26,8 @@ public class PokeblocksClient implements ClientModInitializer {
 		BlockEntityRendererFactories.register(ModBlockEntities.POKEDOLL_SHINY_BULBASAUR_BLOCK_ENTITY, PokedollShinyBulbasaurBlockRenderer::new);
 		BlockEntityRendererFactories.register(ModBlockEntities.POKEDOLL_BULBASAUR_POSED_BLOCK_ENTITY, PokedollBulbasaurPosedBlockRenderer::new);
 		BlockEntityRendererFactories.register(ModBlockEntities.POKEDOLL_SHINY_BULBASAUR_POSED_BLOCK_ENTITY, PokedollShinyBulbasaurPosedBlockRenderer::new);
+		BlockEntityRendererFactories.register(ModBlockEntities.POKEDOLL_SQUIRTLE_BLOCK_ENTITY, PokedollSquirtleBlockRenderer::new);
+		BlockEntityRendererFactories.register(ModBlockEntities.POKEDOLL_CHARMANDER_BLOCK_ENTITY, PokedollCharmanderBlockRenderer::new);
 	}
 
 }
