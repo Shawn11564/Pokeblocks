@@ -35,6 +35,8 @@ public class ModItemGroups {
 						entries.add(ModBlocks.POKEDOLL_SHINY_MAREEP);
 						entries.add(ModBlocks.POKEDOLL_FLAAFFY);
 						entries.add(ModBlocks.POKEDOLL_SHINY_FLAAFFY);
+						entries.add(ModBlocks.POKEDOLL_SMOLIV);
+						entries.add(ModBlocks.POKEDOLL_SHINY_SMOLIV);
 					}))
 					.build()
 	);

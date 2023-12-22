@@ -2,7 +2,7 @@ package dev.mrshawn.pokeblocks.constants;
 
 public class ResourceConstants {
 
-	public static final String GENERIC_ANIMATION = "generic.animation.json";
+	public static final String GENERIC_ANIMATION = "generic.animation";
 	public static final String POKEDOLL_CALYREX_MODEL = "pokedoll_calyrex.geo.json";
 	public static final String POKEDOLL_CALYREX_TEXTURE = "pokedoll_calyrex_texture.png";
 	public static final String POKEDOLL_SHINY_CALYREX_TEXTURE = "pokedoll_calyrex_shiny_texture.png";
@@ -30,5 +30,8 @@ public class ResourceConstants {
 	public static final String POKEDOLL_FLAAFFY_MODEL = "pokedoll_flaaffy.geo.json";
 	public static final String POKEDOLL_FLAAFFY_TEXTURE = "pokedoll_flaaffy_texture.png";
 	public static final String POKEDOLL_SHINY_FLAAFFY_TEXTURE = "pokedoll_flaaffy_shiny_texture.png";
+	public static final String POKEDOLL_SMOLIV_MODEL = "pokedoll_smoliv.geo.json";
+	public static final String POKEDOLL_SMOLIV_TEXTURE = "pokedoll_smoliv_texture.png";
+	public static final String POKEDOLL_SHINY_SMOLIV_TEXTURE = "pokedoll_smoliv_shiny_texture.png";
 
 }

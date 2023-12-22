@@ -135,6 +135,20 @@ public class ModItems {
 			ResourceConstants.POKEDOLL_SHINY_FLAAFFY_TEXTURE
 	);
 
+	public static final Item POKEDOLL_SMOLIV_BLOCK_ITEM = registerItem(
+			PokeIDs.POKEDOLL_SMOLIV,
+			ModBlocks.POKEDOLL_SMOLIV,
+			ResourceConstants.POKEDOLL_SMOLIV_MODEL,
+			ResourceConstants.POKEDOLL_SMOLIV_TEXTURE
+	);
+
+	public static final Item POKEDOLL_SHINY_SMOLIV_BLOCK_ITEM = registerItem(
+			PokeIDs.POKEDOLL_SHINY_SMOLIV,
+			ModBlocks.POKEDOLL_SHINY_SMOLIV,
+			ResourceConstants.POKEDOLL_SMOLIV_MODEL,
+			ResourceConstants.POKEDOLL_SHINY_SMOLIV_TEXTURE
+	);
+
 	private static Item registerItem(String name, Item item) {
 		return Registry.register(Registries.ITEM, new Identifier(Pokeblocks.MOD_ID, name), item);
 	}
