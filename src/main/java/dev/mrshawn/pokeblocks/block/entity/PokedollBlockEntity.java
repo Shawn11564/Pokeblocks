@@ -1,5 +1,6 @@
 package dev.mrshawn.pokeblocks.block.entity;
 
+import dev.mrshawn.pokeblocks.constants.ResourceConstants;
 import net.minecraft.block.BlockState;
 import net.minecraft.block.entity.BlockEntity;
 import net.minecraft.block.entity.BlockEntityType;
@@ -41,7 +42,7 @@ public class PokedollBlockEntity extends BlockEntity implements GeoBlockEntity {
 	}
 
 	protected String getAnimationName() {
-		return "animation.generic";
+		return ResourceConstants.GENERIC_ANIMATION;
 	}
 
 }

@@ -121,6 +121,20 @@ public class ModItems {
 			ResourceConstants.POKEDOLL_SHINY_MAREEP_TEXTURE
 	);
 
+	public static final Item POKEDOLL_FLAAFFY_BLOCK_ITEM = registerItem(
+			PokeIDs.POKEDOLL_FLAAFFY,
+			ModBlocks.POKEDOLL_FLAAFFY,
+			ResourceConstants.POKEDOLL_FLAAFFY_MODEL,
+			ResourceConstants.POKEDOLL_FLAAFFY_TEXTURE
+	);
+
+	public static final Item POKEDOLL_SHINY_FLAAFFY_BLOCK_ITEM = registerItem(
+			PokeIDs.POKEDOLL_SHINY_FLAAFFY,
+			ModBlocks.POKEDOLL_SHINY_FLAAFFY,
+			ResourceConstants.POKEDOLL_FLAAFFY_MODEL,
+			ResourceConstants.POKEDOLL_SHINY_FLAAFFY_TEXTURE
+	);
+
 	private static Item registerItem(String name, Item item) {
 		return Registry.register(Registries.ITEM, new Identifier(Pokeblocks.MOD_ID, name), item);
 	}

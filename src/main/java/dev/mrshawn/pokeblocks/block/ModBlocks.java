@@ -12,6 +12,8 @@ import dev.mrshawn.pokeblocks.block.entity.calyrex.animated.PokedollCalyrexAnima
 import dev.mrshawn.pokeblocks.block.entity.calyrex.animated.PokedollShinyCalyrexAnimatedBlockEntity;
 import dev.mrshawn.pokeblocks.block.entity.charmander.PokedollCharmanderBlockEntity;
 import dev.mrshawn.pokeblocks.block.entity.charmander.PokedollShinyCharmanderBlockEntity;
+import dev.mrshawn.pokeblocks.block.entity.flaaffy.PokedollFlaaffyBlockEntity;
+import dev.mrshawn.pokeblocks.block.entity.flaaffy.PokedollShinyFlaaffyBlockEntity;
 import dev.mrshawn.pokeblocks.block.entity.lickitung.PokedollLickitungBlockEntity;
 import dev.mrshawn.pokeblocks.block.entity.lickitung.PokedollShinyLickitungBlockEntity;
 import dev.mrshawn.pokeblocks.block.entity.mareep.PokedollMareepBlockEntity;
@@ -72,6 +74,12 @@ public class ModBlocks {
 
 	public static final Block POKEDOLL_SHINY_MAREEP = Registry.register(Registries.BLOCK, new Identifier(Pokeblocks.MOD_ID, PokeIDs.POKEDOLL_SHINY_MAREEP),
 			new PokedollBlock<>(() -> PokedollShinyMareepBlockEntity.class));
+
+	public static final Block POKEDOLL_FLAAFFY = Registry.register(Registries.BLOCK, new Identifier(Pokeblocks.MOD_ID, PokeIDs.POKEDOLL_FLAAFFY),
+			new PokedollBlock<>(() -> PokedollFlaaffyBlockEntity.class));
+
+	public static final Block POKEDOLL_SHINY_FLAAFFY = Registry.register(Registries.BLOCK, new Identifier(Pokeblocks.MOD_ID, PokeIDs.POKEDOLL_SHINY_FLAAFFY),
+			new PokedollBlock<>(() -> PokedollShinyFlaaffyBlockEntity.class));
 
 	private static Block registerBlock(String name, Block block) {
 		registerBlockItem(name, block);
