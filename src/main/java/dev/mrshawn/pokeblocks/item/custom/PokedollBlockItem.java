@@ -1,6 +1,8 @@
-package dev.mrshawn.pokeblocks.item.custom.charmander;
+package dev.mrshawn.pokeblocks.item.custom;
 
-import dev.mrshawn.pokeblocks.item.client.charmander.PokedollCharmanderBlockItemRenderer;
+import dev.mrshawn.pokeblocks.item.client.PokedollBlockItemModel;
+import dev.mrshawn.pokeblocks.item.client.PokedollBlockItemRenderer;
+import net.fabricmc.fabric.api.item.v1.FabricItemSettings;
 import net.minecraft.block.Block;
 import net.minecraft.client.render.item.BuiltinModelItemRenderer;
 import net.minecraft.item.BlockItem;
@@ -17,20 +19,28 @@ import software.bernie.geckolib.util.RenderUtils;
 import java.util.function.Consumer;
 import java.util.function.Supplier;
 
-public class PokedollCharmanderBlockItem extends BlockItem implements GeoItem {
+public class PokedollBlockItem extends BlockItem implements GeoItem {
 
 	private AnimatableInstanceCache cache = new SingletonAnimatableInstanceCache(this);
 	private final Supplier<Object> renderProvider = GeoItem.makeRenderer(this);
+	private final Supplier<PokedollBlockItemModel> blockItemModelSupplier;
 
-	public PokedollCharmanderBlockItem(Block block, Settings settings) {
+	public PokedollBlockItem(Block block, Settings settings, Supplier<PokedollBlockItemModel> blockItemModelSupplier) {
 		super(block, settings);
 		SingletonGeoAnimatable.registerSyncedAnimatable(this);
+		this.blockItemModelSupplier = blockItemModelSupplier;
+	}
+
+	public PokedollBlockItem(Block block, Supplier<PokedollBlockItemModel> blockItemModelSupplier) {
+		super(block, new FabricItemSettings());
+		SingletonGeoAnimatable.registerSyncedAnimatable(this);
+		this.blockItemModelSupplier = blockItemModelSupplier;
 	}
 
 	@Override
 	public void createRenderer(Consumer<Object> consumer) {
 		consumer.accept(new RenderProvider() {
-			private final PokedollCharmanderBlockItemRenderer renderer = new PokedollCharmanderBlockItemRenderer();
+			private final PokedollBlockItemRenderer renderer = new PokedollBlockItemRenderer(blockItemModelSupplier.get());
 			@Override
 			public BuiltinModelItemRenderer getCustomRenderer() {
 				return this.renderer;
@@ -49,7 +59,7 @@ public class PokedollCharmanderBlockItem extends BlockItem implements GeoItem {
 	}
 
 	private <T extends GeoAnimatable> PlayState predicate(AnimationState<T> animatedBlockEntityAnimationState) {
-		animatedBlockEntityAnimationState.getController().setAnimation(RawAnimation.begin().then("animation.generic", Animation.LoopType.LOOP));
+		animatedBlockEntityAnimationState.getController().setAnimation(RawAnimation.begin().then(getAnimationName(), Animation.LoopType.LOOP));
 		return PlayState.CONTINUE;
 	}
 
@@ -61,6 +71,10 @@ public class PokedollCharmanderBlockItem extends BlockItem implements GeoItem {
 	@Override
 	public double getTick(Object itemStack) {
 		return RenderUtils.getCurrentTick();
+	}
+
+	protected String getAnimationName() {
+		return "animation.generic";
 	}
 
 }

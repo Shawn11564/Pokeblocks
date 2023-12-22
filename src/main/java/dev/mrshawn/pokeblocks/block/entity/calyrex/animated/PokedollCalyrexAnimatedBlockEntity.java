@@ -1,43 +1,17 @@
 package dev.mrshawn.pokeblocks.block.entity.calyrex.animated;
 
-import dev.mrshawn.pokeblocks.block.entity.ModBlockEntities;
+import dev.mrshawn.pokeblocks.block.entity.BlockEntityTypeRegistry;
+import dev.mrshawn.pokeblocks.block.entity.PokedollBlockEntity;
 import net.minecraft.block.BlockState;
-import net.minecraft.block.entity.BlockEntity;
 import net.minecraft.util.math.BlockPos;
-import software.bernie.geckolib.animatable.GeoBlockEntity;
-import software.bernie.geckolib.core.animatable.GeoAnimatable;
-import software.bernie.geckolib.core.animatable.instance.AnimatableInstanceCache;
-import software.bernie.geckolib.core.animatable.instance.SingletonAnimatableInstanceCache;
-import software.bernie.geckolib.core.animation.*;
-import software.bernie.geckolib.core.object.PlayState;
-import software.bernie.geckolib.util.RenderUtils;
 
-public class PokedollCalyrexAnimatedBlockEntity extends BlockEntity implements GeoBlockEntity {
-
-	private AnimatableInstanceCache cache = new SingletonAnimatableInstanceCache(this);
-
+public class PokedollCalyrexAnimatedBlockEntity extends PokedollBlockEntity {
 	public PokedollCalyrexAnimatedBlockEntity(BlockPos pos, BlockState state) {
-		super(ModBlockEntities.POKEDOLL_CALYREX_ANIMATED_BLOCK_ENTITY, pos, state);
+		super(BlockEntityTypeRegistry.get(PokedollCalyrexAnimatedBlockEntity.class), pos, state);
 	}
 
 	@Override
-	public void registerControllers(AnimatableManager.ControllerRegistrar controllerRegistrar) {
-		controllerRegistrar.add(new AnimationController<>(this, "controller", 0, this::predicate));
-	}
-
-	private <T extends GeoAnimatable> PlayState predicate(AnimationState<T> animatedBlockEntityAnimationState) {
-		animatedBlockEntityAnimationState.getController().setAnimation(
-				RawAnimation.begin().then("animation.pokedoll_calyrex.levitate", Animation.LoopType.LOOP));
-		return PlayState.CONTINUE;
-	}
-
-	@Override
-	public AnimatableInstanceCache getAnimatableInstanceCache() {
-		return cache;
-	}
-
-	@Override
-	public double getTick(Object blockEntity) {
-		return RenderUtils.getCurrentTick();
+	protected String getAnimationName() {
+		return "animation.pokedoll_calyrex.levitate";
 	}
 }

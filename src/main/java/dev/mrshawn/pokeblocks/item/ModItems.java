@@ -2,17 +2,11 @@ package dev.mrshawn.pokeblocks.item;
 
 import dev.mrshawn.pokeblocks.Pokeblocks;
 import dev.mrshawn.pokeblocks.block.ModBlocks;
-import dev.mrshawn.pokeblocks.item.custom.bulbasaur.PokedollBulbasaurBlockItem;
-import dev.mrshawn.pokeblocks.item.custom.bulbasaur.PokedollShinyBulbasaurBlockItem;
-import dev.mrshawn.pokeblocks.item.custom.bulbasaur.posed.PokedollBulbasaurPosedBlockItem;
-import dev.mrshawn.pokeblocks.item.custom.bulbasaur.posed.PokedollShinyBulbasaurPosedBlockItem;
-import dev.mrshawn.pokeblocks.item.custom.calyrex.PokedollCalyrexBlockItem;
-import dev.mrshawn.pokeblocks.item.custom.calyrex.PokedollShinyCalyrexBlockItem;
-import dev.mrshawn.pokeblocks.item.custom.calyrex.animated.PokedollCalyrexAnimatedBlockItem;
-import dev.mrshawn.pokeblocks.item.custom.calyrex.animated.PokedollShinyCalyrexAnimatedBlockItem;
-import dev.mrshawn.pokeblocks.item.custom.charmander.PokedollCharmanderBlockItem;
-import dev.mrshawn.pokeblocks.item.custom.squirtle.PokedollSquirtleBlockItem;
-import net.fabricmc.fabric.api.item.v1.FabricItemSettings;
+import dev.mrshawn.pokeblocks.constants.PokeIDs;
+import dev.mrshawn.pokeblocks.constants.ResourceConstants;
+import dev.mrshawn.pokeblocks.item.client.PokedollBlockItemModel;
+import dev.mrshawn.pokeblocks.item.custom.PokedollBlockItem;
+import net.minecraft.block.Block;
 import net.minecraft.item.Item;
 import net.minecraft.registry.Registries;
 import net.minecraft.registry.Registry;
@@ -20,38 +14,102 @@ import net.minecraft.util.Identifier;
 
 public class ModItems {
 
-	public static final Item POKEDOLL_CALYREX_BLOCK_ITEM = registerItem("pokedoll_calyrex",
-			new PokedollCalyrexBlockItem(ModBlocks.POKEDOLL_CALYREX, new FabricItemSettings()));
+	public static final Item POKEDOLL_CALYREX_BLOCK_ITEM = registerItem(
+			PokeIDs.POKEDOLL_CALYREX,
+			ModBlocks.POKEDOLL_CALYREX,
+			ResourceConstants.POKEDOLL_CALYREX_MODEL,
+			ResourceConstants.POKEDOLL_CALYREX_TEXTURE
+	);
 
-	public static final Item POKEDOLL_SHINY_CALYREX_BLOCK_ITEM = registerItem("pokedoll_shiny_calyrex",
-			new PokedollShinyCalyrexBlockItem(ModBlocks.POKEDOLL_SHINY_CALYREX, new FabricItemSettings()));
+	public static final Item POKEDOLL_SHINY_CALYREX_BLOCK_ITEM = registerItem(
+			PokeIDs.POKEDOLL_SHINY_CALYREX,
+			ModBlocks.POKEDOLL_SHINY_CALYREX,
+			ResourceConstants.POKEDOLL_CALYREX_MODEL,
+			ResourceConstants.POKEDOLL_SHINY_CALYREX_TEXTURE
+	);
 
-	public static final Item POKEDOLL_CALYREX_ANIMATED_BLOCK_ITEM = registerItem("pokedoll_calyrex_animated",
-			new PokedollCalyrexAnimatedBlockItem(ModBlocks.POKEDOLL_CALYREX_ANIMATED, new FabricItemSettings()));
+	public static final Item POKEDOLL_CALYREX_ANIMATED_BLOCK_ITEM = registerItem(
+			PokeIDs.POKEDOLL_CALYREX_ANIMATED,
+			ModBlocks.POKEDOLL_CALYREX_ANIMATED,
+			ResourceConstants.POKEDOLL_CALYREX_ANIMATED_MODEL,
+			ResourceConstants.POKEDOLL_CALYREX_ANIMATED_TEXTURE,
+			ResourceConstants.POKEDOLL_CALYREX_ANIMATED_ANIMATION
+	);
 
-	public static final Item POKEDOLL_SHINY_CALYREX_ANIMATED_BLOCK_ITEM = registerItem("pokedoll_shiny_calyrex_animated",
-			new PokedollShinyCalyrexAnimatedBlockItem(ModBlocks.POKEDOLL_SHINY_CALYREX_ANIMATED, new FabricItemSettings()));
+	public static final Item POKEDOLL_SHINY_CALYREX_ANIMATED_BLOCK_ITEM = registerItem(
+			PokeIDs.POKEDOLL_SHINY_CALYREX_ANIMATED,
+			ModBlocks.POKEDOLL_SHINY_CALYREX_ANIMATED,
+			ResourceConstants.POKEDOLL_CALYREX_ANIMATED_MODEL,
+			ResourceConstants.POKEDOLL_SHINY_CALYREX_ANIMATED_TEXTURE,
+			ResourceConstants.POKEDOLL_CALYREX_ANIMATED_ANIMATION
+	);
 
-	public static final Item POKEDOLL_BULBASAUR_BLOCK_ITEM = registerItem("pokedoll_bulbasaur",
-			new PokedollBulbasaurBlockItem(ModBlocks.POKEDOLL_BULBASAUR, new FabricItemSettings()));
+	public static final Item POKEDOLL_BULBASAUR_BLOCK_ITEM = registerItem(
+			PokeIDs.POKEDOLL_BULBASAUR,
+			ModBlocks.POKEDOLL_BULBASAUR,
+			ResourceConstants.POKEDOLL_BULBASAUR_MODEL,
+			ResourceConstants.POKEDOLL_BULBASAUR_TEXTURE
+	);
 
-	public static final Item POKEDOLL_SHINY_BULBASAUR_BLOCK_ITEM = registerItem("pokedoll_shiny_bulbasaur",
-			new PokedollShinyBulbasaurBlockItem(ModBlocks.POKEDOLL_SHINY_BULBASAUR, new FabricItemSettings()));
+	public static final Item POKEDOLL_SHINY_BULBASAUR_BLOCK_ITEM = registerItem(
+			PokeIDs.POKEDOLL_SHINY_BULBASAUR,
+			ModBlocks.POKEDOLL_SHINY_BULBASAUR,
+			ResourceConstants.POKEDOLL_BULBASAUR_MODEL,
+			ResourceConstants.POKEDOLL_SHINY_BULBASAUR_TEXTURE
+	);
 
-	public static final Item POKEDOLL_BULBASAUR_POSED_BLOCK_ITEM = registerItem("pokedoll_bulbasaur_posed",
-			new PokedollBulbasaurPosedBlockItem(ModBlocks.POKEDOLL_BULBASAUR_POSED, new FabricItemSettings()));
+	public static final Item POKEDOLL_BULBASAUR_POSED_BLOCK_ITEM = registerItem(
+			PokeIDs.POKEDOLL_BULBASAUR_POSED,
+			ModBlocks.POKEDOLL_BULBASAUR_POSED,
+			ResourceConstants.POKEDOLL_BULBASAUR_POSED_MODEL,
+			ResourceConstants.POKEDOLL_BULBASAUR_POSED_TEXTURE
+	);
 
-	public static final Item POKEDOLL_SHINY_BULBASAUR_POSED_BLOCK_ITEM = registerItem("pokedoll_shiny_bulbasaur_posed",
-			new PokedollShinyBulbasaurPosedBlockItem(ModBlocks.POKEDOLL_SHINY_BULBASAUR_POSED, new FabricItemSettings()));
+	public static final Item POKEDOLL_SHINY_BULBASAUR_POSED_BLOCK_ITEM = registerItem(
+			PokeIDs.POKEDOLL_SHINY_BULBASAUR_POSED,
+			ModBlocks.POKEDOLL_SHINY_BULBASAUR_POSED,
+			ResourceConstants.POKEDOLL_BULBASAUR_POSED_MODEL,
+			ResourceConstants.POKEDOLL_SHINY_BULBASAUR_POSED_TEXTURE
+	);
 
-	public static final Item POKEDOLL_SQUIRTLE_BLOCK_ITEM = registerItem("pokedoll_squirtle",
-			new PokedollSquirtleBlockItem(ModBlocks.POKEDOLL_SQUIRTLE, new FabricItemSettings()));
+	public static final Item POKEDOLL_SQUIRTLE_BLOCK_ITEM = registerItem(
+			PokeIDs.POKEDOLL_SQUIRTLE,
+			ModBlocks.POKEDOLL_SQUIRTLE,
+			ResourceConstants.POKEDOLL_SQUIRTLE_MODEL,
+			ResourceConstants.POKEDOLL_SQUIRTLE_TEXTURE
+	);
 
-	public static final Item POKEDOLL_CHARMANDER_BLOCK_ITEM = registerItem("pokedoll_charmander",
-			new PokedollCharmanderBlockItem(ModBlocks.POKEDOLL_CHARMANDER, new FabricItemSettings()));
+	public static final Item POKEDOLL_CHARMANDER_BLOCK_ITEM = registerItem(
+			PokeIDs.POKEDOLL_CHARMANDER,
+			ModBlocks.POKEDOLL_CHARMANDER,
+			ResourceConstants.POKEDOLL_CHARMANDER_MODEL,
+			ResourceConstants.POKEDOLL_CHARMANDER_TEXTURE
+	);
 
 	private static Item registerItem(String name, Item item) {
 		return Registry.register(Registries.ITEM, new Identifier(Pokeblocks.MOD_ID, name), item);
+	}
+
+	private static Item registerItem(String name, Block block, String modelResourcePath, String textureResourcePath, String animationResourcePath) {
+		return registerItem(
+				name,
+				new PokedollBlockItem(block, () -> new PokedollBlockItemModel(
+						modelResourcePath,
+						textureResourcePath,
+						animationResourcePath
+				))
+		);
+	}
+
+	private static Item registerItem(String name, Block block, String modelResourcePath, String textureResourcePath) {
+		return registerItem(
+				name,
+				new PokedollBlockItem(block, () -> new PokedollBlockItemModel(
+						modelResourcePath,
+						textureResourcePath,
+						ResourceConstants.GENERIC_ANIMATION
+				))
+		);
 	}
 
 	public static void registerModItems() {

@@ -13,6 +13,7 @@ import dev.mrshawn.pokeblocks.block.entity.calyrex.animated.PokedollShinyCalyrex
 import dev.mrshawn.pokeblocks.block.entity.charmander.PokedollCharmanderBlockEntity;
 import dev.mrshawn.pokeblocks.block.entity.squirtle.PokedollSquirtleBlockEntity;
 import net.fabricmc.fabric.api.object.builder.v1.block.entity.FabricBlockEntityTypeBuilder;
+import net.minecraft.block.entity.BlockEntity;
 import net.minecraft.block.entity.BlockEntityType;
 import net.minecraft.registry.Registries;
 import net.minecraft.registry.Registry;
@@ -32,55 +33,71 @@ public class ModBlockEntities {
 	public static BlockEntityType<PokedollCharmanderBlockEntity> POKEDOLL_CHARMANDER_BLOCK_ENTITY;
 
 	public static void registerAllBlockEntities() {
-		POKEDOLL_CALYREX_BLOCK_ENTITY = Registry.register(Registries.BLOCK_ENTITY_TYPE,
+		POKEDOLL_CALYREX_BLOCK_ENTITY = registerBlockEntity(
 				new Identifier(Pokeblocks.MOD_ID, "pokedoll_calyrex"),
-				FabricBlockEntityTypeBuilder.create(PokedollCalyrexBlockEntity::new,
-								ModBlocks.POKEDOLL_CALYREX).build());
+				FabricBlockEntityTypeBuilder.create(PokedollCalyrexBlockEntity::new, ModBlocks.POKEDOLL_CALYREX),
+				PokedollCalyrexBlockEntity.class
+		);
 
-		POKEDOLL_SHINY_CALYREX_BLOCK_ENTITY = Registry.register(Registries.BLOCK_ENTITY_TYPE,
+		POKEDOLL_SHINY_CALYREX_BLOCK_ENTITY = registerBlockEntity(
 				new Identifier(Pokeblocks.MOD_ID, "pokedoll_shiny_calyrex"),
-				FabricBlockEntityTypeBuilder.create(PokedollShinyCalyrexBlockEntity::new,
-						ModBlocks.POKEDOLL_SHINY_CALYREX).build());
+				FabricBlockEntityTypeBuilder.create(PokedollShinyCalyrexBlockEntity::new, ModBlocks.POKEDOLL_SHINY_CALYREX),
+				PokedollShinyCalyrexBlockEntity.class
+		);
 
-		POKEDOLL_CALYREX_ANIMATED_BLOCK_ENTITY = Registry.register(Registries.BLOCK_ENTITY_TYPE,
+		POKEDOLL_CALYREX_ANIMATED_BLOCK_ENTITY = registerBlockEntity(
 				new Identifier(Pokeblocks.MOD_ID, "pokedoll_calyrex_animated"),
-				FabricBlockEntityTypeBuilder.create(PokedollCalyrexAnimatedBlockEntity::new,
-						ModBlocks.POKEDOLL_CALYREX_ANIMATED).build());
+				FabricBlockEntityTypeBuilder.create(PokedollCalyrexAnimatedBlockEntity::new, ModBlocks.POKEDOLL_CALYREX_ANIMATED),
+				PokedollCalyrexAnimatedBlockEntity.class
+		);
 
-		POKEDOLL_SHINY_CALYREX_ANIMATED_BLOCK_ENTITY = Registry.register(Registries.BLOCK_ENTITY_TYPE,
+		POKEDOLL_SHINY_CALYREX_ANIMATED_BLOCK_ENTITY = registerBlockEntity(
 				new Identifier(Pokeblocks.MOD_ID, "pokedoll_shiny_calyrex_animated"),
-				FabricBlockEntityTypeBuilder.create(PokedollShinyCalyrexAnimatedBlockEntity::new,
-						ModBlocks.POKEDOLL_SHINY_CALYREX_ANIMATED).build());
+				FabricBlockEntityTypeBuilder.create(PokedollShinyCalyrexAnimatedBlockEntity::new, ModBlocks.POKEDOLL_SHINY_CALYREX_ANIMATED),
+				PokedollShinyCalyrexAnimatedBlockEntity.class
+		);
 
-		POKEDOLL_BULBASAUR_BLOCK_ENTITY = Registry.register(Registries.BLOCK_ENTITY_TYPE,
+		POKEDOLL_BULBASAUR_BLOCK_ENTITY = registerBlockEntity(
 				new Identifier(Pokeblocks.MOD_ID, "pokedoll_bulbasaur"),
-				FabricBlockEntityTypeBuilder.create(PokedollBulbasaurBlockEntity::new,
-						ModBlocks.POKEDOLL_BULBASAUR).build());
+				FabricBlockEntityTypeBuilder.create(PokedollBulbasaurBlockEntity::new, ModBlocks.POKEDOLL_BULBASAUR),
+				PokedollBulbasaurBlockEntity.class
+		);
 
-		POKEDOLL_SHINY_BULBASAUR_BLOCK_ENTITY = Registry.register(Registries.BLOCK_ENTITY_TYPE,
+		POKEDOLL_SHINY_BULBASAUR_BLOCK_ENTITY = registerBlockEntity(
 				new Identifier(Pokeblocks.MOD_ID, "pokedoll_shiny_bulbasaur"),
-				FabricBlockEntityTypeBuilder.create(PokedollShinyBulbasaurBlockEntity::new,
-						ModBlocks.POKEDOLL_SHINY_BULBASAUR).build());
+				FabricBlockEntityTypeBuilder.create(PokedollShinyBulbasaurBlockEntity::new, ModBlocks.POKEDOLL_SHINY_BULBASAUR),
+				PokedollShinyBulbasaurBlockEntity.class
+		);
 
-		POKEDOLL_BULBASAUR_POSED_BLOCK_ENTITY = Registry.register(Registries.BLOCK_ENTITY_TYPE,
+		POKEDOLL_BULBASAUR_POSED_BLOCK_ENTITY = registerBlockEntity(
 				new Identifier(Pokeblocks.MOD_ID, "pokedoll_bulbasaur_posed"),
-				FabricBlockEntityTypeBuilder.create(PokedollBulbasaurPosedBlockEntity::new,
-						ModBlocks.POKEDOLL_BULBASAUR_POSED).build());
+				FabricBlockEntityTypeBuilder.create(PokedollBulbasaurPosedBlockEntity::new, ModBlocks.POKEDOLL_BULBASAUR_POSED),
+				PokedollBulbasaurPosedBlockEntity.class
+		);
 
-		POKEDOLL_SHINY_BULBASAUR_POSED_BLOCK_ENTITY = Registry.register(Registries.BLOCK_ENTITY_TYPE,
+		POKEDOLL_SHINY_BULBASAUR_POSED_BLOCK_ENTITY = registerBlockEntity(
 				new Identifier(Pokeblocks.MOD_ID, "pokedoll_shiny_bulbasaur_posed"),
-				FabricBlockEntityTypeBuilder.create(PokedollShinyBulbasaurPosedBlockEntity::new,
-						ModBlocks.POKEDOLL_SHINY_BULBASAUR_POSED).build());
+				FabricBlockEntityTypeBuilder.create(PokedollShinyBulbasaurPosedBlockEntity::new, ModBlocks.POKEDOLL_SHINY_BULBASAUR_POSED),
+				PokedollShinyBulbasaurPosedBlockEntity.class
+		);
 
-		POKEDOLL_SQUIRTLE_BLOCK_ENTITY = Registry.register(Registries.BLOCK_ENTITY_TYPE,
+		POKEDOLL_SQUIRTLE_BLOCK_ENTITY = registerBlockEntity(
 				new Identifier(Pokeblocks.MOD_ID, "pokedoll_squirtle"),
-				FabricBlockEntityTypeBuilder.create(PokedollSquirtleBlockEntity::new,
-						ModBlocks.POKEDOLL_SQUIRTLE).build());
+				FabricBlockEntityTypeBuilder.create(PokedollSquirtleBlockEntity::new, ModBlocks.POKEDOLL_SQUIRTLE),
+				PokedollSquirtleBlockEntity.class
+		);
 
-		POKEDOLL_CHARMANDER_BLOCK_ENTITY = Registry.register(Registries.BLOCK_ENTITY_TYPE,
+		POKEDOLL_CHARMANDER_BLOCK_ENTITY = registerBlockEntity(
 				new Identifier(Pokeblocks.MOD_ID, "pokedoll_charmander"),
-				FabricBlockEntityTypeBuilder.create(PokedollCharmanderBlockEntity::new,
-						ModBlocks.POKEDOLL_CHARMANDER).build());
+				FabricBlockEntityTypeBuilder.create(PokedollCharmanderBlockEntity::new, ModBlocks.POKEDOLL_CHARMANDER),
+				PokedollCharmanderBlockEntity.class
+		);
+	}
+
+	private static <T extends BlockEntity> BlockEntityType<T> registerBlockEntity(Identifier id, FabricBlockEntityTypeBuilder<T> builder, Class<T> blockEntityClass) {
+		BlockEntityType<T> blockEntityType = Registry.register(Registries.BLOCK_ENTITY_TYPE, id, builder.build());
+		BlockEntityTypeRegistry.register(blockEntityClass, blockEntityType);
+		return blockEntityType;
 	}
 
 }

@@ -1,20 +1,20 @@
 package dev.mrshawn.pokeblocks.block;
 
 import dev.mrshawn.pokeblocks.Pokeblocks;
-import dev.mrshawn.pokeblocks.block.custom.bulbasaur.PokedollBulbasaurBlock;
-import dev.mrshawn.pokeblocks.block.custom.bulbasaur.PokedollShinyBulbasaurBlock;
-import dev.mrshawn.pokeblocks.block.custom.bulbasaur.posed.PokedollBulbasaurPosedBlock;
-import dev.mrshawn.pokeblocks.block.custom.bulbasaur.posed.PokedollShinyBulbasaurPosedBlock;
-import dev.mrshawn.pokeblocks.block.custom.calyrex.PokedollCalyrexBlock;
-import dev.mrshawn.pokeblocks.block.custom.calyrex.PokedollShinyCalyrexBlock;
-import dev.mrshawn.pokeblocks.block.custom.calyrex.animated.PokedollCalyrexAnimatedBlock;
-import dev.mrshawn.pokeblocks.block.custom.calyrex.animated.PokedollShinyCalyrexAnimatedBlock;
-import dev.mrshawn.pokeblocks.block.custom.charmander.PokedollCharmanderBlock;
-import dev.mrshawn.pokeblocks.block.custom.squirtle.PokedollSquirtleBlock;
+import dev.mrshawn.pokeblocks.block.custom.PokedollBlock;
+import dev.mrshawn.pokeblocks.block.entity.calyrex.PokedollCalyrexBlockEntity;
+import dev.mrshawn.pokeblocks.block.entity.bulbasaur.PokedollBulbasaurBlockEntity;
+import dev.mrshawn.pokeblocks.block.entity.bulbasaur.PokedollShinyBulbasaurBlockEntity;
+import dev.mrshawn.pokeblocks.block.entity.bulbasaur.posed.PokedollBulbasaurPosedBlockEntity;
+import dev.mrshawn.pokeblocks.block.entity.bulbasaur.posed.PokedollShinyBulbasaurPosedBlockEntity;
+import dev.mrshawn.pokeblocks.block.entity.calyrex.PokedollShinyCalyrexBlockEntity;
+import dev.mrshawn.pokeblocks.block.entity.calyrex.animated.PokedollCalyrexAnimatedBlockEntity;
+import dev.mrshawn.pokeblocks.block.entity.calyrex.animated.PokedollShinyCalyrexAnimatedBlockEntity;
+import dev.mrshawn.pokeblocks.block.entity.charmander.PokedollCharmanderBlockEntity;
+import dev.mrshawn.pokeblocks.block.entity.squirtle.PokedollSquirtleBlockEntity;
+import dev.mrshawn.pokeblocks.constants.PokeIDs;
 import net.fabricmc.fabric.api.item.v1.FabricItemSettings;
-import net.fabricmc.fabric.api.object.builder.v1.block.FabricBlockSettings;
 import net.minecraft.block.Block;
-import net.minecraft.block.Blocks;
 import net.minecraft.item.BlockItem;
 import net.minecraft.item.Item;
 import net.minecraft.registry.Registries;
@@ -23,34 +23,34 @@ import net.minecraft.util.Identifier;
 
 public class ModBlocks {
 
-	public static final Block POKEDOLL_CALYREX = Registry.register(Registries.BLOCK, new Identifier(Pokeblocks.MOD_ID, "pokedoll_calyrex"),
-			new PokedollCalyrexBlock(FabricBlockSettings.copy(Blocks.WHITE_WOOL).nonOpaque()));
+	public static final Block POKEDOLL_CALYREX = Registry.register(Registries.BLOCK, new Identifier(Pokeblocks.MOD_ID, PokeIDs.POKEDOLL_CALYREX),
+			new PokedollBlock<>(() -> PokedollCalyrexBlockEntity.class));
 
-	public static final Block POKEDOLL_SHINY_CALYREX = Registry.register(Registries.BLOCK, new Identifier(Pokeblocks.MOD_ID, "pokedoll_shiny_calyrex"),
-			new PokedollShinyCalyrexBlock(FabricBlockSettings.copy(Blocks.WHITE_WOOL).nonOpaque()));
+	public static final Block POKEDOLL_SHINY_CALYREX = Registry.register(Registries.BLOCK, new Identifier(Pokeblocks.MOD_ID, PokeIDs.POKEDOLL_SHINY_CALYREX),
+			new PokedollBlock<>(() -> PokedollShinyCalyrexBlockEntity.class));
 
-	public static final Block POKEDOLL_CALYREX_ANIMATED = Registry.register(Registries.BLOCK, new Identifier(Pokeblocks.MOD_ID, "pokedoll_calyrex_animated"),
-			new PokedollCalyrexAnimatedBlock(FabricBlockSettings.copy(Blocks.WHITE_WOOL).nonOpaque()));
+	public static final Block POKEDOLL_CALYREX_ANIMATED = Registry.register(Registries.BLOCK, new Identifier(Pokeblocks.MOD_ID, PokeIDs.POKEDOLL_CALYREX_ANIMATED),
+			new PokedollBlock<>(() -> PokedollCalyrexAnimatedBlockEntity.class));
 
-	public static final Block POKEDOLL_SHINY_CALYREX_ANIMATED = Registry.register(Registries.BLOCK, new Identifier(Pokeblocks.MOD_ID, "pokedoll_shiny_calyrex_animated"),
-			new PokedollShinyCalyrexAnimatedBlock(FabricBlockSettings.copy(Blocks.WHITE_WOOL).nonOpaque()));
+	public static final Block POKEDOLL_SHINY_CALYREX_ANIMATED = Registry.register(Registries.BLOCK, new Identifier(Pokeblocks.MOD_ID, PokeIDs.POKEDOLL_SHINY_CALYREX_ANIMATED),
+			new PokedollBlock<>(() -> PokedollShinyCalyrexAnimatedBlockEntity.class));
 
-	public static final Block POKEDOLL_BULBASAUR = Registry.register(Registries.BLOCK, new Identifier(Pokeblocks.MOD_ID, "pokedoll_bulbasaur"),
-			new PokedollBulbasaurBlock(FabricBlockSettings.copy(Blocks.WHITE_WOOL).nonOpaque()));
+	public static final Block POKEDOLL_BULBASAUR = Registry.register(Registries.BLOCK, new Identifier(Pokeblocks.MOD_ID, PokeIDs.POKEDOLL_BULBASAUR),
+			new PokedollBlock<>(() -> PokedollBulbasaurBlockEntity.class));
 
-	public static final Block POKEDOLL_SHINY_BULBASAUR = Registry.register(Registries.BLOCK, new Identifier(Pokeblocks.MOD_ID, "pokedoll_shiny_bulbasaur"),
-			new PokedollShinyBulbasaurBlock(FabricBlockSettings.copy(Blocks.WHITE_WOOL).nonOpaque()));
+	public static final Block POKEDOLL_SHINY_BULBASAUR = Registry.register(Registries.BLOCK, new Identifier(Pokeblocks.MOD_ID, PokeIDs.POKEDOLL_SHINY_BULBASAUR),
+			new PokedollBlock<>(() -> PokedollShinyBulbasaurBlockEntity.class));
 
-	public static final Block POKEDOLL_BULBASAUR_POSED = Registry.register(Registries.BLOCK, new Identifier(Pokeblocks.MOD_ID, "pokedoll_bulbasaur_posed"),
-			new PokedollBulbasaurPosedBlock(FabricBlockSettings.copy(Blocks.WHITE_WOOL).nonOpaque()));
+	public static final Block POKEDOLL_BULBASAUR_POSED = Registry.register(Registries.BLOCK, new Identifier(Pokeblocks.MOD_ID, PokeIDs.POKEDOLL_BULBASAUR_POSED),
+			new PokedollBlock<>(() -> PokedollBulbasaurPosedBlockEntity.class));
 
-	public static final Block POKEDOLL_SHINY_BULBASAUR_POSED = Registry.register(Registries.BLOCK, new Identifier(Pokeblocks.MOD_ID, "pokedoll_shiny_bulbasaur_posed"),
-			new PokedollShinyBulbasaurPosedBlock(FabricBlockSettings.copy(Blocks.WHITE_WOOL).nonOpaque()));
+	public static final Block POKEDOLL_SHINY_BULBASAUR_POSED = Registry.register(Registries.BLOCK, new Identifier(Pokeblocks.MOD_ID, PokeIDs.POKEDOLL_SHINY_BULBASAUR_POSED),
+			new PokedollBlock<>(() -> PokedollShinyBulbasaurPosedBlockEntity.class));
 
-	public static final Block POKEDOLL_SQUIRTLE = Registry.register(Registries.BLOCK, new Identifier(Pokeblocks.MOD_ID, "pokedoll_squirtle"),
-			new PokedollSquirtleBlock(FabricBlockSettings.copy(Blocks.WHITE_WOOL).nonOpaque()));
-	public static final Block POKEDOLL_CHARMANDER = Registry.register(Registries.BLOCK, new Identifier(Pokeblocks.MOD_ID, "pokedoll_charmander"),
-			new PokedollCharmanderBlock(FabricBlockSettings.copy(Blocks.WHITE_WOOL).nonOpaque()));
+	public static final Block POKEDOLL_SQUIRTLE = Registry.register(Registries.BLOCK, new Identifier(Pokeblocks.MOD_ID, PokeIDs.POKEDOLL_SQUIRTLE),
+			new PokedollBlock<>(() -> PokedollSquirtleBlockEntity.class));
+	public static final Block POKEDOLL_CHARMANDER = Registry.register(Registries.BLOCK, new Identifier(Pokeblocks.MOD_ID, PokeIDs.POKEDOLL_CHARMANDER),
+			new PokedollBlock<>(() -> PokedollCharmanderBlockEntity.class));
 
 	private static Block registerBlock(String name, Block block) {
 		registerBlockItem(name, block);
