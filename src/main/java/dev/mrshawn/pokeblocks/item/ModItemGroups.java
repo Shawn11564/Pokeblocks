@@ -28,6 +28,9 @@ public class ModItemGroups {
 						entries.add(ModBlocks.POKEDOLL_SHINY_BULBASAUR_POSED);
 						entries.add(ModBlocks.POKEDOLL_SQUIRTLE);
 						entries.add(ModBlocks.POKEDOLL_CHARMANDER);
+						entries.add(ModBlocks.POKEDOLL_SHINY_CHARMANDER);
+						entries.add(ModBlocks.POKEDOLL_LICKITUNG);
+						entries.add(ModBlocks.POKEDOLL_SHINY_LICKITUNG);
 					}))
 					.build()
 	);

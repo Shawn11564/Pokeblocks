@@ -86,6 +86,27 @@ public class ModItems {
 			ResourceConstants.POKEDOLL_CHARMANDER_TEXTURE
 	);
 
+	public static final Item POKEDOLL_SHINY_CHARMANDER_BLOCK_ITEM = registerItem(
+			PokeIDs.POKEDOLL_SHINY_CHARMANDER,
+			ModBlocks.POKEDOLL_SHINY_CHARMANDER,
+			ResourceConstants.POKEDOLL_CHARMANDER_MODEL,
+			ResourceConstants.POKEDOLL_SHINY_CHARMANDER_TEXTURE
+	);
+
+	public static final Item POKEDOLL_LICKITUNG_BLOCK_ITEM = registerItem(
+			PokeIDs.POKEDOLL_LICKITUNG,
+			ModBlocks.POKEDOLL_LICKITUNG,
+			ResourceConstants.POKEDOLL_LICKITUNG_MODEL,
+			ResourceConstants.POKEDOLL_LICKITUNG_TEXTURE
+	);
+
+	public static final Item POKEDOLL_SHINY_LICKITUNG_BLOCK_ITEM = registerItem(
+			PokeIDs.POKEDOLL_SHINY_LICKITUNG,
+			ModBlocks.POKEDOLL_SHINY_LICKITUNG,
+			ResourceConstants.POKEDOLL_LICKITUNG_MODEL,
+			ResourceConstants.POKEDOLL_SHINY_LICKITUNG_TEXTURE
+	);
+
 	private static Item registerItem(String name, Item item) {
 		return Registry.register(Registries.ITEM, new Identifier(Pokeblocks.MOD_ID, name), item);
 	}

@@ -11,6 +11,9 @@ import dev.mrshawn.pokeblocks.block.entity.calyrex.PokedollShinyCalyrexBlockEnti
 import dev.mrshawn.pokeblocks.block.entity.calyrex.animated.PokedollCalyrexAnimatedBlockEntity;
 import dev.mrshawn.pokeblocks.block.entity.calyrex.animated.PokedollShinyCalyrexAnimatedBlockEntity;
 import dev.mrshawn.pokeblocks.block.entity.charmander.PokedollCharmanderBlockEntity;
+import dev.mrshawn.pokeblocks.block.entity.charmander.PokedollShinyCharmanderBlockEntity;
+import dev.mrshawn.pokeblocks.block.entity.lickitung.PokedollLickitungBlockEntity;
+import dev.mrshawn.pokeblocks.block.entity.lickitung.PokedollShinyLickitungBlockEntity;
 import dev.mrshawn.pokeblocks.block.entity.squirtle.PokedollSquirtleBlockEntity;
 import dev.mrshawn.pokeblocks.constants.PokeIDs;
 import net.fabricmc.fabric.api.object.builder.v1.block.entity.FabricBlockEntityTypeBuilder;
@@ -32,6 +35,9 @@ public class ModBlockEntities {
 	public static BlockEntityType<PokedollShinyBulbasaurPosedBlockEntity> POKEDOLL_SHINY_BULBASAUR_POSED_BLOCK_ENTITY;
 	public static BlockEntityType<PokedollSquirtleBlockEntity> POKEDOLL_SQUIRTLE_BLOCK_ENTITY;
 	public static BlockEntityType<PokedollCharmanderBlockEntity> POKEDOLL_CHARMANDER_BLOCK_ENTITY;
+	public static BlockEntityType<PokedollShinyCharmanderBlockEntity> POKEDOLL_SHINY_CHARMANDER_BLOCK_ENTITY;
+	public static BlockEntityType<PokedollLickitungBlockEntity> POKEDOLL_LICKITUNG_BLOCK_ENTITY;
+	public static BlockEntityType<PokedollShinyLickitungBlockEntity> POKEDOLL_SHINY_LICKITUNG_BLOCK_ENTITY;
 
 	public static void registerAllBlockEntities() {
 		POKEDOLL_CALYREX_BLOCK_ENTITY = registerBlockEntity(
@@ -92,6 +98,24 @@ public class ModBlockEntities {
 				new Identifier(Pokeblocks.MOD_ID, PokeIDs.POKEDOLL_CHARMANDER),
 				FabricBlockEntityTypeBuilder.create(PokedollCharmanderBlockEntity::new, ModBlocks.POKEDOLL_CHARMANDER),
 				PokedollCharmanderBlockEntity.class
+		);
+
+		POKEDOLL_SHINY_CHARMANDER_BLOCK_ENTITY = registerBlockEntity(
+				new Identifier(Pokeblocks.MOD_ID, PokeIDs.POKEDOLL_SHINY_CHARMANDER),
+				FabricBlockEntityTypeBuilder.create(PokedollShinyCharmanderBlockEntity::new, ModBlocks.POKEDOLL_SHINY_CHARMANDER),
+				PokedollShinyCharmanderBlockEntity.class
+		);
+
+		POKEDOLL_LICKITUNG_BLOCK_ENTITY = registerBlockEntity(
+				new Identifier(Pokeblocks.MOD_ID, PokeIDs.POKEDOLL_LICKITUNG),
+				FabricBlockEntityTypeBuilder.create(PokedollLickitungBlockEntity::new, ModBlocks.POKEDOLL_LICKITUNG),
+				PokedollLickitungBlockEntity.class
+		);
+
+		POKEDOLL_SHINY_LICKITUNG_BLOCK_ENTITY = registerBlockEntity(
+				new Identifier(Pokeblocks.MOD_ID, PokeIDs.POKEDOLL_SHINY_LICKITUNG),
+				FabricBlockEntityTypeBuilder.create(PokedollShinyLickitungBlockEntity::new, ModBlocks.POKEDOLL_SHINY_LICKITUNG),
+				PokedollShinyLickitungBlockEntity.class
 		);
 	}
 

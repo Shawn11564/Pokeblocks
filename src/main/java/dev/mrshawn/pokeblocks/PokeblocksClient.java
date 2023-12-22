@@ -65,6 +65,21 @@ public class PokeblocksClient implements ClientModInitializer {
 				ResourceConstants.POKEDOLL_CHARMANDER_MODEL,
 				ResourceConstants.POKEDOLL_CHARMANDER_TEXTURE
 		);
+		registerBlockEntityRenderer(
+				ModBlockEntities.POKEDOLL_SHINY_CHARMANDER_BLOCK_ENTITY,
+				ResourceConstants.POKEDOLL_CHARMANDER_MODEL,
+				ResourceConstants.POKEDOLL_SHINY_CHARMANDER_TEXTURE
+		);
+		registerBlockEntityRenderer(
+				ModBlockEntities.POKEDOLL_LICKITUNG_BLOCK_ENTITY,
+				ResourceConstants.POKEDOLL_LICKITUNG_MODEL,
+				ResourceConstants.POKEDOLL_LICKITUNG_TEXTURE
+		);
+		registerBlockEntityRenderer(
+				ModBlockEntities.POKEDOLL_SHINY_LICKITUNG_BLOCK_ENTITY,
+				ResourceConstants.POKEDOLL_LICKITUNG_MODEL,
+				ResourceConstants.POKEDOLL_SHINY_LICKITUNG_TEXTURE
+		);
 	}
 
 	private static <T extends PokedollBlockEntity> void registerBlockEntityRenderer(BlockEntityType<T> type, String modelResourcePath, String textureResourcePath, String animationResourcePath) {
