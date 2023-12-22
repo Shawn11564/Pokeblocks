@@ -15,5 +15,7 @@ public class PokeIDs {
 	public static final String POKEDOLL_SHINY_CHARMANDER = "pokedoll_shiny_charmander";
 	public static final String POKEDOLL_LICKITUNG = "pokedoll_lickitung";
 	public static final String POKEDOLL_SHINY_LICKITUNG = "pokedoll_shiny_lickitung";
+	public static final String POKEDOLL_MAREEP = "pokedoll_mareep";
+	public static final String POKEDOLL_SHINY_MAREEP = "pokedoll_shiny_mareep";
 
 }

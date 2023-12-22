@@ -6,6 +6,6 @@
     64
   ],
   "textures": {
-    "particle": "pokeblocks:block/pokedoll_shiny_calyrex_animated_texture"
+    "particle": "pokeblocks:block/pokedoll_calyrex_animated_shiny_texture"
   }
 }

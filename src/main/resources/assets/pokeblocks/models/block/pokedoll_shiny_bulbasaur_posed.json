@@ -6,6 +6,6 @@
     64
   ],
   "textures": {
-    "particle": "pokeblocks:block/pokedoll_shiny_bulbasaur_posed_texture"
+    "particle": "pokeblocks:block/pokedoll_bulbasaur_shiny_posed_texture"
   }
 }

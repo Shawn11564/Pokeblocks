@@ -107,6 +107,20 @@ public class ModItems {
 			ResourceConstants.POKEDOLL_SHINY_LICKITUNG_TEXTURE
 	);
 
+	public static final Item POKEDOLL_MAREEP_BLOCK_ITEM = registerItem(
+			PokeIDs.POKEDOLL_MAREEP,
+			ModBlocks.POKEDOLL_MAREEP,
+			ResourceConstants.POKEDOLL_MAREEP_MODEL,
+			ResourceConstants.POKEDOLL_MAREEP_TEXTURE
+	);
+
+	public static final Item POKEDOLL_SHINY_MAREEP_BLOCK_ITEM = registerItem(
+			PokeIDs.POKEDOLL_SHINY_MAREEP,
+			ModBlocks.POKEDOLL_SHINY_MAREEP,
+			ResourceConstants.POKEDOLL_MAREEP_MODEL,
+			ResourceConstants.POKEDOLL_SHINY_MAREEP_TEXTURE
+	);
+
 	private static Item registerItem(String name, Item item) {
 		return Registry.register(Registries.ITEM, new Identifier(Pokeblocks.MOD_ID, name), item);
 	}
