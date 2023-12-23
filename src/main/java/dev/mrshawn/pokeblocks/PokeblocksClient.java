@@ -120,6 +120,16 @@ public class PokeblocksClient implements ClientModInitializer {
 				ResourceConstants.POKEDOLL_DOLLIV_MODEL,
 				ResourceConstants.POKEDOLL_SHINY_DOLLIV_TEXTURE
 		);
+		registerBlockEntityRenderer(
+				ModBlockEntities.POKEDOLL_ARBOLIVA_BLOCK_ENTITY,
+				ResourceConstants.POKEDOLL_ARBOLIVA_MODEL,
+				ResourceConstants.POKEDOLL_ARBOLIVA_TEXTURE
+		);
+		registerBlockEntityRenderer(
+				ModBlockEntities.POKEDOLL_SHINY_ARBOLIVA_BLOCK_ENTITY,
+				ResourceConstants.POKEDOLL_ARBOLIVA_MODEL,
+				ResourceConstants.POKEDOLL_SHINY_ARBOLIVA_TEXTURE
+		);
 	}
 
 	private static <T extends PokedollBlockEntity> void registerBlockEntityRenderer(BlockEntityType<T> type, String modelResourcePath, String textureResourcePath, String animationResourcePath) {

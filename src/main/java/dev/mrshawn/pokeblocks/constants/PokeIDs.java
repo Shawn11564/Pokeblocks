@@ -23,5 +23,7 @@ public class PokeIDs {
 	public static final String POKEDOLL_SHINY_SMOLIV = "pokedoll_shiny_smoliv";
 	public static final String POKEDOLL_DOLLIV = "pokedoll_dolliv";
 	public static final String POKEDOLL_SHINY_DOLLIV = "pokedoll_shiny_dolliv";
+	public static final String POKEDOLL_ARBOLIVA = "pokedoll_arboliva";
+	public static final String POKEDOLL_SHINY_ARBOLIVA = "pokedoll_shiny_arboliva";
 
 }

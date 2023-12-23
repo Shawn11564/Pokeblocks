@@ -163,6 +163,20 @@ public class ModItems {
 			ResourceConstants.POKEDOLL_SHINY_DOLLIV_TEXTURE
 	);
 
+	public static final Item POKEDOLL_ARBOLIVA_BLOCK_ITEM = registerItem(
+			PokeIDs.POKEDOLL_ARBOLIVA,
+			ModBlocks.POKEDOLL_ARBOLIVA,
+			ResourceConstants.POKEDOLL_ARBOLIVA_MODEL,
+			ResourceConstants.POKEDOLL_ARBOLIVA_TEXTURE
+	);
+
+	public static final Item POKEDOLL_SHINY_ARBOLIVA_BLOCK_ITEM = registerItem(
+			PokeIDs.POKEDOLL_SHINY_ARBOLIVA,
+			ModBlocks.POKEDOLL_SHINY_ARBOLIVA,
+			ResourceConstants.POKEDOLL_ARBOLIVA_MODEL,
+			ResourceConstants.POKEDOLL_SHINY_ARBOLIVA_TEXTURE
+	);
+
 	private static Item registerItem(String name, Item item) {
 		return Registry.register(Registries.ITEM, new Identifier(Pokeblocks.MOD_ID, name), item);
 	}
