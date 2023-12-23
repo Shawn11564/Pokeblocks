@@ -3,6 +3,7 @@ package dev.mrshawn.pokeblocks.block.entity.client;
 import dev.mrshawn.pokeblocks.Pokeblocks;
 import dev.mrshawn.pokeblocks.block.entity.PokedollBlockEntity;
 import dev.mrshawn.pokeblocks.constants.ResourceConstants;
+import net.minecraft.client.render.RenderLayer;
 import net.minecraft.util.Identifier;
 import software.bernie.geckolib.model.GeoModel;
 
@@ -22,6 +23,11 @@ public class PokedollBlockModel extends GeoModel<PokedollBlockEntity> {
 		this.modelResourcePath = modelResourcePath;
 		this.textureResourcePath = textureResourcePath;
 		this.animationResourcePath = ResourceConstants.GENERIC_ANIMATION;
+	}
+
+	@Override
+	public RenderLayer getRenderType(PokedollBlockEntity animatable, Identifier texture) {
+		return RenderLayer.getEntityTranslucent(getTextureResource(animatable));
 	}
 
 	@Override
