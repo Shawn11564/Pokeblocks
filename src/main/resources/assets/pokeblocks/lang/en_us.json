@@ -25,6 +25,8 @@
   "item.pokeblocks.pokedoll_washing_machine": "Snorlax Pokedoll",
   "item.pokeblocks.pokedoll_snorlax": "Snorlax Pokedoll",
   "item.pokeblocks.pokedoll_shiny_snorlax": "Shiny Snorlax Pokedoll",
+  "item.pokeblocks.pokedoll_ampharos": "Ampharos Pokedoll",
+  "item.pokeblocks.pokedoll_shiny_ampharos": "Shiny Ampharos Pokedoll",
 
   "block.pokeblocks.pokedoll_calyrex": "Calyrex Pokedoll",
   "block.pokeblocks.pokedoll_shiny_calyrex": "Shiny Calyrex Pokedoll",
@@ -52,6 +54,8 @@
   "block.pokeblocks.pokedoll_washing_machine": "Snorlax Pokedoll",
   "block.pokeblocks.pokedoll_snorlax": "Snorlax Pokedoll",
   "block.pokeblocks.pokedoll_shiny_snorlax": "Shiny Snorlax Pokedoll",
+  "block.pokeblocks.pokedoll_ampharos": "Ampharos Pokedoll",
+  "block.pokeblocks.pokedoll_shiny_ampharos": "Shiny Ampharos Pokedoll",
 
   "itemgroup.pokeblocks": "Pokeblocks"
 }

@@ -2,6 +2,8 @@ package dev.mrshawn.pokeblocks.block;
 
 import dev.mrshawn.pokeblocks.Pokeblocks;
 import dev.mrshawn.pokeblocks.block.custom.PokedollBlock;
+import dev.mrshawn.pokeblocks.block.entity.ampharos.PokedollAmpharosBlockEntity;
+import dev.mrshawn.pokeblocks.block.entity.ampharos.PokedollShinyAmpharosBlockEntity;
 import dev.mrshawn.pokeblocks.block.entity.arboliva.PokedollArbolivaBlockEntity;
 import dev.mrshawn.pokeblocks.block.entity.arboliva.PokedollShinyArbolivaBlockEntity;
 import dev.mrshawn.pokeblocks.block.entity.bulbasaur.PokedollBulbasaurBlockEntity;
@@ -131,6 +133,12 @@ public class ModBlocks {
 
 	public static final Block POKEDOLL_SHINY_SNORLAX = Registry.register(Registries.BLOCK, new Identifier(Pokeblocks.MOD_ID, PokeIDs.POKEDOLL_SHINY_SNORLAX),
 			new PokedollBlock<>(() -> PokedollShinySnorlaxBlockEntity.class));
+
+	public static final Block POKEDOLL_AMPHAROS = Registry.register(Registries.BLOCK, new Identifier(Pokeblocks.MOD_ID, PokeIDs.POKEDOLL_AMPHAROS),
+			new PokedollBlock<>(() -> PokedollAmpharosBlockEntity.class));
+
+	public static final Block POKEDOLL_SHINY_AMPHAROS = Registry.register(Registries.BLOCK, new Identifier(Pokeblocks.MOD_ID, PokeIDs.POKEDOLL_SHINY_AMPHAROS),
+			new PokedollBlock<>(() -> PokedollShinyAmpharosBlockEntity.class));
 
 	private static Block registerBlock(String name, Block block) {
 		registerBlockItem(name, block);

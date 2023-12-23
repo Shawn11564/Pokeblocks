@@ -2,6 +2,8 @@ package dev.mrshawn.pokeblocks.block.entity;
 
 import dev.mrshawn.pokeblocks.Pokeblocks;
 import dev.mrshawn.pokeblocks.block.ModBlocks;
+import dev.mrshawn.pokeblocks.block.entity.ampharos.PokedollAmpharosBlockEntity;
+import dev.mrshawn.pokeblocks.block.entity.ampharos.PokedollShinyAmpharosBlockEntity;
 import dev.mrshawn.pokeblocks.block.entity.arboliva.PokedollArbolivaBlockEntity;
 import dev.mrshawn.pokeblocks.block.entity.arboliva.PokedollShinyArbolivaBlockEntity;
 import dev.mrshawn.pokeblocks.block.entity.bulbasaur.PokedollBulbasaurBlockEntity;
@@ -64,6 +66,8 @@ public class ModBlockEntities {
 	public static BlockEntityType<PokedollWashingMachineBlockEntity> POKEDOLL_WASHING_MACHINE_BLOCK_ENTITY;
 	public static BlockEntityType<PokedollSnorlaxBlockEntity> POKEDOLL_SNORLAX_BLOCK_ENTITY;
 	public static BlockEntityType<PokedollShinySnorlaxBlockEntity> POKEDOLL_SHINY_SNORLAX_BLOCK_ENTITY;
+	public static BlockEntityType<PokedollAmpharosBlockEntity> POKEDOLL_AMPHAROS_BLOCK_ENTITY;
+	public static BlockEntityType<PokedollShinyAmpharosBlockEntity> POKEDOLL_SHINY_AMPHAROS_BLOCK_ENTITY;
 
 	public static void registerAllBlockEntities() {
 		POKEDOLL_CALYREX_BLOCK_ENTITY = registerBlockEntity(
@@ -220,6 +224,18 @@ public class ModBlockEntities {
 				new Identifier(Pokeblocks.MOD_ID, PokeIDs.POKEDOLL_SHINY_SNORLAX),
 				FabricBlockEntityTypeBuilder.create(PokedollShinySnorlaxBlockEntity::new, ModBlocks.POKEDOLL_SHINY_SNORLAX),
 				PokedollShinySnorlaxBlockEntity.class
+		);
+
+		POKEDOLL_AMPHAROS_BLOCK_ENTITY = registerBlockEntity(
+				new Identifier(Pokeblocks.MOD_ID, PokeIDs.POKEDOLL_AMPHAROS),
+				FabricBlockEntityTypeBuilder.create(PokedollAmpharosBlockEntity::new, ModBlocks.POKEDOLL_AMPHAROS),
+				PokedollAmpharosBlockEntity.class
+		);
+
+		POKEDOLL_SHINY_AMPHAROS_BLOCK_ENTITY = registerBlockEntity(
+				new Identifier(Pokeblocks.MOD_ID, PokeIDs.POKEDOLL_SHINY_AMPHAROS),
+				FabricBlockEntityTypeBuilder.create(PokedollShinyAmpharosBlockEntity::new, ModBlocks.POKEDOLL_SHINY_AMPHAROS),
+				PokedollShinyAmpharosBlockEntity.class
 		);
 	}
 

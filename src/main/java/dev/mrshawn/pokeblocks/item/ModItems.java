@@ -200,6 +200,20 @@ public class ModItems {
 			ResourceConstants.POKEDOLL_SHINY_SNORLAX_TEXTURE
 	);
 
+	public static final Item POKEDOLL_AMPHAROS_BLOCK_ITEM = registerItem(
+			PokeIDs.POKEDOLL_AMPHAROS,
+			ModBlocks.POKEDOLL_AMPHAROS,
+			ResourceConstants.POKEDOLL_AMPHAROS_MODEL,
+			ResourceConstants.POKEDOLL_AMPHAROS_TEXTURE
+	);
+
+	public static final Item POKEDOLL_SHINY_AMPHAROS_BLOCK_ITEM = registerItem(
+			PokeIDs.POKEDOLL_SHINY_AMPHAROS,
+			ModBlocks.POKEDOLL_SHINY_AMPHAROS,
+			ResourceConstants.POKEDOLL_AMPHAROS_MODEL,
+			ResourceConstants.POKEDOLL_SHINY_AMPHAROS_TEXTURE
+	);
+
 	private static Item registerItem(String name, Item item) {
 		return Registry.register(Registries.ITEM, new Identifier(Pokeblocks.MOD_ID, name), item);
 	}

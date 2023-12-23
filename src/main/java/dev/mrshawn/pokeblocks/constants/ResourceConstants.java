@@ -46,5 +46,8 @@ public class ResourceConstants {
 	public static final String POKEDOLL_SNORLAX_MODEL = "pokedoll_snorlax.geo.json";
 	public static final String POKEDOLL_SNORLAX_TEXTURE = "pokedoll_snorlax_texture.png";
 	public static final String POKEDOLL_SHINY_SNORLAX_TEXTURE = "pokedoll_snorlax_shiny_texture.png";
+	public static final String POKEDOLL_AMPHAROS_MODEL = "pokedoll_ampharos.geo.json";
+	public static final String POKEDOLL_AMPHAROS_TEXTURE = "pokedoll_ampharos_texture.png";
+	public static final String POKEDOLL_SHINY_AMPHAROS_TEXTURE = "pokedoll_ampharos_shiny_texture.png";
 
 }
