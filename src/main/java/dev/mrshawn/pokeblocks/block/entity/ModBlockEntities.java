@@ -24,6 +24,7 @@ import dev.mrshawn.pokeblocks.block.entity.mareep.PokedollMareepBlockEntity;
 import dev.mrshawn.pokeblocks.block.entity.mareep.PokedollShinyMareepBlockEntity;
 import dev.mrshawn.pokeblocks.block.entity.smoliv.PokedollShinySmolivBlockEntity;
 import dev.mrshawn.pokeblocks.block.entity.smoliv.PokedollSmolivBlockEntity;
+import dev.mrshawn.pokeblocks.block.entity.snorlax.PokedollWashingMachineBlockEntity;
 import dev.mrshawn.pokeblocks.block.entity.squirtle.PokedollSquirtleBlockEntity;
 import dev.mrshawn.pokeblocks.constants.PokeIDs;
 import net.fabricmc.fabric.api.object.builder.v1.block.entity.FabricBlockEntityTypeBuilder;
@@ -58,6 +59,7 @@ public class ModBlockEntities {
 	public static BlockEntityType<PokedollShinyDollivBlockEntity> POKEDOLL_SHINY_DOLLIV_BLOCK_ENTITY;
 	public static BlockEntityType<PokedollArbolivaBlockEntity> POKEDOLL_ARBOLIVA_BLOCK_ENTITY;
 	public static BlockEntityType<PokedollShinyArbolivaBlockEntity> POKEDOLL_SHINY_ARBOLIVA_BLOCK_ENTITY;
+	public static BlockEntityType<PokedollWashingMachineBlockEntity> POKEDOLL_WASHING_MACHINE_BLOCK_ENTITY;
 
 	public static void registerAllBlockEntities() {
 		POKEDOLL_CALYREX_BLOCK_ENTITY = registerBlockEntity(
@@ -196,6 +198,12 @@ public class ModBlockEntities {
 				new Identifier(Pokeblocks.MOD_ID, PokeIDs.POKEDOLL_SHINY_ARBOLIVA),
 				FabricBlockEntityTypeBuilder.create(PokedollShinyArbolivaBlockEntity::new, ModBlocks.POKEDOLL_SHINY_ARBOLIVA),
 				PokedollShinyArbolivaBlockEntity.class
+		);
+
+		POKEDOLL_WASHING_MACHINE_BLOCK_ENTITY = registerBlockEntity(
+				new Identifier(Pokeblocks.MOD_ID, PokeIDs.POKEDOLL_WASHING_MACHINE),
+				FabricBlockEntityTypeBuilder.create(PokedollWashingMachineBlockEntity::new, ModBlocks.POKEDOLL_WASHING_MACHINE),
+				PokedollWashingMachineBlockEntity.class
 		);
 	}
 

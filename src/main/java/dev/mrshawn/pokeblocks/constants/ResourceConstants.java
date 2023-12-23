@@ -10,6 +10,7 @@ public class ResourceConstants {
 	public static final String POKEDOLL_CALYREX_ANIMATED_MODEL = "pokedoll_calyrex_animated.geo.json";
 	public static final String POKEDOLL_CALYREX_ANIMATED_TEXTURE = "pokedoll_calyrex_animated_texture.png";
 	public static final String POKEDOLL_CALYREX_ANIMATED_ANIMATION = "pokedoll_calyrex_animated.animation.json";
+	public static final String POKEDOLL_CALYREX_ANIMATED_ANIMATION_NAME = "animation.pokedoll_calyrex.levitate";
 	public static final String POKEDOLL_SHINY_CALYREX_ANIMATED_TEXTURE = "pokedoll_calyrex_animated_shiny_texture.png";
 	public static final String POKEDOLL_BULBASAUR_MODEL = "pokedoll_bulbasaur.geo.json";
 	public static final String POKEDOLL_BULBASAUR_TEXTURE = "pokedoll_bulbasaur_texture.png";
@@ -40,5 +41,7 @@ public class ResourceConstants {
 	public static final String POKEDOLL_ARBOLIVA_MODEL = "pokedoll_arboliva.geo.json";
 	public static final String POKEDOLL_ARBOLIVA_TEXTURE = "pokedoll_arboliva_texture.png";
 	public static final String POKEDOLL_SHINY_ARBOLIVA_TEXTURE = "pokedoll_arboliva_shiny_texture.png";
+	public static final String POKEDOLL_WASHING_MACHINE_MODEL = "pokedoll_washing_machine.geo.json";
+	public static final String POKEDOLL_WASHING_MACHINE_TEXTURE = "pokedoll_washing_machine_texture.png";
 
 }

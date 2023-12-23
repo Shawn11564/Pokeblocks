@@ -33,7 +33,8 @@ public class ModItems {
 			ModBlocks.POKEDOLL_CALYREX_ANIMATED,
 			ResourceConstants.POKEDOLL_CALYREX_ANIMATED_MODEL,
 			ResourceConstants.POKEDOLL_CALYREX_ANIMATED_TEXTURE,
-			ResourceConstants.POKEDOLL_CALYREX_ANIMATED_ANIMATION
+			ResourceConstants.POKEDOLL_CALYREX_ANIMATED_ANIMATION,
+			ResourceConstants.POKEDOLL_CALYREX_ANIMATED_ANIMATION_NAME
 	);
 
 	public static final Item POKEDOLL_SHINY_CALYREX_ANIMATED_BLOCK_ITEM = registerItem(
@@ -41,7 +42,8 @@ public class ModItems {
 			ModBlocks.POKEDOLL_SHINY_CALYREX_ANIMATED,
 			ResourceConstants.POKEDOLL_CALYREX_ANIMATED_MODEL,
 			ResourceConstants.POKEDOLL_SHINY_CALYREX_ANIMATED_TEXTURE,
-			ResourceConstants.POKEDOLL_CALYREX_ANIMATED_ANIMATION
+			ResourceConstants.POKEDOLL_CALYREX_ANIMATED_ANIMATION,
+			ResourceConstants.POKEDOLL_CALYREX_ANIMATED_ANIMATION_NAME
 	);
 
 	public static final Item POKEDOLL_BULBASAUR_BLOCK_ITEM = registerItem(
@@ -177,19 +179,30 @@ public class ModItems {
 			ResourceConstants.POKEDOLL_SHINY_ARBOLIVA_TEXTURE
 	);
 
+	public static final Item POKEDOLL_WASHING_MACHINE_BLOCK_ITEM = registerItem(
+			PokeIDs.POKEDOLL_WASHING_MACHINE,
+			ModBlocks.POKEDOLL_WASHING_MACHINE,
+			ResourceConstants.POKEDOLL_WASHING_MACHINE_MODEL,
+			ResourceConstants.POKEDOLL_WASHING_MACHINE_TEXTURE
+	);
+
 	private static Item registerItem(String name, Item item) {
 		return Registry.register(Registries.ITEM, new Identifier(Pokeblocks.MOD_ID, name), item);
 	}
 
-	private static Item registerItem(String name, Block block, String modelResourcePath, String textureResourcePath, String animationResourcePath) {
-		return registerItem(
-				name,
-				new PokedollBlockItem(block, () -> new PokedollBlockItemModel(
-						modelResourcePath,
-						textureResourcePath,
-						animationResourcePath
-				))
+	private static Item registerItem(String name, Block block, String modelResourcePath, String textureResourcePath, String animationResourcePath, String animationName) {
+		PokedollBlockItemModel itemModel = new PokedollBlockItemModel(
+				modelResourcePath,
+				textureResourcePath,
+				animationResourcePath
 		);
+		PokedollBlockItem blockItem = new PokedollBlockItem(block, () -> itemModel) {
+			@Override
+			public String getAnimationName() {
+				return animationName;
+			}
+		};
+		return registerItem(name, blockItem);
 	}
 
 	private static Item registerItem(String name, Block block, String modelResourcePath, String textureResourcePath) {

@@ -24,6 +24,7 @@ import dev.mrshawn.pokeblocks.block.entity.mareep.PokedollMareepBlockEntity;
 import dev.mrshawn.pokeblocks.block.entity.mareep.PokedollShinyMareepBlockEntity;
 import dev.mrshawn.pokeblocks.block.entity.smoliv.PokedollShinySmolivBlockEntity;
 import dev.mrshawn.pokeblocks.block.entity.smoliv.PokedollSmolivBlockEntity;
+import dev.mrshawn.pokeblocks.block.entity.snorlax.PokedollWashingMachineBlockEntity;
 import dev.mrshawn.pokeblocks.block.entity.squirtle.PokedollSquirtleBlockEntity;
 import dev.mrshawn.pokeblocks.constants.PokeIDs;
 import net.fabricmc.fabric.api.item.v1.FabricItemSettings;
@@ -104,6 +105,9 @@ public class ModBlocks {
 
 	public static final Block POKEDOLL_SHINY_ARBOLIVA = Registry.register(Registries.BLOCK, new Identifier(Pokeblocks.MOD_ID, PokeIDs.POKEDOLL_SHINY_ARBOLIVA),
 			new PokedollBlock<>(() -> PokedollShinyArbolivaBlockEntity.class));
+
+	public static final Block POKEDOLL_WASHING_MACHINE = Registry.register(Registries.BLOCK, new Identifier(Pokeblocks.MOD_ID, PokeIDs.POKEDOLL_WASHING_MACHINE),
+			new PokedollBlock<>(() -> PokedollWashingMachineBlockEntity.class));
 
 	private static Block registerBlock(String name, Block block) {
 		registerBlockItem(name, block);

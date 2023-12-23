@@ -74,7 +74,7 @@ public class PokedollBlockItem extends BlockItem implements GeoItem {
 		return RenderUtils.getCurrentTick();
 	}
 
-	protected String getAnimationName() {
+	public String getAnimationName() {
 		return ResourceConstants.GENERIC_ANIMATION;
 	}
 
