@@ -61,6 +61,11 @@ public class PokeblocksClient implements ClientModInitializer {
 				ResourceConstants.POKEDOLL_SQUIRTLE_TEXTURE
 		);
 		registerBlockEntityRenderer(
+				ModBlockEntities.POKEDOLL_SHINY_SQUIRTLE_BLOCK_ENTITY,
+				ResourceConstants.POKEDOLL_SQUIRTLE_MODEL,
+				ResourceConstants.POKEDOLL_SHINY_SQUIRTLE_TEXTURE
+		);
+		registerBlockEntityRenderer(
 				ModBlockEntities.POKEDOLL_CHARMANDER_BLOCK_ENTITY,
 				ResourceConstants.POKEDOLL_CHARMANDER_MODEL,
 				ResourceConstants.POKEDOLL_CHARMANDER_TEXTURE

@@ -81,6 +81,13 @@ public class ModItems {
 			ResourceConstants.POKEDOLL_SQUIRTLE_TEXTURE
 	);
 
+	public static final Item POKEDOLL_SHINY_SQUIRTLE_BLOCK_ITEM = registerItem(
+			PokeIDs.POKEDOLL_SHINY_SQUIRTLE,
+			ModBlocks.POKEDOLL_SHINY_SQUIRTLE,
+			ResourceConstants.POKEDOLL_SQUIRTLE_MODEL,
+			ResourceConstants.POKEDOLL_SHINY_SQUIRTLE_TEXTURE
+	);
+
 	public static final Item POKEDOLL_CHARMANDER_BLOCK_ITEM = registerItem(
 			PokeIDs.POKEDOLL_CHARMANDER,
 			ModBlocks.POKEDOLL_CHARMANDER,

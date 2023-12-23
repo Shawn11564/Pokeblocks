@@ -29,6 +29,7 @@ import dev.mrshawn.pokeblocks.block.entity.smoliv.PokedollSmolivBlockEntity;
 import dev.mrshawn.pokeblocks.block.entity.snorlax.PokedollShinySnorlaxBlockEntity;
 import dev.mrshawn.pokeblocks.block.entity.snorlax.PokedollSnorlaxBlockEntity;
 import dev.mrshawn.pokeblocks.block.entity.snorlax.PokedollWashingMachineBlockEntity;
+import dev.mrshawn.pokeblocks.block.entity.squirtle.PokedollShinySquirtleBlockEntity;
 import dev.mrshawn.pokeblocks.block.entity.squirtle.PokedollSquirtleBlockEntity;
 import dev.mrshawn.pokeblocks.constants.PokeIDs;
 import net.fabricmc.fabric.api.item.v1.FabricItemSettings;
@@ -76,6 +77,9 @@ public class ModBlocks {
 
 	public static final Block POKEDOLL_SQUIRTLE = Registry.register(Registries.BLOCK, new Identifier(Pokeblocks.MOD_ID, PokeIDs.POKEDOLL_SQUIRTLE),
 			new PokedollBlock<>(() -> PokedollSquirtleBlockEntity.class));
+
+	public static final Block POKEDOLL_SHINY_SQUIRTLE = Registry.register(Registries.BLOCK, new Identifier(Pokeblocks.MOD_ID, PokeIDs.POKEDOLL_SHINY_SQUIRTLE),
+			new PokedollBlock<>(() -> PokedollShinySquirtleBlockEntity.class));
 
 	public static final Block POKEDOLL_CHARMANDER = Registry.register(Registries.BLOCK, new Identifier(Pokeblocks.MOD_ID, PokeIDs.POKEDOLL_CHARMANDER),
 			new PokedollBlock<>(() -> PokedollCharmanderBlockEntity.class));

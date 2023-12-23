@@ -20,6 +20,7 @@ public class ResourceConstants {
 	public static final String POKEDOLL_SHINY_BULBASAUR_POSED_TEXTURE = "pokedoll_bulbasaur_shiny_posed_texture.png";
 	public static final String POKEDOLL_SQUIRTLE_MODEL = "pokedoll_squirtle.geo.json";
 	public static final String POKEDOLL_SQUIRTLE_TEXTURE = "pokedoll_squirtle_texture.png";
+	public static final String POKEDOLL_SHINY_SQUIRTLE_TEXTURE = "pokedoll_squirtle_shiny_texture.png";
 	public static final String POKEDOLL_CHARMANDER_MODEL = "pokedoll_charmander.geo.json";
 	public static final String POKEDOLL_CHARMANDER_TEXTURE = "pokedoll_charmander_texture.png";
 	public static final String POKEDOLL_SHINY_CHARMANDER_TEXTURE = "pokedoll_charmander_shiny_texture.png";

@@ -29,6 +29,7 @@ import dev.mrshawn.pokeblocks.block.entity.smoliv.PokedollSmolivBlockEntity;
 import dev.mrshawn.pokeblocks.block.entity.snorlax.PokedollShinySnorlaxBlockEntity;
 import dev.mrshawn.pokeblocks.block.entity.snorlax.PokedollSnorlaxBlockEntity;
 import dev.mrshawn.pokeblocks.block.entity.snorlax.PokedollWashingMachineBlockEntity;
+import dev.mrshawn.pokeblocks.block.entity.squirtle.PokedollShinySquirtleBlockEntity;
 import dev.mrshawn.pokeblocks.block.entity.squirtle.PokedollSquirtleBlockEntity;
 import dev.mrshawn.pokeblocks.constants.PokeIDs;
 import net.fabricmc.fabric.api.object.builder.v1.block.entity.FabricBlockEntityTypeBuilder;
@@ -49,6 +50,7 @@ public class ModBlockEntities {
 	public static BlockEntityType<PokedollBulbasaurPosedBlockEntity> POKEDOLL_BULBASAUR_POSED_BLOCK_ENTITY;
 	public static BlockEntityType<PokedollShinyBulbasaurPosedBlockEntity> POKEDOLL_SHINY_BULBASAUR_POSED_BLOCK_ENTITY;
 	public static BlockEntityType<PokedollSquirtleBlockEntity> POKEDOLL_SQUIRTLE_BLOCK_ENTITY;
+	public static BlockEntityType<PokedollShinySquirtleBlockEntity> POKEDOLL_SHINY_SQUIRTLE_BLOCK_ENTITY;
 	public static BlockEntityType<PokedollCharmanderBlockEntity> POKEDOLL_CHARMANDER_BLOCK_ENTITY;
 	public static BlockEntityType<PokedollShinyCharmanderBlockEntity> POKEDOLL_SHINY_CHARMANDER_BLOCK_ENTITY;
 	public static BlockEntityType<PokedollLickitungBlockEntity> POKEDOLL_LICKITUNG_BLOCK_ENTITY;
@@ -122,6 +124,12 @@ public class ModBlockEntities {
 				new Identifier(Pokeblocks.MOD_ID, PokeIDs.POKEDOLL_SQUIRTLE),
 				FabricBlockEntityTypeBuilder.create(PokedollSquirtleBlockEntity::new, ModBlocks.POKEDOLL_SQUIRTLE),
 				PokedollSquirtleBlockEntity.class
+		);
+
+		POKEDOLL_SHINY_SQUIRTLE_BLOCK_ENTITY = registerBlockEntity(
+				new Identifier(Pokeblocks.MOD_ID, PokeIDs.POKEDOLL_SHINY_SQUIRTLE),
+				FabricBlockEntityTypeBuilder.create(PokedollShinySquirtleBlockEntity::new, ModBlocks.POKEDOLL_SHINY_SQUIRTLE),
+				PokedollShinySquirtleBlockEntity.class
 		);
 
 		POKEDOLL_CHARMANDER_BLOCK_ENTITY = registerBlockEntity(
