@@ -12,6 +12,8 @@ import dev.mrshawn.pokeblocks.block.entity.calyrex.animated.PokedollCalyrexAnima
 import dev.mrshawn.pokeblocks.block.entity.calyrex.animated.PokedollShinyCalyrexAnimatedBlockEntity;
 import dev.mrshawn.pokeblocks.block.entity.charmander.PokedollCharmanderBlockEntity;
 import dev.mrshawn.pokeblocks.block.entity.charmander.PokedollShinyCharmanderBlockEntity;
+import dev.mrshawn.pokeblocks.block.entity.dolliv.PokedollDollivBlockEntity;
+import dev.mrshawn.pokeblocks.block.entity.dolliv.PokedollShinyDollivBlockEntity;
 import dev.mrshawn.pokeblocks.block.entity.flaaffy.PokedollFlaaffyBlockEntity;
 import dev.mrshawn.pokeblocks.block.entity.flaaffy.PokedollShinyFlaaffyBlockEntity;
 import dev.mrshawn.pokeblocks.block.entity.lickitung.PokedollLickitungBlockEntity;
@@ -50,6 +52,8 @@ public class ModBlockEntities {
 	public static BlockEntityType<PokedollShinyFlaaffyBlockEntity> POKEDOLL_SHINY_FLAAFFY_BLOCK_ENTITY;
 	public static BlockEntityType<PokedollSmolivBlockEntity> POKEDOLL_SMOLIV_BLOCK_ENTITY;
 	public static BlockEntityType<PokedollShinySmolivBlockEntity> POKEDOLL_SHINY_SMOLIV_BLOCK_ENTITY;
+	public static BlockEntityType<PokedollDollivBlockEntity> POKEDOLL_DOLLIV_BLOCK_ENTITY;
+	public static BlockEntityType<PokedollShinyDollivBlockEntity> POKEDOLL_SHINY_DOLLIV_BLOCK_ENTITY;
 
 	public static void registerAllBlockEntities() {
 		POKEDOLL_CALYREX_BLOCK_ENTITY = registerBlockEntity(
@@ -164,6 +168,18 @@ public class ModBlockEntities {
 				new Identifier(Pokeblocks.MOD_ID, PokeIDs.POKEDOLL_SHINY_SMOLIV),
 				FabricBlockEntityTypeBuilder.create(PokedollShinySmolivBlockEntity::new, ModBlocks.POKEDOLL_SHINY_SMOLIV),
 				PokedollShinySmolivBlockEntity.class
+		);
+
+		POKEDOLL_DOLLIV_BLOCK_ENTITY = registerBlockEntity(
+				new Identifier(Pokeblocks.MOD_ID, PokeIDs.POKEDOLL_DOLLIV),
+				FabricBlockEntityTypeBuilder.create(PokedollDollivBlockEntity::new, ModBlocks.POKEDOLL_DOLLIV),
+				PokedollDollivBlockEntity.class
+		);
+
+		POKEDOLL_SHINY_DOLLIV_BLOCK_ENTITY = registerBlockEntity(
+				new Identifier(Pokeblocks.MOD_ID, PokeIDs.POKEDOLL_SHINY_DOLLIV),
+				FabricBlockEntityTypeBuilder.create(PokedollShinyDollivBlockEntity::new, ModBlocks.POKEDOLL_SHINY_DOLLIV),
+				PokedollShinyDollivBlockEntity.class
 		);
 	}
 

@@ -149,6 +149,20 @@ public class ModItems {
 			ResourceConstants.POKEDOLL_SHINY_SMOLIV_TEXTURE
 	);
 
+	public static final Item POKEDOLL_DOLLIV_BLOCK_ITEM = registerItem(
+			PokeIDs.POKEDOLL_DOLLIV,
+			ModBlocks.POKEDOLL_DOLLIV,
+			ResourceConstants.POKEDOLL_DOLLIV_MODEL,
+			ResourceConstants.POKEDOLL_DOLLIV_TEXTURE
+	);
+
+	public static final Item POKEDOLL_SHINY_DOLLIV_BLOCK_ITEM = registerItem(
+			PokeIDs.POKEDOLL_SHINY_DOLLIV,
+			ModBlocks.POKEDOLL_SHINY_DOLLIV,
+			ResourceConstants.POKEDOLL_DOLLIV_MODEL,
+			ResourceConstants.POKEDOLL_SHINY_DOLLIV_TEXTURE
+	);
+
 	private static Item registerItem(String name, Item item) {
 		return Registry.register(Registries.ITEM, new Identifier(Pokeblocks.MOD_ID, name), item);
 	}
@@ -170,7 +184,7 @@ public class ModItems {
 				new PokedollBlockItem(block, () -> new PokedollBlockItemModel(
 						modelResourcePath,
 						textureResourcePath,
-						ResourceConstants.GENERIC_ANIMATION
+						ResourceConstants.GENERIC_ANIMATION_PATH
 				))
 		);
 	}

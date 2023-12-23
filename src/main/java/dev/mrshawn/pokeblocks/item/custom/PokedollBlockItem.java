@@ -1,5 +1,6 @@
 package dev.mrshawn.pokeblocks.item.custom;
 
+import dev.mrshawn.pokeblocks.constants.ResourceConstants;
 import dev.mrshawn.pokeblocks.item.client.PokedollBlockItemModel;
 import dev.mrshawn.pokeblocks.item.client.PokedollBlockItemRenderer;
 import net.fabricmc.fabric.api.item.v1.FabricItemSettings;
@@ -74,7 +75,7 @@ public class PokedollBlockItem extends BlockItem implements GeoItem {
 	}
 
 	protected String getAnimationName() {
-		return "animation.generic";
+		return ResourceConstants.GENERIC_ANIMATION;
 	}
 
 }
