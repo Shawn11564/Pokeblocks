@@ -20,6 +20,27 @@ public class ModItemGroups {
 					.entries(((displayContext, entries) -> {
 						entries.add(ModBlocks.POKEDOLL_CALYREX);
 						entries.add(ModBlocks.POKEDOLL_SHINY_CALYREX);
+						entries.add(ModBlocks.POKEDOLL_CALYREX_ANIMATED);
+						entries.add(ModBlocks.POKEDOLL_SHINY_CALYREX_ANIMATED);
+						entries.add(ModBlocks.POKEDOLL_BULBASAUR);
+						entries.add(ModBlocks.POKEDOLL_SHINY_BULBASAUR);
+						entries.add(ModBlocks.POKEDOLL_BULBASAUR_POSED);
+						entries.add(ModBlocks.POKEDOLL_SHINY_BULBASAUR_POSED);
+						entries.add(ModBlocks.POKEDOLL_SQUIRTLE);
+						entries.add(ModBlocks.POKEDOLL_CHARMANDER);
+						entries.add(ModBlocks.POKEDOLL_SHINY_CHARMANDER);
+						entries.add(ModBlocks.POKEDOLL_LICKITUNG);
+						entries.add(ModBlocks.POKEDOLL_SHINY_LICKITUNG);
+						entries.add(ModBlocks.POKEDOLL_MAREEP);
+						entries.add(ModBlocks.POKEDOLL_SHINY_MAREEP);
+						entries.add(ModBlocks.POKEDOLL_FLAAFFY);
+						entries.add(ModBlocks.POKEDOLL_SHINY_FLAAFFY);
+						entries.add(ModBlocks.POKEDOLL_SMOLIV);
+						entries.add(ModBlocks.POKEDOLL_SHINY_SMOLIV);
+						entries.add(ModBlocks.POKEDOLL_DOLLIV);
+						entries.add(ModBlocks.POKEDOLL_SHINY_DOLLIV);
+						entries.add(ModBlocks.POKEDOLL_ARBOLIVA);
+						entries.add(ModBlocks.POKEDOLL_SHINY_ARBOLIVA);
 					}))
 					.build()
 	);
