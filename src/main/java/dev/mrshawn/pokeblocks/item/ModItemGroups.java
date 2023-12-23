@@ -41,6 +41,8 @@ public class ModItemGroups {
 						entries.add(ModBlocks.POKEDOLL_SHINY_DOLLIV);
 						entries.add(ModBlocks.POKEDOLL_ARBOLIVA);
 						entries.add(ModBlocks.POKEDOLL_SHINY_ARBOLIVA);
+						entries.add(ModBlocks.POKEDOLL_SNORLAX);
+						entries.add(ModBlocks.POKEDOLL_SHINY_SNORLAX);
 					}))
 					.build()
 	);

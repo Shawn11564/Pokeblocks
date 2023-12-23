@@ -186,6 +186,20 @@ public class ModItems {
 			ResourceConstants.POKEDOLL_WASHING_MACHINE_TEXTURE
 	);
 
+	public static final Item POKEDOLL_SNORLAX_BLOCK_ITEM = registerItem(
+			PokeIDs.POKEDOLL_SNORLAX,
+			ModBlocks.POKEDOLL_SNORLAX,
+			ResourceConstants.POKEDOLL_SNORLAX_MODEL,
+			ResourceConstants.POKEDOLL_SNORLAX_TEXTURE
+	);
+
+	public static final Item POKEDOLL_SHINY_SNORLAX_BLOCK_ITEM = registerItem(
+			PokeIDs.POKEDOLL_SHINY_SNORLAX,
+			ModBlocks.POKEDOLL_SHINY_SNORLAX,
+			ResourceConstants.POKEDOLL_SNORLAX_MODEL,
+			ResourceConstants.POKEDOLL_SHINY_SNORLAX_TEXTURE
+	);
+
 	private static Item registerItem(String name, Item item) {
 		return Registry.register(Registries.ITEM, new Identifier(Pokeblocks.MOD_ID, name), item);
 	}

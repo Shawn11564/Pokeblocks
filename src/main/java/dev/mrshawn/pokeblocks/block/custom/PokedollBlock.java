@@ -1,12 +1,13 @@
 package dev.mrshawn.pokeblocks.block.custom;
 
 import net.fabricmc.fabric.api.object.builder.v1.block.FabricBlockSettings;
-import net.minecraft.block.BlockRenderType;
-import net.minecraft.block.BlockState;
-import net.minecraft.block.BlockWithEntity;
-import net.minecraft.block.Blocks;
+import net.minecraft.block.*;
 import net.minecraft.block.entity.BlockEntity;
+import net.minecraft.item.ItemPlacementContext;
+import net.minecraft.state.StateManager;
+import net.minecraft.state.property.Properties;
 import net.minecraft.util.math.BlockPos;
+import net.minecraft.util.math.Direction;
 import net.minecraft.world.BlockView;
 import org.jetbrains.annotations.Nullable;
 
@@ -19,11 +20,11 @@ public class PokedollBlock <T extends BlockEntity> extends BlockWithEntity {
 	public PokedollBlock(Settings settings, Supplier<Class<T>> blockEntitySupplier) {
 		super(settings);
 		this.blockEntitySupplier = blockEntitySupplier;
+		setDefaultState(this.getStateManager().getDefaultState().with(Properties.HORIZONTAL_FACING, Direction.NORTH));
 	}
 
 	public PokedollBlock(Supplier<Class<T>> blockEntitySupplier) {
-		super(FabricBlockSettings.copy(Blocks.WHITE_WOOL).nonOpaque());
-		this.blockEntitySupplier = blockEntitySupplier;
+		this(FabricBlockSettings.copy(Blocks.WHITE_WOOL).nonOpaque(), blockEntitySupplier);
 	}
 
 	@Nullable
@@ -39,6 +40,17 @@ public class PokedollBlock <T extends BlockEntity> extends BlockWithEntity {
 	@Override
 	public BlockRenderType getRenderType(BlockState state) {
 		return BlockRenderType.MODEL;
+	}
+
+	@Nullable
+	@Override
+	public BlockState getPlacementState(ItemPlacementContext ctx) {
+		return this.getDefaultState().with(Properties.HORIZONTAL_FACING, ctx.getHorizontalPlayerFacing().getOpposite());
+	}
+
+	@Override
+	protected void appendProperties(StateManager.Builder<Block, BlockState> builder) {
+		builder.add(Properties.HORIZONTAL_FACING);
 	}
 
 	@Override

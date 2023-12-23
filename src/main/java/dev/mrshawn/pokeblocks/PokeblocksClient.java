@@ -135,6 +135,16 @@ public class PokeblocksClient implements ClientModInitializer {
 				ResourceConstants.POKEDOLL_WASHING_MACHINE_MODEL,
 				ResourceConstants.POKEDOLL_WASHING_MACHINE_TEXTURE
 		);
+		registerBlockEntityRenderer(
+				ModBlockEntities.POKEDOLL_SNORLAX_BLOCK_ENTITY,
+				ResourceConstants.POKEDOLL_SNORLAX_MODEL,
+				ResourceConstants.POKEDOLL_SNORLAX_TEXTURE
+		);
+		registerBlockEntityRenderer(
+				ModBlockEntities.POKEDOLL_SHINY_SNORLAX_BLOCK_ENTITY,
+				ResourceConstants.POKEDOLL_SNORLAX_MODEL,
+				ResourceConstants.POKEDOLL_SHINY_SNORLAX_TEXTURE
+		);
 	}
 
 	private static <T extends PokedollBlockEntity> void registerBlockEntityRenderer(BlockEntityType<T> type, String modelResourcePath, String textureResourcePath, String animationResourcePath) {
