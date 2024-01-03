@@ -3,7 +3,9 @@ package dev.mrshawn.pokeblocks.constants;
 public class ResourceConstants {
 
 	public static final String GENERIC_ANIMATION = "animation.generic";
+	public static final String SPIN_ANIMATION = "animation.spin";
 	public static final String GENERIC_ANIMATION_PATH = "generic.animation.json";
+	public static final String SPIN_ANIMATION_PATH = "spin.animation.json";
 	public static final String POKEDOLL_CALYREX_MODEL = "pokedoll_calyrex.geo.json";
 	public static final String POKEDOLL_CALYREX_TEXTURE = "pokedoll_calyrex_texture.png";
 	public static final String POKEDOLL_SHINY_CALYREX_TEXTURE = "pokedoll_calyrex_shiny_texture.png";

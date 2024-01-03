@@ -172,7 +172,7 @@ public class PokeblocksClient implements ClientModInitializer {
 	}
 
 	private static <T extends PokedollBlockEntity> void registerBlockEntityRenderer(BlockEntityType<T> type, String modelResourcePath, String textureResourcePath) {
-		registerBlockEntityRenderer(type, modelResourcePath, textureResourcePath, ResourceConstants.GENERIC_ANIMATION_PATH);
+		registerBlockEntityRenderer(type, modelResourcePath, textureResourcePath, ResourceConstants.SPIN_ANIMATION_PATH);
 	}
 
 }

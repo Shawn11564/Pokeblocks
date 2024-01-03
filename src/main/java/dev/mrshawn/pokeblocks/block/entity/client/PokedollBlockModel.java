@@ -22,7 +22,7 @@ public class PokedollBlockModel extends GeoModel<PokedollBlockEntity> {
 	public PokedollBlockModel(String modelResourcePath, String textureResourcePath) {
 		this.modelResourcePath = modelResourcePath;
 		this.textureResourcePath = textureResourcePath;
-		this.animationResourcePath = ResourceConstants.GENERIC_ANIMATION;
+		this.animationResourcePath = ResourceConstants.SPIN_ANIMATION;
 	}
 
 	@Override

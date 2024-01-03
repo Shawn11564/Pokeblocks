@@ -21,7 +21,7 @@ public class PokedollBlockItemModel extends GeoModel<PokedollBlockItem> {
 	public PokedollBlockItemModel(String modelResourcePath, String textureResourcePath) {
 		this.modelResourcePath = modelResourcePath;
 		this.textureResourcePath = textureResourcePath;
-		this.animationResourcePath = ResourceConstants.GENERIC_ANIMATION_PATH;
+		this.animationResourcePath = ResourceConstants.SPIN_ANIMATION_PATH;
 	}
 
 	@Override

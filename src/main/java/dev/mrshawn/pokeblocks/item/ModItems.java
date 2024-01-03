@@ -6,6 +6,7 @@ import dev.mrshawn.pokeblocks.constants.PokeIDs;
 import dev.mrshawn.pokeblocks.constants.ResourceConstants;
 import dev.mrshawn.pokeblocks.item.client.PokedollBlockItemModel;
 import dev.mrshawn.pokeblocks.item.custom.PokedollBlockItem;
+import dev.mrshawn.pokeblocks.item.custom.WearablePokedollBlockItem;
 import net.minecraft.block.Block;
 import net.minecraft.item.Item;
 import net.minecraft.registry.Registries;
@@ -186,11 +187,19 @@ public class ModItems {
 			ResourceConstants.POKEDOLL_SHINY_ARBOLIVA_TEXTURE
 	);
 
-	public static final Item POKEDOLL_WASHING_MACHINE_BLOCK_ITEM = registerItem(
+//	public static final Item POKEDOLL_WASHING_MACHINE_BLOCK_ITEM = registerItem(
+//			PokeIDs.POKEDOLL_WASHING_MACHINE,
+//			ModBlocks.POKEDOLL_WASHING_MACHINE,
+//			ResourceConstants.POKEDOLL_WASHING_MACHINE_MODEL,
+//			ResourceConstants.POKEDOLL_WASHING_MACHINE_TEXTURE
+//	);
+	public static final Item POKEDOLL_WASHING_MACHINE_BLOCK_ITEM = registerItemWithAnimation(
 			PokeIDs.POKEDOLL_WASHING_MACHINE,
 			ModBlocks.POKEDOLL_WASHING_MACHINE,
 			ResourceConstants.POKEDOLL_WASHING_MACHINE_MODEL,
-			ResourceConstants.POKEDOLL_WASHING_MACHINE_TEXTURE
+			ResourceConstants.POKEDOLL_WASHING_MACHINE_TEXTURE,
+			ResourceConstants.SPIN_ANIMATION_PATH,
+			ResourceConstants.SPIN_ANIMATION
 	);
 
 	public static final Item POKEDOLL_SNORLAX_BLOCK_ITEM = registerItem(
@@ -249,6 +258,21 @@ public class ModItems {
 						ResourceConstants.GENERIC_ANIMATION_PATH
 				))
 		);
+	}
+
+	private static Item registerItemWithAnimation(String name, Block block, String modelResourcePath, String textureResourcePath, String animationResourcePath, String animationName) {
+		PokedollBlockItemModel itemModel = new PokedollBlockItemModel(
+				modelResourcePath,
+				textureResourcePath,
+				animationResourcePath
+		);
+		WearablePokedollBlockItem blockItem = new WearablePokedollBlockItem(block, () -> itemModel) {
+			@Override
+			public String getAnimationName() {
+				return animationName;
+			}
+		};
+		return registerItem(name, blockItem);
 	}
 
 	public static void registerModItems() {
