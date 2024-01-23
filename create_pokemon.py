@@ -20,6 +20,11 @@ for pokemon_name in os.listdir(input_dir):
 
     # 3. Copy and modify blockstate file
     for file_name in ["pokedoll_", "pokedoll_shiny_"]:
+        # Copy the template file to create the new file
+        shutil.copy(f"{template_dir}/blockstates/template_blockstate.json",
+                    f"{output_dir}/blockstates/{file_name}{pokemon_name}.json")
+
+        # Now you can open the newly created file and modify it
         with open(f"{output_dir}/blockstates/{file_name}{pokemon_name}.json", "r") as file:
             content = file.read()
 
@@ -30,6 +35,11 @@ for pokemon_name in os.listdir(input_dir):
 
     # 4. Copy and modify block model file
     for file_name in ["pokedoll_", "pokedoll_shiny_"]:
+        # Copy the template file to create the new file
+        shutil.copy(f"{template_dir}/models/block/template_block_model.json",
+                    f"{output_dir}/models/block/{file_name}{pokemon_name}.json")
+
+        # Now you can open the newly created file and modify it
         with open(f"{output_dir}/models/block/{file_name}{pokemon_name}.json", "r") as file:
             content = file.read()
 
@@ -40,6 +50,11 @@ for pokemon_name in os.listdir(input_dir):
 
     # 5. Copy and modify item model file
     for file_name in ["pokedoll_", "pokedoll_shiny_"]:
+        # Copy the template file to create the new file
+        shutil.copy(f"{template_dir}/models/item/template_item_model.json",
+                    f"{output_dir}/models/item/{file_name}{pokemon_name}.json")
+
+        # Now you can open the newly created file and modify it
         with open(f"{output_dir}/models/item/{file_name}{pokemon_name}.json", "r") as file:
             content = file.read()
 
