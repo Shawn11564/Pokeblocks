@@ -2,6 +2,7 @@ package dev.mrshawn.pokeblocks.block.entity.calyrex.animated;
 
 import dev.mrshawn.pokeblocks.block.entity.BlockEntityTypeRegistry;
 import dev.mrshawn.pokeblocks.block.entity.PokedollBlockEntity;
+import dev.mrshawn.pokeblocks.constants.ResourceConstants;
 import net.minecraft.block.BlockState;
 import net.minecraft.util.math.BlockPos;
 
@@ -11,7 +12,7 @@ public class PokedollShinyCalyrexAnimatedBlockEntity extends PokedollBlockEntity
 	}
 
 	@Override
-	protected String getAnimationName() {
-		return "animation.pokedoll_calyrex.levitate";
+	public String getAnimationName() {
+		return ResourceConstants.POKEDOLL_CALYREX_ANIMATED_ANIMATION_NAME;
 	}
 }

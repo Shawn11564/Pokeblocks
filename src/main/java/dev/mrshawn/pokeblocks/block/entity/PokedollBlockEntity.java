@@ -9,13 +9,17 @@ import software.bernie.geckolib.animatable.GeoBlockEntity;
 import software.bernie.geckolib.core.animatable.GeoAnimatable;
 import software.bernie.geckolib.core.animatable.instance.AnimatableInstanceCache;
 import software.bernie.geckolib.core.animatable.instance.SingletonAnimatableInstanceCache;
-import software.bernie.geckolib.core.animation.*;
+import software.bernie.geckolib.core.animation.AnimatableManager;
+import software.bernie.geckolib.core.animation.AnimationController;
+import software.bernie.geckolib.core.animation.AnimationState;
+import software.bernie.geckolib.core.animation.RawAnimation;
 import software.bernie.geckolib.core.object.PlayState;
 import software.bernie.geckolib.util.RenderUtils;
 
 public class PokedollBlockEntity extends BlockEntity implements GeoBlockEntity {
 
-	private AnimatableInstanceCache cache = new SingletonAnimatableInstanceCache(this);
+	private final AnimatableInstanceCache cache = new SingletonAnimatableInstanceCache(this);
+	private String animationName = ResourceConstants.GENERIC_ANIMATION;
 
 	public PokedollBlockEntity(BlockEntityType<?> type, BlockPos pos, BlockState state) {
 		super(type, pos, state);
@@ -27,7 +31,7 @@ public class PokedollBlockEntity extends BlockEntity implements GeoBlockEntity {
 	}
 
 	private <T extends GeoAnimatable> PlayState predicate(AnimationState<T> animatedBlockEntityAnimationState) {
-		animatedBlockEntityAnimationState.getController().setAnimation(RawAnimation.begin().then(getAnimationName(), Animation.LoopType.LOOP));
+		animatedBlockEntityAnimationState.getController().setAnimation(RawAnimation.begin().thenLoop(getAnimationName()));
 		return PlayState.CONTINUE;
 	}
 
@@ -41,8 +45,12 @@ public class PokedollBlockEntity extends BlockEntity implements GeoBlockEntity {
 		return RenderUtils.getCurrentTick();
 	}
 
-	protected String getAnimationName() {
-		return ResourceConstants.SPIN_ANIMATION;
+	public void setAnimationName(String animationName) {
+		this.animationName = animationName;
+	}
+
+	public String getAnimationName() {
+		return animationName;
 	}
 
 }

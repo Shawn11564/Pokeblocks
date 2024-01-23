@@ -1,5 +1,6 @@
 package dev.mrshawn.pokeblocks.block.custom;
 
+import dev.mrshawn.pokeblocks.block.entity.PokedollBlockEntity;
 import net.fabricmc.fabric.api.object.builder.v1.block.FabricBlockSettings;
 import net.minecraft.block.*;
 import net.minecraft.block.entity.BlockEntity;
@@ -11,6 +12,7 @@ import net.minecraft.state.property.Properties;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.Direction;
 import net.minecraft.world.BlockView;
+import net.minecraft.world.World;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.Collections;
@@ -67,4 +69,23 @@ public class PokedollBlock <T extends BlockEntity> extends BlockWithEntity {
 		return Collections.singletonList(new ItemStack(this));
 	}
 
+	@Override
+	public void neighborUpdate(BlockState state, World world, BlockPos pos, Block sourceBlock, BlockPos sourcePos, boolean notify) {
+		super.neighborUpdate(state, world, pos, sourceBlock, sourcePos, notify);
+
+		boolean powered = world.getReceivedRedstonePower(pos) > 0;
+		BlockEntity blockEntity = world.getBlockEntity(pos);
+
+		if (!(blockEntity instanceof PokedollBlockEntity)) {
+			return;
+		}
+		blockEntity = (PokedollBlockEntity) blockEntity;
+
+		if (powered) {
+
+		} else {
+
+		}
+	}
+	
 }
