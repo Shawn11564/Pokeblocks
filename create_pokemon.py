@@ -87,15 +87,53 @@ for pokemon_name in os.listdir(input_dir):
         file.truncate()
 
     # 7. Modify PokeIDs.java
-    with open(f"{src_dir}/constants/PokeIDs.java", "a") as file:
-        file.write(f"\npublic static final String POKEDOLL_{pokemon_name.upper()} = \"pokedoll_{pokemon_name}\";")
-        file.write(f"\npublic static final String POKEDOLL_SHINY_{pokemon_name.upper()} = \"pokedoll_shiny_{pokemon_name}\";")
+    with open(f"{src_dir}/constants/PokeIDs.java", "r") as file:
+        lines = file.readlines()
+
+    # Find the last line that contains a closing curly bracket
+    last_curly_bracket_line = -1
+    for i, line in reversed(list(enumerate(lines))):
+        if "}" in line:
+            last_curly_bracket_line = i
+            break
+
+    # If found, insert the new entries before that line
+    if last_curly_bracket_line != -1:
+        new_lines = [
+            f"public static final String POKEDOLL_{pokemon_name.upper()} = \"pokedoll_{pokemon_name}\";\n",
+            f"public static final String POKEDOLL_SHINY_{pokemon_name.upper()} = \"pokedoll_shiny_{pokemon_name}\";\n"
+        ]
+        for new_line in reversed(new_lines):
+            lines.insert(last_curly_bracket_line, new_line)
+
+    # Write the file
+    with open(f"{src_dir}/constants/PokeIDs.java", "w") as file:
+        file.writelines(lines)
 
     # 8. Modify ResourceConstants.java
-    with open(f"{src_dir}/constants/ResourceConstants.java", "a") as file:
-        file.write(f"\npublic static final String POKEDOLL_{pokemon_name.upper()}_TEXTURE = \"pokedoll_{pokemon_name}_texture.png\";")
-        file.write(f"\npublic static final String POKEDOLL_SHINY_{pokemon_name.upper()}_TEXTURE = \"pokedoll_{pokemon_name}_shiny_texture.png\";")
-        file.write(f"\npublic static final String POKEDOLL_{pokemon_name.upper()}_MODEL = \"pokedoll_{pokemon_name}.geo.json\";")
+    with open(f"{src_dir}/constants/ResourceConstants.java", "r") as file:
+        lines = file.readlines()
+
+    # Find the last line that contains a closing curly bracket
+    last_curly_bracket_line = -1
+    for i, line in reversed(list(enumerate(lines))):
+        if "}" in line:
+            last_curly_bracket_line = i
+            break
+
+    # If found, insert the new entries before that line
+    if last_curly_bracket_line != -1:
+        new_lines = [
+            f"public static final String POKEDOLL_{pokemon_name.upper()}_TEXTURE = \"pokedoll_{pokemon_name}_texture.png\";\n",
+            f"public static final String POKEDOLL_SHINY_{pokemon_name.upper()}_TEXTURE = \"pokedoll_{pokemon_name}_shiny_texture.png\";\n",
+            f"public static final String POKEDOLL_{pokemon_name.upper()}_MODEL = \"pokedoll_{pokemon_name}.geo.json\";\n"
+        ]
+        for new_line in reversed(new_lines):
+            lines.insert(last_curly_bracket_line, new_line)
+
+    # Write the file
+    with open(f"{src_dir}/constants/ResourceConstants.java", "w") as file:
+        file.writelines(lines)
 
     # 9. Modify PokeblocksClient.java
     # Read the file
