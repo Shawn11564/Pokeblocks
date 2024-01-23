@@ -42,7 +42,7 @@ public class PokedollBlockEntity extends BlockEntity implements GeoBlockEntity {
 	}
 
 	protected String getAnimationName() {
-		return ResourceConstants.SPIN_ANIMATION;
+		return ResourceConstants.GENERIC_ANIMATION;
 	}
 
 }

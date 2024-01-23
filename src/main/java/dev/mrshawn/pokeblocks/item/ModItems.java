@@ -193,13 +193,11 @@ public class ModItems {
 //			ResourceConstants.POKEDOLL_WASHING_MACHINE_MODEL,
 //			ResourceConstants.POKEDOLL_WASHING_MACHINE_TEXTURE
 //	);
-	public static final Item POKEDOLL_WASHING_MACHINE_BLOCK_ITEM = registerItemWithAnimation(
+	public static final Item POKEDOLL_WASHING_MACHINE_BLOCK_ITEM = registerItem(
 			PokeIDs.POKEDOLL_WASHING_MACHINE,
 			ModBlocks.POKEDOLL_WASHING_MACHINE,
 			ResourceConstants.POKEDOLL_WASHING_MACHINE_MODEL,
-			ResourceConstants.POKEDOLL_WASHING_MACHINE_TEXTURE,
-			ResourceConstants.SPIN_ANIMATION_PATH,
-			ResourceConstants.SPIN_ANIMATION
+			ResourceConstants.POKEDOLL_WASHING_MACHINE_TEXTURE
 	);
 
 	public static final Item POKEDOLL_SNORLAX_BLOCK_ITEM = registerItem(
@@ -228,6 +226,34 @@ public class ModItems {
 			ModBlocks.POKEDOLL_SHINY_AMPHAROS,
 			ResourceConstants.POKEDOLL_AMPHAROS_MODEL,
 			ResourceConstants.POKEDOLL_SHINY_AMPHAROS_TEXTURE
+	);
+
+	public static final Item POKEDOLL_SENTRET_BLOCK_ITEM = registerItem(
+			PokeIDs.POKEDOLL_SENTRET,
+			ModBlocks.POKEDOLL_SENTRET,
+			ResourceConstants.POKEDOLL_SENTRET_MODEL,
+			ResourceConstants.POKEDOLL_SENTRET_TEXTURE
+	);
+
+	public static final Item POKEDOLL_SHINY_SENTRET_BLOCK_ITEM = registerItem(
+			PokeIDs.POKEDOLL_SHINY_SENTRET,
+			ModBlocks.POKEDOLL_SHINY_SENTRET,
+			ResourceConstants.POKEDOLL_SENTRET_MODEL,
+			ResourceConstants.POKEDOLL_SHINY_SENTRET_TEXTURE
+	);
+
+	public static final Item POKEDOLL_FURRET_BLOCK_ITEM = registerItem(
+			PokeIDs.POKEDOLL_FURRET,
+			ModBlocks.POKEDOLL_FURRET,
+			ResourceConstants.POKEDOLL_FURRET_MODEL,
+			ResourceConstants.POKEDOLL_FURRET_TEXTURE
+	);
+
+	public static final Item POKEDOLL_SHINY_FURRET_BLOCK_ITEM = registerItem(
+			PokeIDs.POKEDOLL_SHINY_FURRET,
+			ModBlocks.POKEDOLL_SHINY_FURRET,
+			ResourceConstants.POKEDOLL_FURRET_MODEL,
+			ResourceConstants.POKEDOLL_SHINY_FURRET_TEXTURE
 	);
 
 	private static Item registerItem(String name, Item item) {

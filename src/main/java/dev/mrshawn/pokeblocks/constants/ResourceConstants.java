@@ -5,7 +5,7 @@ public class ResourceConstants {
 	public static final String GENERIC_ANIMATION = "animation.generic";
 	public static final String SPIN_ANIMATION = "animation.spin";
 	public static final String GENERIC_ANIMATION_PATH = "generic.animation.json";
-	public static final String SPIN_ANIMATION_PATH = "spin.animation.json";
+	public static final String SPIN_ANIMATION_PATH = "animation.spin.json";
 	public static final String POKEDOLL_CALYREX_MODEL = "pokedoll_calyrex.geo.json";
 	public static final String POKEDOLL_CALYREX_TEXTURE = "pokedoll_calyrex_texture.png";
 	public static final String POKEDOLL_SHINY_CALYREX_TEXTURE = "pokedoll_calyrex_shiny_texture.png";
@@ -52,5 +52,11 @@ public class ResourceConstants {
 	public static final String POKEDOLL_AMPHAROS_MODEL = "pokedoll_ampharos.geo.json";
 	public static final String POKEDOLL_AMPHAROS_TEXTURE = "pokedoll_ampharos_texture.png";
 	public static final String POKEDOLL_SHINY_AMPHAROS_TEXTURE = "pokedoll_ampharos_shiny_texture.png";
+	public static final String POKEDOLL_SENTRET_MODEL = "pokedoll_sentret.geo.json";
+	public static final String POKEDOLL_SENTRET_TEXTURE = "pokedoll_sentret_texture.png";
+	public static final String POKEDOLL_SHINY_SENTRET_TEXTURE = "pokedoll_sentret_shiny_texture.png";
+	public static final String POKEDOLL_FURRET_TEXTURE = "pokedoll_furret_texture.png";
+	public static final String POKEDOLL_SHINY_FURRET_TEXTURE = "pokedoll_furret_shiny_texture.png";
+	public static final String POKEDOLL_FURRET_MODEL = "pokedoll_furret.geo.json";
 
 }

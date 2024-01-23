@@ -28,6 +28,10 @@
   "item.pokeblocks.pokedoll_shiny_snorlax": "Shiny Snorlax Pokedoll",
   "item.pokeblocks.pokedoll_ampharos": "Ampharos Pokedoll",
   "item.pokeblocks.pokedoll_shiny_ampharos": "Shiny Ampharos Pokedoll",
+  "item.pokeblocks.pokedoll_sentret": "Sentret Pokedoll",
+  "item.pokeblocks.pokedoll_shiny_sentret": "Shiny Sentret Pokedoll",
+  "item.pokeblocks.pokedoll_furret": "Furret Pokedoll",
+  "item.pokeblocks.pokedoll_shiny_furret": "Shiny Furret Pokedoll",
 
   "block.pokeblocks.pokedoll_calyrex": "Calyrex Pokedoll",
   "block.pokeblocks.pokedoll_shiny_calyrex": "Shiny Calyrex Pokedoll",
@@ -58,6 +62,10 @@
   "block.pokeblocks.pokedoll_shiny_snorlax": "Shiny Snorlax Pokedoll",
   "block.pokeblocks.pokedoll_ampharos": "Ampharos Pokedoll",
   "block.pokeblocks.pokedoll_shiny_ampharos": "Shiny Ampharos Pokedoll",
+  "block.pokeblocks.pokedoll_sentret": "Sentret Pokedoll",
+  "block.pokeblocks.pokedoll_shiny_sentret": "Shiny Sentret Pokedoll",
+  "block.pokeblocks.pokedoll_furret": "Furret Pokedoll",
+  "block.pokeblocks.pokedoll_shiny_furret": "Shiny Furret Pokedoll",
 
   "itemgroup.pokeblocks": "Pokeblocks"
 }

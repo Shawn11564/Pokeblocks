@@ -31,5 +31,9 @@ public class PokeIDs {
 	public static final String POKEDOLL_SHINY_SNORLAX = "pokedoll_shiny_snorlax";
 	public static final String POKEDOLL_AMPHAROS = "pokedoll_ampharos";
 	public static final String POKEDOLL_SHINY_AMPHAROS = "pokedoll_shiny_ampharos";
+	public static final String POKEDOLL_SENTRET = "pokedoll_sentret";
+	public static final String POKEDOLL_SHINY_SENTRET = "pokedoll_shiny_sentret";
+	public static final String POKEDOLL_FURRET = "pokedoll_furret";
+	public static final String POKEDOLL_SHINY_FURRET = "pokedoll_shiny_furret";
 
 }

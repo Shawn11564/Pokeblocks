@@ -20,10 +20,14 @@ import dev.mrshawn.pokeblocks.block.entity.dolliv.PokedollDollivBlockEntity;
 import dev.mrshawn.pokeblocks.block.entity.dolliv.PokedollShinyDollivBlockEntity;
 import dev.mrshawn.pokeblocks.block.entity.flaaffy.PokedollFlaaffyBlockEntity;
 import dev.mrshawn.pokeblocks.block.entity.flaaffy.PokedollShinyFlaaffyBlockEntity;
+import dev.mrshawn.pokeblocks.block.entity.furret.PokedollFurretBlockEntity;
+import dev.mrshawn.pokeblocks.block.entity.furret.PokedollShinyFurretBlockEntity;
 import dev.mrshawn.pokeblocks.block.entity.lickitung.PokedollLickitungBlockEntity;
 import dev.mrshawn.pokeblocks.block.entity.lickitung.PokedollShinyLickitungBlockEntity;
 import dev.mrshawn.pokeblocks.block.entity.mareep.PokedollMareepBlockEntity;
 import dev.mrshawn.pokeblocks.block.entity.mareep.PokedollShinyMareepBlockEntity;
+import dev.mrshawn.pokeblocks.block.entity.sentret.PokedollSentretBlockEntity;
+import dev.mrshawn.pokeblocks.block.entity.sentret.PokedollShinySentretBlockEntity;
 import dev.mrshawn.pokeblocks.block.entity.smoliv.PokedollShinySmolivBlockEntity;
 import dev.mrshawn.pokeblocks.block.entity.smoliv.PokedollSmolivBlockEntity;
 import dev.mrshawn.pokeblocks.block.entity.snorlax.PokedollShinySnorlaxBlockEntity;
@@ -70,6 +74,10 @@ public class ModBlockEntities {
 	public static BlockEntityType<PokedollShinySnorlaxBlockEntity> POKEDOLL_SHINY_SNORLAX_BLOCK_ENTITY;
 	public static BlockEntityType<PokedollAmpharosBlockEntity> POKEDOLL_AMPHAROS_BLOCK_ENTITY;
 	public static BlockEntityType<PokedollShinyAmpharosBlockEntity> POKEDOLL_SHINY_AMPHAROS_BLOCK_ENTITY;
+	public static BlockEntityType<PokedollSentretBlockEntity> POKEDOLL_SENTRET_BLOCK_ENTITY;
+	public static BlockEntityType<PokedollShinySentretBlockEntity> POKEDOLL_SHINY_SENTRET_BLOCK_ENTITY;
+	public static BlockEntityType<PokedollFurretBlockEntity> POKEDOLL_FURRET_BLOCK_ENTITY;
+	public static BlockEntityType<PokedollShinyFurretBlockEntity> POKEDOLL_SHINY_FURRET_BLOCK_ENTITY;
 
 	public static void registerAllBlockEntities() {
 		POKEDOLL_CALYREX_BLOCK_ENTITY = registerBlockEntity(
@@ -244,6 +252,30 @@ public class ModBlockEntities {
 				new Identifier(Pokeblocks.MOD_ID, PokeIDs.POKEDOLL_SHINY_AMPHAROS),
 				FabricBlockEntityTypeBuilder.create(PokedollShinyAmpharosBlockEntity::new, ModBlocks.POKEDOLL_SHINY_AMPHAROS),
 				PokedollShinyAmpharosBlockEntity.class
+		);
+
+		POKEDOLL_SENTRET_BLOCK_ENTITY = registerBlockEntity(
+				new Identifier(Pokeblocks.MOD_ID, PokeIDs.POKEDOLL_SENTRET),
+				FabricBlockEntityTypeBuilder.create(PokedollSentretBlockEntity::new, ModBlocks.POKEDOLL_SENTRET),
+				PokedollSentretBlockEntity.class
+		);
+
+		POKEDOLL_SHINY_SENTRET_BLOCK_ENTITY = registerBlockEntity(
+				new Identifier(Pokeblocks.MOD_ID, PokeIDs.POKEDOLL_SHINY_SENTRET),
+				FabricBlockEntityTypeBuilder.create(PokedollShinySentretBlockEntity::new, ModBlocks.POKEDOLL_SHINY_SENTRET),
+				PokedollShinySentretBlockEntity.class
+		);
+
+		POKEDOLL_FURRET_BLOCK_ENTITY = registerBlockEntity(
+				new Identifier(Pokeblocks.MOD_ID, PokeIDs.POKEDOLL_FURRET),
+				FabricBlockEntityTypeBuilder.create(PokedollFurretBlockEntity::new, ModBlocks.POKEDOLL_FURRET),
+				PokedollFurretBlockEntity.class
+		);
+
+		POKEDOLL_SHINY_FURRET_BLOCK_ENTITY = registerBlockEntity(
+				new Identifier(Pokeblocks.MOD_ID, PokeIDs.POKEDOLL_SHINY_FURRET),
+				FabricBlockEntityTypeBuilder.create(PokedollShinyFurretBlockEntity::new, ModBlocks.POKEDOLL_SHINY_FURRET),
+				PokedollShinyFurretBlockEntity.class
 		);
 	}
 
