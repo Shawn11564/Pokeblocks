@@ -127,18 +127,6 @@ public class ModBlocks {
 	public static final Block POKEDOLL_SHINY_ARBOLIVA = Registry.register(Registries.BLOCK, new Identifier(Pokeblocks.MOD_ID, PokeIDs.POKEDOLL_SHINY_ARBOLIVA),
 			new PokedollBlock<>(() -> PokedollShinyArbolivaBlockEntity.class));
 
-	public static final Block POKEDOLL_SENTRET = Registry.register(Registries.BLOCK, new Identifier(Pokeblocks.MOD_ID, PokeIDs.POKEDOLL_SENTRET),
-			new PokedollBlock<>(() -> PokedollSentretBlockEntity.class));
-
-	public static final Block POKEDOLL_SHINY_SENTRET = Registry.register(Registries.BLOCK, new Identifier(Pokeblocks.MOD_ID, PokeIDs.POKEDOLL_SHINY_SENTRET),
-			new PokedollBlock<>(() -> PokedollShinySentretBlockEntity.class));
-
-	public static final Block POKEDOLL_FURRET = Registry.register(Registries.BLOCK, new Identifier(Pokeblocks.MOD_ID, PokeIDs.POKEDOLL_FURRET),
-			new PokedollBlock<>(() -> PokedollFurretBlockEntity.class));
-
-	public static final Block POKEDOLL_SHINY_FURRET = Registry.register(Registries.BLOCK, new Identifier(Pokeblocks.MOD_ID, PokeIDs.POKEDOLL_SHINY_FURRET),
-			new PokedollBlock<>(() -> PokedollShinyFurretBlockEntity.class));
-
 	public static final Block POKEDOLL_WASHING_MACHINE = Registry.register(Registries.BLOCK, new Identifier(Pokeblocks.MOD_ID, PokeIDs.POKEDOLL_WASHING_MACHINE),
 			new PokedollBlock<>(() -> PokedollWashingMachineBlockEntity.class) {
 				@Override
@@ -159,6 +147,18 @@ public class ModBlocks {
 
 	public static final Block POKEDOLL_SHINY_AMPHAROS = Registry.register(Registries.BLOCK, new Identifier(Pokeblocks.MOD_ID, PokeIDs.POKEDOLL_SHINY_AMPHAROS),
 			new PokedollBlock<>(() -> PokedollShinyAmpharosBlockEntity.class));
+
+	public static final Block POKEDOLL_SENTRET = Registry.register(Registries.BLOCK, new Identifier(Pokeblocks.MOD_ID, PokeIDs.POKEDOLL_SENTRET),
+			new PokedollBlock<>(() -> PokedollSentretBlockEntity.class));
+
+	public static final Block POKEDOLL_SHINY_SENTRET = Registry.register(Registries.BLOCK, new Identifier(Pokeblocks.MOD_ID, PokeIDs.POKEDOLL_SHINY_SENTRET),
+			new PokedollBlock<>(() -> PokedollShinySentretBlockEntity.class));
+
+	public static final Block POKEDOLL_FURRET = Registry.register(Registries.BLOCK, new Identifier(Pokeblocks.MOD_ID, PokeIDs.POKEDOLL_FURRET),
+			new PokedollBlock<>(() -> PokedollFurretBlockEntity.class));
+
+	public static final Block POKEDOLL_SHINY_FURRET = Registry.register(Registries.BLOCK, new Identifier(Pokeblocks.MOD_ID, PokeIDs.POKEDOLL_SHINY_FURRET),
+			new PokedollBlock<>(() -> PokedollShinyFurretBlockEntity.class));
 
 	private static Block registerBlock(String name, Block block) {
 		registerBlockItem(name, block);
