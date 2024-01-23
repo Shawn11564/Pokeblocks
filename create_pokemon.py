@@ -3,7 +3,7 @@ import shutil
 import json
 
 input_dir = "input"
-output_dir = "resources/assets/pokeblocks"
+output_dir = "src/main/resources/assets/pokeblocks"
 template_dir = "template"
 src_dir = "src/main/java/dev/mrshawn/pokeblocks"
 
@@ -11,7 +11,7 @@ for pokemon_name in os.listdir(input_dir):
     # 1. Copy texture files
     for file_name in os.listdir(f"{input_dir}/{pokemon_name}"):
         if file_name.endswith(".png"):
-            shutil.copy(f"{input_dir}/{pokemon_name}/{file_name}", f"{output_dir}/textures/blocks")
+            shutil.copy(f"{input_dir}/{pokemon_name}/{file_name}", f"{output_dir}/textures/block")
 
     # 2. Copy geo json file
     for file_name in os.listdir(f"{input_dir}/{pokemon_name}"):
