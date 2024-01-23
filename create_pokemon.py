@@ -217,3 +217,15 @@ for pokemon_name in os.listdir(input_dir):
     os.makedirs(f"{src_dir}/block/entity/{pokemon_name}", exist_ok=True)
     shutil.copy(f"{template_dir}/block/entity/template_block_entity.java", f"{src_dir}/block/entity/{pokemon_name}/Pokedoll{pokemon_name.capitalize()}BlockEntity.java")
     shutil.copy(f"{template_dir}/block/entity/template_block_entity.java", f"{src_dir}/block/entity/{pokemon_name}/PokedollShiny{pokemon_name.capitalize()}BlockEntity.java")
+    # Open the files and replace <Pokemon name> with the actual pokemon's name
+    for file_name in ["Pokedoll", "PokedollShiny"]:
+        with open(f"{src_dir}/block/entity/{pokemon_name}/{file_name}{pokemon_name.capitalize()}BlockEntity.java",
+                  "r") as file:
+            content = file.read()
+
+        content = content.replace("<pokemon_name>", pokemon_name)
+        content = content.replace("<Pokemon name>", pokemon_name.capitalize())
+
+        with open(f"{src_dir}/block/entity/{pokemon_name}/{file_name}{pokemon_name.capitalize()}BlockEntity.java",
+                  "w") as file:
+            file.write(content)

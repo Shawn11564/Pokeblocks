@@ -1,4 +1,4 @@
-package dev.mrshawn.pokeblocks.block.entity.sentret;
+package dev.mrshawn.pokeblocks.block.entity.<pokemon name>;
 
 import dev.mrshawn.pokeblocks.block.entity.BlockEntityTypeRegistry;
 import dev.mrshawn.pokeblocks.block.entity.PokedollBlockEntity;
