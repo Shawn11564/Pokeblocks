@@ -28,7 +28,11 @@ for pokemon_name in os.listdir(input_dir):
         with open(f"{output_dir}/blockstates/{file_name}{pokemon_name}.json", "r") as file:
             content = file.read()
 
-        content = content.replace("<pokemon name>", pokemon_name)
+        # Check if the file name starts with 'shiny_'
+        if "_shiny" in file_name:
+            content = content.replace("<pokemon name>", "shiny_" + pokemon_name)
+        else:
+            content = content.replace("<pokemon name>", pokemon_name)
 
         with open(f"{output_dir}/blockstates/{file_name}{pokemon_name}.json", "w") as file:
             file.write(content)
@@ -43,7 +47,11 @@ for pokemon_name in os.listdir(input_dir):
         with open(f"{output_dir}/models/block/{file_name}{pokemon_name}.json", "r") as file:
             content = file.read()
 
-        content = content.replace("<pokemon name>", pokemon_name)
+        # Check if the file name starts with 'shiny_'
+        if "_shiny" in file_name:
+            content = content.replace("<pokemon name>", "shiny_" + pokemon_name)
+        else:
+            content = content.replace("<pokemon name>", pokemon_name)
 
         with open(f"{output_dir}/models/block/{file_name}{pokemon_name}.json", "w") as file:
             file.write(content)
@@ -58,7 +66,11 @@ for pokemon_name in os.listdir(input_dir):
         with open(f"{output_dir}/models/item/{file_name}{pokemon_name}.json", "r") as file:
             content = file.read()
 
-        content = content.replace("<pokemon name>", pokemon_name)
+        # Check if the file name starts with 'shiny_'
+        if "_shiny" in file_name:
+            content = content.replace("<pokemon name>", "shiny_" + pokemon_name)
+        else:
+            content = content.replace("<pokemon name>", pokemon_name)
 
         with open(f"{output_dir}/models/item/{file_name}{pokemon_name}.json", "w") as file:
             file.write(content)
