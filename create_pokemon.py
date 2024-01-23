@@ -19,16 +19,34 @@ for pokemon_name in os.listdir(input_dir):
             shutil.copy(f"{input_dir}/{pokemon_name}/{file_name}", f"{output_dir}/geo")
 
     # 3. Copy and modify blockstate file
-    shutil.copy(f"{template_dir}/blockstates/template_blockstate.json", f"{output_dir}/blockstates/pokedoll_{pokemon_name}.json")
-    shutil.copy(f"{template_dir}/blockstates/template_blockstate.json", f"{output_dir}/blockstates/pokedoll_shiny_{pokemon_name}.json")
+    for file_name in ["pokedoll_", "pokedoll_shiny_"]:
+        with open(f"{output_dir}/blockstates/{file_name}{pokemon_name}.json", "r") as file:
+            content = file.read()
+
+        content = content.replace("<pokemon name>", pokemon_name)
+
+        with open(f"{output_dir}/blockstates/{file_name}{pokemon_name}.json", "w") as file:
+            file.write(content)
 
     # 4. Copy and modify block model file
-    shutil.copy(f"{template_dir}/models/block/template_block_model.json", f"{output_dir}/models/block/pokedoll_{pokemon_name}.json")
-    shutil.copy(f"{template_dir}/models/block/template_block_model.json", f"{output_dir}/models/block/pokedoll_shiny_{pokemon_name}.json")
+    for file_name in ["pokedoll_", "pokedoll_shiny_"]:
+        with open(f"{output_dir}/models/block/{file_name}{pokemon_name}.json", "r") as file:
+            content = file.read()
+
+        content = content.replace("<pokemon name>", pokemon_name)
+
+        with open(f"{output_dir}/models/block/{file_name}{pokemon_name}.json", "w") as file:
+            file.write(content)
 
     # 5. Copy and modify item model file
-    shutil.copy(f"{template_dir}/models/item/template_item_model.json", f"{output_dir}/models/item/pokedoll_{pokemon_name}.json")
-    shutil.copy(f"{template_dir}/models/item/template_item_model.json", f"{output_dir}/models/item/pokedoll_shiny_{pokemon_name}.json")
+    for file_name in ["pokedoll_", "pokedoll_shiny_"]:
+        with open(f"{output_dir}/models/item/{file_name}{pokemon_name}.json", "r") as file:
+            content = file.read()
+
+        content = content.replace("<pokemon name>", pokemon_name)
+
+        with open(f"{output_dir}/models/item/{file_name}{pokemon_name}.json", "w") as file:
+            file.write(content)
 
     # 6. Modify en_us.json
     with open(f"{output_dir}/lang/en_us.json", "r+") as file:
