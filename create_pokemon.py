@@ -153,7 +153,7 @@ for pokemon_name in os.listdir(input_dir):
         f"    ResourceConstants.POKEDOLL_{pokemon_name.upper()}_MODEL,\n",
         f"    ResourceConstants.POKEDOLL_SHINY_{pokemon_name.upper()}_TEXTURE\n",
         f"  );\n",
-        ""
+        f"\n"
     ]
 
     for i, line in enumerate(lines):
@@ -218,7 +218,7 @@ for pokemon_name in os.listdir(input_dir):
             f"\nResourceConstants.POKEDOLL_{pokemon_name.upper()}_MODEL,",
             f"\nResourceConstants.POKEDOLL_SHINY_{pokemon_name.upper()}_TEXTURE",
             f"\n);",
-            ""
+            f"\n"
         ]
         for new_line in reversed(new_lines):
             lines.insert(last_entry_line + 1, new_line)
@@ -290,7 +290,7 @@ for pokemon_name in os.listdir(input_dir):
             f"\nFabricBlockEntityTypeBuilder.create(PokedollShiny{pokemon_name.capitalize()}BlockEntity::new, ModBlocks.POKEDOLL_SHINY_{pokemon_name.upper()}),",
             f"\nPokedollShiny{pokemon_name.capitalize()}BlockEntity.class",
             f"\n);",
-            ""
+            f"\n"
         ]
         for new_line in reversed(new_lines):
             lines.insert(last_entry_line + 1, new_line)
