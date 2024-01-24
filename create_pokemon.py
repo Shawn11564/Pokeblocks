@@ -49,7 +49,7 @@ for pokemon_name in os.listdir(input_dir):
 
         # Check if the file name starts with 'shiny_'
         if "_shiny" in file_name:
-            content = content.replace("<pokemon name>", "shiny_" + pokemon_name)
+            content = content.replace("<pokemon name>", pokemon_name + "_shiny")
         else:
             content = content.replace("<pokemon name>", pokemon_name)
 
@@ -258,7 +258,7 @@ for pokemon_name in os.listdir(input_dir):
     last_entry_line = -1
     for i, line in enumerate(lines):
         if "public static BlockEntityType<Pokedoll" in line:
-            last_entry_line = i + 4
+            last_entry_line = i
 
     # If found, insert the new entries after that line
     if last_entry_line != -1:
@@ -273,7 +273,7 @@ for pokemon_name in os.listdir(input_dir):
     last_entry_line = -1
     for i, line in enumerate(lines):
         if "POKEDOLL_" in line and "registerBlockEntity(" in line:
-            last_entry_line = i
+            last_entry_line = i + 4
 
     # If found, insert the new entries after that line
     if last_entry_line != -1:
