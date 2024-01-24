@@ -183,7 +183,8 @@ for pokemon_name in os.listdir(input_dir):
             f"\npublic static final Block POKEDOLL_{pokemon_name.upper()} = Registry.register(Registries.BLOCK, new Identifier(Pokeblocks.MOD_ID, PokeIDs.POKEDOLL_{pokemon_name.upper()}),",
             f"\nnew PokedollBlock<>(() -> Pokedoll{pokemon_name.capitalize()}BlockEntity.class));",
             f"\npublic static final Block POKEDOLL_SHINY_{pokemon_name.upper()} = Registry.register(Registries.BLOCK, new Identifier(Pokeblocks.MOD_ID, PokeIDs.POKEDOLL_SHINY_{pokemon_name.upper()}),",
-            f"\nnew PokedollBlock<>(() -> PokedollShiny{pokemon_name.capitalize()}BlockEntity.class));"
+            f"\nnew PokedollBlock<>(() -> PokedollShiny{pokemon_name.capitalize()}BlockEntity.class));",
+            f"\n"
         ]
         for new_line in reversed(new_lines):
             lines.insert(last_entry_line + 1, new_line)
@@ -242,7 +243,8 @@ for pokemon_name in os.listdir(input_dir):
     if last_entry_line != -1:
         new_lines = [
             f"\nentries.add(ModBlocks.POKEDOLL_{pokemon_name.upper()});",
-            f"\nentries.add(ModBlocks.POKEDOLL_SHINY_{pokemon_name.upper()});"
+            f"\nentries.add(ModBlocks.POKEDOLL_SHINY_{pokemon_name.upper()});",
+            f"\n"
         ]
         for new_line in reversed(new_lines):
             lines.insert(last_entry_line + 1, new_line)
