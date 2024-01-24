@@ -6,6 +6,6 @@
     64
   ],
   "textures": {
-    "particle": "pokeblocks:block/pokedoll_<pokedoll name>_texture"
+    "particle": "pokeblocks:block/pokedoll_<pokemon name>_texture"
   }
 }

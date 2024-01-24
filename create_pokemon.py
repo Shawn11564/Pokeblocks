@@ -174,7 +174,7 @@ for pokemon_name in os.listdir(input_dir):
     last_entry_line = -1
     for i, line in enumerate(lines):
         if "public static final Block POKEDOLL_" in line:
-            last_entry_line = i
+            last_entry_line = i + 1
 
     # If found, insert the new entries after that line
     if last_entry_line != -1:
@@ -200,7 +200,7 @@ for pokemon_name in os.listdir(input_dir):
     last_entry_line = -1
     for i, line in enumerate(lines):
         if "public static final Item POKEDOLL_" in line:
-            last_entry_line = i
+            last_entry_line = i + 5
 
     # If found, insert the new entries after that line
     if last_entry_line != -1:
@@ -258,7 +258,7 @@ for pokemon_name in os.listdir(input_dir):
     last_entry_line = -1
     for i, line in enumerate(lines):
         if "public static BlockEntityType<Pokedoll" in line:
-            last_entry_line = i
+            last_entry_line = i + 4
 
     # If found, insert the new entries after that line
     if last_entry_line != -1:
@@ -298,16 +298,24 @@ for pokemon_name in os.listdir(input_dir):
 
     # 14. Copy and modify block entity file
     os.makedirs(f"{src_dir}/block/entity/{pokemon_name}", exist_ok=True)
-    shutil.copy(f"{template_dir}/block/entity/template_block_entity.java", f"{src_dir}/block/entity/{pokemon_name}/Pokedoll{pokemon_name.capitalize()}BlockEntity.java")
-    shutil.copy(f"{template_dir}/block/entity/template_block_entity.java", f"{src_dir}/block/entity/{pokemon_name}/PokedollShiny{pokemon_name.capitalize()}BlockEntity.java")
+    shutil.copy(f"{template_dir}/block/entity/template_block_entity.java",
+                f"{src_dir}/block/entity/{pokemon_name}/Pokedoll{pokemon_name.capitalize()}BlockEntity.java")
+    shutil.copy(f"{template_dir}/block/entity/template_block_entity.java",
+                f"{src_dir}/block/entity/{pokemon_name}/PokedollShiny{pokemon_name.capitalize()}BlockEntity.java")
+
     # Open the files and replace <Pokemon name> with the actual pokemon's name
     for file_name in ["Pokedoll", "PokedollShiny"]:
         with open(f"{src_dir}/block/entity/{pokemon_name}/{file_name}{pokemon_name.capitalize()}BlockEntity.java",
                   "r") as file:
             content = file.read()
 
-        content = content.replace("<pokemon_name>", pokemon_name)
-        content = content.replace("<Pokemon name>", pokemon_name.capitalize())
+        # Check if the file name contains 'Shiny'
+        if "Shiny" in file_name:
+            content = content.replace("<Pokemon name>", "Shiny" + pokemon_name.capitalize())
+        else:
+            content = content.replace("<Pokemon name>", pokemon_name.capitalize())
+
+        content = content.replace("<pokemon name>", pokemon_name)
 
         with open(f"{src_dir}/block/entity/{pokemon_name}/{file_name}{pokemon_name.capitalize()}BlockEntity.java",
                   "w") as file:
