@@ -266,7 +266,8 @@ for pokemon_name in os.listdir(input_dir):
     if last_entry_line != -1:
         new_lines = [
             f"\npublic static BlockEntityType<Pokedoll{pokemon_name.capitalize()}BlockEntity> POKEDOLL_{pokemon_name.upper()}_BLOCK_ENTITY;",
-            f"\npublic static BlockEntityType<PokedollShiny{pokemon_name.capitalize()}BlockEntity> POKEDOLL_SHINY_{pokemon_name.upper()}_BLOCK_ENTITY;"
+            f"\npublic static BlockEntityType<PokedollShiny{pokemon_name.capitalize()}BlockEntity> POKEDOLL_SHINY_{pokemon_name.upper()}_BLOCK_ENTITY;",
+            f"\n"
         ]
         for new_line in reversed(new_lines):
             lines.insert(last_entry_line + 1, new_line)
