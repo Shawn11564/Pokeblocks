@@ -50,6 +50,14 @@ public class ModItemGroups {
 						entries.add(ModBlocks.POKEDOLL_SHINY_SENTRET);
 						entries.add(ModBlocks.POKEDOLL_FURRET);
 						entries.add(ModBlocks.POKEDOLL_SHINY_FURRET);
+						entries.add(ModBlocks.POKEDOLL_APPLIN_BASKET);
+						entries.add(ModBlocks.POKEDOLL_SHINY_APPLIN_BASKET);
+						entries.add(ModBlocks.POKEDOLL_MUNCHLAX);
+						entries.add(ModBlocks.POKEDOLL_SHINY_MUNCHLAX);
+						entries.add(ModBlocks.POKEDOLL_RABSCA);
+						entries.add(ModBlocks.POKEDOLL_SHINY_RABSCA);
+						entries.add(ModBlocks.POKEDOLL_RELLOR);
+						entries.add(ModBlocks.POKEDOLL_SHINY_RELLOR);
 					}))
 					.build()
 	);

@@ -14,6 +14,46 @@ public class PokeblocksClient implements ClientModInitializer {
 	@Override
 	public void onInitializeClient() {
 		registerBlockEntityRenderer(
+				ModBlockEntities.POKEDOLL_RELLOR_BLOCK_ENTITY,
+				ResourceConstants.POKEDOLL_RELLOR_MODEL,
+				ResourceConstants.POKEDOLL_RELLOR_TEXTURE
+		);
+		registerBlockEntityRenderer(
+				ModBlockEntities.POKEDOLL_SHINY_RELLOR_BLOCK_ENTITY,
+				ResourceConstants.POKEDOLL_RELLOR_MODEL,
+				ResourceConstants.POKEDOLL_SHINY_RELLOR_TEXTURE
+		);
+		registerBlockEntityRenderer(
+				ModBlockEntities.POKEDOLL_RABSCA_BLOCK_ENTITY,
+				ResourceConstants.POKEDOLL_RABSCA_MODEL,
+				ResourceConstants.POKEDOLL_RABSCA_TEXTURE
+		);
+		registerBlockEntityRenderer(
+				ModBlockEntities.POKEDOLL_SHINY_RABSCA_BLOCK_ENTITY,
+				ResourceConstants.POKEDOLL_RABSCA_MODEL,
+				ResourceConstants.POKEDOLL_SHINY_RABSCA_TEXTURE
+		);
+		registerBlockEntityRenderer(
+				ModBlockEntities.POKEDOLL_MUNCHLAX_BLOCK_ENTITY,
+				ResourceConstants.POKEDOLL_MUNCHLAX_MODEL,
+				ResourceConstants.POKEDOLL_MUNCHLAX_TEXTURE
+		);
+		registerBlockEntityRenderer(
+				ModBlockEntities.POKEDOLL_SHINY_MUNCHLAX_BLOCK_ENTITY,
+				ResourceConstants.POKEDOLL_MUNCHLAX_MODEL,
+				ResourceConstants.POKEDOLL_SHINY_MUNCHLAX_TEXTURE
+		);
+		registerBlockEntityRenderer(
+				ModBlockEntities.POKEDOLL_APPLIN_BASKET_BLOCK_ENTITY,
+				ResourceConstants.POKEDOLL_APPLIN_BASKET_MODEL,
+				ResourceConstants.POKEDOLL_APPLIN_BASKET_TEXTURE
+		);
+		registerBlockEntityRenderer(
+				ModBlockEntities.POKEDOLL_SHINY_APPLIN_BASKET_BLOCK_ENTITY,
+				ResourceConstants.POKEDOLL_APPLIN_BASKET_MODEL,
+				ResourceConstants.POKEDOLL_SHINY_APPLIN_BASKET_TEXTURE
+		);
+		registerBlockEntityRenderer(
 				ModBlockEntities.POKEDOLL_CALYREX_BLOCK_ENTITY,
 				ResourceConstants.POKEDOLL_CALYREX_MODEL,
 				ResourceConstants.POKEDOLL_CALYREX_TEXTURE

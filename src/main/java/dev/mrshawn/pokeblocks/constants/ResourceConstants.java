@@ -58,5 +58,16 @@ public class ResourceConstants {
 	public static final String POKEDOLL_FURRET_TEXTURE = "pokedoll_furret_texture.png";
 	public static final String POKEDOLL_SHINY_FURRET_TEXTURE = "pokedoll_furret_shiny_texture.png";
 	public static final String POKEDOLL_FURRET_MODEL = "pokedoll_furret.geo.json";
-
+	public static final String POKEDOLL_APPLIN_BASKET_TEXTURE = "pokedoll_applin_basket_texture.png";
+	public static final String POKEDOLL_SHINY_APPLIN_BASKET_TEXTURE = "pokedoll_applin_basket_shiny_texture.png";
+	public static final String POKEDOLL_APPLIN_BASKET_MODEL = "pokedoll_applin_basket.geo.json";
+	public static final String POKEDOLL_MUNCHLAX_TEXTURE = "pokedoll_munchlax_texture.png";
+	public static final String POKEDOLL_SHINY_MUNCHLAX_TEXTURE = "pokedoll_munchlax_shiny_texture.png";
+	public static final String POKEDOLL_MUNCHLAX_MODEL = "pokedoll_munchlax.geo.json";
+	public static final String POKEDOLL_RABSCA_TEXTURE = "pokedoll_rabsca_texture.png";
+	public static final String POKEDOLL_SHINY_RABSCA_TEXTURE = "pokedoll_rabsca_shiny_texture.png";
+	public static final String POKEDOLL_RABSCA_MODEL = "pokedoll_rabsca.geo.json";
+	public static final String POKEDOLL_RELLOR_TEXTURE = "pokedoll_rellor_texture.png";
+	public static final String POKEDOLL_SHINY_RELLOR_TEXTURE = "pokedoll_rellor_shiny_texture.png";
+	public static final String POKEDOLL_RELLOR_MODEL = "pokedoll_rellor.geo.json";
 }

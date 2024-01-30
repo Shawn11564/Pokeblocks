@@ -4,10 +4,8 @@
 		"animation.generic": {
 			"loop": true,
 			"bones": {
-				"wings": {
-					"rotation": {
-						"vector": [0, 0, 0]
-					}
+				"rotation": {
+					"vector": [0, 0, 0]
 				}
 			}
 		}
