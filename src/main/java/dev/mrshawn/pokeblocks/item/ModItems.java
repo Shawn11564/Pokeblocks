@@ -19,14 +19,16 @@ public class ModItems {
 			PokeIDs.POKEDOLL_CALYREX,
 			ModBlocks.POKEDOLL_CALYREX,
 			ResourceConstants.POKEDOLL_CALYREX_MODEL,
-			ResourceConstants.POKEDOLL_CALYREX_TEXTURE
+			ResourceConstants.POKEDOLL_CALYREX_TEXTURE,
+			DollRarity.EPIC
 	);
 
 	public static final Item POKEDOLL_SHINY_CALYREX_BLOCK_ITEM = registerItem(
 			PokeIDs.POKEDOLL_SHINY_CALYREX,
 			ModBlocks.POKEDOLL_SHINY_CALYREX,
 			ResourceConstants.POKEDOLL_CALYREX_MODEL,
-			ResourceConstants.POKEDOLL_SHINY_CALYREX_TEXTURE
+			ResourceConstants.POKEDOLL_SHINY_CALYREX_TEXTURE,
+			DollRarity.LEGENDARY
 	);
 
 	public static final Item POKEDOLL_CALYREX_ANIMATED_BLOCK_ITEM = registerItem(
@@ -35,7 +37,8 @@ public class ModItems {
 			ResourceConstants.POKEDOLL_CALYREX_ANIMATED_MODEL,
 			ResourceConstants.POKEDOLL_CALYREX_ANIMATED_TEXTURE,
 			ResourceConstants.POKEDOLL_CALYREX_ANIMATED_ANIMATION,
-			ResourceConstants.POKEDOLL_CALYREX_ANIMATED_ANIMATION_NAME
+			ResourceConstants.POKEDOLL_CALYREX_ANIMATED_ANIMATION_NAME,
+			DollRarity.LEGENDARY
 	);
 
 	public static final Item POKEDOLL_SHINY_CALYREX_ANIMATED_BLOCK_ITEM = registerItem(
@@ -44,147 +47,168 @@ public class ModItems {
 			ResourceConstants.POKEDOLL_CALYREX_ANIMATED_MODEL,
 			ResourceConstants.POKEDOLL_SHINY_CALYREX_ANIMATED_TEXTURE,
 			ResourceConstants.POKEDOLL_CALYREX_ANIMATED_ANIMATION,
-			ResourceConstants.POKEDOLL_CALYREX_ANIMATED_ANIMATION_NAME
+			ResourceConstants.POKEDOLL_CALYREX_ANIMATED_ANIMATION_NAME,
+			DollRarity.LEGENDARY
 	);
 
 	public static final Item POKEDOLL_BULBASAUR_BLOCK_ITEM = registerItem(
 			PokeIDs.POKEDOLL_BULBASAUR,
 			ModBlocks.POKEDOLL_BULBASAUR,
 			ResourceConstants.POKEDOLL_BULBASAUR_MODEL,
-			ResourceConstants.POKEDOLL_BULBASAUR_TEXTURE
+			ResourceConstants.POKEDOLL_BULBASAUR_TEXTURE,
+			DollRarity.COMMON
 	);
 
 	public static final Item POKEDOLL_SHINY_BULBASAUR_BLOCK_ITEM = registerItem(
 			PokeIDs.POKEDOLL_SHINY_BULBASAUR,
 			ModBlocks.POKEDOLL_SHINY_BULBASAUR,
 			ResourceConstants.POKEDOLL_BULBASAUR_MODEL,
-			ResourceConstants.POKEDOLL_SHINY_BULBASAUR_TEXTURE
+			ResourceConstants.POKEDOLL_SHINY_BULBASAUR_TEXTURE,
+			DollRarity.RARE
 	);
 
 	public static final Item POKEDOLL_BULBASAUR_POSED_BLOCK_ITEM = registerItem(
 			PokeIDs.POKEDOLL_BULBASAUR_POSED,
 			ModBlocks.POKEDOLL_BULBASAUR_POSED,
 			ResourceConstants.POKEDOLL_BULBASAUR_POSED_MODEL,
-			ResourceConstants.POKEDOLL_BULBASAUR_POSED_TEXTURE
+			ResourceConstants.POKEDOLL_BULBASAUR_POSED_TEXTURE,
+			DollRarity.RARE
 	);
 
 	public static final Item POKEDOLL_SHINY_BULBASAUR_POSED_BLOCK_ITEM = registerItem(
 			PokeIDs.POKEDOLL_SHINY_BULBASAUR_POSED,
 			ModBlocks.POKEDOLL_SHINY_BULBASAUR_POSED,
 			ResourceConstants.POKEDOLL_BULBASAUR_POSED_MODEL,
-			ResourceConstants.POKEDOLL_SHINY_BULBASAUR_POSED_TEXTURE
+			ResourceConstants.POKEDOLL_SHINY_BULBASAUR_POSED_TEXTURE,
+			DollRarity.EPIC
 	);
 
 	public static final Item POKEDOLL_SQUIRTLE_BLOCK_ITEM = registerItem(
 			PokeIDs.POKEDOLL_SQUIRTLE,
 			ModBlocks.POKEDOLL_SQUIRTLE,
 			ResourceConstants.POKEDOLL_SQUIRTLE_MODEL,
-			ResourceConstants.POKEDOLL_SQUIRTLE_TEXTURE
+			ResourceConstants.POKEDOLL_SQUIRTLE_TEXTURE,
+			DollRarity.COMMON
 	);
 
 	public static final Item POKEDOLL_SHINY_SQUIRTLE_BLOCK_ITEM = registerItem(
 			PokeIDs.POKEDOLL_SHINY_SQUIRTLE,
 			ModBlocks.POKEDOLL_SHINY_SQUIRTLE,
 			ResourceConstants.POKEDOLL_SQUIRTLE_MODEL,
-			ResourceConstants.POKEDOLL_SHINY_SQUIRTLE_TEXTURE
+			ResourceConstants.POKEDOLL_SHINY_SQUIRTLE_TEXTURE,
+			DollRarity.RARE
 	);
 
 	public static final Item POKEDOLL_CHARMANDER_BLOCK_ITEM = registerItem(
 			PokeIDs.POKEDOLL_CHARMANDER,
 			ModBlocks.POKEDOLL_CHARMANDER,
 			ResourceConstants.POKEDOLL_CHARMANDER_MODEL,
-			ResourceConstants.POKEDOLL_CHARMANDER_TEXTURE
+			ResourceConstants.POKEDOLL_CHARMANDER_TEXTURE,
+			DollRarity.COMMON
 	);
 
 	public static final Item POKEDOLL_SHINY_CHARMANDER_BLOCK_ITEM = registerItem(
 			PokeIDs.POKEDOLL_SHINY_CHARMANDER,
 			ModBlocks.POKEDOLL_SHINY_CHARMANDER,
 			ResourceConstants.POKEDOLL_CHARMANDER_MODEL,
-			ResourceConstants.POKEDOLL_SHINY_CHARMANDER_TEXTURE
+			ResourceConstants.POKEDOLL_SHINY_CHARMANDER_TEXTURE,
+			DollRarity.RARE
 	);
 
 	public static final Item POKEDOLL_LICKITUNG_BLOCK_ITEM = registerItem(
 			PokeIDs.POKEDOLL_LICKITUNG,
 			ModBlocks.POKEDOLL_LICKITUNG,
 			ResourceConstants.POKEDOLL_LICKITUNG_MODEL,
-			ResourceConstants.POKEDOLL_LICKITUNG_TEXTURE
+			ResourceConstants.POKEDOLL_LICKITUNG_TEXTURE,
+			DollRarity.UNCOMMON
 	);
 
 	public static final Item POKEDOLL_SHINY_LICKITUNG_BLOCK_ITEM = registerItem(
 			PokeIDs.POKEDOLL_SHINY_LICKITUNG,
 			ModBlocks.POKEDOLL_SHINY_LICKITUNG,
 			ResourceConstants.POKEDOLL_LICKITUNG_MODEL,
-			ResourceConstants.POKEDOLL_SHINY_LICKITUNG_TEXTURE
+			ResourceConstants.POKEDOLL_SHINY_LICKITUNG_TEXTURE,
+			DollRarity.RARE
 	);
 
 	public static final Item POKEDOLL_MAREEP_BLOCK_ITEM = registerItem(
 			PokeIDs.POKEDOLL_MAREEP,
 			ModBlocks.POKEDOLL_MAREEP,
 			ResourceConstants.POKEDOLL_MAREEP_MODEL,
-			ResourceConstants.POKEDOLL_MAREEP_TEXTURE
+			ResourceConstants.POKEDOLL_MAREEP_TEXTURE,
+			DollRarity.UNCOMMON
 	);
 
 	public static final Item POKEDOLL_SHINY_MAREEP_BLOCK_ITEM = registerItem(
 			PokeIDs.POKEDOLL_SHINY_MAREEP,
 			ModBlocks.POKEDOLL_SHINY_MAREEP,
 			ResourceConstants.POKEDOLL_MAREEP_MODEL,
-			ResourceConstants.POKEDOLL_SHINY_MAREEP_TEXTURE
+			ResourceConstants.POKEDOLL_SHINY_MAREEP_TEXTURE,
+			DollRarity.EPIC
 	);
 
 	public static final Item POKEDOLL_FLAAFFY_BLOCK_ITEM = registerItem(
 			PokeIDs.POKEDOLL_FLAAFFY,
 			ModBlocks.POKEDOLL_FLAAFFY,
 			ResourceConstants.POKEDOLL_FLAAFFY_MODEL,
-			ResourceConstants.POKEDOLL_FLAAFFY_TEXTURE
+			ResourceConstants.POKEDOLL_FLAAFFY_TEXTURE,
+			DollRarity.RARE
 	);
 
 	public static final Item POKEDOLL_SHINY_FLAAFFY_BLOCK_ITEM = registerItem(
 			PokeIDs.POKEDOLL_SHINY_FLAAFFY,
 			ModBlocks.POKEDOLL_SHINY_FLAAFFY,
 			ResourceConstants.POKEDOLL_FLAAFFY_MODEL,
-			ResourceConstants.POKEDOLL_SHINY_FLAAFFY_TEXTURE
+			ResourceConstants.POKEDOLL_SHINY_FLAAFFY_TEXTURE,
+			DollRarity.LEGENDARY
 	);
 
 	public static final Item POKEDOLL_SMOLIV_BLOCK_ITEM = registerItem(
 			PokeIDs.POKEDOLL_SMOLIV,
 			ModBlocks.POKEDOLL_SMOLIV,
 			ResourceConstants.POKEDOLL_SMOLIV_MODEL,
-			ResourceConstants.POKEDOLL_SMOLIV_TEXTURE
+			ResourceConstants.POKEDOLL_SMOLIV_TEXTURE,
+			DollRarity.COMMON
 	);
 
 	public static final Item POKEDOLL_SHINY_SMOLIV_BLOCK_ITEM = registerItem(
 			PokeIDs.POKEDOLL_SHINY_SMOLIV,
 			ModBlocks.POKEDOLL_SHINY_SMOLIV,
 			ResourceConstants.POKEDOLL_SMOLIV_MODEL,
-			ResourceConstants.POKEDOLL_SHINY_SMOLIV_TEXTURE
+			ResourceConstants.POKEDOLL_SHINY_SMOLIV_TEXTURE,
+			DollRarity.UNCOMMON
 	);
 
 	public static final Item POKEDOLL_DOLLIV_BLOCK_ITEM = registerItem(
 			PokeIDs.POKEDOLL_DOLLIV,
 			ModBlocks.POKEDOLL_DOLLIV,
 			ResourceConstants.POKEDOLL_DOLLIV_MODEL,
-			ResourceConstants.POKEDOLL_DOLLIV_TEXTURE
+			ResourceConstants.POKEDOLL_DOLLIV_TEXTURE,
+			DollRarity.UNCOMMON
 	);
 
 	public static final Item POKEDOLL_SHINY_DOLLIV_BLOCK_ITEM = registerItem(
 			PokeIDs.POKEDOLL_SHINY_DOLLIV,
 			ModBlocks.POKEDOLL_SHINY_DOLLIV,
 			ResourceConstants.POKEDOLL_DOLLIV_MODEL,
-			ResourceConstants.POKEDOLL_SHINY_DOLLIV_TEXTURE
+			ResourceConstants.POKEDOLL_SHINY_DOLLIV_TEXTURE,
+			DollRarity.EPIC
 	);
 
 	public static final Item POKEDOLL_ARBOLIVA_BLOCK_ITEM = registerItem(
 			PokeIDs.POKEDOLL_ARBOLIVA,
 			ModBlocks.POKEDOLL_ARBOLIVA,
 			ResourceConstants.POKEDOLL_ARBOLIVA_MODEL,
-			ResourceConstants.POKEDOLL_ARBOLIVA_TEXTURE
+			ResourceConstants.POKEDOLL_ARBOLIVA_TEXTURE,
+			DollRarity.UNCOMMON
 	);
 
 	public static final Item POKEDOLL_SHINY_ARBOLIVA_BLOCK_ITEM = registerItem(
 			PokeIDs.POKEDOLL_SHINY_ARBOLIVA,
 			ModBlocks.POKEDOLL_SHINY_ARBOLIVA,
 			ResourceConstants.POKEDOLL_ARBOLIVA_MODEL,
-			ResourceConstants.POKEDOLL_SHINY_ARBOLIVA_TEXTURE
+			ResourceConstants.POKEDOLL_SHINY_ARBOLIVA_TEXTURE,
+			DollRarity.EPIC
 	);
 
 	//	public static final Item POKEDOLL_WASHING_MACHINE_BLOCK_ITEM = registerItem(
@@ -197,128 +221,145 @@ public class ModItems {
 			PokeIDs.POKEDOLL_WASHING_MACHINE,
 			ModBlocks.POKEDOLL_WASHING_MACHINE,
 			ResourceConstants.POKEDOLL_WASHING_MACHINE_MODEL,
-			ResourceConstants.POKEDOLL_WASHING_MACHINE_TEXTURE
+			ResourceConstants.POKEDOLL_WASHING_MACHINE_TEXTURE,
+			DollRarity.LEGENDARY
 	);
 
 	public static final Item POKEDOLL_SNORLAX_BLOCK_ITEM = registerItem(
 			PokeIDs.POKEDOLL_SNORLAX,
 			ModBlocks.POKEDOLL_SNORLAX,
 			ResourceConstants.POKEDOLL_SNORLAX_MODEL,
-			ResourceConstants.POKEDOLL_SNORLAX_TEXTURE
+			ResourceConstants.POKEDOLL_SNORLAX_TEXTURE,
+			DollRarity.RARE
 	);
 
 	public static final Item POKEDOLL_SHINY_SNORLAX_BLOCK_ITEM = registerItem(
 			PokeIDs.POKEDOLL_SHINY_SNORLAX,
 			ModBlocks.POKEDOLL_SHINY_SNORLAX,
 			ResourceConstants.POKEDOLL_SNORLAX_MODEL,
-			ResourceConstants.POKEDOLL_SHINY_SNORLAX_TEXTURE
+			ResourceConstants.POKEDOLL_SHINY_SNORLAX_TEXTURE,
+			DollRarity.LEGENDARY
 	);
 
 	public static final Item POKEDOLL_AMPHAROS_BLOCK_ITEM = registerItem(
 			PokeIDs.POKEDOLL_AMPHAROS,
 			ModBlocks.POKEDOLL_AMPHAROS,
 			ResourceConstants.POKEDOLL_AMPHAROS_MODEL,
-			ResourceConstants.POKEDOLL_AMPHAROS_TEXTURE
+			ResourceConstants.POKEDOLL_AMPHAROS_TEXTURE,
+			DollRarity.EPIC
 	);
 
 	public static final Item POKEDOLL_SHINY_AMPHAROS_BLOCK_ITEM = registerItem(
 			PokeIDs.POKEDOLL_SHINY_AMPHAROS,
 			ModBlocks.POKEDOLL_SHINY_AMPHAROS,
 			ResourceConstants.POKEDOLL_AMPHAROS_MODEL,
-			ResourceConstants.POKEDOLL_SHINY_AMPHAROS_TEXTURE
+			ResourceConstants.POKEDOLL_SHINY_AMPHAROS_TEXTURE,
+			DollRarity.LEGENDARY
 	);
 
 	public static final Item POKEDOLL_SENTRET_BLOCK_ITEM = registerItem(
 			PokeIDs.POKEDOLL_SENTRET,
 			ModBlocks.POKEDOLL_SENTRET,
 			ResourceConstants.POKEDOLL_SENTRET_MODEL,
-			ResourceConstants.POKEDOLL_SENTRET_TEXTURE
+			ResourceConstants.POKEDOLL_SENTRET_TEXTURE,
+			DollRarity.RARE
 	);
 
 	public static final Item POKEDOLL_SHINY_SENTRET_BLOCK_ITEM = registerItem(
 			PokeIDs.POKEDOLL_SHINY_SENTRET,
 			ModBlocks.POKEDOLL_SHINY_SENTRET,
 			ResourceConstants.POKEDOLL_SENTRET_MODEL,
-			ResourceConstants.POKEDOLL_SHINY_SENTRET_TEXTURE
+			ResourceConstants.POKEDOLL_SHINY_SENTRET_TEXTURE,
+			DollRarity.EPIC
 	);
 
 	public static final Item POKEDOLL_FURRET_BLOCK_ITEM = registerItem(
 			PokeIDs.POKEDOLL_FURRET,
 			ModBlocks.POKEDOLL_FURRET,
 			ResourceConstants.POKEDOLL_FURRET_MODEL,
-			ResourceConstants.POKEDOLL_FURRET_TEXTURE
+			ResourceConstants.POKEDOLL_FURRET_TEXTURE,
+			DollRarity.RARE
 	);
 
 	public static final Item POKEDOLL_SHINY_FURRET_BLOCK_ITEM = registerItem(
 			PokeIDs.POKEDOLL_SHINY_FURRET,
 			ModBlocks.POKEDOLL_SHINY_FURRET,
 			ResourceConstants.POKEDOLL_FURRET_MODEL,
-			ResourceConstants.POKEDOLL_SHINY_FURRET_TEXTURE
+			ResourceConstants.POKEDOLL_SHINY_FURRET_TEXTURE,
+			DollRarity.LEGENDARY
 	);
 
 	public static final Item POKEDOLL_APPLIN_BASKET_BLOCK_ITEM = registerItem(
 			PokeIDs.POKEDOLL_APPLIN_BASKET,
 			ModBlocks.POKEDOLL_APPLIN_BASKET,
 			ResourceConstants.POKEDOLL_APPLIN_BASKET_MODEL,
-			ResourceConstants.POKEDOLL_APPLIN_BASKET_TEXTURE
+			ResourceConstants.POKEDOLL_APPLIN_BASKET_TEXTURE,
+			DollRarity.EPIC
 	);
 	public static final Item POKEDOLL_SHINY_APPLIN_BASKET_BLOCK_ITEM = registerItem(
 			PokeIDs.POKEDOLL_SHINY_APPLIN_BASKET,
 			ModBlocks.POKEDOLL_SHINY_APPLIN_BASKET,
 			ResourceConstants.POKEDOLL_APPLIN_BASKET_MODEL,
-			ResourceConstants.POKEDOLL_SHINY_APPLIN_BASKET_TEXTURE
+			ResourceConstants.POKEDOLL_SHINY_APPLIN_BASKET_TEXTURE,
+			DollRarity.LEGENDARY
 	);
 
 	public static final Item POKEDOLL_MUNCHLAX_BLOCK_ITEM = registerItem(
 			PokeIDs.POKEDOLL_MUNCHLAX,
 			ModBlocks.POKEDOLL_MUNCHLAX,
 			ResourceConstants.POKEDOLL_MUNCHLAX_MODEL,
-			ResourceConstants.POKEDOLL_MUNCHLAX_TEXTURE
+			ResourceConstants.POKEDOLL_MUNCHLAX_TEXTURE,
+			DollRarity.RARE
 	);
 	public static final Item POKEDOLL_SHINY_MUNCHLAX_BLOCK_ITEM = registerItem(
 			PokeIDs.POKEDOLL_SHINY_MUNCHLAX,
 			ModBlocks.POKEDOLL_SHINY_MUNCHLAX,
 			ResourceConstants.POKEDOLL_MUNCHLAX_MODEL,
-			ResourceConstants.POKEDOLL_SHINY_MUNCHLAX_TEXTURE
+			ResourceConstants.POKEDOLL_SHINY_MUNCHLAX_TEXTURE,
+			DollRarity.EPIC
 	);
 
 	public static final Item POKEDOLL_RABSCA_BLOCK_ITEM = registerItem(
 			PokeIDs.POKEDOLL_RABSCA,
 			ModBlocks.POKEDOLL_RABSCA,
 			ResourceConstants.POKEDOLL_RABSCA_MODEL,
-			ResourceConstants.POKEDOLL_RABSCA_TEXTURE
+			ResourceConstants.POKEDOLL_RABSCA_TEXTURE,
+			DollRarity.RARE
 	);
 	public static final Item POKEDOLL_SHINY_RABSCA_BLOCK_ITEM = registerItem(
 			PokeIDs.POKEDOLL_SHINY_RABSCA,
 			ModBlocks.POKEDOLL_SHINY_RABSCA,
 			ResourceConstants.POKEDOLL_RABSCA_MODEL,
-			ResourceConstants.POKEDOLL_SHINY_RABSCA_TEXTURE
+			ResourceConstants.POKEDOLL_SHINY_RABSCA_TEXTURE,
+			DollRarity.LEGENDARY
 	);
 
 	public static final Item POKEDOLL_RELLOR_BLOCK_ITEM = registerItem(
 			PokeIDs.POKEDOLL_RELLOR,
 			ModBlocks.POKEDOLL_RELLOR,
 			ResourceConstants.POKEDOLL_RELLOR_MODEL,
-			ResourceConstants.POKEDOLL_RELLOR_TEXTURE
+			ResourceConstants.POKEDOLL_RELLOR_TEXTURE,
+			DollRarity.COMMON
 	);
 	public static final Item POKEDOLL_SHINY_RELLOR_BLOCK_ITEM = registerItem(
 			PokeIDs.POKEDOLL_SHINY_RELLOR,
 			ModBlocks.POKEDOLL_SHINY_RELLOR,
 			ResourceConstants.POKEDOLL_RELLOR_MODEL,
-			ResourceConstants.POKEDOLL_SHINY_RELLOR_TEXTURE
+			ResourceConstants.POKEDOLL_SHINY_RELLOR_TEXTURE,
+			DollRarity.EPIC
 	);
 
 	private static Item registerItem(String name, Item item) {
 		return Registry.register(Registries.ITEM, new Identifier(Pokeblocks.MOD_ID, name), item);
 	}
 
-	private static Item registerItem(String name, Block block, String modelResourcePath, String textureResourcePath, String animationResourcePath, String animationName) {
+	private static Item registerItem(String name, Block block, String modelResourcePath, String textureResourcePath, String animationResourcePath, String animationName, DollRarity rarity) {
 		PokedollBlockItemModel itemModel = new PokedollBlockItemModel(
 				modelResourcePath,
 				textureResourcePath,
 				animationResourcePath
 		);
-		PokedollBlockItem blockItem = new PokedollBlockItem(block, () -> itemModel) {
+		PokedollBlockItem blockItem = new PokedollBlockItem(block, rarity, () -> itemModel) {
 			@Override
 			public String getAnimationName() {
 				return animationName;
@@ -327,10 +368,10 @@ public class ModItems {
 		return registerItem(name, blockItem);
 	}
 
-	private static Item registerItem(String name, Block block, String modelResourcePath, String textureResourcePath) {
+	private static Item registerItem(String name, Block block, String modelResourcePath, String textureResourcePath, DollRarity rarity) {
 		return registerItem(
 				name,
-				new PokedollBlockItem(block, () -> new PokedollBlockItemModel(
+				new PokedollBlockItem(block, rarity, () -> new PokedollBlockItemModel(
 						modelResourcePath,
 						textureResourcePath,
 						ResourceConstants.GENERIC_ANIMATION_PATH
@@ -338,13 +379,13 @@ public class ModItems {
 		);
 	}
 
-	private static Item registerItemWithAnimation(String name, Block block, String modelResourcePath, String textureResourcePath, String animationResourcePath, String animationName) {
+	private static Item registerItemWithAnimation(String name, Block block, String modelResourcePath, String textureResourcePath, String animationResourcePath, String animationName, DollRarity rarity) {
 		PokedollBlockItemModel itemModel = new PokedollBlockItemModel(
 				modelResourcePath,
 				textureResourcePath,
 				animationResourcePath
 		);
-		WearablePokedollBlockItem blockItem = new WearablePokedollBlockItem(block, () -> itemModel) {
+		WearablePokedollBlockItem blockItem = new WearablePokedollBlockItem(block, rarity, () -> itemModel) {
 			@Override
 			public String getAnimationName() {
 				return animationName;

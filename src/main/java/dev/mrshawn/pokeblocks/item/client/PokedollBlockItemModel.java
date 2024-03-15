@@ -36,7 +36,7 @@ public class PokedollBlockItemModel extends GeoModel<PokedollBlockItem> {
 
 	@Override
 	public Identifier getAnimationResource(PokedollBlockItem animatable) {
-		return new Identifier(Pokeblocks.MOD_ID, "animations/" + animationResourcePath);
+		return new Identifier(Pokeblocks.MOD_ID, "animations/block/" + animationResourcePath);
 	}
 
 }

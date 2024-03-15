@@ -4,6 +4,7 @@ import dev.mrshawn.pokeblocks.block.entity.ModBlockEntities;
 import dev.mrshawn.pokeblocks.block.entity.PokedollBlockEntity;
 import dev.mrshawn.pokeblocks.block.entity.client.PokedollBlockModel;
 import dev.mrshawn.pokeblocks.block.entity.client.PokedollBlockRenderer;
+import dev.mrshawn.pokeblocks.block.entity.client.PokedollScaledBlockRenderer;
 import dev.mrshawn.pokeblocks.constants.ResourceConstants;
 import net.fabricmc.api.ClientModInitializer;
 import net.minecraft.block.entity.BlockEntityType;
@@ -231,8 +232,29 @@ public class PokeblocksClient implements ClientModInitializer {
 		BlockEntityRendererFactories.register(type, context -> new PokedollBlockRenderer(context, blockModel));
 	}
 
+	private static <T extends PokedollBlockEntity> void registerBlockEntityRenderer(BlockEntityType<T> type, String modelResourcePath, String textureResourcePath, String animationResourcePath, float scaleWidth, float scaleHeight) {
+		PokedollBlockModel blockModel = new PokedollBlockModel(
+				modelResourcePath,
+				textureResourcePath,
+				animationResourcePath
+		);
+		BlockEntityRendererFactories.register(type, context -> new PokedollScaledBlockRenderer(context, blockModel, scaleWidth, scaleHeight));
+	}
+
+	private static <T extends PokedollBlockEntity> void registerBlockEntityRenderer(BlockEntityType<T> type, String modelResourcePath, String textureResourcePath, String animationResourcePath, float scale) {
+		registerBlockEntityRenderer(type, modelResourcePath, textureResourcePath, animationResourcePath, scale, scale);
+	}
+
 	private static <T extends PokedollBlockEntity> void registerBlockEntityRenderer(BlockEntityType<T> type, String modelResourcePath, String textureResourcePath) {
-		registerBlockEntityRenderer(type, modelResourcePath, textureResourcePath, ResourceConstants.SPIN_ANIMATION_PATH);
+		registerBlockEntityRenderer(type, modelResourcePath, textureResourcePath, ResourceConstants.GENERIC_ANIMATION_PATH);
+	}
+
+	private static <T extends PokedollBlockEntity> void registerBlockEntityRenderer(BlockEntityType<T> type, String modelResourcePath, String textureResourcePath, float scaledWidth, float scaledHeight) {
+		registerBlockEntityRenderer(type, modelResourcePath, textureResourcePath, ResourceConstants.GENERIC_ANIMATION_PATH, scaledWidth, scaledHeight);
+	}
+
+	private static <T extends PokedollBlockEntity> void registerBlockEntityRenderer(BlockEntityType<T> type, String modelResourcePath, String textureResourcePath, float scale) {
+		registerBlockEntityRenderer(type, modelResourcePath, textureResourcePath, ResourceConstants.GENERIC_ANIMATION_PATH, scale);
 	}
 
 }

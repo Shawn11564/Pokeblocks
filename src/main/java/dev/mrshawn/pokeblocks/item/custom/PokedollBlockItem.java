@@ -1,12 +1,18 @@
 package dev.mrshawn.pokeblocks.item.custom;
 
 import dev.mrshawn.pokeblocks.constants.ResourceConstants;
+import dev.mrshawn.pokeblocks.item.DollRarity;
 import dev.mrshawn.pokeblocks.item.client.PokedollBlockItemModel;
 import dev.mrshawn.pokeblocks.item.client.PokedollBlockItemRenderer;
 import net.fabricmc.fabric.api.item.v1.FabricItemSettings;
 import net.minecraft.block.Block;
+import net.minecraft.client.item.TooltipContext;
 import net.minecraft.client.render.item.BuiltinModelItemRenderer;
 import net.minecraft.item.BlockItem;
+import net.minecraft.item.ItemStack;
+import net.minecraft.text.Text;
+import net.minecraft.world.World;
+import org.jetbrains.annotations.Nullable;
 import software.bernie.geckolib.animatable.GeoItem;
 import software.bernie.geckolib.animatable.SingletonGeoAnimatable;
 import software.bernie.geckolib.animatable.client.RenderProvider;
@@ -17,6 +23,7 @@ import software.bernie.geckolib.core.animation.*;
 import software.bernie.geckolib.core.object.PlayState;
 import software.bernie.geckolib.util.RenderUtils;
 
+import java.util.List;
 import java.util.function.Consumer;
 import java.util.function.Supplier;
 
@@ -25,15 +32,18 @@ public class PokedollBlockItem extends BlockItem implements GeoItem {
 	private AnimatableInstanceCache cache = new SingletonAnimatableInstanceCache(this);
 	private final Supplier<Object> renderProvider = GeoItem.makeRenderer(this);
 	private final Supplier<PokedollBlockItemModel> blockItemModelSupplier;
+	private final DollRarity rarity;
 
-	public PokedollBlockItem(Block block, Settings settings, Supplier<PokedollBlockItemModel> blockItemModelSupplier) {
+	public PokedollBlockItem(Block block, Settings settings, DollRarity rarity, Supplier<PokedollBlockItemModel> blockItemModelSupplier) {
 		super(block, settings);
+		this.rarity = rarity;
 		SingletonGeoAnimatable.registerSyncedAnimatable(this);
 		this.blockItemModelSupplier = blockItemModelSupplier;
 	}
 
-	public PokedollBlockItem(Block block, Supplier<PokedollBlockItemModel> blockItemModelSupplier) {
+	public PokedollBlockItem(Block block, DollRarity rarity, Supplier<PokedollBlockItemModel> blockItemModelSupplier) {
 		super(block, new FabricItemSettings());
+		this.rarity = rarity;
 		SingletonGeoAnimatable.registerSyncedAnimatable(this);
 		this.blockItemModelSupplier = blockItemModelSupplier;
 	}
@@ -76,6 +86,11 @@ public class PokedollBlockItem extends BlockItem implements GeoItem {
 
 	public String getAnimationName() {
 		return ResourceConstants.GENERIC_ANIMATION;
+	}
+
+	@Override
+	public void appendTooltip(ItemStack stack, @Nullable World world, List<Text> tooltip, TooltipContext context) {
+		tooltip.add(1, Text.literal(rarity.getDisplayName()).formatted(rarity.getColor()));
 	}
 
 }

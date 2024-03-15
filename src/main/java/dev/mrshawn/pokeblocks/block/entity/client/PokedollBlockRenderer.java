@@ -9,5 +9,4 @@ public class PokedollBlockRenderer extends GeoBlockRenderer<PokedollBlockEntity>
 	public PokedollBlockRenderer(BlockEntityRendererFactory.Context context, PokedollBlockModel model) {
 		super(model);
 	}
-
 }
