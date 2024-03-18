@@ -143,12 +143,12 @@ for pokemon_name in os.listdir(input_dir):
     # Find the method and insert the new lines
     method_name = "onInitializeClient"
     new_lines = [
-        f"  registerBlockEntityRenderer(\n",
+        f"  registerRenderer(\n",
         f"    ModBlockEntities.POKEDOLL_{pokemon_name.upper()}_BLOCK_ENTITY,\n",
         f"    ResourceConstants.POKEDOLL_{pokemon_name.upper()}_MODEL,\n",
         f"    ResourceConstants.POKEDOLL_{pokemon_name.upper()}_TEXTURE\n",
         f"  );\n",
-        f"  registerBlockEntityRenderer(\n",
+        f"  registerRenderer(\n",
         f"    ModBlockEntities.POKEDOLL_SHINY_{pokemon_name.upper()}_BLOCK_ENTITY,\n",
         f"    ResourceConstants.POKEDOLL_{pokemon_name.upper()}_MODEL,\n",
         f"    ResourceConstants.POKEDOLL_SHINY_{pokemon_name.upper()}_TEXTURE\n",
