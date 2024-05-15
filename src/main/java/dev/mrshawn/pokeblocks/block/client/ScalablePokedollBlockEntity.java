@@ -1,4 +1,4 @@
-package dev.mrshawn.pokeblocks.block.entity.client;
+package dev.mrshawn.pokeblocks.block.client;
 
 import dev.mrshawn.pokeblocks.block.entity.PokedollBlockEntity;
 import net.minecraft.block.BlockState;

@@ -24,20 +24,20 @@ public class PokedollBlock <T extends BlockEntity> extends BlockWithEntity {
 	private VoxelShape shape;
 
 	public PokedollBlock(Block copiedBlock, VoxelShape shape, Supplier<Class<T>> blockEntitySupplier) {
-		super(FabricBlockSettings.copy(copiedBlock).nonOpaque().solidBlock((state, world, pos) -> false));
+		super(FabricBlockSettings.copy(copiedBlock).strength(0.4f).nonOpaque().solidBlock((state, world, pos) -> false));
 		this.blockEntitySupplier = blockEntitySupplier;
 		this.shape = shape;
 		setDefaultState(this.getStateManager().getDefaultState().with(Properties.HORIZONTAL_FACING, Direction.NORTH));
 	}
 
 	public PokedollBlock(Block copiedBlock, Supplier<Class<T>> blockEntitySupplier) {
-		super(FabricBlockSettings.copy(copiedBlock).nonOpaque().solidBlock((state, world, pos) -> false));
+		super(FabricBlockSettings.copy(copiedBlock).strength(0.4f).nonOpaque().solidBlock((state, world, pos) -> false));
 		this.blockEntitySupplier = blockEntitySupplier;
 		setDefaultState(this.getStateManager().getDefaultState().with(Properties.HORIZONTAL_FACING, Direction.NORTH));
 	}
 
 	public PokedollBlock(VoxelShape shape, Supplier<Class<T>> blockEntitySupplier) {
-		super(FabricBlockSettings.copy(Blocks.WHITE_WOOL).nonOpaque().solidBlock((state, world, pos) -> false));
+		super(FabricBlockSettings.copy(Blocks.WHITE_WOOL).strength(0.4f).nonOpaque().solidBlock((state, world, pos) -> false));
 		this.blockEntitySupplier = blockEntitySupplier;
 		this.shape = shape;
 		setDefaultState(this.getStateManager().getDefaultState().with(Properties.HORIZONTAL_FACING, Direction.NORTH));

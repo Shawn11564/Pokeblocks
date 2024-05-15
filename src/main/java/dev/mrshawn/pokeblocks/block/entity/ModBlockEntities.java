@@ -45,6 +45,8 @@ import dev.mrshawn.pokeblocks.block.entity.mareep.PokedollShinyMareepBlockEntity
 import dev.mrshawn.pokeblocks.block.entity.munchlax.PokedollMunchlaxBlockEntity;
 import dev.mrshawn.pokeblocks.block.entity.munchlax.PokedollShinyMunchlaxBlockEntity;
 import dev.mrshawn.pokeblocks.block.entity.pokemon_trophy.PokedollPokemonTrophyBlockEntity;
+import dev.mrshawn.pokeblocks.block.entity.quagsire.PokedollQuagsireBlockEntity;
+import dev.mrshawn.pokeblocks.block.entity.quagsire.PokedollShinyQuagsireBlockEntity;
 import dev.mrshawn.pokeblocks.block.entity.rabsca.PokedollRabscaBlockEntity;
 import dev.mrshawn.pokeblocks.block.entity.rabsca.PokedollShinyRabscaBlockEntity;
 import dev.mrshawn.pokeblocks.block.entity.red_communism_figurine.RedCommunismFigurineBlockEntity;
@@ -67,6 +69,8 @@ import dev.mrshawn.pokeblocks.block.entity.venusaur.PokedollShinyVenusaurBlockEn
 import dev.mrshawn.pokeblocks.block.entity.venusaur.PokedollVenusaurBlockEntity;
 import dev.mrshawn.pokeblocks.block.entity.wartortle.PokedollShinyWartortleBlockEntity;
 import dev.mrshawn.pokeblocks.block.entity.wartortle.PokedollWartortleBlockEntity;
+import dev.mrshawn.pokeblocks.block.entity.wooper.PokedollShinyWooperBlockEntity;
+import dev.mrshawn.pokeblocks.block.entity.wooper.PokedollWooperBlockEntity;
 import dev.mrshawn.pokeblocks.constants.PokeIDs;
 import net.fabricmc.fabric.api.object.builder.v1.block.entity.FabricBlockEntityTypeBuilder;
 import net.minecraft.block.entity.BlockEntity;
@@ -136,12 +140,14 @@ public class ModBlockEntities {
 	public static BlockEntityType<PokedollMagikarpFishbowlBlockEntity> POKEDOLL_MAGIKARP_FISHBOWL_BLOCK_ENTITY;
 	public static BlockEntityType<PokedollShinyMagikarpFishbowlBlockEntity> POKEDOLL_SHINY_MAGIKARP_FISHBOWL_BLOCK_ENTITY;
 	public static BlockEntityType<PokedollPokemonTrophyBlockEntity> POKEDOLL_POKEMON_TROPHY_BLOCK_ENTITY;
-
-public static BlockEntityType<PokedollBlastoiseBlockEntity> POKEDOLL_BLASTOISE_BLOCK_ENTITY;
-public static BlockEntityType<PokedollShinyBlastoiseBlockEntity> POKEDOLL_SHINY_BLASTOISE_BLOCK_ENTITY;
-
-public static BlockEntityType<PokedollSwinubBlockEntity> POKEDOLL_SWINUB_BLOCK_ENTITY;
-public static BlockEntityType<PokedollShinySwinubBlockEntity> POKEDOLL_SHINY_SWINUB_BLOCK_ENTITY;
+	public static BlockEntityType<PokedollBlastoiseBlockEntity> POKEDOLL_BLASTOISE_BLOCK_ENTITY;
+	public static BlockEntityType<PokedollShinyBlastoiseBlockEntity> POKEDOLL_SHINY_BLASTOISE_BLOCK_ENTITY;
+	public static BlockEntityType<PokedollSwinubBlockEntity> POKEDOLL_SWINUB_BLOCK_ENTITY;
+	public static BlockEntityType<PokedollShinySwinubBlockEntity> POKEDOLL_SHINY_SWINUB_BLOCK_ENTITY;
+	public static BlockEntityType<PokedollWooperBlockEntity> POKEDOLL_WOOPER_BLOCK_ENTITY;
+	public static BlockEntityType<PokedollShinyWooperBlockEntity> POKEDOLL_SHINY_WOOPER_BLOCK_ENTITY;
+	public static BlockEntityType<PokedollQuagsireBlockEntity> POKEDOLL_QUAGSIRE_BLOCK_ENTITY;
+	public static BlockEntityType<PokedollShinyQuagsireBlockEntity> POKEDOLL_SHINY_QUAGSIRE_BLOCK_ENTITY;
 	public static BlockEntityType<A09RobertFigurineBlockEntity> A09ROBERT_FIGURINE_BLOCK_ENTITY;
 	public static BlockEntityType<RedCommunismFigurineBlockEntity> RED_COMMUNISM_FIGURINE_BLOCK_ENTITY;
 
@@ -510,13 +516,32 @@ public static BlockEntityType<PokedollShinySwinubBlockEntity> POKEDOLL_SHINY_SWI
 				FabricBlockEntityTypeBuilder.create(PokedollShinySwinubBlockEntity::new, ModBlocks.POKEDOLL_SHINY_SWINUB),
 				PokedollShinySwinubBlockEntity.class
 		);
+		POKEDOLL_WOOPER_BLOCK_ENTITY = registerBlockEntity(
+				new Identifier(Pokeblocks.MOD_ID, PokeIDs.POKEDOLL_WOOPER),
+				FabricBlockEntityTypeBuilder.create(PokedollWooperBlockEntity::new, ModBlocks.POKEDOLL_WOOPER),
+				PokedollWooperBlockEntity.class
+		);
+		POKEDOLL_SHINY_WOOPER_BLOCK_ENTITY = registerBlockEntity(
+				new Identifier(Pokeblocks.MOD_ID, PokeIDs.POKEDOLL_SHINY_WOOPER),
+				FabricBlockEntityTypeBuilder.create(PokedollShinyWooperBlockEntity::new, ModBlocks.POKEDOLL_SHINY_WOOPER),
+				PokedollShinyWooperBlockEntity.class
+		);
 
+		POKEDOLL_QUAGSIRE_BLOCK_ENTITY = registerBlockEntity(
+				new Identifier(Pokeblocks.MOD_ID, PokeIDs.POKEDOLL_QUAGSIRE),
+				FabricBlockEntityTypeBuilder.create(PokedollQuagsireBlockEntity::new, ModBlocks.POKEDOLL_QUAGSIRE),
+				PokedollQuagsireBlockEntity.class
+		);
+		POKEDOLL_SHINY_QUAGSIRE_BLOCK_ENTITY = registerBlockEntity(
+				new Identifier(Pokeblocks.MOD_ID, PokeIDs.POKEDOLL_SHINY_QUAGSIRE),
+				FabricBlockEntityTypeBuilder.create(PokedollShinyQuagsireBlockEntity::new, ModBlocks.POKEDOLL_SHINY_QUAGSIRE),
+				PokedollShinyQuagsireBlockEntity.class
+		);
 		A09ROBERT_FIGURINE_BLOCK_ENTITY = registerBlockEntity(
 				new Identifier(Pokeblocks.MOD_ID, PokeIDs.A09ROBERT_FIGURINE),
 				FabricBlockEntityTypeBuilder.create(A09RobertFigurineBlockEntity::new, ModBlocks.A09ROBERT_FIGURINE),
 				A09RobertFigurineBlockEntity.class
 		);
-
 		RED_COMMUNISM_FIGURINE_BLOCK_ENTITY = registerBlockEntity(
 				new Identifier(Pokeblocks.MOD_ID, PokeIDs.RED_COMMUNISM_FIGURINE),
 				FabricBlockEntityTypeBuilder.create(RedCommunismFigurineBlockEntity::new, ModBlocks.RED_COMMUNISM_FIGURINE),

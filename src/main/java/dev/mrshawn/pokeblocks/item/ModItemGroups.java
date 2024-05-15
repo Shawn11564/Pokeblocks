@@ -77,6 +77,10 @@ public class ModItemGroups {
 						entries.add(ModBlocks.POKEDOLL_SHINY_BLASTOISE);
 						entries.add(ModBlocks.POKEDOLL_SWINUB);
 						entries.add(ModBlocks.POKEDOLL_SHINY_SWINUB);
+						entries.add(ModBlocks.POKEDOLL_WOOPER);
+						entries.add(ModBlocks.POKEDOLL_SHINY_WOOPER);
+						entries.add(ModBlocks.POKEDOLL_QUAGSIRE);
+						entries.add(ModBlocks.POKEDOLL_SHINY_QUAGSIRE);
 						entries.add(ModBlocks.POKEDOLL_AIRUHSEA_FIGURINE);
 						entries.add(ModBlocks.POKEDOLL_DAMORGO_FIGURINE);
 						entries.add(ModBlocks.POKEDOLL_DONCHEADLE_FIGURINE);
@@ -84,6 +88,7 @@ public class ModItemGroups {
 						entries.add(ModBlocks.RED_COMMUNISM_FIGURINE);
 						entries.add(ModItems.POKE_COIN);
 						entries.add(ModItems.POKE_EGG);
+						entries.add(ModItems.NICKEL);
 					}))
 					.build()
 	);

@@ -530,6 +530,36 @@ public class ModItems {
 			DollRarity.SHINY
 	);
 
+	public static final Item POKEDOLL_WOOPER_BLOCK_ITEM = registerItem(
+			PokeIDs.POKEDOLL_WOOPER,
+			ModBlocks.POKEDOLL_WOOPER,
+			ResourceConstants.POKEDOLL_WOOPER_MODEL,
+			ResourceConstants.POKEDOLL_WOOPER_TEXTURE,
+			DollRarity.UNCOMMON
+	);
+	public static final Item POKEDOLL_SHINY_WOOPER_BLOCK_ITEM = registerItem(
+			PokeIDs.POKEDOLL_SHINY_WOOPER,
+			ModBlocks.POKEDOLL_SHINY_WOOPER,
+			ResourceConstants.POKEDOLL_WOOPER_MODEL,
+			ResourceConstants.POKEDOLL_SHINY_WOOPER_TEXTURE,
+			DollRarity.SHINY
+	);
+
+	public static final Item POKEDOLL_QUAGSIRE_BLOCK_ITEM = registerItem(
+			PokeIDs.POKEDOLL_QUAGSIRE,
+			ModBlocks.POKEDOLL_QUAGSIRE,
+			ResourceConstants.POKEDOLL_QUAGSIRE_MODEL,
+			ResourceConstants.POKEDOLL_QUAGSIRE_TEXTURE,
+			DollRarity.RARE
+	);
+	public static final Item POKEDOLL_SHINY_QUAGSIRE_BLOCK_ITEM = registerItem(
+			PokeIDs.POKEDOLL_SHINY_QUAGSIRE,
+			ModBlocks.POKEDOLL_SHINY_QUAGSIRE,
+			ResourceConstants.POKEDOLL_QUAGSIRE_MODEL,
+			ResourceConstants.POKEDOLL_SHINY_QUAGSIRE_TEXTURE,
+			DollRarity.SHINY
+	);
+
 	public static final Item POKE_COIN = registerItem(
 			PokeIDs.POKE_COIN,
 			new Item(new Item.Settings().maxCount(64))
@@ -537,6 +567,11 @@ public class ModItems {
 
 	public static final Item POKE_EGG = registerItem(
 			PokeIDs.POKE_EGG,
+			new Item(new Item.Settings().maxCount(64))
+	);
+
+	public static final Item NICKEL = registerItem(
+			PokeIDs.NICKEL,
 			new Item(new Item.Settings().maxCount(64))
 	);
 

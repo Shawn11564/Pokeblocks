@@ -45,6 +45,8 @@ import dev.mrshawn.pokeblocks.block.entity.mareep.PokedollShinyMareepBlockEntity
 import dev.mrshawn.pokeblocks.block.entity.munchlax.PokedollMunchlaxBlockEntity;
 import dev.mrshawn.pokeblocks.block.entity.munchlax.PokedollShinyMunchlaxBlockEntity;
 import dev.mrshawn.pokeblocks.block.entity.pokemon_trophy.PokedollPokemonTrophyBlockEntity;
+import dev.mrshawn.pokeblocks.block.entity.quagsire.PokedollQuagsireBlockEntity;
+import dev.mrshawn.pokeblocks.block.entity.quagsire.PokedollShinyQuagsireBlockEntity;
 import dev.mrshawn.pokeblocks.block.entity.rabsca.PokedollRabscaBlockEntity;
 import dev.mrshawn.pokeblocks.block.entity.rabsca.PokedollShinyRabscaBlockEntity;
 import dev.mrshawn.pokeblocks.block.entity.red_communism_figurine.RedCommunismFigurineBlockEntity;
@@ -67,6 +69,8 @@ import dev.mrshawn.pokeblocks.block.entity.venusaur.PokedollShinyVenusaurBlockEn
 import dev.mrshawn.pokeblocks.block.entity.venusaur.PokedollVenusaurBlockEntity;
 import dev.mrshawn.pokeblocks.block.entity.wartortle.PokedollShinyWartortleBlockEntity;
 import dev.mrshawn.pokeblocks.block.entity.wartortle.PokedollWartortleBlockEntity;
+import dev.mrshawn.pokeblocks.block.entity.wooper.PokedollShinyWooperBlockEntity;
+import dev.mrshawn.pokeblocks.block.entity.wooper.PokedollWooperBlockEntity;
 import dev.mrshawn.pokeblocks.constants.PokeIDs;
 import dev.mrshawn.pokeblocks.constants.Shapes;
 import dev.mrshawn.pokeblocks.utils.ServerHandler;
@@ -163,7 +167,7 @@ public class ModBlocks {
 						world.addParticle(ParticleTypes.CLOUD, x, y, z, dx, dy, dz);
 
 						// Check for collision with players
-						Box particleBox = new Box(x - 0.1, y - 0.1, z - 0.1, x + 0.1, y + 0.1, z + 0.1);
+						Box particleBox = new Box(x - 0.5, y - 0.5, z - 0.5, x + 0.5, y + 0.5, z + 0.5);
 						for (PlayerEntity playerEntity : world.getPlayers()) {
 							if (playerEntity.getBoundingBox().intersects(particleBox)) {
 								// Broadcast the message to the entire server
@@ -251,6 +255,14 @@ public class ModBlocks {
 			new PokedollBlock<>(Shapes.FIGURINE_SHAPE, () -> PokedollDamorgoFigurineBlockEntity.class));
 	public static final Block POKEDOLL_DONCHEADLE_FIGURINE = Registry.register(Registries.BLOCK, new Identifier(Pokeblocks.MOD_ID, PokeIDs.DONCHEADLE_FIGURINE),
 			new PokedollBlock<>(Shapes.FIGURINE_SHAPE, () -> PokedollDoncheadleFigurineBlockEntity.class));
+	public static final Block POKEDOLL_WOOPER = Registry.register(Registries.BLOCK, new Identifier(Pokeblocks.MOD_ID, PokeIDs.POKEDOLL_WOOPER),
+			new PokedollBlock<>(() -> PokedollWooperBlockEntity.class));
+	public static final Block POKEDOLL_SHINY_WOOPER = Registry.register(Registries.BLOCK, new Identifier(Pokeblocks.MOD_ID, PokeIDs.POKEDOLL_SHINY_WOOPER),
+			new PokedollBlock<>(() -> PokedollShinyWooperBlockEntity.class));
+	public static final Block POKEDOLL_QUAGSIRE = Registry.register(Registries.BLOCK, new Identifier(Pokeblocks.MOD_ID, PokeIDs.POKEDOLL_QUAGSIRE),
+			new PokedollBlock<>(() -> PokedollQuagsireBlockEntity.class));
+	public static final Block POKEDOLL_SHINY_QUAGSIRE = Registry.register(Registries.BLOCK, new Identifier(Pokeblocks.MOD_ID, PokeIDs.POKEDOLL_SHINY_QUAGSIRE),
+			new PokedollBlock<>(() -> PokedollShinyQuagsireBlockEntity.class));
 	public static final Block A09ROBERT_FIGURINE = Registry.register(Registries.BLOCK, new Identifier(Pokeblocks.MOD_ID, PokeIDs.A09ROBERT_FIGURINE),
 			new PokedollBlock<>(Shapes.FIGURINE_SHAPE, () -> A09RobertFigurineBlockEntity.class));
 	public static final Block RED_COMMUNISM_FIGURINE = Registry.register(Registries.BLOCK, new Identifier(Pokeblocks.MOD_ID, PokeIDs.RED_COMMUNISM_FIGURINE),

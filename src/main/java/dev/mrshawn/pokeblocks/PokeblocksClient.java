@@ -2,8 +2,8 @@ package dev.mrshawn.pokeblocks;
 
 import dev.mrshawn.pokeblocks.block.entity.ModBlockEntities;
 import dev.mrshawn.pokeblocks.block.entity.PokedollBlockEntity;
-import dev.mrshawn.pokeblocks.block.entity.client.PokedollBlockModel;
-import dev.mrshawn.pokeblocks.block.entity.client.PokedollBlockRenderer;
+import dev.mrshawn.pokeblocks.block.client.PokedollBlockModel;
+import dev.mrshawn.pokeblocks.block.client.PokedollBlockRenderer;
 import dev.mrshawn.pokeblocks.constants.ResourceConstants;
 import dev.mrshawn.pokeblocks.utils.ServerHandler;
 import net.fabricmc.api.ClientModInitializer;
@@ -12,16 +12,42 @@ import net.minecraft.client.render.block.entity.BlockEntityRendererFactories;
 
 public class PokeblocksClient implements ClientModInitializer {
 
+	private static final float SCALE = 3.0f;
+
 	@Override
 	public void onInitializeClient() {
-
 		ServerHandler.register();
+
+		registerBlockEntityRenderer(
+				ModBlockEntities.POKEDOLL_QUAGSIRE_BLOCK_ENTITY,
+				ResourceConstants.POKEDOLL_QUAGSIRE_MODEL,
+				ResourceConstants.POKEDOLL_QUAGSIRE_TEXTURE
+		);
+
+		registerBlockEntityRenderer(
+				ModBlockEntities.POKEDOLL_SHINY_QUAGSIRE_BLOCK_ENTITY,
+				ResourceConstants.POKEDOLL_QUAGSIRE_MODEL,
+				ResourceConstants.POKEDOLL_SHINY_QUAGSIRE_TEXTURE
+		);
+
+		registerBlockEntityRenderer(
+				ModBlockEntities.POKEDOLL_WOOPER_BLOCK_ENTITY,
+				ResourceConstants.POKEDOLL_WOOPER_MODEL,
+				ResourceConstants.POKEDOLL_WOOPER_TEXTURE
+		);
+
+		registerBlockEntityRenderer(
+				ModBlockEntities.POKEDOLL_SHINY_WOOPER_BLOCK_ENTITY,
+				ResourceConstants.POKEDOLL_WOOPER_MODEL,
+				ResourceConstants.POKEDOLL_SHINY_WOOPER_TEXTURE
+		);
 
 		registerBlockEntityRenderer(
 				ModBlockEntities.POKEDOLL_SWINUB_BLOCK_ENTITY,
 				ResourceConstants.POKEDOLL_SWINUB_MODEL,
 				ResourceConstants.POKEDOLL_SWINUB_TEXTURE
 		);
+
 		registerBlockEntityRenderer(
 				ModBlockEntities.POKEDOLL_SHINY_SWINUB_BLOCK_ENTITY,
 				ResourceConstants.POKEDOLL_SWINUB_MODEL,
@@ -33,6 +59,7 @@ public class PokeblocksClient implements ClientModInitializer {
 				ResourceConstants.POKEDOLL_BLASTOISE_MODEL,
 				ResourceConstants.POKEDOLL_BLASTOISE_TEXTURE
 		);
+
 		registerBlockEntityRenderer(
 				ModBlockEntities.POKEDOLL_SHINY_BLASTOISE_BLOCK_ENTITY,
 				ResourceConstants.POKEDOLL_BLASTOISE_MODEL,
@@ -374,6 +401,19 @@ public class PokeblocksClient implements ClientModInitializer {
 
 	private static <T extends PokedollBlockEntity> void registerBlockEntityRenderer(BlockEntityType<T> type, String modelResourcePath, String textureResourcePath) {
 		registerBlockEntityRenderer(type, modelResourcePath, textureResourcePath, ResourceConstants.GENERIC_ANIMATION_PATH);
+	}
+
+	private static <T extends PokedollBlockEntity> void registerScaledBlockEntityRenderer(BlockEntityType<T> type, String modelResourcePath, String textureResourcePath, String animationResourcePath, float scale) {
+		PokedollBlockModel blockModel = new PokedollBlockModel(
+				modelResourcePath,
+				textureResourcePath,
+				animationResourcePath
+		);
+		BlockEntityRendererFactories.register(type, context -> new PokedollBlockRenderer(context, blockModel));
+	}
+
+	private static <T extends PokedollBlockEntity> void registerScaledBlockEntityRenderer(BlockEntityType<T> type, String modelResourcePath, String textureResourcePath, float scale) {
+		registerScaledBlockEntityRenderer(type, modelResourcePath, textureResourcePath, ResourceConstants.GENERIC_ANIMATION_PATH, scale);
 	}
 
 }

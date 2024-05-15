@@ -63,10 +63,15 @@ public class PokeIDs {
 	public static final String POKEMON_TROPHY = "pokemon_trophy";
 	public static final String POKE_COIN = "poke_coin";
 	public static final String POKE_EGG = "poke_egg";
+	public static final String NICKEL = "nickel";
 	public static final String A09ROBERT_FIGURINE = "a09robert_figurine";
 	public static final String RED_COMMUNISM_FIGURINE = "red_communism_figurine";
 	public static final String POKEDOLL_BLASTOISE = "pokedoll_blastoise";
 	public static final String POKEDOLL_SHINY_BLASTOISE = "pokedoll_shiny_blastoise";
 	public static final String POKEDOLL_SWINUB = "pokedoll_swinub";
 	public static final String POKEDOLL_SHINY_SWINUB = "pokedoll_shiny_swinub";
+	public static final String POKEDOLL_WOOPER = "pokedoll_wooper";
+	public static final String POKEDOLL_SHINY_WOOPER = "pokedoll_shiny_wooper";
+	public static final String POKEDOLL_QUAGSIRE = "pokedoll_quagsire";
+	public static final String POKEDOLL_SHINY_QUAGSIRE = "pokedoll_shiny_quagsire";
 }

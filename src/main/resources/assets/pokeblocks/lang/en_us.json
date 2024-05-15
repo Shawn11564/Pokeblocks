@@ -122,6 +122,7 @@
     "block.pokeblocks.pokemon_trophy": "Pokemon Trophy",
     "item.pokeblocks.poke_coin": "Poke Coin",
     "item.pokeblocks.poke_egg": "Poke Egg",
+    "item.pokeblocks.nickel": "Nickel",
     "item.pokeblocks.a09robert_figurine": "a09Robert Figurine",
     "block.pokeblocks.a09robert_figurine": "a09Robert Figurine",
     "item.pokeblocks.red_communism_figurine": "red_communism Figurine",
@@ -133,5 +134,13 @@
     "item.pokeblocks.pokedoll_swinub": "Swinub Pokedoll",
     "item.pokeblocks.pokedoll_shiny_swinub": "Shiny Swinub Pokedoll",
     "block.pokeblocks.pokedoll_swinub": "Swinub Pokedoll",
-    "block.pokeblocks.pokedoll_shiny_swinub": "Shiny Swinub Pokedoll"
+    "block.pokeblocks.pokedoll_shiny_swinub": "Shiny Swinub Pokedoll",
+    "item.pokeblocks.pokedoll_wooper": "Wooper Pokedoll",
+    "item.pokeblocks.pokedoll_shiny_wooper": "Shiny Wooper Pokedoll",
+    "block.pokeblocks.pokedoll_wooper": "Wooper Pokedoll",
+    "block.pokeblocks.pokedoll_shiny_wooper": "Shiny Wooper Pokedoll",
+    "item.pokeblocks.pokedoll_quagsire": "Quagsire Pokedoll",
+    "item.pokeblocks.pokedoll_shiny_quagsire": "Shiny Quagsire Pokedoll",
+    "block.pokeblocks.pokedoll_quagsire": "Quagsire Pokedoll",
+    "block.pokeblocks.pokedoll_shiny_quagsire": "Shiny Quagsire Pokedoll"
 }
