@@ -1,5 +1,5 @@
 {
-  "parent": "pokeblocks:block/pokedoll_shiny_applin_basket",
+  "parent": "pokeblocks:block/shiny_applin_basket",
   "display": {
     "thirdperson_righthand": {
       "rotation": [0, 135, 0],

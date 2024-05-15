@@ -21,7 +21,6 @@ import software.bernie.geckolib.core.animatable.instance.AnimatableInstanceCache
 import software.bernie.geckolib.core.animatable.instance.SingletonAnimatableInstanceCache;
 import software.bernie.geckolib.core.animation.*;
 import software.bernie.geckolib.core.object.PlayState;
-import software.bernie.geckolib.util.RenderUtils;
 
 import java.util.List;
 import java.util.function.Consumer;
@@ -79,18 +78,22 @@ public class PokedollBlockItem extends BlockItem implements GeoItem {
 		return cache;
 	}
 
-	@Override
-	public double getTick(Object itemStack) {
-		return RenderUtils.getCurrentTick();
-	}
-
 	public String getAnimationName() {
 		return ResourceConstants.GENERIC_ANIMATION;
 	}
 
 	@Override
 	public void appendTooltip(ItemStack stack, @Nullable World world, List<Text> tooltip, TooltipContext context) {
-		tooltip.add(1, Text.literal(rarity.getDisplayName()).formatted(rarity.getColor()));
+//		tooltip.clear();
+		if (rarity != DollRarity.NONE) {
+//			tooltip.add(0, getColoredItemName(stack, rarity)); // Add the colored item name first
+			tooltip.add(1, Text.empty());
+			tooltip.add(2, Text.literal(rarity.getDisplayName()).formatted(rarity.getColor()));
+		}
+	}
+
+	private Text getColoredItemName(ItemStack stack, DollRarity rarity) {
+		return stack.getName().copy().formatted(rarity.getColor());
 	}
 
 }

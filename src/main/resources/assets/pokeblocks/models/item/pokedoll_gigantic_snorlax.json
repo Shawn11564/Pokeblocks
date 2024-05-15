@@ -1,5 +1,5 @@
 {
-  "parent": "pokeblocks:block/pokedoll_snorlax",
+  "parent": "pokeblocks:block/pokedoll_gigantic_snorlax",
   "display": {
     "thirdperson_righthand": {
       "rotation": [0, 135, 0],

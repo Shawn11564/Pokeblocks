@@ -1,7 +1,7 @@
 {
   "variants": {
     "": {
-      "model": "pokeblocks:block/pokedoll_shiny_applin_basket"
+      "model": "pokeblocks:block/shiny_applin_basket"
     }
   }
 }

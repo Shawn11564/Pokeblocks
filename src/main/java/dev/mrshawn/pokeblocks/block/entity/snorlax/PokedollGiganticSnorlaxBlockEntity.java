@@ -5,8 +5,8 @@ import dev.mrshawn.pokeblocks.block.entity.PokedollBlockEntity;
 import net.minecraft.block.BlockState;
 import net.minecraft.util.math.BlockPos;
 
-public class PokedollSnorlaxBlockEntity extends PokedollBlockEntity {
-	public PokedollSnorlaxBlockEntity(BlockPos pos, BlockState state) {
-		super(BlockEntityTypeRegistry.get(PokedollSnorlaxBlockEntity.class), pos, state);
+public class PokedollGiganticSnorlaxBlockEntity extends PokedollBlockEntity {
+	public PokedollGiganticSnorlaxBlockEntity(BlockPos pos, BlockState state) {
+		super(BlockEntityTypeRegistry.get(PokedollGiganticSnorlaxBlockEntity.class), pos, state);
 	}
 }

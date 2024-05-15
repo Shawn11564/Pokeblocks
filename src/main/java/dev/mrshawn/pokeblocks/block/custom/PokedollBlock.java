@@ -10,6 +10,7 @@ import net.minecraft.state.StateManager;
 import net.minecraft.state.property.Properties;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.Direction;
+import net.minecraft.util.shape.VoxelShape;
 import net.minecraft.world.BlockView;
 import org.jetbrains.annotations.Nullable;
 
@@ -19,7 +20,28 @@ import java.util.function.Supplier;
 
 public class PokedollBlock <T extends BlockEntity> extends BlockWithEntity {
 
-	private final Supplier<Class<T>> blockEntitySupplier;
+	private Supplier<Class<T>> blockEntitySupplier;
+	private VoxelShape shape;
+
+	public PokedollBlock(Block copiedBlock, VoxelShape shape, Supplier<Class<T>> blockEntitySupplier) {
+		super(FabricBlockSettings.copy(copiedBlock).nonOpaque().solidBlock((state, world, pos) -> false));
+		this.blockEntitySupplier = blockEntitySupplier;
+		this.shape = shape;
+		setDefaultState(this.getStateManager().getDefaultState().with(Properties.HORIZONTAL_FACING, Direction.NORTH));
+	}
+
+	public PokedollBlock(Block copiedBlock, Supplier<Class<T>> blockEntitySupplier) {
+		super(FabricBlockSettings.copy(copiedBlock).nonOpaque().solidBlock((state, world, pos) -> false));
+		this.blockEntitySupplier = blockEntitySupplier;
+		setDefaultState(this.getStateManager().getDefaultState().with(Properties.HORIZONTAL_FACING, Direction.NORTH));
+	}
+
+	public PokedollBlock(VoxelShape shape, Supplier<Class<T>> blockEntitySupplier) {
+		super(FabricBlockSettings.copy(Blocks.WHITE_WOOL).nonOpaque().solidBlock((state, world, pos) -> false));
+		this.blockEntitySupplier = blockEntitySupplier;
+		this.shape = shape;
+		setDefaultState(this.getStateManager().getDefaultState().with(Properties.HORIZONTAL_FACING, Direction.NORTH));
+	}
 
 	public PokedollBlock(Settings settings, Supplier<Class<T>> blockEntitySupplier) {
 		super(settings);
@@ -28,7 +50,8 @@ public class PokedollBlock <T extends BlockEntity> extends BlockWithEntity {
 	}
 
 	public PokedollBlock(Supplier<Class<T>> blockEntitySupplier) {
-		this(FabricBlockSettings.copy(Blocks.WHITE_WOOL).nonOpaque(), blockEntitySupplier);
+		this(FabricBlockSettings.copy(Blocks.WHITE_WOOL).nonOpaque().solidBlock((state, world, pos) -> false), blockEntitySupplier);
+		this.blockEntitySupplier = blockEntitySupplier;
 	}
 
 	@Nullable
@@ -65,6 +88,16 @@ public class PokedollBlock <T extends BlockEntity> extends BlockWithEntity {
 	@Override
 	public List<ItemStack> getDroppedStacks(BlockState state, LootContextParameterSet.Builder builder) {
 		return Collections.singletonList(new ItemStack(this));
+	}
+
+	@Override
+	public VoxelShape getOutlineShape(BlockState state, BlockView world, BlockPos pos, ShapeContext context) {
+		if (shape != null) {
+			return shape;
+		} else {
+			return super.getOutlineShape(state, world, pos, context);
+		}
+
 	}
 
 }

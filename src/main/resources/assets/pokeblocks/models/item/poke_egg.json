@@ -1,6 +1,6 @@
 {
   "parent": "item/generated",
   "textures": {
-    "layer0": "pokeblocks:item/poke_coin_texture"
+    "layer0": "pokeblocks:item/poke_egg_texture"
   }
 }

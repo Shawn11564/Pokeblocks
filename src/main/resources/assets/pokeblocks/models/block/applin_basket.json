@@ -6,6 +6,6 @@
     64
   ],
   "textures": {
-    "particle": "pokeblocks:block/pokedoll_applin_basket_texture"
+    "particle": "pokeblocks:block/applin_basket_texture"
   }
 }

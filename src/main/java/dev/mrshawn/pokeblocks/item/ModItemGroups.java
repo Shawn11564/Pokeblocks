@@ -58,6 +58,32 @@ public class ModItemGroups {
 						entries.add(ModBlocks.POKEDOLL_SHINY_RABSCA);
 						entries.add(ModBlocks.POKEDOLL_RELLOR);
 						entries.add(ModBlocks.POKEDOLL_SHINY_RELLOR);
+						entries.add(ModBlocks.POKEDOLL_WARTORTLE);
+						entries.add(ModBlocks.POKEDOLL_SHINY_WARTORTLE);
+						entries.add(ModBlocks.POKEDOLL_SABLEYE);
+						entries.add(ModBlocks.POKEDOLL_SHINY_SABLEYE);
+						entries.add(ModBlocks.POKEDOLL_ABSOL);
+						entries.add(ModBlocks.POKEDOLL_SHINY_ABSOL);
+						entries.add(ModBlocks.POKEDOLL_HAPPINY);
+						entries.add(ModBlocks.POKEDOLL_SHINY_HAPPINY);
+						entries.add(ModBlocks.POKEDOLL_IVYSAUR);
+						entries.add(ModBlocks.POKEDOLL_SHINY_IVYSAUR);
+						entries.add(ModBlocks.POKEDOLL_VENUSAUR);
+						entries.add(ModBlocks.POKEDOLL_SHINY_VENUSAUR);
+						entries.add(ModBlocks.POKEDOLL_MAGIKARP_FISHBOWL);
+						entries.add(ModBlocks.POKEDOLL_SHINY_MAGIKARP_FISHBOWL);
+						entries.add(ModBlocks.POKEDOLL_POKEMON_TROPHY);
+						entries.add(ModBlocks.POKEDOLL_BLASTOISE);
+						entries.add(ModBlocks.POKEDOLL_SHINY_BLASTOISE);
+						entries.add(ModBlocks.POKEDOLL_SWINUB);
+						entries.add(ModBlocks.POKEDOLL_SHINY_SWINUB);
+						entries.add(ModBlocks.POKEDOLL_AIRUHSEA_FIGURINE);
+						entries.add(ModBlocks.POKEDOLL_DAMORGO_FIGURINE);
+						entries.add(ModBlocks.POKEDOLL_DONCHEADLE_FIGURINE);
+						entries.add(ModBlocks.A09ROBERT_FIGURINE);
+						entries.add(ModBlocks.RED_COMMUNISM_FIGURINE);
+						entries.add(ModItems.POKE_COIN);
+						entries.add(ModItems.POKE_EGG);
 					}))
 					.build()
 	);

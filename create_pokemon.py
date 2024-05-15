@@ -8,6 +8,18 @@ template_dir = "template"
 src_dir = "src/main/java/dev/mrshawn/pokeblocks"
 
 for pokemon_name in os.listdir(input_dir):
+    # 0. Rename folders to match the naming convention
+    # Remove leading numbers + _
+    if pokemon_name[0].isdigit():
+        newName = pokemon_name.split("_", 1)[1].lower()
+        os.rename(f"{input_dir}/{pokemon_name}", f"{input_dir}/{newName}")
+        pokemon_name = newName
+    
+    # Delete .bbmodel from folder
+    for file_name in os.listdir(f"{input_dir}/{pokemon_name}"):
+        if file_name.endswith(".bbmodel"):
+            os.remove(f"{input_dir}/{pokemon_name}/{file_name}")
+
     # 1. Copy texture files
     for file_name in os.listdir(f"{input_dir}/{pokemon_name}"):
         if file_name.endswith(".png"):

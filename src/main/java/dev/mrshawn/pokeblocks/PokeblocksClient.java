@@ -4,8 +4,8 @@ import dev.mrshawn.pokeblocks.block.entity.ModBlockEntities;
 import dev.mrshawn.pokeblocks.block.entity.PokedollBlockEntity;
 import dev.mrshawn.pokeblocks.block.entity.client.PokedollBlockModel;
 import dev.mrshawn.pokeblocks.block.entity.client.PokedollBlockRenderer;
-import dev.mrshawn.pokeblocks.block.entity.client.PokedollScaledBlockRenderer;
 import dev.mrshawn.pokeblocks.constants.ResourceConstants;
+import dev.mrshawn.pokeblocks.utils.ServerHandler;
 import net.fabricmc.api.ClientModInitializer;
 import net.minecraft.block.entity.BlockEntityType;
 import net.minecraft.client.render.block.entity.BlockEntityRendererFactories;
@@ -14,6 +14,146 @@ public class PokeblocksClient implements ClientModInitializer {
 
 	@Override
 	public void onInitializeClient() {
+
+		ServerHandler.register();
+
+		registerBlockEntityRenderer(
+				ModBlockEntities.POKEDOLL_SWINUB_BLOCK_ENTITY,
+				ResourceConstants.POKEDOLL_SWINUB_MODEL,
+				ResourceConstants.POKEDOLL_SWINUB_TEXTURE
+		);
+		registerBlockEntityRenderer(
+				ModBlockEntities.POKEDOLL_SHINY_SWINUB_BLOCK_ENTITY,
+				ResourceConstants.POKEDOLL_SWINUB_MODEL,
+				ResourceConstants.POKEDOLL_SHINY_SWINUB_TEXTURE
+		);
+
+		registerBlockEntityRenderer(
+				ModBlockEntities.POKEDOLL_BLASTOISE_BLOCK_ENTITY,
+				ResourceConstants.POKEDOLL_BLASTOISE_MODEL,
+				ResourceConstants.POKEDOLL_BLASTOISE_TEXTURE
+		);
+		registerBlockEntityRenderer(
+				ModBlockEntities.POKEDOLL_SHINY_BLASTOISE_BLOCK_ENTITY,
+				ResourceConstants.POKEDOLL_BLASTOISE_MODEL,
+				ResourceConstants.POKEDOLL_SHINY_BLASTOISE_TEXTURE
+		);
+
+		registerBlockEntityRenderer(
+				ModBlockEntities.RED_COMMUNISM_FIGURINE_BLOCK_ENTITY,
+				ResourceConstants.RED_COMMUNISM_FIGURINE_MODEL,
+				ResourceConstants.RED_COMMUNISM_FIGURINE_TEXTURE
+		);
+
+		registerBlockEntityRenderer(
+				ModBlockEntities.A09ROBERT_FIGURINE_BLOCK_ENTITY,
+				ResourceConstants.A09ROBERT_FIGURINE_MODEL,
+				ResourceConstants.A09ROBERT_FIGURINE_TEXTURE
+		);
+
+		registerBlockEntityRenderer(
+				ModBlockEntities.POKEDOLL_POKEMON_TROPHY_BLOCK_ENTITY,
+				ResourceConstants.POKEMON_TROPHY_MODEL,
+				ResourceConstants.POKEMON_TROPHY_TEXTURE
+		);
+
+		registerBlockEntityRenderer(
+				ModBlockEntities.POKEDOLL_MAGIKARP_FISHBOWL_BLOCK_ENTITY,
+				ResourceConstants.MAGIKARP_FISHBOWL_MODEL,
+				ResourceConstants.MAGIKARP_FISHBOWL_TEXTURE,
+				ResourceConstants.MAGIKARP_FISHBOWL_ANIMATION
+		);
+		registerBlockEntityRenderer(
+				ModBlockEntities.POKEDOLL_SHINY_MAGIKARP_FISHBOWL_BLOCK_ENTITY,
+				ResourceConstants.MAGIKARP_FISHBOWL_MODEL,
+				ResourceConstants.SHINY_MAGIKARP_FISHBOWL_TEXTURE,
+				ResourceConstants.MAGIKARP_FISHBOWL_ANIMATION
+		);
+
+		registerBlockEntityRenderer(
+				ModBlockEntities.POKEDOLL_DONCHEADLE_FIGURINE_BLOCK_ENTITY,
+				ResourceConstants.DONCHEADLE_FIGURINE_MODEL,
+				ResourceConstants.DONCHEADLE_FIGURINE_TEXTURE
+		);
+
+		registerBlockEntityRenderer(
+				ModBlockEntities.POKEDOLL_DAMORGO_FIGURINE_BLOCK_ENTITY,
+				ResourceConstants.DAMORGO_FIGURINE_MODEL,
+				ResourceConstants.DAMORGO_FIGURINE_TEXTURE
+		);
+
+		registerBlockEntityRenderer(
+				ModBlockEntities.POKEDOLL_AIRUHSEA_FIGURINE_BLOCK_ENTITY,
+				ResourceConstants.AIRUHSEA_FIGURINE_MODEL,
+				ResourceConstants.AIRUHSEA_FIGURINE_TEXTURE
+		);
+
+		registerBlockEntityRenderer(
+				ModBlockEntities.POKEDOLL_VENUSAUR_BLOCK_ENTITY,
+				ResourceConstants.POKEDOLL_VENUSAUR_MODEL,
+				ResourceConstants.POKEDOLL_VENUSAUR_TEXTURE
+		);
+		registerBlockEntityRenderer(
+				ModBlockEntities.POKEDOLL_SHINY_VENUSAUR_BLOCK_ENTITY,
+				ResourceConstants.POKEDOLL_VENUSAUR_MODEL,
+				ResourceConstants.POKEDOLL_SHINY_VENUSAUR_TEXTURE
+		);
+
+		registerBlockEntityRenderer(
+				ModBlockEntities.POKEDOLL_IVYSAUR_BLOCK_ENTITY,
+				ResourceConstants.POKEDOLL_IVYSAUR_MODEL,
+				ResourceConstants.POKEDOLL_IVYSAUR_TEXTURE
+		);
+		registerBlockEntityRenderer(
+				ModBlockEntities.POKEDOLL_SHINY_IVYSAUR_BLOCK_ENTITY,
+				ResourceConstants.POKEDOLL_IVYSAUR_MODEL,
+				ResourceConstants.POKEDOLL_SHINY_IVYSAUR_TEXTURE
+		);
+
+		registerBlockEntityRenderer(
+				ModBlockEntities.POKEDOLL_HAPPINY_BLOCK_ENTITY,
+				ResourceConstants.POKEDOLL_HAPPINY_MODEL,
+				ResourceConstants.POKEDOLL_HAPPINY_TEXTURE
+		);
+		registerBlockEntityRenderer(
+				ModBlockEntities.POKEDOLL_SHINY_HAPPINY_BLOCK_ENTITY,
+				ResourceConstants.POKEDOLL_HAPPINY_MODEL,
+				ResourceConstants.POKEDOLL_SHINY_HAPPINY_TEXTURE
+		);
+
+		registerBlockEntityRenderer(
+				ModBlockEntities.POKEDOLL_ABSOL_BLOCK_ENTITY,
+				ResourceConstants.POKEDOLL_ABSOL_MODEL,
+				ResourceConstants.POKEDOLL_ABSOL_TEXTURE
+		);
+		registerBlockEntityRenderer(
+				ModBlockEntities.POKEDOLL_SHINY_ABSOL_BLOCK_ENTITY,
+				ResourceConstants.POKEDOLL_ABSOL_MODEL,
+				ResourceConstants.POKEDOLL_SHINY_ABSOL_TEXTURE
+		);
+
+		registerBlockEntityRenderer(
+				ModBlockEntities.POKEDOLL_SABLEYE_BLOCK_ENTITY,
+				ResourceConstants.POKEDOLL_SABLEYE_MODEL,
+				ResourceConstants.POKEDOLL_SABLEYE_TEXTURE
+		);
+		registerBlockEntityRenderer(
+				ModBlockEntities.POKEDOLL_SHINY_SABLEYE_BLOCK_ENTITY,
+				ResourceConstants.POKEDOLL_SABLEYE_MODEL,
+				ResourceConstants.POKEDOLL_SHINY_SABLEYE_TEXTURE
+		);
+
+		registerBlockEntityRenderer(
+				ModBlockEntities.POKEDOLL_WARTORTLE_BLOCK_ENTITY,
+				ResourceConstants.POKEDOLL_WARTORTLE_MODEL,
+				ResourceConstants.POKEDOLL_WARTORTLE_TEXTURE
+		);
+		registerBlockEntityRenderer(
+				ModBlockEntities.POKEDOLL_SHINY_WARTORTLE_BLOCK_ENTITY,
+				ResourceConstants.POKEDOLL_WARTORTLE_MODEL,
+				ResourceConstants.POKEDOLL_SHINY_WARTORTLE_TEXTURE
+		);
+
 		registerBlockEntityRenderer(
 				ModBlockEntities.POKEDOLL_RELLOR_BLOCK_ENTITY,
 				ResourceConstants.POKEDOLL_RELLOR_MODEL,
@@ -46,13 +186,13 @@ public class PokeblocksClient implements ClientModInitializer {
 		);
 		registerBlockEntityRenderer(
 				ModBlockEntities.POKEDOLL_APPLIN_BASKET_BLOCK_ENTITY,
-				ResourceConstants.POKEDOLL_APPLIN_BASKET_MODEL,
-				ResourceConstants.POKEDOLL_APPLIN_BASKET_TEXTURE
+				ResourceConstants.APPLIN_BASKET_MODEL,
+				ResourceConstants.APPLIN_BASKET_TEXTURE
 		);
 		registerBlockEntityRenderer(
 				ModBlockEntities.POKEDOLL_SHINY_APPLIN_BASKET_BLOCK_ENTITY,
-				ResourceConstants.POKEDOLL_APPLIN_BASKET_MODEL,
-				ResourceConstants.POKEDOLL_SHINY_APPLIN_BASKET_TEXTURE
+				ResourceConstants.APPLIN_BASKET_MODEL,
+				ResourceConstants.SHINY_APPLIN_BASKET_TEXTURE
 		);
 		registerBlockEntityRenderer(
 				ModBlockEntities.POKEDOLL_CALYREX_BLOCK_ENTITY,
@@ -232,29 +372,8 @@ public class PokeblocksClient implements ClientModInitializer {
 		BlockEntityRendererFactories.register(type, context -> new PokedollBlockRenderer(context, blockModel));
 	}
 
-	private static <T extends PokedollBlockEntity> void registerBlockEntityRenderer(BlockEntityType<T> type, String modelResourcePath, String textureResourcePath, String animationResourcePath, float scaleWidth, float scaleHeight) {
-		PokedollBlockModel blockModel = new PokedollBlockModel(
-				modelResourcePath,
-				textureResourcePath,
-				animationResourcePath
-		);
-		BlockEntityRendererFactories.register(type, context -> new PokedollScaledBlockRenderer(context, blockModel, scaleWidth, scaleHeight));
-	}
-
-	private static <T extends PokedollBlockEntity> void registerBlockEntityRenderer(BlockEntityType<T> type, String modelResourcePath, String textureResourcePath, String animationResourcePath, float scale) {
-		registerBlockEntityRenderer(type, modelResourcePath, textureResourcePath, animationResourcePath, scale, scale);
-	}
-
 	private static <T extends PokedollBlockEntity> void registerBlockEntityRenderer(BlockEntityType<T> type, String modelResourcePath, String textureResourcePath) {
 		registerBlockEntityRenderer(type, modelResourcePath, textureResourcePath, ResourceConstants.GENERIC_ANIMATION_PATH);
-	}
-
-	private static <T extends PokedollBlockEntity> void registerBlockEntityRenderer(BlockEntityType<T> type, String modelResourcePath, String textureResourcePath, float scaledWidth, float scaledHeight) {
-		registerBlockEntityRenderer(type, modelResourcePath, textureResourcePath, ResourceConstants.GENERIC_ANIMATION_PATH, scaledWidth, scaledHeight);
-	}
-
-	private static <T extends PokedollBlockEntity> void registerBlockEntityRenderer(BlockEntityType<T> type, String modelResourcePath, String textureResourcePath, float scale) {
-		registerBlockEntityRenderer(type, modelResourcePath, textureResourcePath, ResourceConstants.GENERIC_ANIMATION_PATH, scale);
 	}
 
 }
