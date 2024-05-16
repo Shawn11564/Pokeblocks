@@ -317,21 +317,51 @@ public class ModBlocks {
 	public static final Block POKEDOLL_DONCHEADLE_FIGURINE = Registry.register(Registries.BLOCK, new Identifier(Pokeblocks.MOD_ID, PokeIDs.DONCHEADLE_FIGURINE),
 			new PokedollBlock<>(Shapes.FIGURINE_SHAPE, () -> PokedollDoncheadleFigurineBlockEntity.class));
 	public static final Block POKEDOLL_WOOPER = Registry.register(Registries.BLOCK, new Identifier(Pokeblocks.MOD_ID, PokeIDs.POKEDOLL_WOOPER),
-			new PokedollBlock<>(() -> PokedollWooperBlockEntity.class));
+			new PokedollBlock<>(Shapes.WOOPER_SHAPE, () -> PokedollWooperBlockEntity.class));
 	public static final Block POKEDOLL_SHINY_WOOPER = Registry.register(Registries.BLOCK, new Identifier(Pokeblocks.MOD_ID, PokeIDs.POKEDOLL_SHINY_WOOPER),
-			new PokedollBlock<>(() -> PokedollShinyWooperBlockEntity.class));
+			new PokedollBlock<>(Shapes.WOOPER_SHAPE, () -> PokedollShinyWooperBlockEntity.class));
 	public static final Block POKEDOLL_QUAGSIRE = Registry.register(Registries.BLOCK, new Identifier(Pokeblocks.MOD_ID, PokeIDs.POKEDOLL_QUAGSIRE),
-			new PokedollBlock<>(() -> PokedollQuagsireBlockEntity.class));
+			new PokedollBlock<>(Shapes.QUAGSIRE_SHAPE, () -> PokedollQuagsireBlockEntity.class));
 	public static final Block POKEDOLL_SHINY_QUAGSIRE = Registry.register(Registries.BLOCK, new Identifier(Pokeblocks.MOD_ID, PokeIDs.POKEDOLL_SHINY_QUAGSIRE),
-			new PokedollBlock<>(() -> PokedollShinyQuagsireBlockEntity.class));
+			new PokedollBlock<>(Shapes.QUAGSIRE_SHAPE, () -> PokedollShinyQuagsireBlockEntity.class));
 
 	public static final Block GIGANTIC_POKEDOLL_WOOPER = Registry.register(Registries.BLOCK, new Identifier(Pokeblocks.MOD_ID, PokeIDs.GIGANTIC_POKEDOLL_WOOPER),
-			new PokedollBlock<>(() -> PokedollGiganticWooperBlockEntity.class));
+			new PokedollBlock<>(Shapes.WOOPER_SHAPE, () -> PokedollGiganticWooperBlockEntity.class));
 	public static final Block GIGANTIC_POKEDOLL_SHINY_WOOPER = Registry.register(Registries.BLOCK, new Identifier(Pokeblocks.MOD_ID, PokeIDs.GIGANTIC_POKEDOLL_SHINY_WOOPER),
-			new PokedollBlock<>(() -> PokedollGiganticShinyWooperBlockEntity.class));
+			new PokedollBlock<>(Shapes.WOOPER_SHAPE, () -> PokedollGiganticShinyWooperBlockEntity.class));
 
 	public static final Block GIGANTIC_POKEDOLL_WASHING_MACHINE = Registry.register(Registries.BLOCK, new Identifier(Pokeblocks.MOD_ID, PokeIDs.GIGANTIC_POKEDOLL_WASHING_MACHINE),
-			new PokedollBlock<>(() -> PokedollGiganticWashingMachineBlockEntity.class));
+			new PokedollBlock<>(() -> PokedollGiganticWashingMachineBlockEntity.class) {
+				@Override
+				public ActionResult onUse(BlockState state, World world, BlockPos pos, PlayerEntity player, Hand hand, BlockHitResult hit) {
+					world.playSound(player, pos, SoundEvents.BLOCK_WATER_AMBIENT, SoundCategory.BLOCKS, 1f, 1f);
+
+					if (world.random.nextDouble() < 0.5) {
+						Direction facing = state.get(Properties.HORIZONTAL_FACING);
+						double x = pos.getX() + 0.5 + facing.getOffsetX() * 0.5;
+						double y = pos.getY() + 0.25;
+						double z = pos.getZ() + 0.5 + facing.getOffsetZ() * 0.5;
+
+						double velocity = 0.5;
+						double dx = facing.getOffsetX() * velocity;
+						double dy = 0;
+						double dz = facing.getOffsetZ() * velocity;
+
+						world.addParticle(ParticleTypes.CLOUD, x, y, z, dx, dy, dz);
+
+						// Check for collision with players
+						Box particleBox = new Box(x - 0.5, y - 0.5, z - 0.5, x + 0.5, y + 0.5, z + 0.5);
+						for (PlayerEntity playerEntity : world.getPlayers()) {
+							if (playerEntity.getBoundingBox().intersects(particleBox)) {
+								// Broadcast the message to the entire server
+								ServerHandler.broadcast(playerEntity.getDisplayName().getString() + " got mega nutted on!", Formatting.GOLD);
+							}
+						}
+					}
+
+					return ActionResult.SUCCESS;
+				}
+			});
 
 	public static final Block GIGANTIC_POKEDOLL_WARTORTLE = Registry.register(Registries.BLOCK, new Identifier(Pokeblocks.MOD_ID, PokeIDs.GIGANTIC_POKEDOLL_WARTORTLE),
 			new PokedollBlock<>(() -> PokedollGiganticWartortleBlockEntity.class));
@@ -384,9 +414,9 @@ public class ModBlocks {
 			new PokedollBlock<>(() -> PokedollGiganticShinyRabscaBlockEntity.class));
 
 	public static final Block GIGANTIC_POKEDOLL_QUAGSIRE = Registry.register(Registries.BLOCK, new Identifier(Pokeblocks.MOD_ID, PokeIDs.GIGANTIC_POKEDOLL_QUAGSIRE),
-			new PokedollBlock<>(() -> PokedollGiganticQuagsireBlockEntity.class));
+			new PokedollBlock<>(Shapes.QUAGSIRE_SHAPE, () -> PokedollGiganticQuagsireBlockEntity.class));
 	public static final Block GIGANTIC_POKEDOLL_SHINY_QUAGSIRE = Registry.register(Registries.BLOCK, new Identifier(Pokeblocks.MOD_ID, PokeIDs.GIGANTIC_POKEDOLL_SHINY_QUAGSIRE),
-			new PokedollBlock<>(() -> PokedollGiganticShinyQuagsireBlockEntity.class));
+			new PokedollBlock<>(Shapes.QUAGSIRE_SHAPE, () -> PokedollGiganticShinyQuagsireBlockEntity.class));
 
 	public static final Block GIGANTIC_POKEDOLL_MUNCHLAX = Registry.register(Registries.BLOCK, new Identifier(Pokeblocks.MOD_ID, PokeIDs.GIGANTIC_POKEDOLL_MUNCHLAX),
 			new PokedollBlock<>(() -> PokedollGiganticMunchlaxBlockEntity.class));

@@ -6,8 +6,8 @@ import net.fabricmc.fabric.api.datagen.v1.provider.FabricRecipeProvider;
 import net.minecraft.block.Block;
 import net.minecraft.data.server.recipe.RecipeJsonProvider;
 import net.minecraft.data.server.recipe.ShapedRecipeJsonBuilder;
-import net.minecraft.item.Items;
 import net.minecraft.recipe.book.RecipeCategory;
+import net.minecraft.registry.tag.ItemTags;
 import net.minecraft.util.Identifier;
 
 import java.util.List;
@@ -49,7 +49,7 @@ public class PokeblocksRecipeGenerator extends FabricRecipeProvider {
 							.pattern("dwd")
 							.pattern(" d ")
 							.input('d', block)
-							.input('w', Items.WHITE_WOOL)
+							.input('w', ItemTags.WOOL)
 							.criterion(FabricRecipeProvider.hasItem(block),
 									FabricRecipeProvider.conditionsFromItem(block))
 							.offerTo(exporter, new Identifier("pokeblocks", "gigantic_pokedoll_" + pokemonName));

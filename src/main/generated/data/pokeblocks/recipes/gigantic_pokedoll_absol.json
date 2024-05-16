@@ -6,7 +6,7 @@
       "item": "pokeblocks:pokedoll_absol"
     },
     "w": {
-      "item": "minecraft:white_wool"
+      "tag": "minecraft:wool"
     }
   },
   "pattern": [
