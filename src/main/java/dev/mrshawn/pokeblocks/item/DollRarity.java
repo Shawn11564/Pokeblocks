@@ -11,7 +11,8 @@ public enum DollRarity {
 	RARE("Rare", Formatting.AQUA),
 	EPIC("Epic", Formatting.DARK_PURPLE),
 	LEGENDARY("Legendary", Formatting.RED),
-	SHINY("Shiny", Formatting.GOLD);
+	SHINY("Shiny", Formatting.GOLD),
+	GIGANTIC("Gigantic", Formatting.LIGHT_PURPLE);
 
 	private final String displayName;
 	private final Formatting color;

@@ -42,7 +42,7 @@ for folder_name in os.listdir(block_entity_dir):
             if last_entry_line != -1:
                 new_lines = [
                     f"\npublic static final Block GIGANTIC_POKEDOLL_{pokemon_name.upper()} = Registry.register(Registries.BLOCK, new Identifier(Pokeblocks.MOD_ID, PokeIDs.GIGANTIC_POKEDOLL_{pokemon_name.upper()}),",
-                    f"\nnew PokedollBlock<>(() -> Gigantic{capitalized_pokemon_name}BlockEntity.class));",
+                    f"\nnew PokedollBlock<>(() -> PokedollGigantic{capitalized_pokemon_name}BlockEntity.class));",
                     f"\n"
                 ]
                 for new_line in reversed(new_lines):
