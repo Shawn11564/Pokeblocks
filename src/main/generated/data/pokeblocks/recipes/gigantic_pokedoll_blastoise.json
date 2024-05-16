@@ -1,0 +1,21 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "category": "misc",
+  "key": {
+    "d": {
+      "item": "pokeblocks:pokedoll_blastoise"
+    },
+    "w": {
+      "item": "minecraft:white_wool"
+    }
+  },
+  "pattern": [
+    " d ",
+    "dwd",
+    " d "
+  ],
+  "result": {
+    "item": "pokeblocks:gigantic_pokedoll_blastoise"
+  },
+  "show_notification": true
+}

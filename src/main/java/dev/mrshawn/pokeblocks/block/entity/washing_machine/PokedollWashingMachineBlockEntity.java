@@ -1,4 +1,4 @@
-package dev.mrshawn.pokeblocks.block.entity.washingmachine;
+package dev.mrshawn.pokeblocks.block.entity.washing_machine;
 
 import dev.mrshawn.pokeblocks.block.entity.BlockEntityTypeRegistry;
 import dev.mrshawn.pokeblocks.block.entity.PokedollBlockEntity;

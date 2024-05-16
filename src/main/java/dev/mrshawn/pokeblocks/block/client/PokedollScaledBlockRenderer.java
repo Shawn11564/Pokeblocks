@@ -7,22 +7,19 @@ import software.bernie.geckolib.cache.object.BakedGeoModel;
 
 public class PokedollScaledBlockRenderer extends PokedollBlockRenderer {
 
-	private final float scaleWidth;
-	private final float scaleHeight;
-
-	public PokedollScaledBlockRenderer(BlockEntityRendererFactory.Context context, PokedollBlockModel model, float scaleWidth, float scaleHeight) {
-		super(context, model);
-		this.scaleWidth = scaleWidth;
-		this.scaleHeight = scaleHeight;
-	}
+	private final float scale;
 
 	public PokedollScaledBlockRenderer(BlockEntityRendererFactory.Context context, PokedollBlockModel model, float scale) {
-		this(context, model, scale, scale);
+		super(context, model);
+		this.scale = scale;
 	}
 
 	@Override
 	public void scaleModelForRender(float widthScale, float heightScale, MatrixStack poseStack, PokedollBlockEntity animatable, BakedGeoModel model, boolean isReRender, float partialTick, int packedLight, int packedOverlay) {
-		super.scaleModelForRender(scaleWidth, scaleHeight, poseStack, animatable, model, isReRender, partialTick, packedLight, packedOverlay);
+		poseStack.translate(0.5f, 0.0f, 0.5f); // Translate to the center of the block
+		poseStack.scale(scale, scale, scale); // Scale the model
+		poseStack.translate(-0.5f, 0.0f, -0.5f); // Translate back to the origin
+		super.scaleModelForRender(widthScale, heightScale, poseStack, animatable, model, isReRender, partialTick, packedLight, packedOverlay);
 	}
 
 }

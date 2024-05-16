@@ -222,26 +222,26 @@ for folder_name in os.listdir(block_entity_dir):
                     "display": {
                         "thirdperson_righthand": {
                             "rotation": [0, 135, 0],
-                            "scale": [0.5, 0.5, 0.5]
+                            "scale": [0.75, 0.75, 0.75]
                         },
                         "thirdperson_lefthand": {
                             "rotation": [0, 135, 0],
-                            "scale": [0.5, 0.5, 0.5]
+                            "scale": [0.75, 0.75, 0.75]
                         },
                         "firstperson_righthand": {
                             "rotation": [0, 135, 0],
-                            "scale": [0.5, 0.5, 0.5]
+                            "scale": [0.75, 0.75, 0.75]
                         },
                         "firstperson_lefthand": {
                             "rotation": [0, 135, 0],
-                            "scale": [0.5, 0.5, 0.5]
+                            "scale": [0.75, 0.75, 0.75]
                         },
                         "ground": {
-                            "scale": [0.5, 0.5, 0.5]
+                            "scale": [0.75, 0.75, 0.75]
                         },
                         "gui": {
                             "rotation": [0, 135, 0],
-                            "scale": [0.75, 0.75, 0.75],
+                            "scale": [1.0, 1.0, 1.0],
                             "translation": [0, -8, 0]
                         }
                     }
@@ -256,26 +256,26 @@ for folder_name in os.listdir(block_entity_dir):
                     "display": {
                         "thirdperson_righthand": {
                             "rotation": [0, 135, 0],
-                            "scale": [0.5, 0.5, 0.5]
+                            "scale": [0.75, 0.75, 0.75]
                         },
                         "thirdperson_lefthand": {
                             "rotation": [0, 135, 0],
-                            "scale": [0.5, 0.5, 0.5]
+                            "scale": [0.75, 0.75, 0.75]
                         },
                         "firstperson_righthand": {
                             "rotation": [0, 135, 0],
-                            "scale": [0.5, 0.5, 0.5]
+                            "scale": [0.75, 0.75, 0.75]
                         },
                         "firstperson_lefthand": {
                             "rotation": [0, 135, 0],
-                            "scale": [0.5, 0.5, 0.5]
+                            "scale": [0.75, 0.75, 0.75]
                         },
                         "ground": {
-                            "scale": [0.5, 0.5, 0.5]
+                            "scale": [0.75, 0.75, 0.75]
                         },
                         "gui": {
                             "rotation": [0, 135, 0],
-                            "scale": [0.75, 0.75, 0.75],
+                            "scale": [1.0, 1.0, 1.0],
                             "translation": [0, -8, 0]
                         }
                     }
