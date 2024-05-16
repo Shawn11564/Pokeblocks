@@ -3,11 +3,12 @@ import shutil
 import json
 
 src_dir = "src/main/java/dev/mrshawn/pokeblocks"
+resources_dir = "src/main/resources"
 block_entity_dir = os.path.join(src_dir, "block/entity")
 
 for folder_name in os.listdir(block_entity_dir):
     folder_path = os.path.join(block_entity_dir, folder_name)
-    if os.path.isdir(folder_path) and not folder_name.endswith("figurine"):
+    if os.path.isdir(folder_path) and not any(ignore_word in folder_name.lower() for ignore_word in ["figurine", "fishbowl", "trophy"]):
         pokemon_name = folder_name
         capitalized_pokemon_name = pokemon_name.capitalize()
 
@@ -170,3 +171,62 @@ for folder_name in os.listdir(block_entity_dir):
             # Write the file
             with open(f"{src_dir}/item/ModItems.java", "w") as file:
                 file.writelines(lines)
+            
+            # 7. Create item model JSON
+            os.makedirs(os.path.join(resources_dir, "assets/pokeblocks/models/item"), exist_ok=True)
+            item_model_json_path = os.path.join(resources_dir, "assets/pokeblocks/models/item", f"gigantic_pokedoll_{pokemon_name}.json")
+            with open(item_model_json_path, "w") as file:
+                item_model_json = {
+                    "parent": f"pokeblocks:block/gigantic_pokedoll_{pokemon_name}",
+                    "display": {
+                        "thirdperson_righthand": {
+                            "rotation": [0, 135, 0],
+                            "scale": [0.5, 0.5, 0.5]
+                        },
+                        "thirdperson_lefthand": {
+                            "rotation": [0, 135, 0],
+                            "scale": [0.5, 0.5, 0.5]
+                        },
+                        "firstperson_righthand": {
+                            "rotation": [0, 135, 0],
+                            "scale": [0.5, 0.5, 0.5]
+                        },
+                        "firstperson_lefthand": {
+                            "rotation": [0, 135, 0],
+                            "scale": [0.5, 0.5, 0.5]
+                        },
+                        "ground": {
+                            "scale": [0.5, 0.5, 0.5]
+                        },
+                        "gui": {
+                            "rotation": [0, 135, 0],
+                            "scale": [0.75, 0.75, 0.75],
+                            "translation": [0, -8, 0]
+                        }
+                    }
+                }
+                json.dump(item_model_json, file, indent=2)
+
+            # 8. Create block model JSON
+            os.makedirs(os.path.join(resources_dir, "assets/pokeblocks/models/block"), exist_ok=True)
+            block_model_json_path = os.path.join(resources_dir, "assets/pokeblocks/models/block", f"gigantic_pokedoll_{pokemon_name}.json")
+            with open(block_model_json_path, "w") as file:
+                block_model_json = {
+                    "credit": "Made with Blockbench",
+                    "parent": "builtin/entity",
+                    "texture_size": [64, 64],
+                    "textures": {
+                        "particle": f"pokeblocks:block/pokedoll_{pokemon_name}_texture"
+                    }
+                }
+                json.dump(block_model_json, file, indent=2)
+
+            # 9. Create lang entries in en_us.json
+            lang_file_path = os.path.join(resources_dir, "assets/pokeblocks/lang/en_us.json")
+            with open(lang_file_path, "r+") as file:
+                data = json.load(file)
+                data[f"item.pokeblocks.gigantic_pokedoll_{pokemon_name}"] = f"Gigantic {pokemon_name.capitalize()} Pokedoll"
+                data[f"block.pokeblocks.gigantic_pokedoll_{pokemon_name}"] = f"Gigantic {pokemon_name.capitalize()} Pokedoll"
+                file.seek(0)
+                json.dump(data, file, indent=4)
+                file.truncate()
