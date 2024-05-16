@@ -8,7 +8,7 @@ block_entity_dir = os.path.join(src_dir, "block/entity")
 
 for folder_name in os.listdir(block_entity_dir):
     folder_path = os.path.join(block_entity_dir, folder_name)
-    if os.path.isdir(folder_path) and not any(ignore_word in folder_name.lower() for ignore_word in ["figurine", "fishbowl", "trophy"]):
+    if os.path.isdir(folder_path) and not any(ignore_word in folder_name.lower() for ignore_word in ["figurine", "fishbowl", "trophy", "applin_basket"]):
         pokemon_name = folder_name
         capitalized_pokemon_name = pokemon_name.capitalize()
 

@@ -1,5 +1,6 @@
 package dev.mrshawn.pokeblocks;
 
+import dev.mrshawn.pokeblocks.block.client.PokedollScaledBlockRenderer;
 import dev.mrshawn.pokeblocks.block.entity.ModBlockEntities;
 import dev.mrshawn.pokeblocks.block.entity.PokedollBlockEntity;
 import dev.mrshawn.pokeblocks.block.client.PokedollBlockModel;
@@ -409,7 +410,7 @@ public class PokeblocksClient implements ClientModInitializer {
 				textureResourcePath,
 				animationResourcePath
 		);
-		BlockEntityRendererFactories.register(type, context -> new PokedollBlockRenderer(context, blockModel));
+		BlockEntityRendererFactories.register(type, context -> new PokedollScaledBlockRenderer(context, blockModel, scale, scale));
 	}
 
 	private static <T extends PokedollBlockEntity> void registerScaledBlockEntityRenderer(BlockEntityType<T> type, String modelResourcePath, String textureResourcePath, float scale) {
