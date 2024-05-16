@@ -66,7 +66,7 @@ for folder_name in os.listdir(block_entity_dir):
             # If found, insert the new entry after that line
             if last_entry_line != -1:
                 new_lines = [
-                    f"\npublic static BlockEntityType<Gigantic{capitalized_pokemon_name}BlockEntity> GIGANTIC_POKEDOLL_{pokemon_name.upper()}_BLOCK_ENTITY;",
+                    f"\npublic static BlockEntityType<PokedollGigantic{capitalized_pokemon_name}BlockEntity> GIGANTIC_POKEDOLL_{pokemon_name.upper()}_BLOCK_ENTITY;",
                     f"\n"
                 ]
                 for new_line in reversed(new_lines):
@@ -83,8 +83,8 @@ for folder_name in os.listdir(block_entity_dir):
                 new_lines = [
                     f"\nGIGANTIC_POKEDOLL_{pokemon_name.upper()}_BLOCK_ENTITY = registerBlockEntity(",
                     f"\nnew Identifier(Pokeblocks.MOD_ID, PokeIDs.GIGANTIC_POKEDOLL_{pokemon_name.upper()}),",
-                    f"\nFabricBlockEntityTypeBuilder.create(Gigantic{capitalized_pokemon_name}BlockEntity::new, ModBlocks.GIGANTIC_POKEDOLL_{pokemon_name.upper()}),",
-                    f"\nGigantic{capitalized_pokemon_name}BlockEntity.class",
+                    f"\nFabricBlockEntityTypeBuilder.create(PokedollGigantic{capitalized_pokemon_name}BlockEntity::new, ModBlocks.GIGANTIC_POKEDOLL_{pokemon_name.upper()}),",
+                    f"\nPokedollGigantic{capitalized_pokemon_name}BlockEntity.class",
                     f"\n);",
                     f"\n"
                 ]
