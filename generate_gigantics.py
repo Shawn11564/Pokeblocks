@@ -11,20 +11,20 @@ for folder_name in os.listdir(block_entity_dir):
         pokemon_name = folder_name
         capitalized_pokemon_name = pokemon_name.capitalize()
 
-        if not any(file.startswith(f"Gigantic{capitalized_pokemon_name}BlockEntity") for file in os.listdir(folder_path)):
+        if not any(file.startswith(f"PokedollGigantic{capitalized_pokemon_name}BlockEntity") for file in os.listdir(folder_path)):
             # 1. Copy and modify block entity file
             os.makedirs(folder_path, exist_ok=True)
             shutil.copy(f"template/block/entity/template_block_entity.java",
-                        f"{folder_path}/Gigantic{capitalized_pokemon_name}BlockEntity.java")
+                        f"{folder_path}/PokedollGigantic{capitalized_pokemon_name}BlockEntity.java")
 
             # Open the file and replace <Pokemon name> with the actual pokemon's name
-            with open(f"{folder_path}/Gigantic{capitalized_pokemon_name}BlockEntity.java", "r") as file:
+            with open(f"{folder_path}/PokedollGigantic{capitalized_pokemon_name}BlockEntity.java", "r") as file:
                 content = file.read()
 
             content = content.replace("<Pokemon name>", f"Gigantic{capitalized_pokemon_name}")
             content = content.replace("<pokemon name>", pokemon_name)
 
-            with open(f"{folder_path}/Gigantic{capitalized_pokemon_name}BlockEntity.java", "w") as file:
+            with open(f"{folder_path}/PokedollGigantic{capitalized_pokemon_name}BlockEntity.java", "w") as file:
                 file.write(content)
 
             # 2. Modify ModBlocks.java
