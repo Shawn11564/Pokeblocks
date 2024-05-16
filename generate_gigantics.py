@@ -230,3 +230,16 @@ for folder_name in os.listdir(block_entity_dir):
                 file.seek(0)
                 json.dump(data, file, indent=4)
                 file.truncate()
+            
+            # 10. Create blockstate file
+            os.makedirs(os.path.join(resources_dir, "assets/pokeblocks/blockstates"), exist_ok=True)
+            blockstate_file_path = os.path.join(resources_dir, "assets/pokeblocks/blockstates", f"gigantic_pokedoll_{pokemon_name}.json")
+            with open(blockstate_file_path, "w") as file:
+                blockstate_json = {
+                    "variants": {
+                        "": {
+                            "model": f"pokeblocks:block/gigantic_pokedoll_{pokemon_name}"
+                        }
+                    }
+                }
+                json.dump(blockstate_json, file, indent=2)
