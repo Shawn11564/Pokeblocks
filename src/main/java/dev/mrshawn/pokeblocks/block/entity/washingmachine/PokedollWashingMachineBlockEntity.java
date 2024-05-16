@@ -1,4 +1,4 @@
-package dev.mrshawn.pokeblocks.block.entity.snorlax;
+package dev.mrshawn.pokeblocks.block.entity.washingmachine;
 
 import dev.mrshawn.pokeblocks.block.entity.BlockEntityTypeRegistry;
 import dev.mrshawn.pokeblocks.block.entity.PokedollBlockEntity;
