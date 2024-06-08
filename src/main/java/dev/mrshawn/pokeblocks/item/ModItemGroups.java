@@ -144,8 +144,24 @@ public class ModItemGroups {
 						entries.add(ModBlocks.POKEDOLL_MAGIKARP_FISHBOWL);
 						entries.add(ModBlocks.POKEDOLL_SHINY_MAGIKARP_FISHBOWL);
 						entries.add(ModBlocks.POKEDOLL_POKEMON_TROPHY);
+						entries.add(ModBlocks.POKEDOLL_GASTLY);
+						entries.add(ModBlocks.POKEDOLL_SHINY_GASTLY);
+						entries.add(ModBlocks.POKEDOLL_GENGAR);
+						entries.add(ModBlocks.POKEDOLL_SHINY_GENGAR);
+						entries.add(ModBlocks.POKEDOLL_DRIFLOON);
+						entries.add(ModBlocks.POKEDOLL_SHINY_DRIFLOON);
+						entries.add(ModBlocks.POKEDOLL_ROOKIDEE);
+						entries.add(ModBlocks.POKEDOLL_SHINY_ROOKIDEE);
+						entries.add(ModBlocks.POKEDOLL_CORVISQUIRE);
+						entries.add(ModBlocks.POKEDOLL_SHINY_CORVISQUIRE);
+						entries.add(ModBlocks.POKEDOLL_CORVIKNIGHT);
+						entries.add(ModBlocks.POKEDOLL_SHINY_CORVIKNIGHT);
+						entries.add(ModBlocks.POKEDOLL_STONJOURNER);
+						entries.add(ModBlocks.POKEDOLL_SHINY_STONJOURNER);
 						entries.add(ModItems.POKE_COIN);
 						entries.add(ModItems.POKE_EGG);
+						entries.add(ModItems.RAID_PASS);
+						entries.add(ModItems.RAID_VOUCHER);
 						entries.add(ModItems.NICKEL);
 					}))
 					.build()

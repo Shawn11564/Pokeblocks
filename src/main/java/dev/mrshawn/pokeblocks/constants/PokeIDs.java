@@ -64,6 +64,8 @@ public class PokeIDs {
 	public static final String POKE_COIN = "poke_coin";
 	public static final String POKE_EGG = "poke_egg";
 	public static final String NICKEL = "nickel";
+	public static final String RAID_PASS = "raid_pass";
+	public static final String RAID_VOUCHER = "raid_voucher";
 	public static final String A09ROBERT_FIGURINE = "a09robert_figurine";
 	public static final String RED_COMMUNISM_FIGURINE = "red_communism_figurine";
 	public static final String POKEDOLL_BLASTOISE = "pokedoll_blastoise";
@@ -133,4 +135,18 @@ public class PokeIDs {
 	public static final String GIGANTIC_POKEDOLL_WASHING_MACHINE = "gigantic_pokedoll_washing_machine";
 	public static final String GIGANTIC_POKEDOLL_WOOPER = "gigantic_pokedoll_wooper";
 	public static final String GIGANTIC_POKEDOLL_SHINY_WOOPER = "gigantic_pokedoll_shiny_wooper";
+	public static final String POKEDOLL_GASTLY = "pokedoll_gastly";
+	public static final String POKEDOLL_SHINY_GASTLY = "pokedoll_shiny_gastly";
+	public static final String POKEDOLL_GENGAR = "pokedoll_gengar";
+	public static final String POKEDOLL_SHINY_GENGAR = "pokedoll_shiny_gengar";
+	public static final String POKEDOLL_DRIFLOON = "pokedoll_drifloon";
+	public static final String POKEDOLL_SHINY_DRIFLOON = "pokedoll_shiny_drifloon";
+	public static final String POKEDOLL_ROOKIDEE = "pokedoll_rookidee";
+	public static final String POKEDOLL_SHINY_ROOKIDEE = "pokedoll_shiny_rookidee";
+	public static final String POKEDOLL_CORVISQUIRE = "pokedoll_corvisquire";
+	public static final String POKEDOLL_SHINY_CORVISQUIRE = "pokedoll_shiny_corvisquire";
+	public static final String POKEDOLL_CORVIKNIGHT = "pokedoll_corviknight";
+	public static final String POKEDOLL_SHINY_CORVIKNIGHT = "pokedoll_shiny_corviknight";
+	public static final String POKEDOLL_STONJOURNER = "pokedoll_stonjourner";
+	public static final String POKEDOLL_SHINY_STONJOURNER = "pokedoll_shiny_stonjourner";
 }

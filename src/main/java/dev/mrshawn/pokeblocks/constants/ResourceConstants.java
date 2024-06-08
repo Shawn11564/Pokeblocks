@@ -117,4 +117,25 @@ public class ResourceConstants {
 	public static final String POKEDOLL_QUAGSIRE_TEXTURE = "pokedoll_quagsire_texture.png";
 	public static final String POKEDOLL_SHINY_QUAGSIRE_TEXTURE = "pokedoll_quagsire_shiny_texture.png";
 	public static final String POKEDOLL_QUAGSIRE_MODEL = "pokedoll_quagsire.geo.json";
+	public static final String POKEDOLL_GASTLY_TEXTURE = "pokedoll_gastly_texture.png";
+	public static final String POKEDOLL_SHINY_GASTLY_TEXTURE = "pokedoll_gastly_shiny_texture.png";
+	public static final String POKEDOLL_GASTLY_MODEL = "pokedoll_gastly.geo.json";
+	public static final String POKEDOLL_GENGAR_TEXTURE = "pokedoll_gengar_texture.png";
+	public static final String POKEDOLL_SHINY_GENGAR_TEXTURE = "pokedoll_gengar_shiny_texture.png";
+	public static final String POKEDOLL_GENGAR_MODEL = "pokedoll_gengar.geo.json";
+	public static final String POKEDOLL_DRIFLOON_TEXTURE = "pokedoll_drifloon_texture.png";
+	public static final String POKEDOLL_SHINY_DRIFLOON_TEXTURE = "pokedoll_drifloon_shiny_texture.png";
+	public static final String POKEDOLL_DRIFLOON_MODEL = "pokedoll_drifloon.geo.json";
+	public static final String POKEDOLL_ROOKIDEE_TEXTURE = "pokedoll_rookidee_texture.png";
+	public static final String POKEDOLL_SHINY_ROOKIDEE_TEXTURE = "pokedoll_rookidee_shiny_texture.png";
+	public static final String POKEDOLL_ROOKIDEE_MODEL = "pokedoll_rookidee.geo.json";
+	public static final String POKEDOLL_CORVISQUIRE_TEXTURE = "pokedoll_corvisquire_texture.png";
+	public static final String POKEDOLL_SHINY_CORVISQUIRE_TEXTURE = "pokedoll_corvisquire_shiny_texture.png";
+	public static final String POKEDOLL_CORVISQUIRE_MODEL = "pokedoll_corvisquire.geo.json";
+	public static final String POKEDOLL_CORVIKNIGHT_TEXTURE = "pokedoll_corviknight_texture.png";
+	public static final String POKEDOLL_SHINY_CORVIKNIGHT_TEXTURE = "pokedoll_corviknight_shiny_texture.png";
+	public static final String POKEDOLL_CORVIKNIGHT_MODEL = "pokedoll_corviknight.geo.json";
+	public static final String POKEDOLL_STONJOURNER_TEXTURE = "pokedoll_stonjourner_texture.png";
+	public static final String POKEDOLL_SHINY_STONJOURNER_TEXTURE = "pokedoll_stonjourner_shiny_texture.png";
+	public static final String POKEDOLL_STONJOURNER_MODEL = "pokedoll_stonjourner.geo.json";
 }

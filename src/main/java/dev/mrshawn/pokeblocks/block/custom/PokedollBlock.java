@@ -1,5 +1,6 @@
 package dev.mrshawn.pokeblocks.block.custom;
 
+import dev.mrshawn.pokeblocks.constants.Shapes;
 import net.fabricmc.fabric.api.object.builder.v1.block.FabricBlockSettings;
 import net.minecraft.block.*;
 import net.minecraft.block.entity.BlockEntity;
@@ -21,19 +22,21 @@ import java.util.function.Supplier;
 public class PokedollBlock <T extends BlockEntity> extends BlockWithEntity {
 
 	private Supplier<Class<T>> blockEntitySupplier;
-	private VoxelShape shape;
+	private VoxelShape shape = Shapes.DOLL_SHAPE;
 
 	public PokedollBlock(Block copiedBlock, VoxelShape shape, Supplier<Class<T>> blockEntitySupplier) {
 		super(FabricBlockSettings.copy(copiedBlock).strength(0.4f).nonOpaque().solidBlock((state, world, pos) -> false));
 		this.blockEntitySupplier = blockEntitySupplier;
 		this.shape = shape;
 		setDefaultState(this.getStateManager().getDefaultState().with(Properties.HORIZONTAL_FACING, Direction.NORTH));
+		if (this.blockEntitySupplier.get().getSimpleName().toLowerCase().contains("gigantic")) { this.shape = Shapes.GIGANTIC_DOLL_SHAPE; }
 	}
 
 	public PokedollBlock(Block copiedBlock, Supplier<Class<T>> blockEntitySupplier) {
 		super(FabricBlockSettings.copy(copiedBlock).strength(0.4f).nonOpaque().solidBlock((state, world, pos) -> false));
 		this.blockEntitySupplier = blockEntitySupplier;
 		setDefaultState(this.getStateManager().getDefaultState().with(Properties.HORIZONTAL_FACING, Direction.NORTH));
+		if (this.blockEntitySupplier.get().getSimpleName().toLowerCase().contains("gigantic")) { this.shape = Shapes.GIGANTIC_DOLL_SHAPE; }
 	}
 
 	public PokedollBlock(VoxelShape shape, Supplier<Class<T>> blockEntitySupplier) {
@@ -41,17 +44,20 @@ public class PokedollBlock <T extends BlockEntity> extends BlockWithEntity {
 		this.blockEntitySupplier = blockEntitySupplier;
 		this.shape = shape;
 		setDefaultState(this.getStateManager().getDefaultState().with(Properties.HORIZONTAL_FACING, Direction.NORTH));
+		if (this.blockEntitySupplier.get().getSimpleName().toLowerCase().contains("gigantic")) { this.shape = Shapes.GIGANTIC_DOLL_SHAPE; }
 	}
 
 	public PokedollBlock(Settings settings, Supplier<Class<T>> blockEntitySupplier) {
 		super(settings);
 		this.blockEntitySupplier = blockEntitySupplier;
 		setDefaultState(this.getStateManager().getDefaultState().with(Properties.HORIZONTAL_FACING, Direction.NORTH));
+		if (this.blockEntitySupplier.get().getSimpleName().toLowerCase().contains("gigantic")) { this.shape = Shapes.GIGANTIC_DOLL_SHAPE; }
 	}
 
 	public PokedollBlock(Supplier<Class<T>> blockEntitySupplier) {
 		this(FabricBlockSettings.copy(Blocks.WHITE_WOOL).nonOpaque().solidBlock((state, world, pos) -> false), blockEntitySupplier);
 		this.blockEntitySupplier = blockEntitySupplier;
+		if (this.blockEntitySupplier.get().getSimpleName().toLowerCase().contains("gigantic")) { this.shape = Shapes.GIGANTIC_DOLL_SHAPE; }
 	}
 
 	@Nullable

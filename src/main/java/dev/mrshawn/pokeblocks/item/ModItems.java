@@ -1006,6 +1006,111 @@ public class ModItems {
 			DollRarity.SHINY
 	);
 
+	public static final Item POKEDOLL_GASTLY_BLOCK_ITEM = registerItem(
+			PokeIDs.POKEDOLL_GASTLY,
+			ModBlocks.POKEDOLL_GASTLY,
+			ResourceConstants.POKEDOLL_GASTLY_MODEL,
+			ResourceConstants.POKEDOLL_GASTLY_TEXTURE,
+			DollRarity.UNCOMMON
+	);
+	public static final Item POKEDOLL_SHINY_GASTLY_BLOCK_ITEM = registerItem(
+			PokeIDs.POKEDOLL_SHINY_GASTLY,
+			ModBlocks.POKEDOLL_SHINY_GASTLY,
+			ResourceConstants.POKEDOLL_GASTLY_MODEL,
+			ResourceConstants.POKEDOLL_SHINY_GASTLY_TEXTURE,
+			DollRarity.SHINY
+	);
+
+	public static final Item POKEDOLL_GENGAR_BLOCK_ITEM = registerItem(
+			PokeIDs.POKEDOLL_GENGAR,
+			ModBlocks.POKEDOLL_GENGAR,
+			ResourceConstants.POKEDOLL_GENGAR_MODEL,
+			ResourceConstants.POKEDOLL_GENGAR_TEXTURE,
+			DollRarity.LEGENDARY
+	);
+	public static final Item POKEDOLL_SHINY_GENGAR_BLOCK_ITEM = registerItem(
+			PokeIDs.POKEDOLL_SHINY_GENGAR,
+			ModBlocks.POKEDOLL_SHINY_GENGAR,
+			ResourceConstants.POKEDOLL_GENGAR_MODEL,
+			ResourceConstants.POKEDOLL_SHINY_GENGAR_TEXTURE,
+			DollRarity.SHINY
+	);
+
+	public static final Item POKEDOLL_DRIFLOON_BLOCK_ITEM = registerItem(
+			PokeIDs.POKEDOLL_DRIFLOON,
+			ModBlocks.POKEDOLL_DRIFLOON,
+			ResourceConstants.POKEDOLL_DRIFLOON_MODEL,
+			ResourceConstants.POKEDOLL_DRIFLOON_TEXTURE,
+			DollRarity.COMMON
+	);
+	public static final Item POKEDOLL_SHINY_DRIFLOON_BLOCK_ITEM = registerItem(
+			PokeIDs.POKEDOLL_SHINY_DRIFLOON,
+			ModBlocks.POKEDOLL_SHINY_DRIFLOON,
+			ResourceConstants.POKEDOLL_DRIFLOON_MODEL,
+			ResourceConstants.POKEDOLL_SHINY_DRIFLOON_TEXTURE,
+			DollRarity.SHINY
+	);
+
+	public static final Item POKEDOLL_ROOKIDEE_BLOCK_ITEM = registerItem(
+			PokeIDs.POKEDOLL_ROOKIDEE,
+			ModBlocks.POKEDOLL_ROOKIDEE,
+			ResourceConstants.POKEDOLL_ROOKIDEE_MODEL,
+			ResourceConstants.POKEDOLL_ROOKIDEE_TEXTURE,
+			DollRarity.COMMON
+	);
+	public static final Item POKEDOLL_SHINY_ROOKIDEE_BLOCK_ITEM = registerItem(
+			PokeIDs.POKEDOLL_SHINY_ROOKIDEE,
+			ModBlocks.POKEDOLL_SHINY_ROOKIDEE,
+			ResourceConstants.POKEDOLL_ROOKIDEE_MODEL,
+			ResourceConstants.POKEDOLL_SHINY_ROOKIDEE_TEXTURE,
+			DollRarity.SHINY
+	);
+
+	public static final Item POKEDOLL_CORVISQUIRE_BLOCK_ITEM = registerItem(
+			PokeIDs.POKEDOLL_CORVISQUIRE,
+			ModBlocks.POKEDOLL_CORVISQUIRE,
+			ResourceConstants.POKEDOLL_CORVISQUIRE_MODEL,
+			ResourceConstants.POKEDOLL_CORVISQUIRE_TEXTURE,
+			DollRarity.RARE
+	);
+	public static final Item POKEDOLL_SHINY_CORVISQUIRE_BLOCK_ITEM = registerItem(
+			PokeIDs.POKEDOLL_SHINY_CORVISQUIRE,
+			ModBlocks.POKEDOLL_SHINY_CORVISQUIRE,
+			ResourceConstants.POKEDOLL_CORVISQUIRE_MODEL,
+			ResourceConstants.POKEDOLL_SHINY_CORVISQUIRE_TEXTURE,
+			DollRarity.SHINY
+	);
+
+	public static final Item POKEDOLL_CORVIKNIGHT_BLOCK_ITEM = registerItem(
+			PokeIDs.POKEDOLL_CORVIKNIGHT,
+			ModBlocks.POKEDOLL_CORVIKNIGHT,
+			ResourceConstants.POKEDOLL_CORVIKNIGHT_MODEL,
+			ResourceConstants.POKEDOLL_CORVIKNIGHT_TEXTURE,
+			DollRarity.LEGENDARY
+	);
+	public static final Item POKEDOLL_SHINY_CORVIKNIGHT_BLOCK_ITEM = registerItem(
+			PokeIDs.POKEDOLL_SHINY_CORVIKNIGHT,
+			ModBlocks.POKEDOLL_SHINY_CORVIKNIGHT,
+			ResourceConstants.POKEDOLL_CORVIKNIGHT_MODEL,
+			ResourceConstants.POKEDOLL_SHINY_CORVIKNIGHT_TEXTURE,
+			DollRarity.SHINY
+	);
+
+	public static final Item POKEDOLL_STONJOURNER_BLOCK_ITEM = registerItem(
+			PokeIDs.POKEDOLL_STONJOURNER,
+			ModBlocks.POKEDOLL_STONJOURNER,
+			ResourceConstants.POKEDOLL_STONJOURNER_MODEL,
+			ResourceConstants.POKEDOLL_STONJOURNER_TEXTURE,
+			DollRarity.EPIC
+	);
+	public static final Item POKEDOLL_SHINY_STONJOURNER_BLOCK_ITEM = registerItem(
+			PokeIDs.POKEDOLL_SHINY_STONJOURNER,
+			ModBlocks.POKEDOLL_SHINY_STONJOURNER,
+			ResourceConstants.POKEDOLL_STONJOURNER_MODEL,
+			ResourceConstants.POKEDOLL_SHINY_STONJOURNER_TEXTURE,
+			DollRarity.SHINY
+	);
+
 	public static final Item POKE_COIN = registerItem(
 			PokeIDs.POKE_COIN,
 			new Item(new Item.Settings().maxCount(64))
@@ -1018,6 +1123,16 @@ public class ModItems {
 
 	public static final Item NICKEL = registerItem(
 			PokeIDs.NICKEL,
+			new Item(new Item.Settings().maxCount(64))
+	);
+
+	public static final Item RAID_PASS = registerItem(
+			PokeIDs.RAID_PASS,
+			new Item(new Item.Settings().maxCount(64))
+	);
+
+	public static final Item RAID_VOUCHER = registerItem(
+			PokeIDs.RAID_VOUCHER,
 			new Item(new Item.Settings().maxCount(64))
 	);
 
