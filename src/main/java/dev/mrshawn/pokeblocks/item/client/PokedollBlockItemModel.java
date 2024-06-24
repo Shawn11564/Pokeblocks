@@ -21,7 +21,7 @@ public class PokedollBlockItemModel extends GeoModel<PokedollBlockItem> {
 	public PokedollBlockItemModel(String modelResourcePath, String textureResourcePath) {
 		this.modelResourcePath = modelResourcePath;
 		this.textureResourcePath = textureResourcePath;
-		this.animationResourcePath = ResourceConstants.GENERIC_ANIMATION_PATH;
+		this.animationResourcePath = ResourceConstants.SPIN_ANIMATION_PATH;
 	}
 
 	@Override
@@ -36,7 +36,7 @@ public class PokedollBlockItemModel extends GeoModel<PokedollBlockItem> {
 
 	@Override
 	public Identifier getAnimationResource(PokedollBlockItem animatable) {
-		return new Identifier(Pokeblocks.MOD_ID, "animations/" + animationResourcePath);
+		return new Identifier(Pokeblocks.MOD_ID, "animations/block/" + animationResourcePath);
 	}
 
 }
