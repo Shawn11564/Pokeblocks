@@ -43,8 +43,12 @@ import dev.mrshawn.pokeblocks.block.entity.charmander.PokedollGiganticCharmander
 import dev.mrshawn.pokeblocks.block.entity.charmander.PokedollGiganticShinyCharmanderBlockEntity;
 import dev.mrshawn.pokeblocks.block.entity.charmander.PokedollShinyCharmanderBlockEntity;
 import dev.mrshawn.pokeblocks.block.entity.corviknight.PokedollCorviknightBlockEntity;
+import dev.mrshawn.pokeblocks.block.entity.corviknight.PokedollGiganticCorviknightBlockEntity;
+import dev.mrshawn.pokeblocks.block.entity.corviknight.PokedollGiganticShinyCorviknightBlockEntity;
 import dev.mrshawn.pokeblocks.block.entity.corviknight.PokedollShinyCorviknightBlockEntity;
 import dev.mrshawn.pokeblocks.block.entity.corvisquire.PokedollCorvisquireBlockEntity;
+import dev.mrshawn.pokeblocks.block.entity.corvisquire.PokedollGiganticCorvisquireBlockEntity;
+import dev.mrshawn.pokeblocks.block.entity.corvisquire.PokedollGiganticShinyCorvisquireBlockEntity;
 import dev.mrshawn.pokeblocks.block.entity.corvisquire.PokedollShinyCorvisquireBlockEntity;
 import dev.mrshawn.pokeblocks.block.entity.damorgo_figurine.PokedollDamorgoFigurineBlockEntity;
 import dev.mrshawn.pokeblocks.block.entity.dolliv.PokedollDollivBlockEntity;
@@ -53,6 +57,8 @@ import dev.mrshawn.pokeblocks.block.entity.dolliv.PokedollGiganticShinyDollivBlo
 import dev.mrshawn.pokeblocks.block.entity.dolliv.PokedollShinyDollivBlockEntity;
 import dev.mrshawn.pokeblocks.block.entity.doncheadle_figurine.PokedollDoncheadleFigurineBlockEntity;
 import dev.mrshawn.pokeblocks.block.entity.drifloon.PokedollDrifloonBlockEntity;
+import dev.mrshawn.pokeblocks.block.entity.drifloon.PokedollGiganticDrifloonBlockEntity;
+import dev.mrshawn.pokeblocks.block.entity.drifloon.PokedollGiganticShinyDrifloonBlockEntity;
 import dev.mrshawn.pokeblocks.block.entity.drifloon.PokedollShinyDrifloonBlockEntity;
 import dev.mrshawn.pokeblocks.block.entity.flaaffy.PokedollFlaaffyBlockEntity;
 import dev.mrshawn.pokeblocks.block.entity.flaaffy.PokedollGiganticFlaaffyBlockEntity;
@@ -63,8 +69,12 @@ import dev.mrshawn.pokeblocks.block.entity.furret.PokedollGiganticFurretBlockEnt
 import dev.mrshawn.pokeblocks.block.entity.furret.PokedollGiganticShinyFurretBlockEntity;
 import dev.mrshawn.pokeblocks.block.entity.furret.PokedollShinyFurretBlockEntity;
 import dev.mrshawn.pokeblocks.block.entity.gastly.PokedollGastlyBlockEntity;
+import dev.mrshawn.pokeblocks.block.entity.gastly.PokedollGiganticGastlyBlockEntity;
+import dev.mrshawn.pokeblocks.block.entity.gastly.PokedollGiganticShinyGastlyBlockEntity;
 import dev.mrshawn.pokeblocks.block.entity.gastly.PokedollShinyGastlyBlockEntity;
 import dev.mrshawn.pokeblocks.block.entity.gengar.PokedollGengarBlockEntity;
+import dev.mrshawn.pokeblocks.block.entity.gengar.PokedollGiganticGengarBlockEntity;
+import dev.mrshawn.pokeblocks.block.entity.gengar.PokedollGiganticShinyGengarBlockEntity;
 import dev.mrshawn.pokeblocks.block.entity.gengar.PokedollShinyGengarBlockEntity;
 import dev.mrshawn.pokeblocks.block.entity.happiny.PokedollGiganticHappinyBlockEntity;
 import dev.mrshawn.pokeblocks.block.entity.happiny.PokedollGiganticShinyHappinyBlockEntity;
@@ -102,6 +112,8 @@ import dev.mrshawn.pokeblocks.block.entity.rellor.PokedollGiganticRellorBlockEnt
 import dev.mrshawn.pokeblocks.block.entity.rellor.PokedollGiganticShinyRellorBlockEntity;
 import dev.mrshawn.pokeblocks.block.entity.rellor.PokedollRellorBlockEntity;
 import dev.mrshawn.pokeblocks.block.entity.rellor.PokedollShinyRellorBlockEntity;
+import dev.mrshawn.pokeblocks.block.entity.rookidee.PokedollGiganticRookideeBlockEntity;
+import dev.mrshawn.pokeblocks.block.entity.rookidee.PokedollGiganticShinyRookideeBlockEntity;
 import dev.mrshawn.pokeblocks.block.entity.rookidee.PokedollRookideeBlockEntity;
 import dev.mrshawn.pokeblocks.block.entity.rookidee.PokedollShinyRookideeBlockEntity;
 import dev.mrshawn.pokeblocks.block.entity.sableye.PokedollGiganticSableyeBlockEntity;
@@ -124,6 +136,8 @@ import dev.mrshawn.pokeblocks.block.entity.squirtle.PokedollGiganticShinySquirtl
 import dev.mrshawn.pokeblocks.block.entity.squirtle.PokedollGiganticSquirtleBlockEntity;
 import dev.mrshawn.pokeblocks.block.entity.squirtle.PokedollShinySquirtleBlockEntity;
 import dev.mrshawn.pokeblocks.block.entity.squirtle.PokedollSquirtleBlockEntity;
+import dev.mrshawn.pokeblocks.block.entity.stonjourner.PokedollGiganticShinyStonjournerBlockEntity;
+import dev.mrshawn.pokeblocks.block.entity.stonjourner.PokedollGiganticStonjournerBlockEntity;
 import dev.mrshawn.pokeblocks.block.entity.stonjourner.PokedollShinyStonjournerBlockEntity;
 import dev.mrshawn.pokeblocks.block.entity.stonjourner.PokedollStonjournerBlockEntity;
 import dev.mrshawn.pokeblocks.block.entity.swinub.PokedollGiganticShinySwinubBlockEntity;
@@ -151,12 +165,15 @@ import net.fabricmc.fabric.api.item.v1.FabricItemSettings;
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockState;
 import net.minecraft.block.Blocks;
+import net.minecraft.entity.EntityType;
+import net.minecraft.entity.passive.SalmonEntity;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.BlockItem;
 import net.minecraft.item.Item;
 import net.minecraft.particle.ParticleTypes;
 import net.minecraft.registry.Registries;
 import net.minecraft.registry.Registry;
+import net.minecraft.server.world.ServerWorld;
 import net.minecraft.sound.SoundCategory;
 import net.minecraft.sound.SoundEvents;
 import net.minecraft.state.property.Properties;
@@ -169,8 +186,11 @@ import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.Box;
 import net.minecraft.util.math.Direction;
 import net.minecraft.world.World;
+import net.minecraft.world.WorldAccess;
 
 import java.lang.reflect.Field;
+import java.util.ArrayList;
+import java.util.List;
 
 public class ModBlocks {
 
@@ -246,7 +266,7 @@ public class ModBlocks {
 						for (PlayerEntity playerEntity : world.getPlayers()) {
 							if (playerEntity.getBoundingBox().intersects(particleBox)) {
 								// Broadcast the message to the entire server
-								ServerHandler.broadcast(playerEntity.getDisplayName().getString() + " got nutted on!", Formatting.GOLD);
+								ServerHandler.broadcast(playerEntity.getDisplayName().getString() + " got washed!", Formatting.GOLD);
 							}
 						}
 					}
@@ -311,9 +331,34 @@ public class ModBlocks {
 	public static final Block POKEDOLL_SHINY_VENUSAUR = Registry.register(Registries.BLOCK, new Identifier(Pokeblocks.MOD_ID, PokeIDs.POKEDOLL_SHINY_VENUSAUR),
 			new PokedollBlock<>(() -> PokedollShinyVenusaurBlockEntity.class));
 	public static final Block POKEDOLL_MAGIKARP_FISHBOWL = Registry.register(Registries.BLOCK, new Identifier(Pokeblocks.MOD_ID, PokeIDs.MAGIKARP_FISHBOWL),
-			new PokedollBlock<>(Blocks.GLASS, () -> PokedollMagikarpFishbowlBlockEntity.class));
+			new PokedollBlock<>(Blocks.GLASS, () -> PokedollMagikarpFishbowlBlockEntity.class) {
+				@Override
+				public void onBroken(WorldAccess world, BlockPos pos, BlockState state) {
+					world.setBlockState(pos, Blocks.WATER.getDefaultState(), 8);
+					if (world instanceof ServerWorld serverWorld) {
+						SalmonEntity salmon = EntityType.SALMON.create(serverWorld);
+						if (salmon != null) {
+							salmon.refreshPositionAndAngles(pos.getX() + 0.5, pos.getY(), pos.getZ() + 0.5, 0.0f, 0.0f);
+							serverWorld.spawnEntity(salmon);
+						}
+					}
+				}
+			}
+	);
 	public static final Block POKEDOLL_SHINY_MAGIKARP_FISHBOWL = Registry.register(Registries.BLOCK, new Identifier(Pokeblocks.MOD_ID, PokeIDs.SHINY_MAGIKARP_FISHBOWL),
-			new PokedollBlock<>(Blocks.GLASS, () -> PokedollShinyMagikarpFishbowlBlockEntity.class));
+			new PokedollBlock<>(Blocks.GLASS, () -> PokedollShinyMagikarpFishbowlBlockEntity.class) {
+				@Override
+				public void onBroken(WorldAccess world, BlockPos pos, BlockState state) {
+					world.setBlockState(pos, Blocks.WATER.getDefaultState(), 8);
+					if (world instanceof ServerWorld serverWorld) {
+						SalmonEntity salmon = EntityType.SALMON.create(serverWorld);
+						if (salmon != null) {
+							salmon.refreshPositionAndAngles(pos.getX() + 0.5, pos.getY(), pos.getZ() + 0.5, 0.0f, 0.0f);
+							serverWorld.spawnEntity(salmon);
+						}
+					}
+				}
+	});
 	public static final Block POKEDOLL_POKEMON_TROPHY = Registry.register(Registries.BLOCK, new Identifier(Pokeblocks.MOD_ID, PokeIDs.POKEMON_TROPHY),
 			new PokedollBlock<>(Blocks.GOLD_BLOCK, Shapes.TROPHY_SHAPE, () -> PokedollPokemonTrophyBlockEntity.class));
 	public static final Block POKEDOLL_BLASTOISE = Registry.register(Registries.BLOCK, new Identifier(Pokeblocks.MOD_ID, PokeIDs.POKEDOLL_BLASTOISE),
@@ -374,6 +419,41 @@ public class ModBlocks {
 	public static final Block POKEDOLL_SHINY_STONJOURNER = Registry.register(Registries.BLOCK, new Identifier(Pokeblocks.MOD_ID, PokeIDs.POKEDOLL_SHINY_STONJOURNER),
 			new PokedollBlock<>(() -> PokedollShinyStonjournerBlockEntity.class));
 
+	public static final Block GIGANTIC_POKEDOLL_STONJOURNER = Registry.register(Registries.BLOCK, new Identifier(Pokeblocks.MOD_ID, PokeIDs.GIGANTIC_POKEDOLL_STONJOURNER),
+			new PokedollBlock<>(() -> PokedollGiganticStonjournerBlockEntity.class));
+	public static final Block GIGANTIC_POKEDOLL_SHINY_STONJOURNER = Registry.register(Registries.BLOCK, new Identifier(Pokeblocks.MOD_ID, PokeIDs.GIGANTIC_POKEDOLL_SHINY_STONJOURNER),
+			new PokedollBlock<>(() -> PokedollGiganticShinyStonjournerBlockEntity.class));
+
+	public static final Block GIGANTIC_POKEDOLL_ROOKIDEE = Registry.register(Registries.BLOCK, new Identifier(Pokeblocks.MOD_ID, PokeIDs.GIGANTIC_POKEDOLL_ROOKIDEE),
+			new PokedollBlock<>(() -> PokedollGiganticRookideeBlockEntity.class));
+	public static final Block GIGANTIC_POKEDOLL_SHINY_ROOKIDEE = Registry.register(Registries.BLOCK, new Identifier(Pokeblocks.MOD_ID, PokeIDs.GIGANTIC_POKEDOLL_SHINY_ROOKIDEE),
+			new PokedollBlock<>(() -> PokedollGiganticShinyRookideeBlockEntity.class));
+
+	public static final Block GIGANTIC_POKEDOLL_GENGAR = Registry.register(Registries.BLOCK, new Identifier(Pokeblocks.MOD_ID, PokeIDs.GIGANTIC_POKEDOLL_GENGAR),
+			new PokedollBlock<>(() -> PokedollGiganticGengarBlockEntity.class));
+	public static final Block GIGANTIC_POKEDOLL_SHINY_GENGAR = Registry.register(Registries.BLOCK, new Identifier(Pokeblocks.MOD_ID, PokeIDs.GIGANTIC_POKEDOLL_SHINY_GENGAR),
+			new PokedollBlock<>(() -> PokedollGiganticShinyGengarBlockEntity.class));
+
+	public static final Block GIGANTIC_POKEDOLL_GASTLY = Registry.register(Registries.BLOCK, new Identifier(Pokeblocks.MOD_ID, PokeIDs.GIGANTIC_POKEDOLL_GASTLY),
+			new PokedollBlock<>(() -> PokedollGiganticGastlyBlockEntity.class));
+	public static final Block GIGANTIC_POKEDOLL_SHINY_GASTLY = Registry.register(Registries.BLOCK, new Identifier(Pokeblocks.MOD_ID, PokeIDs.GIGANTIC_POKEDOLL_SHINY_GASTLY),
+			new PokedollBlock<>(() -> PokedollGiganticShinyGastlyBlockEntity.class));
+
+	public static final Block GIGANTIC_POKEDOLL_DRIFLOON = Registry.register(Registries.BLOCK, new Identifier(Pokeblocks.MOD_ID, PokeIDs.GIGANTIC_POKEDOLL_DRIFLOON),
+			new PokedollBlock<>(() -> PokedollGiganticDrifloonBlockEntity.class));
+	public static final Block GIGANTIC_POKEDOLL_SHINY_DRIFLOON = Registry.register(Registries.BLOCK, new Identifier(Pokeblocks.MOD_ID, PokeIDs.GIGANTIC_POKEDOLL_SHINY_DRIFLOON),
+			new PokedollBlock<>(() -> PokedollGiganticShinyDrifloonBlockEntity.class));
+
+	public static final Block GIGANTIC_POKEDOLL_CORVISQUIRE = Registry.register(Registries.BLOCK, new Identifier(Pokeblocks.MOD_ID, PokeIDs.GIGANTIC_POKEDOLL_CORVISQUIRE),
+			new PokedollBlock<>(() -> PokedollGiganticCorvisquireBlockEntity.class));
+	public static final Block GIGANTIC_POKEDOLL_SHINY_CORVISQUIRE = Registry.register(Registries.BLOCK, new Identifier(Pokeblocks.MOD_ID, PokeIDs.GIGANTIC_POKEDOLL_SHINY_CORVISQUIRE),
+			new PokedollBlock<>(() -> PokedollGiganticShinyCorvisquireBlockEntity.class));
+
+	public static final Block GIGANTIC_POKEDOLL_CORVIKNIGHT = Registry.register(Registries.BLOCK, new Identifier(Pokeblocks.MOD_ID, PokeIDs.GIGANTIC_POKEDOLL_CORVIKNIGHT),
+			new PokedollBlock<>(() -> PokedollGiganticCorviknightBlockEntity.class));
+	public static final Block GIGANTIC_POKEDOLL_SHINY_CORVIKNIGHT = Registry.register(Registries.BLOCK, new Identifier(Pokeblocks.MOD_ID, PokeIDs.GIGANTIC_POKEDOLL_SHINY_CORVIKNIGHT),
+			new PokedollBlock<>(() -> PokedollGiganticShinyCorviknightBlockEntity.class));
+
 	public static final Block GIGANTIC_POKEDOLL_WOOPER = Registry.register(Registries.BLOCK, new Identifier(Pokeblocks.MOD_ID, PokeIDs.GIGANTIC_POKEDOLL_WOOPER),
 			new PokedollBlock<>(() -> PokedollGiganticWooperBlockEntity.class));
 	public static final Block GIGANTIC_POKEDOLL_SHINY_WOOPER = Registry.register(Registries.BLOCK, new Identifier(Pokeblocks.MOD_ID, PokeIDs.GIGANTIC_POKEDOLL_SHINY_WOOPER),
@@ -403,7 +483,7 @@ public class ModBlocks {
 						for (PlayerEntity playerEntity : world.getPlayers()) {
 							if (playerEntity.getBoundingBox().intersects(particleBox)) {
 								// Broadcast the message to the entire server
-								ServerHandler.broadcast(playerEntity.getDisplayName().getString() + " got mega nutted on!", Formatting.GOLD);
+								ServerHandler.broadcast(playerEntity.getDisplayName().getString() + " got washed!", Formatting.GOLD);
 							}
 						}
 					}
@@ -456,27 +536,22 @@ public class ModBlocks {
 			new PokedollBlock<>(() -> PokedollGiganticRellorBlockEntity.class));
 	public static final Block GIGANTIC_POKEDOLL_SHINY_RELLOR = Registry.register(Registries.BLOCK, new Identifier(Pokeblocks.MOD_ID, PokeIDs.GIGANTIC_POKEDOLL_SHINY_RELLOR),
 			new PokedollBlock<>(() -> PokedollGiganticShinyRellorBlockEntity.class));
-
 	public static final Block GIGANTIC_POKEDOLL_RABSCA = Registry.register(Registries.BLOCK, new Identifier(Pokeblocks.MOD_ID, PokeIDs.GIGANTIC_POKEDOLL_RABSCA),
 			new PokedollBlock<>(() -> PokedollGiganticRabscaBlockEntity.class));
 	public static final Block GIGANTIC_POKEDOLL_SHINY_RABSCA = Registry.register(Registries.BLOCK, new Identifier(Pokeblocks.MOD_ID, PokeIDs.GIGANTIC_POKEDOLL_SHINY_RABSCA),
 			new PokedollBlock<>(() -> PokedollGiganticShinyRabscaBlockEntity.class));
-
 	public static final Block GIGANTIC_POKEDOLL_QUAGSIRE = Registry.register(Registries.BLOCK, new Identifier(Pokeblocks.MOD_ID, PokeIDs.GIGANTIC_POKEDOLL_QUAGSIRE),
 			new PokedollBlock<>(() -> PokedollGiganticQuagsireBlockEntity.class));
 	public static final Block GIGANTIC_POKEDOLL_SHINY_QUAGSIRE = Registry.register(Registries.BLOCK, new Identifier(Pokeblocks.MOD_ID, PokeIDs.GIGANTIC_POKEDOLL_SHINY_QUAGSIRE),
 			new PokedollBlock<>(() -> PokedollGiganticShinyQuagsireBlockEntity.class));
-
 	public static final Block GIGANTIC_POKEDOLL_MUNCHLAX = Registry.register(Registries.BLOCK, new Identifier(Pokeblocks.MOD_ID, PokeIDs.GIGANTIC_POKEDOLL_MUNCHLAX),
 			new PokedollBlock<>(() -> PokedollGiganticMunchlaxBlockEntity.class));
 	public static final Block GIGANTIC_POKEDOLL_SHINY_MUNCHLAX = Registry.register(Registries.BLOCK, new Identifier(Pokeblocks.MOD_ID, PokeIDs.GIGANTIC_POKEDOLL_SHINY_MUNCHLAX),
 			new PokedollBlock<>(() -> PokedollGiganticShinyMunchlaxBlockEntity.class));
-
 	public static final Block GIGANTIC_POKEDOLL_MAREEP = Registry.register(Registries.BLOCK, new Identifier(Pokeblocks.MOD_ID, PokeIDs.GIGANTIC_POKEDOLL_MAREEP),
 			new PokedollBlock<>(() -> PokedollGiganticMareepBlockEntity.class));
 	public static final Block GIGANTIC_POKEDOLL_SHINY_MAREEP = Registry.register(Registries.BLOCK, new Identifier(Pokeblocks.MOD_ID, PokeIDs.GIGANTIC_POKEDOLL_SHINY_MAREEP),
 			new PokedollBlock<>(() -> PokedollGiganticShinyMareepBlockEntity.class));
-
 	public static final Block GIGANTIC_POKEDOLL_LICKITUNG = Registry.register(Registries.BLOCK, new Identifier(Pokeblocks.MOD_ID, PokeIDs.GIGANTIC_POKEDOLL_LICKITUNG),
 			new PokedollBlock<>(() -> PokedollGiganticLickitungBlockEntity.class));
 	public static final Block GIGANTIC_POKEDOLL_SHINY_LICKITUNG = Registry.register(Registries.BLOCK, new Identifier(Pokeblocks.MOD_ID, PokeIDs.GIGANTIC_POKEDOLL_SHINY_LICKITUNG),
@@ -576,6 +651,22 @@ public class ModBlocks {
 			e.printStackTrace();
 			throw new RuntimeException("Failed to get gigantic Pokedoll block for " + pokemonName);
 		}
+	}
+
+	public static List<Block> getAllDollBlocks(boolean includeGigantics) {
+		List<Block> blocks = new ArrayList<>();
+		for (Field field : ModBlocks.class.getDeclaredFields()) {
+			if (field.getType() == Block.class) {
+				if (!includeGigantics && field.getName().startsWith("GIGANTIC_")) continue;
+				try {
+					Block block = (Block) field.get(null);
+					blocks.add(block);
+				} catch (IllegalAccessException e) {
+					e.printStackTrace();
+				}
+			}
+		}
+		return blocks;
 	}
 
 	public static void registerModBlocks() {

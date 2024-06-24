@@ -13,6 +13,10 @@ import net.minecraft.registry.Registries;
 import net.minecraft.registry.Registry;
 import net.minecraft.util.Identifier;
 
+import java.lang.reflect.Field;
+import java.util.ArrayList;
+import java.util.List;
+
 public class ModItems {
 
 	public static final Item POKEDOLL_CALYREX_BLOCK_ITEM = registerItem(
@@ -553,6 +557,14 @@ public class ModItems {
 			DollRarity.RARE
 	);
 
+	public static final Item GIGANTIC_POKEDOLL_WASHING_MACHINE = registerItem(
+			PokeIDs.GIGANTIC_POKEDOLL_WASHING_MACHINE,
+			ModBlocks.GIGANTIC_POKEDOLL_WASHING_MACHINE,
+			ResourceConstants.POKEDOLL_WASHING_MACHINE_MODEL,
+			ResourceConstants.POKEDOLL_WASHING_MACHINE_TEXTURE,
+			DollRarity.GIGANTIC
+	);
+
 	public static final Item GIGANTIC_POKEDOLL_WOOPER_BLOCK_ITEM = registerItem(
 			PokeIDs.GIGANTIC_POKEDOLL_WOOPER,
 			ModBlocks.GIGANTIC_POKEDOLL_WOOPER,
@@ -566,14 +578,6 @@ public class ModItems {
 			ResourceConstants.POKEDOLL_WOOPER_MODEL,
 			ResourceConstants.POKEDOLL_SHINY_WOOPER_TEXTURE,
 			DollRarity.SHINY
-	);
-
-	public static final Item GIGANTIC_POKEDOLL_WASHINGMACHINE_BLOCK_ITEM = registerItem(
-			PokeIDs.GIGANTIC_POKEDOLL_WASHING_MACHINE,
-			ModBlocks.GIGANTIC_POKEDOLL_WASHING_MACHINE,
-			ResourceConstants.POKEDOLL_WASHING_MACHINE_MODEL,
-			ResourceConstants.POKEDOLL_WASHING_MACHINE_TEXTURE,
-			DollRarity.GIGANTIC
 	);
 
 	public static final Item GIGANTIC_POKEDOLL_WARTORTLE_BLOCK_ITEM = registerItem(
@@ -1111,6 +1115,111 @@ public class ModItems {
 			DollRarity.SHINY
 	);
 
+	public static final Item GIGANTIC_POKEDOLL_STONJOURNER_BLOCK_ITEM = registerItem(
+			PokeIDs.GIGANTIC_POKEDOLL_STONJOURNER,
+			ModBlocks.GIGANTIC_POKEDOLL_STONJOURNER,
+			ResourceConstants.POKEDOLL_STONJOURNER_MODEL,
+			ResourceConstants.POKEDOLL_STONJOURNER_TEXTURE,
+			DollRarity.GIGANTIC
+	);
+	public static final Item GIGANTIC_POKEDOLL_SHINY_STONJOURNER_BLOCK_ITEM = registerItem(
+			PokeIDs.GIGANTIC_POKEDOLL_SHINY_STONJOURNER,
+			ModBlocks.GIGANTIC_POKEDOLL_SHINY_STONJOURNER,
+			ResourceConstants.POKEDOLL_STONJOURNER_MODEL,
+			ResourceConstants.POKEDOLL_SHINY_STONJOURNER_TEXTURE,
+			DollRarity.SHINY
+	);
+
+	public static final Item GIGANTIC_POKEDOLL_ROOKIDEE_BLOCK_ITEM = registerItem(
+			PokeIDs.GIGANTIC_POKEDOLL_ROOKIDEE,
+			ModBlocks.GIGANTIC_POKEDOLL_ROOKIDEE,
+			ResourceConstants.POKEDOLL_ROOKIDEE_MODEL,
+			ResourceConstants.POKEDOLL_ROOKIDEE_TEXTURE,
+			DollRarity.GIGANTIC
+	);
+	public static final Item GIGANTIC_POKEDOLL_SHINY_ROOKIDEE_BLOCK_ITEM = registerItem(
+			PokeIDs.GIGANTIC_POKEDOLL_SHINY_ROOKIDEE,
+			ModBlocks.GIGANTIC_POKEDOLL_SHINY_ROOKIDEE,
+			ResourceConstants.POKEDOLL_ROOKIDEE_MODEL,
+			ResourceConstants.POKEDOLL_SHINY_ROOKIDEE_TEXTURE,
+			DollRarity.SHINY
+	);
+
+	public static final Item GIGANTIC_POKEDOLL_GENGAR_BLOCK_ITEM = registerItem(
+			PokeIDs.GIGANTIC_POKEDOLL_GENGAR,
+			ModBlocks.GIGANTIC_POKEDOLL_GENGAR,
+			ResourceConstants.POKEDOLL_GENGAR_MODEL,
+			ResourceConstants.POKEDOLL_GENGAR_TEXTURE,
+			DollRarity.GIGANTIC
+	);
+	public static final Item GIGANTIC_POKEDOLL_SHINY_GENGAR_BLOCK_ITEM = registerItem(
+			PokeIDs.GIGANTIC_POKEDOLL_SHINY_GENGAR,
+			ModBlocks.GIGANTIC_POKEDOLL_SHINY_GENGAR,
+			ResourceConstants.POKEDOLL_GENGAR_MODEL,
+			ResourceConstants.POKEDOLL_SHINY_GENGAR_TEXTURE,
+			DollRarity.SHINY
+	);
+
+	public static final Item GIGANTIC_POKEDOLL_GASTLY_BLOCK_ITEM = registerItem(
+			PokeIDs.GIGANTIC_POKEDOLL_GASTLY,
+			ModBlocks.GIGANTIC_POKEDOLL_GASTLY,
+			ResourceConstants.POKEDOLL_GASTLY_MODEL,
+			ResourceConstants.POKEDOLL_GASTLY_TEXTURE,
+			DollRarity.GIGANTIC
+	);
+	public static final Item GIGANTIC_POKEDOLL_SHINY_GASTLY_BLOCK_ITEM = registerItem(
+			PokeIDs.GIGANTIC_POKEDOLL_SHINY_GASTLY,
+			ModBlocks.GIGANTIC_POKEDOLL_SHINY_GASTLY,
+			ResourceConstants.POKEDOLL_GASTLY_MODEL,
+			ResourceConstants.POKEDOLL_SHINY_GASTLY_TEXTURE,
+			DollRarity.SHINY
+	);
+
+	public static final Item GIGANTIC_POKEDOLL_DRIFLOON_BLOCK_ITEM = registerItem(
+			PokeIDs.GIGANTIC_POKEDOLL_DRIFLOON,
+			ModBlocks.GIGANTIC_POKEDOLL_DRIFLOON,
+			ResourceConstants.POKEDOLL_DRIFLOON_MODEL,
+			ResourceConstants.POKEDOLL_DRIFLOON_TEXTURE,
+			DollRarity.GIGANTIC
+	);
+	public static final Item GIGANTIC_POKEDOLL_SHINY_DRIFLOON_BLOCK_ITEM = registerItem(
+			PokeIDs.GIGANTIC_POKEDOLL_SHINY_DRIFLOON,
+			ModBlocks.GIGANTIC_POKEDOLL_SHINY_DRIFLOON,
+			ResourceConstants.POKEDOLL_DRIFLOON_MODEL,
+			ResourceConstants.POKEDOLL_SHINY_DRIFLOON_TEXTURE,
+			DollRarity.SHINY
+	);
+
+	public static final Item GIGANTIC_POKEDOLL_CORVISQUIRE_BLOCK_ITEM = registerItem(
+			PokeIDs.GIGANTIC_POKEDOLL_CORVISQUIRE,
+			ModBlocks.GIGANTIC_POKEDOLL_CORVISQUIRE,
+			ResourceConstants.POKEDOLL_CORVISQUIRE_MODEL,
+			ResourceConstants.POKEDOLL_CORVISQUIRE_TEXTURE,
+			DollRarity.GIGANTIC
+	);
+	public static final Item GIGANTIC_POKEDOLL_SHINY_CORVISQUIRE_BLOCK_ITEM = registerItem(
+			PokeIDs.GIGANTIC_POKEDOLL_SHINY_CORVISQUIRE,
+			ModBlocks.GIGANTIC_POKEDOLL_SHINY_CORVISQUIRE,
+			ResourceConstants.POKEDOLL_CORVISQUIRE_MODEL,
+			ResourceConstants.POKEDOLL_SHINY_CORVISQUIRE_TEXTURE,
+			DollRarity.SHINY
+	);
+
+	public static final Item GIGANTIC_POKEDOLL_CORVIKNIGHT_BLOCK_ITEM = registerItem(
+			PokeIDs.GIGANTIC_POKEDOLL_CORVIKNIGHT,
+			ModBlocks.GIGANTIC_POKEDOLL_CORVIKNIGHT,
+			ResourceConstants.POKEDOLL_CORVIKNIGHT_MODEL,
+			ResourceConstants.POKEDOLL_CORVIKNIGHT_TEXTURE,
+			DollRarity.GIGANTIC
+	);
+	public static final Item GIGANTIC_POKEDOLL_SHINY_CORVIKNIGHT_BLOCK_ITEM = registerItem(
+			PokeIDs.GIGANTIC_POKEDOLL_SHINY_CORVIKNIGHT,
+			ModBlocks.GIGANTIC_POKEDOLL_SHINY_CORVIKNIGHT,
+			ResourceConstants.POKEDOLL_CORVIKNIGHT_MODEL,
+			ResourceConstants.POKEDOLL_SHINY_CORVIKNIGHT_TEXTURE,
+			DollRarity.SHINY
+	);
+
 	public static final Item POKE_COIN = registerItem(
 			PokeIDs.POKE_COIN,
 			new Item(new Item.Settings().maxCount(64))
@@ -1126,6 +1235,11 @@ public class ModItems {
 			new Item(new Item.Settings().maxCount(64))
 	);
 
+	public static final Item DIME = registerItem(
+			PokeIDs.DIME,
+			new Item(new Item.Settings().maxCount(64))
+	);
+
 	public static final Item RAID_PASS = registerItem(
 			PokeIDs.RAID_PASS,
 			new Item(new Item.Settings().maxCount(64))
@@ -1133,6 +1247,11 @@ public class ModItems {
 
 	public static final Item RAID_VOUCHER = registerItem(
 			PokeIDs.RAID_VOUCHER,
+			new Item(new Item.Settings().maxCount(64))
+	);
+
+	public static final Item RADIANT_VOUCHER = registerItem(
+			PokeIDs.RADIANT_VOUCHER,
 			new Item(new Item.Settings().maxCount(64))
 	);
 
@@ -1179,6 +1298,32 @@ public class ModItems {
 			}
 		};
 		return registerItem(name, blockItem);
+	}
+
+	public static List<PokedollBlockItem> getAllDolls(boolean ignoreGigantics) {
+		List<PokedollBlockItem> dolls = new ArrayList<>();
+		for (Field field : ModItems.class.getDeclaredFields()) {
+			if (field.getType() == Item.class) {
+				try {
+					Item item = (Item) field.get(null);
+					if (item instanceof PokedollBlockItem doll) {
+						if (ignoreGigantics && doll.getRarity() == DollRarity.GIGANTIC) { continue; }
+						dolls.add(doll);
+					}
+				} catch (IllegalAccessException e) {
+					throw new RuntimeException(e);
+				}
+			}
+		}
+		return dolls;
+	}
+
+	public static int getCombinedWeight() {
+		int rarity = 0;
+		for (PokedollBlockItem doll : getAllDolls(false)) {
+			rarity += doll.getRarity().getWeight();
+		}
+		return rarity;
 	}
 
 	public static void registerModItems() {

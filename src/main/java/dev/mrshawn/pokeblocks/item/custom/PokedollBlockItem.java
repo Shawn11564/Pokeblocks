@@ -82,6 +82,10 @@ public class PokedollBlockItem extends BlockItem implements GeoItem {
 		return ResourceConstants.GENERIC_ANIMATION;
 	}
 
+	public DollRarity getRarity() {
+		return rarity;
+	}
+
 	@Override
 	public void appendTooltip(ItemStack stack, @Nullable World world, List<Text> tooltip, TooltipContext context) {
 //		tooltip.clear();

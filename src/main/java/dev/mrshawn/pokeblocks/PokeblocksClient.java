@@ -17,7 +17,106 @@ public class PokeblocksClient implements ClientModInitializer {
 
 	@Override
 	public void onInitializeClient() {
+
 		ServerHandler.register();
+
+		registerScaledBlockEntityRenderer(
+				ModBlockEntities.GIGANTIC_POKEDOLL_STONJOURNER_BLOCK_ENTITY,
+				ResourceConstants.POKEDOLL_STONJOURNER_MODEL,
+				ResourceConstants.POKEDOLL_STONJOURNER_TEXTURE,
+				SCALE
+		);
+
+		registerScaledBlockEntityRenderer(
+				ModBlockEntities.GIGANTIC_POKEDOLL_SHINY_STONJOURNER_BLOCK_ENTITY,
+				ResourceConstants.POKEDOLL_STONJOURNER_MODEL,
+				ResourceConstants.POKEDOLL_SHINY_STONJOURNER_TEXTURE,
+				SCALE
+		);
+
+		registerScaledBlockEntityRenderer(
+				ModBlockEntities.GIGANTIC_POKEDOLL_ROOKIDEE_BLOCK_ENTITY,
+				ResourceConstants.POKEDOLL_ROOKIDEE_MODEL,
+				ResourceConstants.POKEDOLL_ROOKIDEE_TEXTURE,
+				SCALE
+		);
+
+		registerScaledBlockEntityRenderer(
+				ModBlockEntities.GIGANTIC_POKEDOLL_SHINY_ROOKIDEE_BLOCK_ENTITY,
+				ResourceConstants.POKEDOLL_ROOKIDEE_MODEL,
+				ResourceConstants.POKEDOLL_SHINY_ROOKIDEE_TEXTURE,
+				SCALE
+		);
+
+		registerScaledBlockEntityRenderer(
+				ModBlockEntities.GIGANTIC_POKEDOLL_GENGAR_BLOCK_ENTITY,
+				ResourceConstants.POKEDOLL_GENGAR_MODEL,
+				ResourceConstants.POKEDOLL_GENGAR_TEXTURE,
+				SCALE
+		);
+
+		registerScaledBlockEntityRenderer(
+				ModBlockEntities.GIGANTIC_POKEDOLL_SHINY_GENGAR_BLOCK_ENTITY,
+				ResourceConstants.POKEDOLL_GENGAR_MODEL,
+				ResourceConstants.POKEDOLL_SHINY_GENGAR_TEXTURE,
+				SCALE
+		);
+
+		registerScaledBlockEntityRenderer(
+				ModBlockEntities.GIGANTIC_POKEDOLL_GASTLY_BLOCK_ENTITY,
+				ResourceConstants.POKEDOLL_GASTLY_MODEL,
+				ResourceConstants.POKEDOLL_GASTLY_TEXTURE,
+				SCALE
+		);
+
+		registerScaledBlockEntityRenderer(
+				ModBlockEntities.GIGANTIC_POKEDOLL_SHINY_GASTLY_BLOCK_ENTITY,
+				ResourceConstants.POKEDOLL_GASTLY_MODEL,
+				ResourceConstants.POKEDOLL_SHINY_GASTLY_TEXTURE,
+				SCALE
+		);
+
+		registerScaledBlockEntityRenderer(
+				ModBlockEntities.GIGANTIC_POKEDOLL_DRIFLOON_BLOCK_ENTITY,
+				ResourceConstants.POKEDOLL_DRIFLOON_MODEL,
+				ResourceConstants.POKEDOLL_DRIFLOON_TEXTURE,
+				SCALE
+		);
+
+		registerScaledBlockEntityRenderer(
+				ModBlockEntities.GIGANTIC_POKEDOLL_SHINY_DRIFLOON_BLOCK_ENTITY,
+				ResourceConstants.POKEDOLL_DRIFLOON_MODEL,
+				ResourceConstants.POKEDOLL_SHINY_DRIFLOON_TEXTURE,
+				SCALE
+		);
+
+		registerScaledBlockEntityRenderer(
+				ModBlockEntities.GIGANTIC_POKEDOLL_CORVISQUIRE_BLOCK_ENTITY,
+				ResourceConstants.POKEDOLL_CORVISQUIRE_MODEL,
+				ResourceConstants.POKEDOLL_CORVISQUIRE_TEXTURE,
+				SCALE
+		);
+
+		registerScaledBlockEntityRenderer(
+				ModBlockEntities.GIGANTIC_POKEDOLL_SHINY_CORVISQUIRE_BLOCK_ENTITY,
+				ResourceConstants.POKEDOLL_CORVISQUIRE_MODEL,
+				ResourceConstants.POKEDOLL_SHINY_CORVISQUIRE_TEXTURE,
+				SCALE
+		);
+
+		registerScaledBlockEntityRenderer(
+				ModBlockEntities.GIGANTIC_POKEDOLL_CORVIKNIGHT_BLOCK_ENTITY,
+				ResourceConstants.POKEDOLL_CORVIKNIGHT_MODEL,
+				ResourceConstants.POKEDOLL_CORVIKNIGHT_TEXTURE,
+				SCALE
+		);
+
+		registerScaledBlockEntityRenderer(
+				ModBlockEntities.GIGANTIC_POKEDOLL_SHINY_CORVIKNIGHT_BLOCK_ENTITY,
+				ResourceConstants.POKEDOLL_CORVIKNIGHT_MODEL,
+				ResourceConstants.POKEDOLL_SHINY_CORVIKNIGHT_TEXTURE,
+				SCALE
+		);
 
 		registerBlockEntityRenderer(
 				ModBlockEntities.POKEDOLL_STONJOURNER_BLOCK_ENTITY,

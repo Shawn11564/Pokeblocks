@@ -10,6 +10,8 @@ import net.minecraft.registry.Registry;
 import net.minecraft.text.Text;
 import net.minecraft.util.Identifier;
 
+import java.util.HashMap;
+
 public class ModItemGroups {
 
 	public static final ItemGroup POKEBLOCKS = Registry.register(Registries.ITEM_GROUP,
@@ -134,6 +136,36 @@ public class ModItemGroups {
 						entries.add(ModBlocks.POKEDOLL_SHINY_QUAGSIRE);
 						entries.add(ModBlocks.GIGANTIC_POKEDOLL_QUAGSIRE);
 						entries.add(ModBlocks.GIGANTIC_POKEDOLL_SHINY_QUAGSIRE);
+						entries.add(ModBlocks.POKEDOLL_GASTLY);
+						entries.add(ModBlocks.POKEDOLL_SHINY_GASTLY);
+						entries.add(ModBlocks.GIGANTIC_POKEDOLL_GASTLY);
+						entries.add(ModBlocks.GIGANTIC_POKEDOLL_SHINY_GASTLY);
+						entries.add(ModBlocks.POKEDOLL_GENGAR);
+						entries.add(ModBlocks.POKEDOLL_SHINY_GENGAR);
+						entries.add(ModBlocks.GIGANTIC_POKEDOLL_GENGAR);
+						entries.add(ModBlocks.GIGANTIC_POKEDOLL_SHINY_GENGAR);
+						entries.add(ModBlocks.POKEDOLL_DRIFLOON);
+						entries.add(ModBlocks.POKEDOLL_SHINY_DRIFLOON);
+						entries.add(ModBlocks.GIGANTIC_POKEDOLL_DRIFLOON);
+						entries.add(ModBlocks.GIGANTIC_POKEDOLL_SHINY_DRIFLOON);
+						entries.add(ModBlocks.POKEDOLL_ROOKIDEE);
+						entries.add(ModBlocks.POKEDOLL_SHINY_ROOKIDEE);
+						entries.add(ModBlocks.GIGANTIC_POKEDOLL_ROOKIDEE);
+						entries.add(ModBlocks.GIGANTIC_POKEDOLL_SHINY_ROOKIDEE);
+						entries.add(ModBlocks.POKEDOLL_CORVISQUIRE);
+						entries.add(ModBlocks.POKEDOLL_SHINY_CORVISQUIRE);
+						entries.add(ModBlocks.GIGANTIC_POKEDOLL_CORVISQUIRE);
+						entries.add(ModBlocks.GIGANTIC_POKEDOLL_SHINY_CORVISQUIRE);
+						entries.add(ModBlocks.POKEDOLL_CORVIKNIGHT);
+						entries.add(ModBlocks.POKEDOLL_SHINY_CORVIKNIGHT);
+						entries.add(ModBlocks.GIGANTIC_POKEDOLL_CORVIKNIGHT);
+						entries.add(ModBlocks.GIGANTIC_POKEDOLL_SHINY_CORVIKNIGHT);
+						entries.add(ModBlocks.POKEDOLL_STONJOURNER);
+						entries.add(ModBlocks.POKEDOLL_SHINY_STONJOURNER);
+						entries.add(ModBlocks.GIGANTIC_POKEDOLL_STONJOURNER);
+						entries.add(ModBlocks.GIGANTIC_POKEDOLL_SHINY_STONJOURNER);
+						entries.add(ModBlocks.POKEDOLL_WASHING_MACHINE);
+						entries.add(ModBlocks.GIGANTIC_POKEDOLL_WASHING_MACHINE);
 						entries.add(ModBlocks.POKEDOLL_AIRUHSEA_FIGURINE);
 						entries.add(ModBlocks.POKEDOLL_DAMORGO_FIGURINE);
 						entries.add(ModBlocks.POKEDOLL_DONCHEADLE_FIGURINE);
@@ -144,31 +176,29 @@ public class ModItemGroups {
 						entries.add(ModBlocks.POKEDOLL_MAGIKARP_FISHBOWL);
 						entries.add(ModBlocks.POKEDOLL_SHINY_MAGIKARP_FISHBOWL);
 						entries.add(ModBlocks.POKEDOLL_POKEMON_TROPHY);
-						entries.add(ModBlocks.POKEDOLL_GASTLY);
-						entries.add(ModBlocks.POKEDOLL_SHINY_GASTLY);
-						entries.add(ModBlocks.POKEDOLL_GENGAR);
-						entries.add(ModBlocks.POKEDOLL_SHINY_GENGAR);
-						entries.add(ModBlocks.POKEDOLL_DRIFLOON);
-						entries.add(ModBlocks.POKEDOLL_SHINY_DRIFLOON);
-						entries.add(ModBlocks.POKEDOLL_ROOKIDEE);
-						entries.add(ModBlocks.POKEDOLL_SHINY_ROOKIDEE);
-						entries.add(ModBlocks.POKEDOLL_CORVISQUIRE);
-						entries.add(ModBlocks.POKEDOLL_SHINY_CORVISQUIRE);
-						entries.add(ModBlocks.POKEDOLL_CORVIKNIGHT);
-						entries.add(ModBlocks.POKEDOLL_SHINY_CORVIKNIGHT);
-						entries.add(ModBlocks.POKEDOLL_STONJOURNER);
-						entries.add(ModBlocks.POKEDOLL_SHINY_STONJOURNER);
 						entries.add(ModItems.POKE_COIN);
 						entries.add(ModItems.POKE_EGG);
 						entries.add(ModItems.RAID_PASS);
 						entries.add(ModItems.RAID_VOUCHER);
+						entries.add(ModItems.RADIANT_VOUCHER);
 						entries.add(ModItems.NICKEL);
+						entries.add(ModItems.DIME);
 					}))
 					.build()
 	);
 
 	public static void registerItemGroups() {
 		Pokeblocks.LOGGER.info("Registering ItemGroups for " + Pokeblocks.MOD_ID);
+
+		HashMap<String, Integer> counts = new HashMap<>();
+		POKEBLOCKS.getDisplayStacks().forEach(stack -> {
+			if (counts.containsKey(stack.getName().getString())) {
+				counts.put(stack.getName().getString(), counts.get(stack.getName().getString()) + 1);
+			} else {
+				counts.put(stack.getName().getString(), 1);
+			}
+		});
+		counts.forEach((key, value) -> Pokeblocks.LOGGER.info("Registered " + value + "x " + key));
 	}
 
 }
