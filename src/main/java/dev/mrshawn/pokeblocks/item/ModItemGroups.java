@@ -181,6 +181,8 @@ public class ModItemGroups {
 						entries.add(ModItems.RAID_PASS);
 						entries.add(ModItems.RAID_VOUCHER);
 						entries.add(ModItems.RADIANT_VOUCHER);
+						entries.add(ModItems.SUMMER_RAID_SOUL);
+						entries.add(ModItems.SUMMER_TOKEN);
 						entries.add(ModItems.NICKEL);
 						entries.add(ModItems.DIME);
 					}))

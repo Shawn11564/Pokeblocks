@@ -68,6 +68,8 @@ public class PokeIDs {
 	public static final String RAID_PASS = "raid_pass";
 	public static final String RAID_VOUCHER = "raid_voucher";
 	public static final String RADIANT_VOUCHER = "radiant_voucher";
+	public static final String SUMMER_RAID_SOUL = "summer_raid_soul";
+	public static final String SUMMER_TOKEN = "summer_token";
 	public static final String A09ROBERT_FIGURINE = "a09robert_figurine";
 	public static final String RED_COMMUNISM_FIGURINE = "red_communism_figurine";
 	public static final String POKEDOLL_BLASTOISE = "pokedoll_blastoise";

@@ -1255,6 +1255,16 @@ public class ModItems {
 			new Item(new Item.Settings().maxCount(64))
 	);
 
+	public static final Item SUMMER_RAID_SOUL = registerItem(
+			PokeIDs.SUMMER_RAID_SOUL,
+			new Item(new Item.Settings().maxCount(64))
+	);
+
+	public static final Item SUMMER_TOKEN = registerItem(
+			PokeIDs.SUMMER_TOKEN,
+			new Item(new Item.Settings().maxCount(64))
+	);
+
 	private static Item registerItem(String name, Item item) {
 		return Registry.register(Registries.ITEM, new Identifier(Pokeblocks.MOD_ID, name), item);
 	}
