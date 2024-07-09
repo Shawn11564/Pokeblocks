@@ -138,4 +138,17 @@ public class ResourceConstants {
 	public static final String POKEDOLL_STONJOURNER_TEXTURE = "pokedoll_stonjourner_texture.png";
 	public static final String POKEDOLL_SHINY_STONJOURNER_TEXTURE = "pokedoll_stonjourner_shiny_texture.png";
 	public static final String POKEDOLL_STONJOURNER_MODEL = "pokedoll_stonjourner.geo.json";
+	public static final String POKEDOLL_EEVEE_TEXTURE = "pokedoll_eevee_texture.png";
+	public static final String POKEDOLL_SHINY_EEVEE_TEXTURE = "pokedoll_eevee_shiny_texture.png";
+	public static final String POKEDOLL_EEVEE_MODEL = "pokedoll_eevee.geo.json";
+	public static final String POKEDOLL_SANDYGAST_TEXTURE = "pokedoll_sandygast_texture.png";
+	public static final String POKEDOLL_SHINY_SANDYGAST_TEXTURE = "pokedoll_sandygast_shiny_texture.png";
+	public static final String POKEDOLL_SANDYGAST_MODEL = "pokedoll_sandygast.geo.json";
+	public static final String POKEDOLL_PALOSSAND_TEXTURE = "pokedoll_palossand_texture.png";
+	public static final String POKEDOLL_SHINY_PALOSSAND_TEXTURE = "pokedoll_palossand_shiny_texture.png";
+	public static final String POKEDOLL_PALOSSAND_MODEL = "pokedoll_palossand.geo.json";
+	public static final String POKEDOLL_GHOLDENGO_TEXTURE = "pokedoll_gholdengo_texture.png";
+	public static final String POKEDOLL_SHINY_GHOLDENGO_TEXTURE = "pokedoll_gholdengo_shiny_texture.png";
+	public static final String POKEDOLL_NETHERITE_GHOLDENGO_TEXTURE = "pokedoll_gholdengo_netherite_texture.png";
+	public static final String POKEDOLL_GHOLDENGO_MODEL = "pokedoll_gholdengo.geo.json";
 }

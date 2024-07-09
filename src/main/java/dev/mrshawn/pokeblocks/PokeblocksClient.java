@@ -17,8 +17,56 @@ public class PokeblocksClient implements ClientModInitializer {
 
 	@Override
 	public void onInitializeClient() {
-
 		ServerHandler.register();
+
+		registerBlockEntityRenderer(
+				ModBlockEntities.POKEDOLL_GHOLDENGO_BLOCK_ENTITY,
+				ResourceConstants.POKEDOLL_GHOLDENGO_MODEL,
+				ResourceConstants.POKEDOLL_GHOLDENGO_TEXTURE
+		);
+		registerBlockEntityRenderer(
+				ModBlockEntities.POKEDOLL_SHINY_GHOLDENGO_BLOCK_ENTITY,
+				ResourceConstants.POKEDOLL_GHOLDENGO_MODEL,
+				ResourceConstants.POKEDOLL_SHINY_GHOLDENGO_TEXTURE
+		);
+		registerBlockEntityRenderer(
+				ModBlockEntities.POKEDOLL_NETHERITE_GHOLDENGO_BLOCK_ENTITY,
+				ResourceConstants.POKEDOLL_GHOLDENGO_MODEL,
+				ResourceConstants.POKEDOLL_NETHERITE_GHOLDENGO_TEXTURE
+		);
+
+		registerBlockEntityRenderer(
+				ModBlockEntities.POKEDOLL_PALOSSAND_BLOCK_ENTITY,
+				ResourceConstants.POKEDOLL_PALOSSAND_MODEL,
+				ResourceConstants.POKEDOLL_PALOSSAND_TEXTURE
+		);
+		registerBlockEntityRenderer(
+				ModBlockEntities.POKEDOLL_SHINY_PALOSSAND_BLOCK_ENTITY,
+				ResourceConstants.POKEDOLL_PALOSSAND_MODEL,
+				ResourceConstants.POKEDOLL_SHINY_PALOSSAND_TEXTURE
+		);
+
+		registerBlockEntityRenderer(
+				ModBlockEntities.POKEDOLL_SANDYGAST_BLOCK_ENTITY,
+				ResourceConstants.POKEDOLL_SANDYGAST_MODEL,
+				ResourceConstants.POKEDOLL_SANDYGAST_TEXTURE
+		);
+		registerBlockEntityRenderer(
+				ModBlockEntities.POKEDOLL_SHINY_SANDYGAST_BLOCK_ENTITY,
+				ResourceConstants.POKEDOLL_SANDYGAST_MODEL,
+				ResourceConstants.POKEDOLL_SHINY_SANDYGAST_TEXTURE
+		);
+
+		registerBlockEntityRenderer(
+				ModBlockEntities.POKEDOLL_EEVEE_BLOCK_ENTITY,
+				ResourceConstants.POKEDOLL_EEVEE_MODEL,
+				ResourceConstants.POKEDOLL_EEVEE_TEXTURE
+		);
+		registerBlockEntityRenderer(
+				ModBlockEntities.POKEDOLL_SHINY_EEVEE_BLOCK_ENTITY,
+				ResourceConstants.POKEDOLL_EEVEE_MODEL,
+				ResourceConstants.POKEDOLL_SHINY_EEVEE_TEXTURE
+		);
 
 		registerScaledBlockEntityRenderer(
 				ModBlockEntities.GIGANTIC_POKEDOLL_STONJOURNER_BLOCK_ENTITY,

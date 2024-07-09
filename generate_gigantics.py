@@ -12,6 +12,10 @@ for folder_name in os.listdir(block_entity_dir):
         pokemon_name = folder_name
         capitalized_pokemon_name = pokemon_name.capitalize()
 
+        folder_path = os.path.join(block_entity_dir, folder_name)
+        if "WashingMachine" not in folder_name:
+            continue
+
         if not any(file.startswith(f"PokedollGigantic{capitalized_pokemon_name}BlockEntity") for file in os.listdir(folder_path)):
             # 1. Copy and modify block entity file
             os.makedirs(folder_path, exist_ok=True)

@@ -1115,6 +1115,73 @@ public class ModItems {
 			DollRarity.SHINY
 	);
 
+	public static final Item POKEDOLL_EEVEE_BLOCK_ITEM = registerItem(
+			PokeIDs.POKEDOLL_EEVEE,
+			ModBlocks.POKEDOLL_EEVEE,
+			ResourceConstants.POKEDOLL_EEVEE_MODEL,
+			ResourceConstants.POKEDOLL_EEVEE_TEXTURE,
+			DollRarity.RARE
+	);
+	public static final Item POKEDOLL_SHINY_EEVEE_BLOCK_ITEM = registerItem(
+			PokeIDs.POKEDOLL_SHINY_EEVEE,
+			ModBlocks.POKEDOLL_SHINY_EEVEE,
+			ResourceConstants.POKEDOLL_EEVEE_MODEL,
+			ResourceConstants.POKEDOLL_SHINY_EEVEE_TEXTURE,
+			DollRarity.SHINY
+	);
+
+	public static final Item POKEDOLL_SANDYGAST_BLOCK_ITEM = registerItem(
+			PokeIDs.POKEDOLL_SANDYGAST,
+			ModBlocks.POKEDOLL_SANDYGAST,
+			ResourceConstants.POKEDOLL_SANDYGAST_MODEL,
+			ResourceConstants.POKEDOLL_SANDYGAST_TEXTURE,
+			DollRarity.UNCOMMON
+	);
+	public static final Item POKEDOLL_SHINY_SANDYGAST_BLOCK_ITEM = registerItem(
+			PokeIDs.POKEDOLL_SHINY_SANDYGAST,
+			ModBlocks.POKEDOLL_SHINY_SANDYGAST,
+			ResourceConstants.POKEDOLL_SANDYGAST_MODEL,
+			ResourceConstants.POKEDOLL_SHINY_SANDYGAST_TEXTURE,
+			DollRarity.SHINY
+	);
+
+	public static final Item POKEDOLL_PALOSSAND_BLOCK_ITEM = registerItem(
+			PokeIDs.POKEDOLL_PALOSSAND,
+			ModBlocks.POKEDOLL_PALOSSAND,
+			ResourceConstants.POKEDOLL_PALOSSAND_MODEL,
+			ResourceConstants.POKEDOLL_PALOSSAND_TEXTURE,
+			DollRarity.EPIC
+	);
+	public static final Item POKEDOLL_SHINY_PALOSSAND_BLOCK_ITEM = registerItem(
+			PokeIDs.POKEDOLL_SHINY_PALOSSAND,
+			ModBlocks.POKEDOLL_SHINY_PALOSSAND,
+			ResourceConstants.POKEDOLL_PALOSSAND_MODEL,
+			ResourceConstants.POKEDOLL_SHINY_PALOSSAND_TEXTURE,
+			DollRarity.SHINY
+	);
+
+	public static final Item POKEDOLL_GHOLDENGO_BLOCK_ITEM = registerItem(
+			PokeIDs.POKEDOLL_GHOLDENGO,
+			ModBlocks.POKEDOLL_GHOLDENGO,
+			ResourceConstants.POKEDOLL_GHOLDENGO_MODEL,
+			ResourceConstants.POKEDOLL_GHOLDENGO_TEXTURE,
+			DollRarity.LEGENDARY
+	);
+	public static final Item POKEDOLL_SHINY_GHOLDENGO_BLOCK_ITEM = registerItem(
+			PokeIDs.POKEDOLL_SHINY_GHOLDENGO,
+			ModBlocks.POKEDOLL_SHINY_GHOLDENGO,
+			ResourceConstants.POKEDOLL_GHOLDENGO_MODEL,
+			ResourceConstants.POKEDOLL_SHINY_GHOLDENGO_TEXTURE,
+			DollRarity.SHINY
+	);
+	public static final Item POKEDOLL_NETHERITE_GHOLDENGO_BLOCK_ITEM = registerItem(
+			PokeIDs.POKEDOLL_NETHERITE_GHOLDENGO,
+			ModBlocks.POKEDOLL_NETHERITE_GHOLDENGO,
+			ResourceConstants.POKEDOLL_GHOLDENGO_MODEL,
+			ResourceConstants.POKEDOLL_NETHERITE_GHOLDENGO_TEXTURE,
+			DollRarity.LEGENDARY
+	);
+
 	public static final Item GIGANTIC_POKEDOLL_STONJOURNER_BLOCK_ITEM = registerItem(
 			PokeIDs.GIGANTIC_POKEDOLL_STONJOURNER,
 			ModBlocks.GIGANTIC_POKEDOLL_STONJOURNER,
