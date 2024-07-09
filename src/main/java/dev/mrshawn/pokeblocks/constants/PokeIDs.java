@@ -176,4 +176,13 @@ public class PokeIDs {
 	public static final String POKEDOLL_GHOLDENGO = "pokedoll_gholdengo";
 	public static final String POKEDOLL_SHINY_GHOLDENGO = "pokedoll_shiny_gholdengo";
 	public static final String POKEDOLL_NETHERITE_GHOLDENGO = "pokedoll_netherite_gholdengo";
+	public static final String GIGANTIC_POKEDOLL_EEVEE = "gigantic_pokedoll_eevee";
+	public static final String GIGANTIC_POKEDOLL_SHINY_EEVEE = "gigantic_pokedoll_shiny_eevee";
+	public static final String GIGANTIC_POKEDOLL_GHOLDENGO = "gigantic_pokedoll_gholdengo";
+	public static final String GIGANTIC_POKEDOLL_SHINY_GHOLDENGO = "gigantic_pokedoll_shiny_gholdengo";
+	public static final String GIGANTIC_POKEDOLL_NETHERITE_GHOLDENGO = "gigantic_pokedoll_netherite_gholdengo";
+	public static final String GIGANTIC_POKEDOLL_PALOSSAND = "gigantic_pokedoll_palossand";
+	public static final String GIGANTIC_POKEDOLL_SHINY_PALOSSAND = "gigantic_pokedoll_shiny_palossand";
+	public static final String GIGANTIC_POKEDOLL_SANDYGAST = "gigantic_pokedoll_sandygast";
+	public static final String GIGANTIC_POKEDOLL_SHINY_SANDYGAST = "gigantic_pokedoll_shiny_sandygast";
 }

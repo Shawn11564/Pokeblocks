@@ -19,6 +19,68 @@ public class PokeblocksClient implements ClientModInitializer {
 	public void onInitializeClient() {
 		ServerHandler.register();
 
+		registerScaledBlockEntityRenderer(
+				ModBlockEntities.GIGANTIC_POKEDOLL_SANDYGAST_BLOCK_ENTITY,
+				ResourceConstants.POKEDOLL_SANDYGAST_MODEL,
+				ResourceConstants.POKEDOLL_SANDYGAST_TEXTURE,
+				SCALE
+		);
+
+		registerScaledBlockEntityRenderer(
+				ModBlockEntities.GIGANTIC_POKEDOLL_SHINY_SANDYGAST_BLOCK_ENTITY,
+				ResourceConstants.POKEDOLL_SANDYGAST_MODEL,
+				ResourceConstants.POKEDOLL_SHINY_SANDYGAST_TEXTURE,
+				SCALE
+		);
+
+		registerScaledBlockEntityRenderer(
+				ModBlockEntities.GIGANTIC_POKEDOLL_PALOSSAND_BLOCK_ENTITY,
+				ResourceConstants.POKEDOLL_PALOSSAND_MODEL,
+				ResourceConstants.POKEDOLL_PALOSSAND_TEXTURE,
+				SCALE
+		);
+
+		registerScaledBlockEntityRenderer(
+				ModBlockEntities.GIGANTIC_POKEDOLL_SHINY_PALOSSAND_BLOCK_ENTITY,
+				ResourceConstants.POKEDOLL_PALOSSAND_MODEL,
+				ResourceConstants.POKEDOLL_SHINY_PALOSSAND_TEXTURE,
+				SCALE
+		);
+
+		registerScaledBlockEntityRenderer(
+				ModBlockEntities.GIGANTIC_POKEDOLL_GHOLDENGO_BLOCK_ENTITY,
+				ResourceConstants.POKEDOLL_GHOLDENGO_MODEL,
+				ResourceConstants.POKEDOLL_GHOLDENGO_TEXTURE,
+				SCALE
+		);
+
+		registerScaledBlockEntityRenderer(
+				ModBlockEntities.GIGANTIC_POKEDOLL_SHINY_GHOLDENGO_BLOCK_ENTITY,
+				ResourceConstants.POKEDOLL_GHOLDENGO_MODEL,
+				ResourceConstants.POKEDOLL_SHINY_GHOLDENGO_TEXTURE,
+				SCALE
+		);
+		registerScaledBlockEntityRenderer(
+				ModBlockEntities.GIGANTIC_POKEDOLL_NETHERITE_GHOLDENGO_BLOCK_ENTITY,
+				ResourceConstants.POKEDOLL_GHOLDENGO_MODEL,
+				ResourceConstants.POKEDOLL_NETHERITE_GHOLDENGO_TEXTURE,
+				SCALE
+		);
+
+		registerScaledBlockEntityRenderer(
+				ModBlockEntities.GIGANTIC_POKEDOLL_EEVEE_BLOCK_ENTITY,
+				ResourceConstants.POKEDOLL_EEVEE_MODEL,
+				ResourceConstants.POKEDOLL_EEVEE_TEXTURE,
+				SCALE
+		);
+
+		registerScaledBlockEntityRenderer(
+				ModBlockEntities.GIGANTIC_POKEDOLL_SHINY_EEVEE_BLOCK_ENTITY,
+				ResourceConstants.POKEDOLL_EEVEE_MODEL,
+				ResourceConstants.POKEDOLL_SHINY_EEVEE_TEXTURE,
+				SCALE
+		);
+
 		registerBlockEntityRenderer(
 				ModBlockEntities.POKEDOLL_GHOLDENGO_BLOCK_ENTITY,
 				ResourceConstants.POKEDOLL_GHOLDENGO_MODEL,
