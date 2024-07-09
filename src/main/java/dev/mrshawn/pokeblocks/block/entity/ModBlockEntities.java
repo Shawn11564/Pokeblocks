@@ -157,6 +157,7 @@ import dev.mrshawn.pokeblocks.block.entity.swinub.PokedollGiganticShinySwinubBlo
 import dev.mrshawn.pokeblocks.block.entity.swinub.PokedollGiganticSwinubBlockEntity;
 import dev.mrshawn.pokeblocks.block.entity.swinub.PokedollShinySwinubBlockEntity;
 import dev.mrshawn.pokeblocks.block.entity.swinub.PokedollSwinubBlockEntity;
+import dev.mrshawn.pokeblocks.block.entity.tropsic0_figurine.Tropsic0FigurineBlockEntity;
 import dev.mrshawn.pokeblocks.block.entity.venusaur.PokedollGiganticShinyVenusaurBlockEntity;
 import dev.mrshawn.pokeblocks.block.entity.venusaur.PokedollGiganticVenusaurBlockEntity;
 import dev.mrshawn.pokeblocks.block.entity.venusaur.PokedollShinyVenusaurBlockEntity;
@@ -405,6 +406,7 @@ public class ModBlockEntities {
 
 	public static BlockEntityType<A09RobertFigurineBlockEntity> A09ROBERT_FIGURINE_BLOCK_ENTITY;
 	public static BlockEntityType<RedCommunismFigurineBlockEntity> RED_COMMUNISM_FIGURINE_BLOCK_ENTITY;
+	public static BlockEntityType<Tropsic0FigurineBlockEntity> TROPSIC0_FIGURINE_BLOCK_ENTITY;
 
 	public static void registerAllBlockEntities() {
 		POKEDOLL_CALYREX_BLOCK_ENTITY = registerBlockEntity(
@@ -1376,6 +1378,11 @@ public class ModBlockEntities {
 				new Identifier(Pokeblocks.MOD_ID, PokeIDs.RED_COMMUNISM_FIGURINE),
 				FabricBlockEntityTypeBuilder.create(RedCommunismFigurineBlockEntity::new, ModBlocks.RED_COMMUNISM_FIGURINE),
 				RedCommunismFigurineBlockEntity.class
+		);
+		TROPSIC0_FIGURINE_BLOCK_ENTITY = registerBlockEntity(
+				new Identifier(Pokeblocks.MOD_ID, PokeIDs.TROPSIC0_FIGURINE),
+				FabricBlockEntityTypeBuilder.create(Tropsic0FigurineBlockEntity::new, ModBlocks.TROPSIC0_FIGURINE),
+				Tropsic0FigurineBlockEntity.class
 		);
 
 	}

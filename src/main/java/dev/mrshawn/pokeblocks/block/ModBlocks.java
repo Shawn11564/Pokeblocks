@@ -157,6 +157,7 @@ import dev.mrshawn.pokeblocks.block.entity.swinub.PokedollGiganticShinySwinubBlo
 import dev.mrshawn.pokeblocks.block.entity.swinub.PokedollGiganticSwinubBlockEntity;
 import dev.mrshawn.pokeblocks.block.entity.swinub.PokedollShinySwinubBlockEntity;
 import dev.mrshawn.pokeblocks.block.entity.swinub.PokedollSwinubBlockEntity;
+import dev.mrshawn.pokeblocks.block.entity.tropsic0_figurine.Tropsic0FigurineBlockEntity;
 import dev.mrshawn.pokeblocks.block.entity.venusaur.PokedollGiganticShinyVenusaurBlockEntity;
 import dev.mrshawn.pokeblocks.block.entity.venusaur.PokedollGiganticVenusaurBlockEntity;
 import dev.mrshawn.pokeblocks.block.entity.venusaur.PokedollShinyVenusaurBlockEntity;
@@ -684,6 +685,8 @@ public class ModBlocks {
 			new PokedollBlock<>(Shapes.FIGURINE_SHAPE, () -> A09RobertFigurineBlockEntity.class));
 	public static final Block RED_COMMUNISM_FIGURINE = Registry.register(Registries.BLOCK, new Identifier(Pokeblocks.MOD_ID, PokeIDs.RED_COMMUNISM_FIGURINE),
 			new PokedollBlock<>(Shapes.FIGURINE_SHAPE, () -> RedCommunismFigurineBlockEntity.class));
+	public static final Block TROPSIC0_FIGURINE = Registry.register(Registries.BLOCK, new Identifier(Pokeblocks.MOD_ID, PokeIDs.TROPSIC0_FIGURINE),
+			new PokedollBlock<>(Shapes.FIGURINE_SHAPE, () -> Tropsic0FigurineBlockEntity.class));
 
 	private static Block registerBlock(String name, Block block) {
 		registerBlockItem(name, block);

@@ -105,6 +105,8 @@ public class ResourceConstants {
 	public static final String A09ROBERT_FIGURINE_MODEL = "a09robert_figurine.geo.json";
 	public static final String RED_COMMUNISM_FIGURINE_TEXTURE = "red_communism_figurine_texture.png";
 	public static final String RED_COMMUNISM_FIGURINE_MODEL = "red_communism_figurine.geo.json";
+	public static final String TROPSIC0_FIGURINE_MODEL = "tropsic0_figurine.geo.json";
+	public static final String TROPSIC0_FIGURINE_TEXTURE = "tropsic0_figurine_texture.png";
 	public static final String POKEDOLL_BLASTOISE_TEXTURE = "pokedoll_blastoise_texture.png";
 	public static final String POKEDOLL_SHINY_BLASTOISE_TEXTURE = "pokedoll_blastoise_shiny_texture.png";
 	public static final String POKEDOLL_BLASTOISE_MODEL = "pokedoll_blastoise.geo.json";

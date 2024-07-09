@@ -503,6 +503,13 @@ public class ModItems {
 			ResourceConstants.RED_COMMUNISM_FIGURINE_TEXTURE,
 			DollRarity.NONE
 	);
+	public static final Item POKEDOLL_TROPSIC0_FIGURINE_BLOCK_ITEM = registerItem(
+			PokeIDs.TROPSIC0_FIGURINE,
+			ModBlocks.TROPSIC0_FIGURINE,
+			ResourceConstants.TROPSIC0_FIGURINE_MODEL,
+			ResourceConstants.TROPSIC0_FIGURINE_TEXTURE,
+			DollRarity.NONE
+	);
 
 	public static final Item POKEDOLL_BLASTOISE_BLOCK_ITEM = registerItem(
 			PokeIDs.POKEDOLL_BLASTOISE,

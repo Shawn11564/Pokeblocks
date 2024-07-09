@@ -779,6 +779,11 @@ public class PokeblocksClient implements ClientModInitializer {
 				ResourceConstants.A09ROBERT_FIGURINE_MODEL,
 				ResourceConstants.A09ROBERT_FIGURINE_TEXTURE
 		);
+		registerBlockEntityRenderer(
+				ModBlockEntities.TROPSIC0_FIGURINE_BLOCK_ENTITY,
+				ResourceConstants.TROPSIC0_FIGURINE_MODEL,
+				ResourceConstants.TROPSIC0_FIGURINE_TEXTURE
+		);
 
 		registerBlockEntityRenderer(
 				ModBlockEntities.POKEDOLL_POKEMON_TROPHY_BLOCK_ENTITY,
