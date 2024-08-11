@@ -17,6 +17,90 @@ public class PokeblocksClient implements ClientModInitializer {
 
 	@Override
 	public void onInitializeClient() {
+		registerScaledBlockEntityRenderer(
+				ModBlockEntities.GIGANTIC_POKEDOLL_WAILORD_BLOCK_ENTITY,
+				ResourceConstants.POKEDOLL_WAILORD_MODEL,
+				ResourceConstants.POKEDOLL_WAILORD_TEXTURE,
+				SCALE
+		);
+
+		registerScaledBlockEntityRenderer(
+				ModBlockEntities.GIGANTIC_POKEDOLL_SHINY_WAILORD_BLOCK_ENTITY,
+				ResourceConstants.POKEDOLL_WAILORD_MODEL,
+				ResourceConstants.POKEDOLL_SHINY_WAILORD_TEXTURE,
+				SCALE
+		);
+
+		registerScaledBlockEntityRenderer(
+				ModBlockEntities.GIGANTIC_POKEDOLL_WAILMER_BLOCK_ENTITY,
+				ResourceConstants.POKEDOLL_WAILMER_MODEL,
+				ResourceConstants.POKEDOLL_WAILMER_TEXTURE,
+				SCALE
+		);
+
+		registerScaledBlockEntityRenderer(
+				ModBlockEntities.GIGANTIC_POKEDOLL_SHINY_WAILMER_BLOCK_ENTITY,
+				ResourceConstants.POKEDOLL_WAILMER_MODEL,
+				ResourceConstants.POKEDOLL_SHINY_WAILMER_TEXTURE,
+				SCALE
+		);
+
+		registerScaledBlockEntityRenderer(
+				ModBlockEntities.GIGANTIC_POKEDOLL_TROPIUS_BLOCK_ENTITY,
+				ResourceConstants.POKEDOLL_TROPIUS_MODEL,
+				ResourceConstants.POKEDOLL_TROPIUS_TEXTURE,
+				SCALE
+		);
+
+		registerScaledBlockEntityRenderer(
+				ModBlockEntities.GIGANTIC_POKEDOLL_SHINY_TROPIUS_BLOCK_ENTITY,
+				ResourceConstants.POKEDOLL_TROPIUS_MODEL,
+				ResourceConstants.POKEDOLL_SHINY_TROPIUS_TEXTURE,
+				SCALE
+		);
+
+		registerScaledBlockEntityRenderer(
+				ModBlockEntities.GIGANTIC_POKEDOLL_SHELLDER_BLOCK_ENTITY,
+				ResourceConstants.POKEDOLL_SHELLDER_MODEL,
+				ResourceConstants.POKEDOLL_SHELLDER_TEXTURE,
+				SCALE
+		);
+
+		registerScaledBlockEntityRenderer(
+				ModBlockEntities.GIGANTIC_POKEDOLL_SHINY_SHELLDER_BLOCK_ENTITY,
+				ResourceConstants.POKEDOLL_SHELLDER_MODEL,
+				ResourceConstants.POKEDOLL_SHINY_SHELLDER_TEXTURE,
+				SCALE
+		);
+
+		registerScaledBlockEntityRenderer(
+				ModBlockEntities.GIGANTIC_POKEDOLL_KYOGRE_BLOCK_ENTITY,
+				ResourceConstants.POKEDOLL_KYOGRE_MODEL,
+				ResourceConstants.POKEDOLL_KYOGRE_TEXTURE,
+				SCALE
+		);
+
+		registerScaledBlockEntityRenderer(
+				ModBlockEntities.GIGANTIC_POKEDOLL_SHINY_KYOGRE_BLOCK_ENTITY,
+				ResourceConstants.POKEDOLL_KYOGRE_MODEL,
+				ResourceConstants.POKEDOLL_SHINY_KYOGRE_TEXTURE,
+				SCALE
+		);
+
+		registerScaledBlockEntityRenderer(
+				ModBlockEntities.GIGANTIC_POKEDOLL_CLOYSTER_BLOCK_ENTITY,
+				ResourceConstants.POKEDOLL_CLOYSTER_MODEL,
+				ResourceConstants.POKEDOLL_CLOYSTER_TEXTURE,
+				SCALE - 0.15f
+		);
+
+		registerScaledBlockEntityRenderer(
+				ModBlockEntities.GIGANTIC_POKEDOLL_SHINY_CLOYSTER_BLOCK_ENTITY,
+				ResourceConstants.POKEDOLL_CLOYSTER_MODEL,
+				ResourceConstants.POKEDOLL_SHINY_CLOYSTER_TEXTURE,
+				SCALE - 0.15f
+		);
+
 		ServerHandler.register();
 
 		registerBlockEntityRenderer(
@@ -133,6 +217,12 @@ public class PokeblocksClient implements ClientModInitializer {
 				ModBlockEntities.GIGANTIC_POKEDOLL_NETHERITE_GHOLDENGO_BLOCK_ENTITY,
 				ResourceConstants.POKEDOLL_GHOLDENGO_MODEL,
 				ResourceConstants.POKEDOLL_NETHERITE_GHOLDENGO_TEXTURE,
+				SCALE
+		);
+		registerScaledBlockEntityRenderer(
+				ModBlockEntities.GIGANTIC_POKEDOLL_SHINY_NETHERITE_GHOLDENGO_BLOCK_ENTITY,
+				ResourceConstants.POKEDOLL_GHOLDENGO_MODEL,
+				ResourceConstants.POKEDOLL_SHINY_NETHERITE_GHOLDENGO_TEXTURE,
 				SCALE
 		);
 

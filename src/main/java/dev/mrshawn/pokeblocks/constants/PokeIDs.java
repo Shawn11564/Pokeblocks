@@ -183,6 +183,7 @@ public class PokeIDs {
 	public static final String GIGANTIC_POKEDOLL_GHOLDENGO = "gigantic_pokedoll_gholdengo";
 	public static final String GIGANTIC_POKEDOLL_SHINY_GHOLDENGO = "gigantic_pokedoll_shiny_gholdengo";
 	public static final String GIGANTIC_POKEDOLL_NETHERITE_GHOLDENGO = "gigantic_pokedoll_netherite_gholdengo";
+	public static final String GIGANTIC_POKEDOLL_SHINY_NETHERITE_GHOLDENGO = "gigantic_pokedoll_shiny_netherite_gholdengo";
 	public static final String GIGANTIC_POKEDOLL_PALOSSAND = "gigantic_pokedoll_palossand";
 	public static final String GIGANTIC_POKEDOLL_SHINY_PALOSSAND = "gigantic_pokedoll_shiny_palossand";
 	public static final String GIGANTIC_POKEDOLL_SANDYGAST = "gigantic_pokedoll_sandygast";
@@ -199,4 +200,16 @@ public class PokeIDs {
 	public static final String POKEDOLL_SHINY_TROPIUS = "pokedoll_shiny_tropius";
 	public static final String POKEDOLL_KYOGRE = "pokedoll_kyogre";
 	public static final String POKEDOLL_SHINY_KYOGRE = "pokedoll_shiny_kyogre";
+	public static final String GIGANTIC_POKEDOLL_CLOYSTER = "gigantic_pokedoll_cloyster";
+	public static final String GIGANTIC_POKEDOLL_SHINY_CLOYSTER = "gigantic_pokedoll_shiny_cloyster";
+	public static final String GIGANTIC_POKEDOLL_KYOGRE = "gigantic_pokedoll_kyogre";
+	public static final String GIGANTIC_POKEDOLL_SHINY_KYOGRE = "gigantic_pokedoll_shiny_kyogre";
+	public static final String GIGANTIC_POKEDOLL_SHELLDER = "gigantic_pokedoll_shellder";
+	public static final String GIGANTIC_POKEDOLL_SHINY_SHELLDER = "gigantic_pokedoll_shiny_shellder";
+	public static final String GIGANTIC_POKEDOLL_TROPIUS = "gigantic_pokedoll_tropius";
+	public static final String GIGANTIC_POKEDOLL_SHINY_TROPIUS = "gigantic_pokedoll_shiny_tropius";
+	public static final String GIGANTIC_POKEDOLL_WAILMER = "gigantic_pokedoll_wailmer";
+	public static final String GIGANTIC_POKEDOLL_SHINY_WAILMER = "gigantic_pokedoll_shiny_wailmer";
+	public static final String GIGANTIC_POKEDOLL_WAILORD = "gigantic_pokedoll_wailord";
+	public static final String GIGANTIC_POKEDOLL_SHINY_WAILORD = "gigantic_pokedoll_shiny_wailord";
 }
