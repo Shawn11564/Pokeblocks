@@ -454,6 +454,8 @@ public class ModBlocks {
 			new PokedollBlock<>(() -> PokedollShinyGholdengoBlockEntity.class));
 	public static final Block POKEDOLL_NETHERITE_GHOLDENGO = Registry.register(Registries.BLOCK, new Identifier(Pokeblocks.MOD_ID, PokeIDs.POKEDOLL_NETHERITE_GHOLDENGO),
 			new PokedollBlock<>(() -> PokedollNetheriteGholdengoBlockEntity.class));
+	public static final Block POKEDOLL_SHINY_NETHERITE_GHOLDENGO = Registry.register(Registries.BLOCK, new Identifier(Pokeblocks.MOD_ID, PokeIDs.POKEDOLL_SHINY_NETHERITE_GHOLDENGO),
+			new PokedollBlock<>(() -> PokedollShinyNetheriteGholdengoBlockEntity.class));
 	public static final Block GIGANTIC_POKEDOLL_SANDYGAST = Registry.register(Registries.BLOCK, new Identifier(Pokeblocks.MOD_ID, PokeIDs.GIGANTIC_POKEDOLL_SANDYGAST),
 			new PokedollBlock<>(() -> PokedollGiganticSandygastBlockEntity.class));
 	public static final Block GIGANTIC_POKEDOLL_SHINY_SANDYGAST = Registry.register(Registries.BLOCK, new Identifier(Pokeblocks.MOD_ID, PokeIDs.GIGANTIC_POKEDOLL_SHINY_SANDYGAST),

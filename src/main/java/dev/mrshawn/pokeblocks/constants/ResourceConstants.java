@@ -152,5 +152,6 @@ public class ResourceConstants {
 	public static final String POKEDOLL_GHOLDENGO_TEXTURE = "pokedoll_gholdengo_texture.png";
 	public static final String POKEDOLL_SHINY_GHOLDENGO_TEXTURE = "pokedoll_gholdengo_shiny_texture.png";
 	public static final String POKEDOLL_NETHERITE_GHOLDENGO_TEXTURE = "pokedoll_gholdengo_netherite_texture.png";
+	public static final String POKEDOLL_SHINY_NETHERITE_GHOLDENGO_TEXTURE = "pokedoll_gholdengo_shiny_netherite_texture.png";
 	public static final String POKEDOLL_GHOLDENGO_MODEL = "pokedoll_gholdengo.geo.json";
 }

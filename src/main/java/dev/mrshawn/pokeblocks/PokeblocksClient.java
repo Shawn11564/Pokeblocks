@@ -96,6 +96,11 @@ public class PokeblocksClient implements ClientModInitializer {
 				ResourceConstants.POKEDOLL_GHOLDENGO_MODEL,
 				ResourceConstants.POKEDOLL_NETHERITE_GHOLDENGO_TEXTURE
 		);
+		registerBlockEntityRenderer(
+				ModBlockEntities.POKEDOLL_SHINY_NETHERITE_GHOLDENGO_BLOCK_ENTITY,
+				ResourceConstants.POKEDOLL_GHOLDENGO_MODEL,
+				ResourceConstants.POKEDOLL_SHINY_NETHERITE_GHOLDENGO_TEXTURE
+		);
 
 		registerBlockEntityRenderer(
 				ModBlockEntities.POKEDOLL_PALOSSAND_BLOCK_ENTITY,

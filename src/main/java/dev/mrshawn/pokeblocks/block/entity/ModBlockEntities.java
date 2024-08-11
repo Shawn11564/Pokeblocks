@@ -390,6 +390,7 @@ public class ModBlockEntities {
 	public static BlockEntityType<PokedollGholdengoBlockEntity> POKEDOLL_GHOLDENGO_BLOCK_ENTITY;
 	public static BlockEntityType<PokedollShinyGholdengoBlockEntity> POKEDOLL_SHINY_GHOLDENGO_BLOCK_ENTITY;
 	public static BlockEntityType<PokedollNetheriteGholdengoBlockEntity> POKEDOLL_NETHERITE_GHOLDENGO_BLOCK_ENTITY;
+	public static BlockEntityType<PokedollShinyNetheriteGholdengoBlockEntity> POKEDOLL_SHINY_NETHERITE_GHOLDENGO_BLOCK_ENTITY;
 
 	public static BlockEntityType<PokedollGiganticEeveeBlockEntity> GIGANTIC_POKEDOLL_EEVEE_BLOCK_ENTITY;
 	public static BlockEntityType<PokedollGiganticShinyEeveeBlockEntity> GIGANTIC_POKEDOLL_SHINY_EEVEE_BLOCK_ENTITY;
@@ -1319,6 +1320,11 @@ public class ModBlockEntities {
 				new Identifier(Pokeblocks.MOD_ID, PokeIDs.POKEDOLL_NETHERITE_GHOLDENGO),
 				FabricBlockEntityTypeBuilder.create(PokedollNetheriteGholdengoBlockEntity::new, ModBlocks.POKEDOLL_NETHERITE_GHOLDENGO),
 				PokedollNetheriteGholdengoBlockEntity.class
+		);
+		POKEDOLL_SHINY_NETHERITE_GHOLDENGO_BLOCK_ENTITY = registerBlockEntity(
+				new Identifier(Pokeblocks.MOD_ID, PokeIDs.POKEDOLL_SHINY_NETHERITE_GHOLDENGO),
+				FabricBlockEntityTypeBuilder.create(PokedollShinyNetheriteGholdengoBlockEntity::new, ModBlocks.POKEDOLL_SHINY_NETHERITE_GHOLDENGO),
+				PokedollShinyNetheriteGholdengoBlockEntity.class
 		);
 
 		GIGANTIC_POKEDOLL_EEVEE_BLOCK_ENTITY = registerBlockEntity(

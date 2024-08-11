@@ -179,6 +179,7 @@ public class ModItemGroups {
 						entries.add(ModBlocks.POKEDOLL_GHOLDENGO);
 						entries.add(ModBlocks.POKEDOLL_SHINY_GHOLDENGO);
 						entries.add(ModBlocks.POKEDOLL_NETHERITE_GHOLDENGO);
+						entries.add(ModBlocks.POKEDOLL_SHINY_NETHERITE_GHOLDENGO);
 						entries.add(ModBlocks.GIGANTIC_POKEDOLL_GHOLDENGO);
 						entries.add(ModBlocks.GIGANTIC_POKEDOLL_SHINY_GHOLDENGO);
 						entries.add(ModBlocks.GIGANTIC_POKEDOLL_NETHERITE_GHOLDENGO);
