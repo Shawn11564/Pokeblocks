@@ -19,6 +19,75 @@ public class PokeblocksClient implements ClientModInitializer {
 	public void onInitializeClient() {
 		ServerHandler.register();
 
+		registerBlockEntityRenderer(
+				ModBlockEntities.POKEDOLL_KYOGRE_BLOCK_ENTITY,
+				ResourceConstants.POKEDOLL_KYOGRE_MODEL,
+				ResourceConstants.POKEDOLL_KYOGRE_TEXTURE
+		);
+		registerBlockEntityRenderer(
+				ModBlockEntities.POKEDOLL_SHINY_KYOGRE_BLOCK_ENTITY,
+				ResourceConstants.POKEDOLL_KYOGRE_MODEL,
+				ResourceConstants.POKEDOLL_SHINY_KYOGRE_TEXTURE
+		);
+
+		registerBlockEntityRenderer(
+				ModBlockEntities.POKEDOLL_TROPIUS_BLOCK_ENTITY,
+				ResourceConstants.POKEDOLL_TROPIUS_MODEL,
+				ResourceConstants.POKEDOLL_TROPIUS_TEXTURE
+		);
+		registerBlockEntityRenderer(
+				ModBlockEntities.POKEDOLL_SHINY_TROPIUS_BLOCK_ENTITY,
+				ResourceConstants.POKEDOLL_TROPIUS_MODEL,
+				ResourceConstants.POKEDOLL_SHINY_TROPIUS_TEXTURE
+		);
+
+		registerBlockEntityRenderer(
+				ModBlockEntities.POKEDOLL_WAILORD_BLOCK_ENTITY,
+				ResourceConstants.POKEDOLL_WAILORD_MODEL,
+				ResourceConstants.POKEDOLL_WAILORD_TEXTURE
+		);
+		registerBlockEntityRenderer(
+				ModBlockEntities.POKEDOLL_SHINY_WAILORD_BLOCK_ENTITY,
+				ResourceConstants.POKEDOLL_WAILORD_MODEL,
+				ResourceConstants.POKEDOLL_SHINY_WAILORD_TEXTURE
+		);
+
+		registerBlockEntityRenderer(
+				ModBlockEntities.POKEDOLL_WAILMER_BLOCK_ENTITY,
+				ResourceConstants.POKEDOLL_WAILMER_MODEL,
+				ResourceConstants.POKEDOLL_WAILMER_TEXTURE
+		);
+		registerBlockEntityRenderer(
+				ModBlockEntities.POKEDOLL_SHINY_WAILMER_BLOCK_ENTITY,
+				ResourceConstants.POKEDOLL_WAILMER_MODEL,
+				ResourceConstants.POKEDOLL_SHINY_WAILMER_TEXTURE
+		);
+
+		registerScaledBlockEntityRenderer(
+				ModBlockEntities.POKEDOLL_CLOYSTER_BLOCK_ENTITY,
+				ResourceConstants.POKEDOLL_CLOYSTER_MODEL,
+				ResourceConstants.POKEDOLL_CLOYSTER_TEXTURE,
+				0.85f
+		);
+		registerScaledBlockEntityRenderer(
+				ModBlockEntities.POKEDOLL_SHINY_CLOYSTER_BLOCK_ENTITY,
+				ResourceConstants.POKEDOLL_CLOYSTER_MODEL,
+				ResourceConstants.POKEDOLL_SHINY_CLOYSTER_TEXTURE,
+				0.85f
+		);
+
+		registerScaledBlockEntityRenderer(
+				ModBlockEntities.POKEDOLL_SHELLDER_BLOCK_ENTITY,
+				ResourceConstants.POKEDOLL_SHELLDER_MODEL,
+				ResourceConstants.POKEDOLL_SHELLDER_TEXTURE,
+				0.85f
+		);
+		registerScaledBlockEntityRenderer(
+				ModBlockEntities.POKEDOLL_SHINY_SHELLDER_BLOCK_ENTITY,
+				ResourceConstants.POKEDOLL_SHELLDER_MODEL,
+				ResourceConstants.POKEDOLL_SHINY_SHELLDER_TEXTURE,
+				0.85f
+		);
 		registerScaledBlockEntityRenderer(
 				ModBlockEntities.GIGANTIC_POKEDOLL_SANDYGAST_BLOCK_ENTITY,
 				ResourceConstants.POKEDOLL_SANDYGAST_MODEL,

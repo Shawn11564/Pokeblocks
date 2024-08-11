@@ -1196,6 +1196,96 @@ public class ModItems {
 			DollRarity.SHINY
 	);
 
+	public static final Item POKEDOLL_SHELLDER_BLOCK_ITEM = registerItem(
+			PokeIDs.POKEDOLL_SHELLDER,
+			ModBlocks.POKEDOLL_SHELLDER,
+			ResourceConstants.POKEDOLL_SHELLDER_MODEL,
+			ResourceConstants.POKEDOLL_SHELLDER_TEXTURE,
+			DollRarity.UNCOMMON
+	);
+	public static final Item POKEDOLL_SHINY_SHELLDER_BLOCK_ITEM = registerItem(
+			PokeIDs.POKEDOLL_SHINY_SHELLDER,
+			ModBlocks.POKEDOLL_SHINY_SHELLDER,
+			ResourceConstants.POKEDOLL_SHELLDER_MODEL,
+			ResourceConstants.POKEDOLL_SHINY_SHELLDER_TEXTURE,
+			DollRarity.SHINY
+	);
+
+	public static final Item POKEDOLL_CLOYSTER_BLOCK_ITEM = registerItem(
+			PokeIDs.POKEDOLL_CLOYSTER,
+			ModBlocks.POKEDOLL_CLOYSTER,
+			ResourceConstants.POKEDOLL_CLOYSTER_MODEL,
+			ResourceConstants.POKEDOLL_CLOYSTER_TEXTURE,
+			DollRarity.RARE
+	);
+	public static final Item POKEDOLL_SHINY_CLOYSTER_BLOCK_ITEM = registerItem(
+			PokeIDs.POKEDOLL_SHINY_CLOYSTER,
+			ModBlocks.POKEDOLL_SHINY_CLOYSTER,
+			ResourceConstants.POKEDOLL_CLOYSTER_MODEL,
+			ResourceConstants.POKEDOLL_SHINY_CLOYSTER_TEXTURE,
+			DollRarity.SHINY
+	);
+
+	public static final Item POKEDOLL_WAILMER_BLOCK_ITEM = registerItem(
+			PokeIDs.POKEDOLL_WAILMER,
+			ModBlocks.POKEDOLL_WAILMER,
+			ResourceConstants.POKEDOLL_WAILMER_MODEL,
+			ResourceConstants.POKEDOLL_WAILMER_TEXTURE,
+			DollRarity.COMMON
+	);
+	public static final Item POKEDOLL_SHINY_WAILMER_BLOCK_ITEM = registerItem(
+			PokeIDs.POKEDOLL_SHINY_WAILMER,
+			ModBlocks.POKEDOLL_SHINY_WAILMER,
+			ResourceConstants.POKEDOLL_WAILMER_MODEL,
+			ResourceConstants.POKEDOLL_SHINY_WAILMER_TEXTURE,
+			DollRarity.SHINY
+	);
+
+	public static final Item POKEDOLL_WAILORD_BLOCK_ITEM = registerItem(
+			PokeIDs.POKEDOLL_WAILORD,
+			ModBlocks.POKEDOLL_WAILORD,
+			ResourceConstants.POKEDOLL_WAILORD_MODEL,
+			ResourceConstants.POKEDOLL_WAILORD_TEXTURE,
+			DollRarity.RARE
+	);
+	public static final Item POKEDOLL_SHINY_WAILORD_BLOCK_ITEM = registerItem(
+			PokeIDs.POKEDOLL_SHINY_WAILORD,
+			ModBlocks.POKEDOLL_SHINY_WAILORD,
+			ResourceConstants.POKEDOLL_WAILORD_MODEL,
+			ResourceConstants.POKEDOLL_SHINY_WAILORD_TEXTURE,
+			DollRarity.SHINY
+	);
+
+	public static final Item POKEDOLL_TROPIUS_BLOCK_ITEM = registerItem(
+			PokeIDs.POKEDOLL_TROPIUS,
+			ModBlocks.POKEDOLL_TROPIUS,
+			ResourceConstants.POKEDOLL_TROPIUS_MODEL,
+			ResourceConstants.POKEDOLL_TROPIUS_TEXTURE,
+			DollRarity.EPIC
+	);
+	public static final Item POKEDOLL_SHINY_TROPIUS_BLOCK_ITEM = registerItem(
+			PokeIDs.POKEDOLL_SHINY_TROPIUS,
+			ModBlocks.POKEDOLL_SHINY_TROPIUS,
+			ResourceConstants.POKEDOLL_TROPIUS_MODEL,
+			ResourceConstants.POKEDOLL_SHINY_TROPIUS_TEXTURE,
+			DollRarity.SHINY
+	);
+
+	public static final Item POKEDOLL_KYOGRE_BLOCK_ITEM = registerItem(
+			PokeIDs.POKEDOLL_KYOGRE,
+			ModBlocks.POKEDOLL_KYOGRE,
+			ResourceConstants.POKEDOLL_KYOGRE_MODEL,
+			ResourceConstants.POKEDOLL_KYOGRE_TEXTURE,
+			DollRarity.LEGENDARY
+	);
+	public static final Item POKEDOLL_SHINY_KYOGRE_BLOCK_ITEM = registerItem(
+			PokeIDs.POKEDOLL_SHINY_KYOGRE,
+			ModBlocks.POKEDOLL_SHINY_KYOGRE,
+			ResourceConstants.POKEDOLL_KYOGRE_MODEL,
+			ResourceConstants.POKEDOLL_SHINY_KYOGRE_TEXTURE,
+			DollRarity.SHINY
+	);
+
 	public static final Item GIGANTIC_POKEDOLL_SANDYGAST_BLOCK_ITEM = registerItem(
 			PokeIDs.GIGANTIC_POKEDOLL_SANDYGAST,
 			ModBlocks.GIGANTIC_POKEDOLL_SANDYGAST,
