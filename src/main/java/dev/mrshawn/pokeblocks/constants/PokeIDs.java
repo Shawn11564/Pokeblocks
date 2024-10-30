@@ -1,7 +1,6 @@
 package dev.mrshawn.pokeblocks.constants;
 
 public class PokeIDs {
-
 	public static final String POKEDOLL_CALYREX = "pokedoll_calyrex";
 	public static final String POKEDOLL_SHINY_CALYREX = "pokedoll_shiny_calyrex";
 	public static final String POKEDOLL_CALYREX_ANIMATED = "pokedoll_calyrex_animated";
