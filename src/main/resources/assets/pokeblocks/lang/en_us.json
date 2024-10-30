@@ -418,5 +418,9 @@
     "item.pokeblocks.pokedoll_pumpkaboo": "Pumpkaboo Pokedoll",
     "item.pokeblocks.pokedoll_shiny_pumpkaboo": "Shiny Pumpkaboo Pokedoll",
     "block.pokeblocks.pokedoll_pumpkaboo": "Pumpkaboo Pokedoll",
-    "block.pokeblocks.pokedoll_shiny_pumpkaboo": "Shiny Pumpkaboo Pokedoll"
+    "block.pokeblocks.pokedoll_shiny_pumpkaboo": "Shiny Pumpkaboo Pokedoll",
+    "item.pokeblocks.pokedoll_trevenant": "Trevenant Pokedoll",
+    "item.pokeblocks.pokedoll_shiny_trevenant": "Shiny Trevenant Pokedoll",
+    "block.pokeblocks.pokedoll_trevenant": "Trevenant Pokedoll",
+    "block.pokeblocks.pokedoll_shiny_trevenant": "Shiny Trevenant Pokedoll"
 }

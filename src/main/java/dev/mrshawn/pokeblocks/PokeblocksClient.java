@@ -20,6 +20,16 @@ public class PokeblocksClient implements ClientModInitializer {
 		ServerHandler.register();
 
 		registerBlockEntityRenderer(
+				ModBlockEntities.POKEDOLL_TREVENANT_BLOCK_ENTITY,
+				ResourceConstants.POKEDOLL_TREVENANT_MODEL,
+				ResourceConstants.POKEDOLL_TREVENANT_TEXTURE
+		);
+		registerBlockEntityRenderer(
+				ModBlockEntities.POKEDOLL_SHINY_TREVENANT_BLOCK_ENTITY,
+				ResourceConstants.POKEDOLL_TREVENANT_MODEL,
+				ResourceConstants.POKEDOLL_SHINY_TREVENANT_TEXTURE
+		);
+		registerBlockEntityRenderer(
 				ModBlockEntities.POKEDOLL_PUMPKABOO_BLOCK_ENTITY,
 				ResourceConstants.POKEDOLL_PUMPKABOO_MODEL,
 				ResourceConstants.POKEDOLL_PUMPKABOO_TEXTURE
