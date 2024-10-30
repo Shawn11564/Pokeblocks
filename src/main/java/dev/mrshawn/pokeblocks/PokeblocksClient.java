@@ -17,29 +17,97 @@ public class PokeblocksClient implements ClientModInitializer {
 
 	@Override
 	public void onInitializeClient() {
-  registerBlockEntityRenderer(
-    ModBlockEntities.POKEDOLL_MARSHADOW_ZENITH_BLOCK_ENTITY,
-    ResourceConstants.POKEDOLL_MARSHADOW_ZENITH_MODEL,
-    ResourceConstants.POKEDOLL_MARSHADOW_ZENITH_TEXTURE
-  );
-  registerBlockEntityRenderer(
-    ModBlockEntities.POKEDOLL_SHINY_MARSHADOW_ZENITH_BLOCK_ENTITY,
-    ResourceConstants.POKEDOLL_MARSHADOW_ZENITH_MODEL,
-    ResourceConstants.POKEDOLL_SHINY_MARSHADOW_ZENITH_TEXTURE
-  );
-
-  registerBlockEntityRenderer(
-    ModBlockEntities.POKEDOLL_MARSHADOW_BLOCK_ENTITY,
-    ResourceConstants.POKEDOLL_MARSHADOW_MODEL,
-    ResourceConstants.POKEDOLL_MARSHADOW_TEXTURE
-  );
-  registerBlockEntityRenderer(
-    ModBlockEntities.POKEDOLL_SHINY_MARSHADOW_BLOCK_ENTITY,
-    ResourceConstants.POKEDOLL_MARSHADOW_MODEL,
-    ResourceConstants.POKEDOLL_SHINY_MARSHADOW_TEXTURE
-  );
-
 		ServerHandler.register();
+		registerScaledBlockEntityRenderer(
+			ModBlockEntities.GIGANTIC_POKEDOLL_TREVENANT_BLOCK_ENTITY,
+			ResourceConstants.POKEDOLL_TREVENANT_MODEL,
+			ResourceConstants.POKEDOLL_TREVENANT_TEXTURE,
+			SCALE
+		);
+
+		registerScaledBlockEntityRenderer(
+			ModBlockEntities.GIGANTIC_POKEDOLL_SHINY_TREVENANT_BLOCK_ENTITY,
+			ResourceConstants.POKEDOLL_TREVENANT_MODEL,
+			ResourceConstants.POKEDOLL_SHINY_TREVENANT_TEXTURE,
+			SCALE
+		);
+
+		registerScaledBlockEntityRenderer(
+			ModBlockEntities.GIGANTIC_POKEDOLL_PUMPKABOO_BLOCK_ENTITY,
+			ResourceConstants.POKEDOLL_PUMPKABOO_MODEL,
+			ResourceConstants.POKEDOLL_PUMPKABOO_TEXTURE,
+			SCALE
+		);
+
+		registerScaledBlockEntityRenderer(
+			ModBlockEntities.GIGANTIC_POKEDOLL_SHINY_PUMPKABOO_BLOCK_ENTITY,
+			ResourceConstants.POKEDOLL_PUMPKABOO_MODEL,
+			ResourceConstants.POKEDOLL_SHINY_PUMPKABOO_TEXTURE,
+			SCALE
+		);
+
+		registerScaledBlockEntityRenderer(
+			ModBlockEntities.GIGANTIC_POKEDOLL_PHANTUMP_BLOCK_ENTITY,
+			ResourceConstants.POKEDOLL_PHANTUMP_MODEL,
+			ResourceConstants.POKEDOLL_PHANTUMP_TEXTURE,
+			SCALE
+		);
+
+		registerScaledBlockEntityRenderer(
+			ModBlockEntities.GIGANTIC_POKEDOLL_SHINY_PHANTUMP_BLOCK_ENTITY,
+			ResourceConstants.POKEDOLL_PHANTUMP_MODEL,
+			ResourceConstants.POKEDOLL_SHINY_PHANTUMP_TEXTURE,
+			SCALE
+		);
+
+		registerScaledBlockEntityRenderer(
+			ModBlockEntities.GIGANTIC_POKEDOLL_MARSHADOW_BLOCK_ENTITY,
+			ResourceConstants.POKEDOLL_MARSHADOW_MODEL,
+			ResourceConstants.POKEDOLL_MARSHADOW_TEXTURE,
+			SCALE
+		);
+
+		registerScaledBlockEntityRenderer(
+			ModBlockEntities.GIGANTIC_POKEDOLL_SHINY_MARSHADOW_BLOCK_ENTITY,
+			ResourceConstants.POKEDOLL_MARSHADOW_MODEL,
+			ResourceConstants.POKEDOLL_SHINY_MARSHADOW_TEXTURE,
+			SCALE
+		);
+		registerScaledBlockEntityRenderer(
+			ModBlockEntities.GIGANTIC_POKEDOLL_MARSHADOW_ZENITH_BLOCK_ENTITY,
+			ResourceConstants.POKEDOLL_MARSHADOW_ZENITH_MODEL,
+			ResourceConstants.POKEDOLL_MARSHADOW_ZENITH_TEXTURE,
+			SCALE
+		);
+
+		registerScaledBlockEntityRenderer(
+			ModBlockEntities.GIGANTIC_POKEDOLL_SHINY_MARSHADOW_ZENITH_BLOCK_ENTITY,
+			ResourceConstants.POKEDOLL_MARSHADOW_ZENITH_MODEL,
+			ResourceConstants.POKEDOLL_SHINY_MARSHADOW_ZENITH_TEXTURE,
+			SCALE
+		);
+
+		registerBlockEntityRenderer(
+				ModBlockEntities.POKEDOLL_MARSHADOW_ZENITH_BLOCK_ENTITY,
+				ResourceConstants.POKEDOLL_MARSHADOW_ZENITH_MODEL,
+				ResourceConstants.POKEDOLL_MARSHADOW_ZENITH_TEXTURE
+		);
+		registerBlockEntityRenderer(
+				ModBlockEntities.POKEDOLL_SHINY_MARSHADOW_ZENITH_BLOCK_ENTITY,
+				ResourceConstants.POKEDOLL_MARSHADOW_ZENITH_MODEL,
+				ResourceConstants.POKEDOLL_SHINY_MARSHADOW_ZENITH_TEXTURE
+		);
+
+		registerBlockEntityRenderer(
+				ModBlockEntities.POKEDOLL_MARSHADOW_BLOCK_ENTITY,
+				ResourceConstants.POKEDOLL_MARSHADOW_MODEL,
+				ResourceConstants.POKEDOLL_MARSHADOW_TEXTURE
+		);
+		registerBlockEntityRenderer(
+				ModBlockEntities.POKEDOLL_SHINY_MARSHADOW_BLOCK_ENTITY,
+				ResourceConstants.POKEDOLL_MARSHADOW_MODEL,
+				ResourceConstants.POKEDOLL_SHINY_MARSHADOW_TEXTURE
+		);
 
 		registerBlockEntityRenderer(
 				ModBlockEntities.POKEDOLL_TREVENANT_BLOCK_ENTITY,

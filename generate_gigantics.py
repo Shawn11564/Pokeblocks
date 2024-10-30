@@ -61,11 +61,10 @@ for folder_name in os.listdir(block_entity_dir):
             # If found, insert the new entries after that line
             if last_entry_line != -1:
                 new_lines = [
-                    f"\npublic static final Block GIGANTIC_POKEDOLL_{pokemon_name.upper()} = Registry.register(Registries.BLOCK, new Identifier(Pokeblocks.MOD_ID, PokeIDs.GIGANTIC_POKEDOLL_{pokemon_name.upper()}),",
-                    f"\nnew PokedollBlock<>(() -> PokedollGigantic{capitalized_pokemon_name}BlockEntity.class));",
-                    f"\npublic static final Block GIGANTIC_POKEDOLL_SHINY_{pokemon_name.upper()} = Registry.register(Registries.BLOCK, new Identifier(Pokeblocks.MOD_ID, PokeIDs.GIGANTIC_POKEDOLL_SHINY_{pokemon_name.upper()}),",
-                    f"\nnew PokedollBlock<>(() -> PokedollGiganticShiny{capitalized_pokemon_name}BlockEntity.class));",
-                    f"\n"
+                    f"\n    public static final Block GIGANTIC_POKEDOLL_{pokemon_name.upper()} = Registry.register(Registries.BLOCK, new Identifier(Pokeblocks.MOD_ID, PokeIDs.GIGANTIC_POKEDOLL_{pokemon_name.upper()}),",
+                    f"\n        new PokedollBlock<>(() -> PokedollGigantic{capitalized_pokemon_name}BlockEntity.class));",
+                    f"\n    public static final Block GIGANTIC_POKEDOLL_SHINY_{pokemon_name.upper()} = Registry.register(Registries.BLOCK, new Identifier(Pokeblocks.MOD_ID, PokeIDs.GIGANTIC_POKEDOLL_SHINY_{pokemon_name.upper()}),",
+                    f"\n        new PokedollBlock<>(() -> PokedollGiganticShiny{capitalized_pokemon_name}BlockEntity.class));"
                 ]
                 for new_line in reversed(new_lines):
                     lines.insert(last_entry_line + 1, new_line)
@@ -88,32 +87,32 @@ for folder_name in os.listdir(block_entity_dir):
             # If found, insert the new entries after that line
             if last_entry_line != -1:
                 new_lines = [
-                    f"\npublic static BlockEntityType<PokedollGigantic{capitalized_pokemon_name}BlockEntity> GIGANTIC_POKEDOLL_{pokemon_name.upper()}_BLOCK_ENTITY;",
-                    f"\npublic static BlockEntityType<PokedollGiganticShiny{capitalized_pokemon_name}BlockEntity> GIGANTIC_POKEDOLL_SHINY_{pokemon_name.upper()}_BLOCK_ENTITY;",
+                    f"\n    public static BlockEntityType<PokedollGigantic{capitalized_pokemon_name}BlockEntity> GIGANTIC_POKEDOLL_{pokemon_name.upper()}_BLOCK_ENTITY;",
+                    f"\n    public static BlockEntityType<PokedollGiganticShiny{capitalized_pokemon_name}BlockEntity> GIGANTIC_POKEDOLL_SHINY_{pokemon_name.upper()}_BLOCK_ENTITY;",
                     f"\n"
                 ]
                 for new_line in reversed(new_lines):
                     lines.insert(last_entry_line + 1, new_line)
 
-            # Find the last line that matches the pattern of the existing entries in the method registerAllBlockEntities
+            # Find the last line that matches the pattern of the existing entries in the method registerBlockEntities
             last_entry_line = -1
             for i, line in enumerate(lines):
-                if "POKEDOLL_" in line and "registerBlockEntity(" in line:
+                if "GIGANTIC_POKEDOLL_" in line and "registerBlockEntity(" in line:
                     last_entry_line = i + 4
 
-            # If found, insert the new entries after that line
+            # If found, insert the new entries after that line with proper indentation
             if last_entry_line != -1:
                 new_lines = [
-                    f"\nGIGANTIC_POKEDOLL_{pokemon_name.upper()}_BLOCK_ENTITY = registerBlockEntity(",
-                    f"\nnew Identifier(Pokeblocks.MOD_ID, PokeIDs.GIGANTIC_POKEDOLL_{pokemon_name.upper()}),",
-                    f"\nFabricBlockEntityTypeBuilder.create(PokedollGigantic{capitalized_pokemon_name}BlockEntity::new, ModBlocks.GIGANTIC_POKEDOLL_{pokemon_name.upper()}),",
-                    f"\nPokedollGigantic{capitalized_pokemon_name}BlockEntity.class",
-                    f"\n);",
-                    f"\nGIGANTIC_POKEDOLL_SHINY_{pokemon_name.upper()}_BLOCK_ENTITY = registerBlockEntity(",
-                    f"\nnew Identifier(Pokeblocks.MOD_ID, PokeIDs.GIGANTIC_POKEDOLL_SHINY_{pokemon_name.upper()}),",
-                    f"\nFabricBlockEntityTypeBuilder.create(PokedollGiganticShiny{capitalized_pokemon_name}BlockEntity::new, ModBlocks.GIGANTIC_POKEDOLL_SHINY_{pokemon_name.upper()}),",
-                    f"\nPokedollGiganticShiny{capitalized_pokemon_name}BlockEntity.class",
-                    f"\n);",
+                    f"\n        GIGANTIC_POKEDOLL_{pokemon_name.upper()}_BLOCK_ENTITY = registerBlockEntity(",
+                    f"\n            new Identifier(Pokeblocks.MOD_ID, PokeIDs.GIGANTIC_POKEDOLL_{pokemon_name.upper()}),",
+                    f"\n            FabricBlockEntityTypeBuilder.create(PokedollGigantic{capitalized_pokemon_name}BlockEntity::new, ModBlocks.GIGANTIC_POKEDOLL_{pokemon_name.upper()}),",
+                    f"\n            PokedollGigantic{capitalized_pokemon_name}BlockEntity.class",
+                    f"\n        );",
+                    f"\n        GIGANTIC_POKEDOLL_SHINY_{pokemon_name.upper()}_BLOCK_ENTITY = registerBlockEntity(",
+                    f"\n            new Identifier(Pokeblocks.MOD_ID, PokeIDs.GIGANTIC_POKEDOLL_SHINY_{pokemon_name.upper()}),",
+                    f"\n            FabricBlockEntityTypeBuilder.create(PokedollGiganticShiny{capitalized_pokemon_name}BlockEntity::new, ModBlocks.GIGANTIC_POKEDOLL_SHINY_{pokemon_name.upper()}),",
+                    f"\n            PokedollGiganticShiny{capitalized_pokemon_name}BlockEntity.class",
+                    f"\n        );",
                     f"\n"
                 ]
                 for new_line in reversed(new_lines):
@@ -137,8 +136,8 @@ for folder_name in os.listdir(block_entity_dir):
             # If found, insert the new entries before that line
             if last_curly_bracket_line != -1:
                 new_lines = [
-                    f"public static final String GIGANTIC_POKEDOLL_{pokemon_name.upper()} = \"gigantic_pokedoll_{pokemon_name}\";\n",
-                    f"public static final String GIGANTIC_POKEDOLL_SHINY_{pokemon_name.upper()} = \"gigantic_pokedoll_shiny_{pokemon_name}\";\n"
+                    f"	public static final String GIGANTIC_POKEDOLL_{pokemon_name.upper()} = \"gigantic_pokedoll_{pokemon_name}\";\n",
+                    f"	public static final String GIGANTIC_POKEDOLL_SHINY_{pokemon_name.upper()} = \"gigantic_pokedoll_shiny_{pokemon_name}\";\n"
                 ]
                 for new_line in reversed(new_lines):
                     lines.insert(last_curly_bracket_line, new_line)
@@ -152,21 +151,21 @@ for folder_name in os.listdir(block_entity_dir):
             with open(f"{src_dir}/PokeblocksClient.java", "r") as file:
                 lines = file.readlines()
 
-            # Find the method and insert the new lines
-            method_name = "onInitializeClient"
+            # Find "ServerHandler.register();" and insert the lines 
+            method_name = "ServerHandler.register();"
             new_lines = [
-                f"    registerScaledBlockEntityRenderer(\n" \
-                f"        ModBlockEntities.GIGANTIC_POKEDOLL_{pokemon_name.upper()}_BLOCK_ENTITY,\n" \
-                f"        ResourceConstants.POKEDOLL_{pokemon_name.upper()}_MODEL,\n" \
-                f"        ResourceConstants.POKEDOLL_{pokemon_name.upper()}_TEXTURE,\n" \
-                f"        SCALE\n" \
-                f"    );\n\n",
-                f"    registerScaledBlockEntityRenderer(\n" \
-                f"        ModBlockEntities.GIGANTIC_POKEDOLL_SHINY_{pokemon_name.upper()}_BLOCK_ENTITY,\n" \
-                f"        ResourceConstants.POKEDOLL_{pokemon_name.upper()}_MODEL,\n" \
-                f"        ResourceConstants.POKEDOLL_SHINY_{pokemon_name.upper()}_TEXTURE,\n" \
-                f"        SCALE\n" \
-                f"    );\n\n"
+                f"		registerScaledBlockEntityRenderer(\n" \
+                f"			ModBlockEntities.GIGANTIC_POKEDOLL_{pokemon_name.upper()}_BLOCK_ENTITY,\n" \
+                f"			ResourceConstants.POKEDOLL_{pokemon_name.upper()}_MODEL,\n" \
+                f"			ResourceConstants.POKEDOLL_{pokemon_name.upper()}_TEXTURE,\n" \
+                f"			SCALE\n" \
+                f"		);\n\n",
+                f"		registerScaledBlockEntityRenderer(\n" \
+                f"			ModBlockEntities.GIGANTIC_POKEDOLL_SHINY_{pokemon_name.upper()}_BLOCK_ENTITY,\n" \
+                f"			ResourceConstants.POKEDOLL_{pokemon_name.upper()}_MODEL,\n" \
+                f"			ResourceConstants.POKEDOLL_SHINY_{pokemon_name.upper()}_TEXTURE,\n" \
+                f"			SCALE\n" \
+                f"		);\n\n"
             ]
 
             for i, line in enumerate(lines):
@@ -188,25 +187,25 @@ for folder_name in os.listdir(block_entity_dir):
             last_entry_line = -1
             for i, line in enumerate(lines):
                 if "public static final Item POKEDOLL_" in line:
-                    last_entry_line = i + 1
+                    last_entry_line = i + 6
 
             # If found, insert the new entries after that line
             if last_entry_line != -1:
                 new_lines = [
-                    f"\npublic static final Item GIGANTIC_POKEDOLL_{pokemon_name.upper()}_BLOCK_ITEM = registerItem(",
-                    f"\n    PokeIDs.GIGANTIC_POKEDOLL_{pokemon_name.upper()},",
-                    f"\n    ModBlocks.GIGANTIC_POKEDOLL_{pokemon_name.upper()},",
-                    f"\n    ResourceConstants.POKEDOLL_{pokemon_name.upper()}_MODEL,",
-                    f"\n    ResourceConstants.POKEDOLL_{pokemon_name.upper()}_TEXTURE,",
-                    f"\n    DollRarity.GIGANTIC",
-                    f"\n);",
-                    f"\npublic static final Item GIGANTIC_POKEDOLL_SHINY_{pokemon_name.upper()}_BLOCK_ITEM = registerItem(",
-                    f"\n    PokeIDs.GIGANTIC_POKEDOLL_SHINY_{pokemon_name.upper()},",
-                    f"\n    ModBlocks.GIGANTIC_POKEDOLL_SHINY_{pokemon_name.upper()},",
-                    f"\n    ResourceConstants.POKEDOLL_{pokemon_name.upper()}_MODEL,",
-                    f"\n    ResourceConstants.POKEDOLL_SHINY_{pokemon_name.upper()}_TEXTURE,",
-                    f"\n    DollRarity.SHINY",
-                    f"\n);",
+                    f"\n    public static final Item GIGANTIC_POKEDOLL_{pokemon_name.upper()}_BLOCK_ITEM = registerItem(",
+                    f"\n        PokeIDs.GIGANTIC_POKEDOLL_{pokemon_name.upper()},",
+                    f"\n        ModBlocks.GIGANTIC_POKEDOLL_{pokemon_name.upper()},",
+                    f"\n        ResourceConstants.POKEDOLL_{pokemon_name.upper()}_MODEL,",
+                    f"\n        ResourceConstants.POKEDOLL_{pokemon_name.upper()}_TEXTURE,",
+                    f"\n        DollRarity.GIGANTIC",
+                    f"\n    );",
+                    f"\n    public static final Item GIGANTIC_POKEDOLL_SHINY_{pokemon_name.upper()}_BLOCK_ITEM = registerItem(",
+                    f"\n        PokeIDs.GIGANTIC_POKEDOLL_SHINY_{pokemon_name.upper()},",
+                    f"\n        ModBlocks.GIGANTIC_POKEDOLL_SHINY_{pokemon_name.upper()},",
+                    f"\n        ResourceConstants.POKEDOLL_{pokemon_name.upper()}_MODEL,",
+                    f"\n        ResourceConstants.POKEDOLL_SHINY_{pokemon_name.upper()}_TEXTURE,",
+                    f"\n        DollRarity.SHINY",
+                    f"\n    );",
                     f"\n"
                 ]
                 for new_line in reversed(new_lines):

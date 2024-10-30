@@ -1360,6 +1360,80 @@ public class ModItems {
 			DollRarity.SHINY
 	);
 
+    public static final Item GIGANTIC_POKEDOLL_TREVENANT_BLOCK_ITEM = registerItem(
+        PokeIDs.GIGANTIC_POKEDOLL_TREVENANT,
+        ModBlocks.GIGANTIC_POKEDOLL_TREVENANT,
+        ResourceConstants.POKEDOLL_TREVENANT_MODEL,
+        ResourceConstants.POKEDOLL_TREVENANT_TEXTURE,
+        DollRarity.GIGANTIC
+    );
+    public static final Item GIGANTIC_POKEDOLL_SHINY_TREVENANT_BLOCK_ITEM = registerItem(
+        PokeIDs.GIGANTIC_POKEDOLL_SHINY_TREVENANT,
+        ModBlocks.GIGANTIC_POKEDOLL_SHINY_TREVENANT,
+        ResourceConstants.POKEDOLL_TREVENANT_MODEL,
+        ResourceConstants.POKEDOLL_SHINY_TREVENANT_TEXTURE,
+        DollRarity.SHINY
+    );
+
+    public static final Item GIGANTIC_POKEDOLL_PUMPKABOO_BLOCK_ITEM = registerItem(
+        PokeIDs.GIGANTIC_POKEDOLL_PUMPKABOO,
+        ModBlocks.GIGANTIC_POKEDOLL_PUMPKABOO,
+        ResourceConstants.POKEDOLL_PUMPKABOO_MODEL,
+        ResourceConstants.POKEDOLL_PUMPKABOO_TEXTURE,
+        DollRarity.GIGANTIC
+    );
+    public static final Item GIGANTIC_POKEDOLL_SHINY_PUMPKABOO_BLOCK_ITEM = registerItem(
+        PokeIDs.GIGANTIC_POKEDOLL_SHINY_PUMPKABOO,
+        ModBlocks.GIGANTIC_POKEDOLL_SHINY_PUMPKABOO,
+        ResourceConstants.POKEDOLL_PUMPKABOO_MODEL,
+        ResourceConstants.POKEDOLL_SHINY_PUMPKABOO_TEXTURE,
+        DollRarity.SHINY
+    );
+
+    public static final Item GIGANTIC_POKEDOLL_PHANTUMP_BLOCK_ITEM = registerItem(
+        PokeIDs.GIGANTIC_POKEDOLL_PHANTUMP,
+        ModBlocks.GIGANTIC_POKEDOLL_PHANTUMP,
+        ResourceConstants.POKEDOLL_PHANTUMP_MODEL,
+        ResourceConstants.POKEDOLL_PHANTUMP_TEXTURE,
+        DollRarity.GIGANTIC
+    );
+    public static final Item GIGANTIC_POKEDOLL_SHINY_PHANTUMP_BLOCK_ITEM = registerItem(
+        PokeIDs.GIGANTIC_POKEDOLL_SHINY_PHANTUMP,
+        ModBlocks.GIGANTIC_POKEDOLL_SHINY_PHANTUMP,
+        ResourceConstants.POKEDOLL_PHANTUMP_MODEL,
+        ResourceConstants.POKEDOLL_SHINY_PHANTUMP_TEXTURE,
+        DollRarity.SHINY
+    );
+
+    public static final Item GIGANTIC_POKEDOLL_MARSHADOW_BLOCK_ITEM = registerItem(
+        PokeIDs.GIGANTIC_POKEDOLL_MARSHADOW,
+        ModBlocks.GIGANTIC_POKEDOLL_MARSHADOW,
+        ResourceConstants.POKEDOLL_MARSHADOW_MODEL,
+        ResourceConstants.POKEDOLL_MARSHADOW_TEXTURE,
+        DollRarity.GIGANTIC
+    );
+    public static final Item GIGANTIC_POKEDOLL_SHINY_MARSHADOW_BLOCK_ITEM = registerItem(
+        PokeIDs.GIGANTIC_POKEDOLL_SHINY_MARSHADOW,
+        ModBlocks.GIGANTIC_POKEDOLL_SHINY_MARSHADOW,
+        ResourceConstants.POKEDOLL_MARSHADOW_MODEL,
+        ResourceConstants.POKEDOLL_SHINY_MARSHADOW_TEXTURE,
+        DollRarity.SHINY
+    );
+    public static final Item GIGANTIC_POKEDOLL_MARSHADOW_ZENITH_BLOCK_ITEM = registerItem(
+        PokeIDs.GIGANTIC_POKEDOLL_MARSHADOW_ZENITH,
+        ModBlocks.GIGANTIC_POKEDOLL_MARSHADOW_ZENITH,
+        ResourceConstants.POKEDOLL_MARSHADOW_ZENITH_MODEL,
+        ResourceConstants.POKEDOLL_MARSHADOW_ZENITH_TEXTURE,
+        DollRarity.GIGANTIC
+    );
+    public static final Item GIGANTIC_POKEDOLL_SHINY_MARSHADOW_ZENITH_BLOCK_ITEM = registerItem(
+        PokeIDs.GIGANTIC_POKEDOLL_SHINY_MARSHADOW_ZENITH,
+        ModBlocks.GIGANTIC_POKEDOLL_SHINY_MARSHADOW_ZENITH,
+        ResourceConstants.POKEDOLL_MARSHADOW_ZENITH_MODEL,
+        ResourceConstants.POKEDOLL_SHINY_MARSHADOW_ZENITH_TEXTURE,
+        DollRarity.SHINY
+    );
+
 	public static final Item GIGANTIC_POKEDOLL_WAILORD_BLOCK_ITEM = registerItem(
 			PokeIDs.GIGANTIC_POKEDOLL_WAILORD,
 			ModBlocks.GIGANTIC_POKEDOLL_WAILORD,

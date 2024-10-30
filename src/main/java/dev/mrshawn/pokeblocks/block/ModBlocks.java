@@ -107,10 +107,7 @@ import dev.mrshawn.pokeblocks.block.entity.mareep.PokedollGiganticMareepBlockEnt
 import dev.mrshawn.pokeblocks.block.entity.mareep.PokedollGiganticShinyMareepBlockEntity;
 import dev.mrshawn.pokeblocks.block.entity.mareep.PokedollMareepBlockEntity;
 import dev.mrshawn.pokeblocks.block.entity.mareep.PokedollShinyMareepBlockEntity;
-import dev.mrshawn.pokeblocks.block.entity.marshadow.PokedollMarshadowBlockEntity;
-import dev.mrshawn.pokeblocks.block.entity.marshadow.PokedollMarshadowZenithBlockEntity;
-import dev.mrshawn.pokeblocks.block.entity.marshadow.PokedollShinyMarshadowBlockEntity;
-import dev.mrshawn.pokeblocks.block.entity.marshadow.PokedollShinyMarshadowZenithBlockEntity;
+import dev.mrshawn.pokeblocks.block.entity.marshadow.*;
 import dev.mrshawn.pokeblocks.block.entity.munchlax.PokedollGiganticMunchlaxBlockEntity;
 import dev.mrshawn.pokeblocks.block.entity.munchlax.PokedollGiganticShinyMunchlaxBlockEntity;
 import dev.mrshawn.pokeblocks.block.entity.munchlax.PokedollMunchlaxBlockEntity;
@@ -119,9 +116,13 @@ import dev.mrshawn.pokeblocks.block.entity.palossand.PokedollGiganticPalossandBl
 import dev.mrshawn.pokeblocks.block.entity.palossand.PokedollGiganticShinyPalossandBlockEntity;
 import dev.mrshawn.pokeblocks.block.entity.palossand.PokedollPalossandBlockEntity;
 import dev.mrshawn.pokeblocks.block.entity.palossand.PokedollShinyPalossandBlockEntity;
+import dev.mrshawn.pokeblocks.block.entity.phantump.PokedollGiganticPhantumpBlockEntity;
+import dev.mrshawn.pokeblocks.block.entity.phantump.PokedollGiganticShinyPhantumpBlockEntity;
 import dev.mrshawn.pokeblocks.block.entity.phantump.PokedollPhantumpBlockEntity;
 import dev.mrshawn.pokeblocks.block.entity.phantump.PokedollShinyPhantumpBlockEntity;
 import dev.mrshawn.pokeblocks.block.entity.pokemon_trophy.PokedollPokemonTrophyBlockEntity;
+import dev.mrshawn.pokeblocks.block.entity.pumpkaboo.PokedollGiganticPumpkabooBlockEntity;
+import dev.mrshawn.pokeblocks.block.entity.pumpkaboo.PokedollGiganticShinyPumpkabooBlockEntity;
 import dev.mrshawn.pokeblocks.block.entity.pumpkaboo.PokedollPumpkabooBlockEntity;
 import dev.mrshawn.pokeblocks.block.entity.pumpkaboo.PokedollShinyPumpkabooBlockEntity;
 import dev.mrshawn.pokeblocks.block.entity.quagsire.PokedollGiganticQuagsireBlockEntity;
@@ -177,6 +178,8 @@ import dev.mrshawn.pokeblocks.block.entity.swinub.PokedollGiganticShinySwinubBlo
 import dev.mrshawn.pokeblocks.block.entity.swinub.PokedollGiganticSwinubBlockEntity;
 import dev.mrshawn.pokeblocks.block.entity.swinub.PokedollShinySwinubBlockEntity;
 import dev.mrshawn.pokeblocks.block.entity.swinub.PokedollSwinubBlockEntity;
+import dev.mrshawn.pokeblocks.block.entity.trevenant.PokedollGiganticShinyTrevenantBlockEntity;
+import dev.mrshawn.pokeblocks.block.entity.trevenant.PokedollGiganticTrevenantBlockEntity;
 import dev.mrshawn.pokeblocks.block.entity.trevenant.PokedollShinyTrevenantBlockEntity;
 import dev.mrshawn.pokeblocks.block.entity.trevenant.PokedollTrevenantBlockEntity;
 import dev.mrshawn.pokeblocks.block.entity.tropius.PokedollGiganticShinyTropiusBlockEntity;
@@ -546,6 +549,26 @@ public class ModBlocks {
 	public static final Block POKEDOLL_SHINY_MARSHADOW_ZENITH = Registry.register(Registries.BLOCK, new Identifier(Pokeblocks.MOD_ID, PokeIDs.POKEDOLL_SHINY_MARSHADOW_ZENITH),
 			new PokedollBlock<>(() -> PokedollShinyMarshadowZenithBlockEntity.class));
 
+    public static final Block GIGANTIC_POKEDOLL_TREVENANT = Registry.register(Registries.BLOCK, new Identifier(Pokeblocks.MOD_ID, PokeIDs.GIGANTIC_POKEDOLL_TREVENANT),
+        new PokedollBlock<>(() -> PokedollGiganticTrevenantBlockEntity.class));
+    public static final Block GIGANTIC_POKEDOLL_SHINY_TREVENANT = Registry.register(Registries.BLOCK, new Identifier(Pokeblocks.MOD_ID, PokeIDs.GIGANTIC_POKEDOLL_SHINY_TREVENANT),
+        new PokedollBlock<>(() -> PokedollGiganticShinyTrevenantBlockEntity.class));
+    public static final Block GIGANTIC_POKEDOLL_PUMPKABOO = Registry.register(Registries.BLOCK, new Identifier(Pokeblocks.MOD_ID, PokeIDs.GIGANTIC_POKEDOLL_PUMPKABOO),
+        new PokedollBlock<>(() -> PokedollGiganticPumpkabooBlockEntity.class));
+    public static final Block GIGANTIC_POKEDOLL_SHINY_PUMPKABOO = Registry.register(Registries.BLOCK, new Identifier(Pokeblocks.MOD_ID, PokeIDs.GIGANTIC_POKEDOLL_SHINY_PUMPKABOO),
+        new PokedollBlock<>(() -> PokedollGiganticShinyPumpkabooBlockEntity.class));
+    public static final Block GIGANTIC_POKEDOLL_PHANTUMP = Registry.register(Registries.BLOCK, new Identifier(Pokeblocks.MOD_ID, PokeIDs.GIGANTIC_POKEDOLL_PHANTUMP),
+        new PokedollBlock<>(() -> PokedollGiganticPhantumpBlockEntity.class));
+    public static final Block GIGANTIC_POKEDOLL_SHINY_PHANTUMP = Registry.register(Registries.BLOCK, new Identifier(Pokeblocks.MOD_ID, PokeIDs.GIGANTIC_POKEDOLL_SHINY_PHANTUMP),
+        new PokedollBlock<>(() -> PokedollGiganticShinyPhantumpBlockEntity.class));
+    public static final Block GIGANTIC_POKEDOLL_MARSHADOW = Registry.register(Registries.BLOCK, new Identifier(Pokeblocks.MOD_ID, PokeIDs.GIGANTIC_POKEDOLL_MARSHADOW),
+        new PokedollBlock<>(() -> PokedollGiganticMarshadowBlockEntity.class));
+    public static final Block GIGANTIC_POKEDOLL_SHINY_MARSHADOW = Registry.register(Registries.BLOCK, new Identifier(Pokeblocks.MOD_ID, PokeIDs.GIGANTIC_POKEDOLL_SHINY_MARSHADOW),
+        new PokedollBlock<>(() -> PokedollGiganticShinyMarshadowBlockEntity.class));
+	public static final Block GIGANTIC_POKEDOLL_MARSHADOW_ZENITH = Registry.register(Registries.BLOCK, new Identifier(Pokeblocks.MOD_ID, PokeIDs.GIGANTIC_POKEDOLL_MARSHADOW_ZENITH),
+        new PokedollBlock<>(() -> PokedollGiganticMarshadowZenithBlockEntity.class));
+    public static final Block GIGANTIC_POKEDOLL_SHINY_MARSHADOW_ZENITH = Registry.register(Registries.BLOCK, new Identifier(Pokeblocks.MOD_ID, PokeIDs.GIGANTIC_POKEDOLL_SHINY_MARSHADOW_ZENITH),
+        new PokedollBlock<>(() -> PokedollGiganticShinyMarshadowZenithBlockEntity.class));
 	public static final Block GIGANTIC_POKEDOLL_WAILORD = Registry.register(Registries.BLOCK, new Identifier(Pokeblocks.MOD_ID, PokeIDs.GIGANTIC_POKEDOLL_WAILORD),
 			new PokedollBlock<>(() -> PokedollGiganticWailordBlockEntity.class));
 	public static final Block GIGANTIC_POKEDOLL_SHINY_WAILORD = Registry.register(Registries.BLOCK, new Identifier(Pokeblocks.MOD_ID, PokeIDs.GIGANTIC_POKEDOLL_SHINY_WAILORD),

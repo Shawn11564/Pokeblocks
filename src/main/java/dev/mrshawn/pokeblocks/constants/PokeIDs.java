@@ -221,4 +221,14 @@ public class PokeIDs {
 	public static final String POKEDOLL_SHINY_MARSHADOW = "pokedoll_shiny_marshadow";
 	public static final String POKEDOLL_MARSHADOW_ZENITH = "pokedoll_marshadow_zenith";
 	public static final String POKEDOLL_SHINY_MARSHADOW_ZENITH = "pokedoll_shiny_marshadow_zenith";
+	public static final String GIGANTIC_POKEDOLL_MARSHADOW_ZENITH = "gigantic_pokedoll_marshadow_zenith";
+	public static final String GIGANTIC_POKEDOLL_SHINY_MARSHADOW_ZENITH = "gigantic_pokedoll_shiny_marshadow_zenith";
+	public static final String GIGANTIC_POKEDOLL_MARSHADOW = "gigantic_pokedoll_marshadow";
+	public static final String GIGANTIC_POKEDOLL_SHINY_MARSHADOW = "gigantic_pokedoll_shiny_marshadow";
+	public static final String GIGANTIC_POKEDOLL_PHANTUMP = "gigantic_pokedoll_phantump";
+	public static final String GIGANTIC_POKEDOLL_SHINY_PHANTUMP = "gigantic_pokedoll_shiny_phantump";
+	public static final String GIGANTIC_POKEDOLL_PUMPKABOO = "gigantic_pokedoll_pumpkaboo";
+	public static final String GIGANTIC_POKEDOLL_SHINY_PUMPKABOO = "gigantic_pokedoll_shiny_pumpkaboo";
+	public static final String GIGANTIC_POKEDOLL_TREVENANT = "gigantic_pokedoll_trevenant";
+	public static final String GIGANTIC_POKEDOLL_SHINY_TREVENANT = "gigantic_pokedoll_shiny_trevenant";
 }
