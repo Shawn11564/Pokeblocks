@@ -1285,6 +1285,35 @@ public class ModItems {
 			ResourceConstants.POKEDOLL_SHINY_KYOGRE_TEXTURE,
 			DollRarity.SHINY
 	);
+	public static final Item POKEDOLL_PHANTUMP_BLOCK_ITEM = registerItem(
+			PokeIDs.POKEDOLL_PHANTUMP,
+			ModBlocks.POKEDOLL_PHANTUMP,
+			ResourceConstants.POKEDOLL_PHANTUMP_MODEL,
+			ResourceConstants.POKEDOLL_PHANTUMP_TEXTURE,
+			DollRarity.RARE
+	);
+	public static final Item POKEDOLL_SHINY_PHANTUMP_BLOCK_ITEM = registerItem(
+			PokeIDs.POKEDOLL_SHINY_PHANTUMP,
+			ModBlocks.POKEDOLL_SHINY_PHANTUMP,
+			ResourceConstants.POKEDOLL_PHANTUMP_MODEL,
+			ResourceConstants.POKEDOLL_SHINY_PHANTUMP_TEXTURE,
+			DollRarity.RARE
+	);
+
+	public static final Item POKEDOLL_PUMPKABOO_BLOCK_ITEM = registerItem(
+			PokeIDs.POKEDOLL_PUMPKABOO,
+			ModBlocks.POKEDOLL_PUMPKABOO,
+			ResourceConstants.POKEDOLL_PUMPKABOO_MODEL,
+			ResourceConstants.POKEDOLL_PUMPKABOO_TEXTURE,
+			DollRarity.UNCOMMON
+	);
+	public static final Item POKEDOLL_SHINY_PUMPKABOO_BLOCK_ITEM = registerItem(
+			PokeIDs.POKEDOLL_SHINY_PUMPKABOO,
+			ModBlocks.POKEDOLL_SHINY_PUMPKABOO,
+			ResourceConstants.POKEDOLL_PUMPKABOO_MODEL,
+			ResourceConstants.POKEDOLL_SHINY_PUMPKABOO_TEXTURE,
+			DollRarity.UNCOMMON
+	);
 
 	public static final Item GIGANTIC_POKEDOLL_WAILORD_BLOCK_ITEM = registerItem(
 			PokeIDs.GIGANTIC_POKEDOLL_WAILORD,

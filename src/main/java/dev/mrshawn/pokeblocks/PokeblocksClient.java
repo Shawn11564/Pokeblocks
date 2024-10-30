@@ -17,6 +17,30 @@ public class PokeblocksClient implements ClientModInitializer {
 
 	@Override
 	public void onInitializeClient() {
+		ServerHandler.register();
+
+		registerBlockEntityRenderer(
+				ModBlockEntities.POKEDOLL_PUMPKABOO_BLOCK_ENTITY,
+				ResourceConstants.POKEDOLL_PUMPKABOO_MODEL,
+				ResourceConstants.POKEDOLL_PUMPKABOO_TEXTURE
+		);
+		registerBlockEntityRenderer(
+				ModBlockEntities.POKEDOLL_SHINY_PUMPKABOO_BLOCK_ENTITY,
+				ResourceConstants.POKEDOLL_PUMPKABOO_MODEL,
+				ResourceConstants.POKEDOLL_SHINY_PUMPKABOO_TEXTURE
+		);
+
+		registerBlockEntityRenderer(
+				ModBlockEntities.POKEDOLL_PHANTUMP_BLOCK_ENTITY,
+				ResourceConstants.POKEDOLL_PHANTUMP_MODEL,
+				ResourceConstants.POKEDOLL_PHANTUMP_TEXTURE
+		);
+		registerBlockEntityRenderer(
+				ModBlockEntities.POKEDOLL_SHINY_PHANTUMP_BLOCK_ENTITY,
+				ResourceConstants.POKEDOLL_PHANTUMP_MODEL,
+				ResourceConstants.POKEDOLL_SHINY_PHANTUMP_TEXTURE
+		);
+
 		registerScaledBlockEntityRenderer(
 				ModBlockEntities.GIGANTIC_POKEDOLL_WAILORD_BLOCK_ENTITY,
 				ResourceConstants.POKEDOLL_WAILORD_MODEL,
@@ -100,8 +124,6 @@ public class PokeblocksClient implements ClientModInitializer {
 				ResourceConstants.POKEDOLL_SHINY_CLOYSTER_TEXTURE,
 				SCALE - 0.15f
 		);
-
-		ServerHandler.register();
 
 		registerBlockEntityRenderer(
 				ModBlockEntities.POKEDOLL_KYOGRE_BLOCK_ENTITY,

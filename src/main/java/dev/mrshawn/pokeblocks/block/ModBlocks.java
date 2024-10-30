@@ -115,7 +115,11 @@ import dev.mrshawn.pokeblocks.block.entity.palossand.PokedollGiganticPalossandBl
 import dev.mrshawn.pokeblocks.block.entity.palossand.PokedollGiganticShinyPalossandBlockEntity;
 import dev.mrshawn.pokeblocks.block.entity.palossand.PokedollPalossandBlockEntity;
 import dev.mrshawn.pokeblocks.block.entity.palossand.PokedollShinyPalossandBlockEntity;
+import dev.mrshawn.pokeblocks.block.entity.phantump.PokedollPhantumpBlockEntity;
+import dev.mrshawn.pokeblocks.block.entity.phantump.PokedollShinyPhantumpBlockEntity;
 import dev.mrshawn.pokeblocks.block.entity.pokemon_trophy.PokedollPokemonTrophyBlockEntity;
+import dev.mrshawn.pokeblocks.block.entity.pumpkaboo.PokedollPumpkabooBlockEntity;
+import dev.mrshawn.pokeblocks.block.entity.pumpkaboo.PokedollShinyPumpkabooBlockEntity;
 import dev.mrshawn.pokeblocks.block.entity.quagsire.PokedollGiganticQuagsireBlockEntity;
 import dev.mrshawn.pokeblocks.block.entity.quagsire.PokedollGiganticShinyQuagsireBlockEntity;
 import dev.mrshawn.pokeblocks.block.entity.quagsire.PokedollQuagsireBlockEntity;
@@ -510,6 +514,16 @@ public class ModBlocks {
 			new PokedollBlock<>(() -> PokedollKyogreBlockEntity.class));
 	public static final Block POKEDOLL_SHINY_KYOGRE = Registry.register(Registries.BLOCK, new Identifier(Pokeblocks.MOD_ID, PokeIDs.POKEDOLL_SHINY_KYOGRE),
 			new PokedollBlock<>(() -> PokedollShinyKyogreBlockEntity.class));
+
+	public static final Block POKEDOLL_PHANTUMP = Registry.register(Registries.BLOCK, new Identifier(Pokeblocks.MOD_ID, PokeIDs.POKEDOLL_PHANTUMP),
+			new PokedollBlock<>(() -> PokedollPhantumpBlockEntity.class));
+	public static final Block POKEDOLL_SHINY_PHANTUMP = Registry.register(Registries.BLOCK, new Identifier(Pokeblocks.MOD_ID, PokeIDs.POKEDOLL_SHINY_PHANTUMP),
+			new PokedollBlock<>(() -> PokedollShinyPhantumpBlockEntity.class));
+
+	public static final Block POKEDOLL_PUMPKABOO = Registry.register(Registries.BLOCK, new Identifier(Pokeblocks.MOD_ID, PokeIDs.POKEDOLL_PUMPKABOO),
+			new PokedollBlock<>(() -> PokedollPumpkabooBlockEntity.class));
+	public static final Block POKEDOLL_SHINY_PUMPKABOO = Registry.register(Registries.BLOCK, new Identifier(Pokeblocks.MOD_ID, PokeIDs.POKEDOLL_SHINY_PUMPKABOO),
+			new PokedollBlock<>(() -> PokedollShinyPumpkabooBlockEntity.class));
 
 	public static final Block GIGANTIC_POKEDOLL_WAILORD = Registry.register(Registries.BLOCK, new Identifier(Pokeblocks.MOD_ID, PokeIDs.GIGANTIC_POKEDOLL_WAILORD),
 			new PokedollBlock<>(() -> PokedollGiganticWailordBlockEntity.class));
