@@ -217,4 +217,8 @@ public class PokeIDs {
 	public static final String POKEDOLL_SHINY_PUMPKABOO = "pokedoll_shiny_pumpkaboo";
 	public static final String POKEDOLL_TREVENANT = "pokedoll_trevenant";
 	public static final String POKEDOLL_SHINY_TREVENANT = "pokedoll_shiny_trevenant";
+	public static final String POKEDOLL_MARSHADOW = "pokedoll_marshadow";
+	public static final String POKEDOLL_SHINY_MARSHADOW = "pokedoll_shiny_marshadow";
+	public static final String POKEDOLL_MARSHADOW_ZENITH = "pokedoll_marshadow_zenith";
+	public static final String POKEDOLL_SHINY_MARSHADOW_ZENITH = "pokedoll_shiny_marshadow_zenith";
 }

@@ -17,6 +17,28 @@ public class PokeblocksClient implements ClientModInitializer {
 
 	@Override
 	public void onInitializeClient() {
+  registerBlockEntityRenderer(
+    ModBlockEntities.POKEDOLL_MARSHADOW_ZENITH_BLOCK_ENTITY,
+    ResourceConstants.POKEDOLL_MARSHADOW_ZENITH_MODEL,
+    ResourceConstants.POKEDOLL_MARSHADOW_ZENITH_TEXTURE
+  );
+  registerBlockEntityRenderer(
+    ModBlockEntities.POKEDOLL_SHINY_MARSHADOW_ZENITH_BLOCK_ENTITY,
+    ResourceConstants.POKEDOLL_MARSHADOW_ZENITH_MODEL,
+    ResourceConstants.POKEDOLL_SHINY_MARSHADOW_ZENITH_TEXTURE
+  );
+
+  registerBlockEntityRenderer(
+    ModBlockEntities.POKEDOLL_MARSHADOW_BLOCK_ENTITY,
+    ResourceConstants.POKEDOLL_MARSHADOW_MODEL,
+    ResourceConstants.POKEDOLL_MARSHADOW_TEXTURE
+  );
+  registerBlockEntityRenderer(
+    ModBlockEntities.POKEDOLL_SHINY_MARSHADOW_BLOCK_ENTITY,
+    ResourceConstants.POKEDOLL_MARSHADOW_MODEL,
+    ResourceConstants.POKEDOLL_SHINY_MARSHADOW_TEXTURE
+  );
+
 		ServerHandler.register();
 
 		registerBlockEntityRenderer(

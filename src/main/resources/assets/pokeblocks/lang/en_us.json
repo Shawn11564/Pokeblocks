@@ -422,5 +422,13 @@
     "item.pokeblocks.pokedoll_trevenant": "Trevenant Pokedoll",
     "item.pokeblocks.pokedoll_shiny_trevenant": "Shiny Trevenant Pokedoll",
     "block.pokeblocks.pokedoll_trevenant": "Trevenant Pokedoll",
-    "block.pokeblocks.pokedoll_shiny_trevenant": "Shiny Trevenant Pokedoll"
+    "block.pokeblocks.pokedoll_shiny_trevenant": "Shiny Trevenant Pokedoll",
+    "item.pokeblocks.pokedoll_marshadow": "Marshadow Pokedoll",
+    "item.pokeblocks.pokedoll_shiny_marshadow": "Shiny Marshadow Pokedoll",
+    "block.pokeblocks.pokedoll_marshadow": "Marshadow Pokedoll",
+    "block.pokeblocks.pokedoll_shiny_marshadow": "Shiny Marshadow Pokedoll",
+    "item.pokeblocks.pokedoll_marshadow_zenith": "Marshadow Zenith Pokedoll",
+    "item.pokeblocks.pokedoll_shiny_marshadow_zenith": "Shiny Marshadow Zenith Pokedoll",
+    "block.pokeblocks.pokedoll_marshadow_zenith": "Marshadow Zenith Pokedoll",
+    "block.pokeblocks.pokedoll_shiny_marshadow_zenith": "Shiny Marshadow Zenith Pokedoll"
 }
