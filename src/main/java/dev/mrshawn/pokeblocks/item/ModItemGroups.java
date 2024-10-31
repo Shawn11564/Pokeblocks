@@ -228,6 +228,12 @@ public class ModItemGroups {
 						entries.add(ModBlocks.GIGANTIC_POKEDOLL_SHINY_MARSHADOW);
 						entries.add(ModBlocks.GIGANTIC_POKEDOLL_MARSHADOW_ZENITH);
 						entries.add(ModBlocks.GIGANTIC_POKEDOLL_SHINY_MARSHADOW_ZENITH);
+						entries.add(ModBlocks.POKEDOLL_BELLOSSOM);
+						entries.add(ModBlocks.POKEDOLL_SHINY_BELLOSSOM);
+						entries.add(ModBlocks.POKEDOLL_ROWLET);
+						entries.add(ModBlocks.POKEDOLL_SHINY_ROWLET);
+						entries.add(ModBlocks.POKEDOLL_MIMIKYU);
+						entries.add(ModBlocks.POKEDOLL_SHINY_MIMIKYU);
 						entries.add(ModBlocks.POKEDOLL_WASHING_MACHINE);
 						entries.add(ModBlocks.GIGANTIC_POKEDOLL_WASHING_MACHINE);
 						entries.add(ModBlocks.POKEDOLL_AIRUHSEA_FIGURINE);

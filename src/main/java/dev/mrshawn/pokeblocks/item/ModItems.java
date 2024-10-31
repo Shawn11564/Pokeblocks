@@ -1360,6 +1360,51 @@ public class ModItems {
 			DollRarity.SHINY
 	);
 
+    public static final Item POKEDOLL_BELLOSSOM_BLOCK_ITEM = registerItem(
+        PokeIDs.POKEDOLL_BELLOSSOM,
+        ModBlocks.POKEDOLL_BELLOSSOM,
+        ResourceConstants.POKEDOLL_BELLOSSOM_MODEL,
+        ResourceConstants.POKEDOLL_BELLOSSOM_TEXTURE,
+        DollRarity.UNCOMMON
+    );
+    public static final Item POKEDOLL_SHINY_BELLOSSOM_BLOCK_ITEM = registerItem(
+        PokeIDs.POKEDOLL_SHINY_BELLOSSOM,
+        ModBlocks.POKEDOLL_SHINY_BELLOSSOM,
+        ResourceConstants.POKEDOLL_BELLOSSOM_MODEL,
+        ResourceConstants.POKEDOLL_SHINY_BELLOSSOM_TEXTURE,
+        DollRarity.SHINY
+    );
+
+    public static final Item POKEDOLL_ROWLET_BLOCK_ITEM = registerItem(
+        PokeIDs.POKEDOLL_ROWLET,
+        ModBlocks.POKEDOLL_ROWLET,
+        ResourceConstants.POKEDOLL_ROWLET_MODEL,
+        ResourceConstants.POKEDOLL_ROWLET_TEXTURE,
+        DollRarity.COMMON
+    );
+    public static final Item POKEDOLL_SHINY_ROWLET_BLOCK_ITEM = registerItem(
+        PokeIDs.POKEDOLL_SHINY_ROWLET,
+        ModBlocks.POKEDOLL_SHINY_ROWLET,
+        ResourceConstants.POKEDOLL_ROWLET_MODEL,
+        ResourceConstants.POKEDOLL_SHINY_ROWLET_TEXTURE,
+        DollRarity.SHINY
+    );
+
+    public static final Item POKEDOLL_MIMIKYU_BLOCK_ITEM = registerItem(
+        PokeIDs.POKEDOLL_MIMIKYU,
+        ModBlocks.POKEDOLL_MIMIKYU,
+        ResourceConstants.POKEDOLL_MIMIKYU_MODEL,
+        ResourceConstants.POKEDOLL_MIMIKYU_TEXTURE,
+        DollRarity.EPIC
+    );
+    public static final Item POKEDOLL_SHINY_MIMIKYU_BLOCK_ITEM = registerItem(
+        PokeIDs.POKEDOLL_SHINY_MIMIKYU,
+        ModBlocks.POKEDOLL_SHINY_MIMIKYU,
+        ResourceConstants.POKEDOLL_MIMIKYU_MODEL,
+        ResourceConstants.POKEDOLL_SHINY_MIMIKYU_TEXTURE,
+        DollRarity.SHINY
+    );
+
     public static final Item GIGANTIC_POKEDOLL_TREVENANT_BLOCK_ITEM = registerItem(
         PokeIDs.GIGANTIC_POKEDOLL_TREVENANT,
         ModBlocks.GIGANTIC_POKEDOLL_TREVENANT,

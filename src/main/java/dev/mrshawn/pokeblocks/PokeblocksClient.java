@@ -18,6 +18,39 @@ public class PokeblocksClient implements ClientModInitializer {
 	@Override
 	public void onInitializeClient() {
 		ServerHandler.register();
+		registerBlockEntityRenderer(
+			ModBlockEntities.POKEDOLL_MIMIKYU_BLOCK_ENTITY,
+			ResourceConstants.POKEDOLL_MIMIKYU_MODEL,
+			ResourceConstants.POKEDOLL_MIMIKYU_TEXTURE
+		);
+		registerBlockEntityRenderer(
+			ModBlockEntities.POKEDOLL_SHINY_MIMIKYU_BLOCK_ENTITY,
+			ResourceConstants.POKEDOLL_MIMIKYU_MODEL,
+			ResourceConstants.POKEDOLL_SHINY_MIMIKYU_TEXTURE
+		);
+
+		registerBlockEntityRenderer(
+			ModBlockEntities.POKEDOLL_ROWLET_BLOCK_ENTITY,
+			ResourceConstants.POKEDOLL_ROWLET_MODEL,
+			ResourceConstants.POKEDOLL_ROWLET_TEXTURE
+		);
+		registerBlockEntityRenderer(
+			ModBlockEntities.POKEDOLL_SHINY_ROWLET_BLOCK_ENTITY,
+			ResourceConstants.POKEDOLL_ROWLET_MODEL,
+			ResourceConstants.POKEDOLL_SHINY_ROWLET_TEXTURE
+		);
+
+		registerBlockEntityRenderer(
+			ModBlockEntities.POKEDOLL_BELLOSSOM_BLOCK_ENTITY,
+			ResourceConstants.POKEDOLL_BELLOSSOM_MODEL,
+			ResourceConstants.POKEDOLL_BELLOSSOM_TEXTURE
+		);
+		registerBlockEntityRenderer(
+			ModBlockEntities.POKEDOLL_SHINY_BELLOSSOM_BLOCK_ENTITY,
+			ResourceConstants.POKEDOLL_BELLOSSOM_MODEL,
+			ResourceConstants.POKEDOLL_SHINY_BELLOSSOM_TEXTURE
+		);
+
 		registerScaledBlockEntityRenderer(
 			ModBlockEntities.GIGANTIC_POKEDOLL_TREVENANT_BLOCK_ENTITY,
 			ResourceConstants.POKEDOLL_TREVENANT_MODEL,

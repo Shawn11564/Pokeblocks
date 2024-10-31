@@ -187,4 +187,13 @@ public class ResourceConstants {
 	public static final String POKEDOLL_MARSHADOW_ZENITH_TEXTURE = "pokedoll_marshadow_zenith_texture.png";
 	public static final String POKEDOLL_SHINY_MARSHADOW_ZENITH_TEXTURE = "pokedoll_marshadow_zenith_shiny_texture.png";
 	public static final String POKEDOLL_MARSHADOW_ZENITH_MODEL = "pokedoll_marshadow_zenith.geo.json";
+	public static final String POKEDOLL_BELLOSSOM_TEXTURE = "pokedoll_bellossom_texture.png";
+	public static final String POKEDOLL_SHINY_BELLOSSOM_TEXTURE = "pokedoll_bellossom_shiny_texture.png";
+	public static final String POKEDOLL_BELLOSSOM_MODEL = "pokedoll_bellossom.geo.json";
+	public static final String POKEDOLL_ROWLET_TEXTURE = "pokedoll_rowlet_texture.png";
+	public static final String POKEDOLL_SHINY_ROWLET_TEXTURE = "pokedoll_rowlet_shiny_texture.png";
+	public static final String POKEDOLL_ROWLET_MODEL = "pokedoll_rowlet.geo.json";
+	public static final String POKEDOLL_MIMIKYU_TEXTURE = "pokedoll_mimikyu_texture.png";
+	public static final String POKEDOLL_SHINY_MIMIKYU_TEXTURE = "pokedoll_mimikyu_shiny_texture.png";
+	public static final String POKEDOLL_MIMIKYU_MODEL = "pokedoll_mimikyu.geo.json";
 }

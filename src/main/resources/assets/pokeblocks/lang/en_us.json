@@ -450,5 +450,17 @@
     "item.pokeblocks.gigantic_pokedoll_trevenant": "Gigantic Trevenant Pokedoll",
     "block.pokeblocks.gigantic_pokedoll_trevenant": "Gigantic Trevenant Pokedoll",
     "item.pokeblocks.gigantic_pokedoll_shiny_trevenant": "Gigantic Shiny Trevenant Pokedoll",
-    "block.pokeblocks.gigantic_pokedoll_shiny_trevenant": "Gigantic Shiny Trevenant Pokedoll"
+    "block.pokeblocks.gigantic_pokedoll_shiny_trevenant": "Gigantic Shiny Trevenant Pokedoll",
+    "item.pokeblocks.pokedoll_bellossom": "Bellossom Pokedoll",
+    "item.pokeblocks.pokedoll_shiny_bellossom": "Shiny Bellossom Pokedoll",
+    "block.pokeblocks.pokedoll_bellossom": "Bellossom Pokedoll",
+    "block.pokeblocks.pokedoll_shiny_bellossom": "Shiny Bellossom Pokedoll",
+    "item.pokeblocks.pokedoll_rowlet": "Rowlet Pokedoll",
+    "item.pokeblocks.pokedoll_shiny_rowlet": "Shiny Rowlet Pokedoll",
+    "block.pokeblocks.pokedoll_rowlet": "Rowlet Pokedoll",
+    "block.pokeblocks.pokedoll_shiny_rowlet": "Shiny Rowlet Pokedoll",
+    "item.pokeblocks.pokedoll_mimikyu": "Mimikyu Pokedoll",
+    "item.pokeblocks.pokedoll_shiny_mimikyu": "Shiny Mimikyu Pokedoll",
+    "block.pokeblocks.pokedoll_mimikyu": "Mimikyu Pokedoll",
+    "block.pokeblocks.pokedoll_shiny_mimikyu": "Shiny Mimikyu Pokedoll"
 }
