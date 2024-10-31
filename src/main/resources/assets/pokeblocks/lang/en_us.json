@@ -462,5 +462,17 @@
     "item.pokeblocks.pokedoll_mimikyu": "Mimikyu Pokedoll",
     "item.pokeblocks.pokedoll_shiny_mimikyu": "Shiny Mimikyu Pokedoll",
     "block.pokeblocks.pokedoll_mimikyu": "Mimikyu Pokedoll",
-    "block.pokeblocks.pokedoll_shiny_mimikyu": "Shiny Mimikyu Pokedoll"
+    "block.pokeblocks.pokedoll_shiny_mimikyu": "Shiny Mimikyu Pokedoll",
+    "item.pokeblocks.gigantic_pokedoll_bellossom": "Gigantic Bellossom Pokedoll",
+    "block.pokeblocks.gigantic_pokedoll_bellossom": "Gigantic Bellossom Pokedoll",
+    "item.pokeblocks.gigantic_pokedoll_shiny_bellossom": "Gigantic Shiny Bellossom Pokedoll",
+    "block.pokeblocks.gigantic_pokedoll_shiny_bellossom": "Gigantic Shiny Bellossom Pokedoll",
+    "item.pokeblocks.gigantic_pokedoll_mimikyu": "Gigantic Mimikyu Pokedoll",
+    "block.pokeblocks.gigantic_pokedoll_mimikyu": "Gigantic Mimikyu Pokedoll",
+    "item.pokeblocks.gigantic_pokedoll_shiny_mimikyu": "Gigantic Shiny Mimikyu Pokedoll",
+    "block.pokeblocks.gigantic_pokedoll_shiny_mimikyu": "Gigantic Shiny Mimikyu Pokedoll",
+    "item.pokeblocks.gigantic_pokedoll_rowlet": "Gigantic Rowlet Pokedoll",
+    "block.pokeblocks.gigantic_pokedoll_rowlet": "Gigantic Rowlet Pokedoll",
+    "item.pokeblocks.gigantic_pokedoll_shiny_rowlet": "Gigantic Shiny Rowlet Pokedoll",
+    "block.pokeblocks.gigantic_pokedoll_shiny_rowlet": "Gigantic Shiny Rowlet Pokedoll"
 }

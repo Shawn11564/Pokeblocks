@@ -18,6 +18,48 @@ public class PokeblocksClient implements ClientModInitializer {
 	@Override
 	public void onInitializeClient() {
 		ServerHandler.register();
+		registerScaledBlockEntityRenderer(
+			ModBlockEntities.GIGANTIC_POKEDOLL_ROWLET_BLOCK_ENTITY,
+			ResourceConstants.POKEDOLL_ROWLET_MODEL,
+			ResourceConstants.POKEDOLL_ROWLET_TEXTURE,
+			SCALE
+		);
+
+		registerScaledBlockEntityRenderer(
+			ModBlockEntities.GIGANTIC_POKEDOLL_SHINY_ROWLET_BLOCK_ENTITY,
+			ResourceConstants.POKEDOLL_ROWLET_MODEL,
+			ResourceConstants.POKEDOLL_SHINY_ROWLET_TEXTURE,
+			SCALE
+		);
+
+		registerScaledBlockEntityRenderer(
+			ModBlockEntities.GIGANTIC_POKEDOLL_MIMIKYU_BLOCK_ENTITY,
+			ResourceConstants.POKEDOLL_MIMIKYU_MODEL,
+			ResourceConstants.POKEDOLL_MIMIKYU_TEXTURE,
+			SCALE
+		);
+
+		registerScaledBlockEntityRenderer(
+			ModBlockEntities.GIGANTIC_POKEDOLL_SHINY_MIMIKYU_BLOCK_ENTITY,
+			ResourceConstants.POKEDOLL_MIMIKYU_MODEL,
+			ResourceConstants.POKEDOLL_SHINY_MIMIKYU_TEXTURE,
+			SCALE
+		);
+
+		registerScaledBlockEntityRenderer(
+			ModBlockEntities.GIGANTIC_POKEDOLL_BELLOSSOM_BLOCK_ENTITY,
+			ResourceConstants.POKEDOLL_BELLOSSOM_MODEL,
+			ResourceConstants.POKEDOLL_BELLOSSOM_TEXTURE,
+			SCALE
+		);
+
+		registerScaledBlockEntityRenderer(
+			ModBlockEntities.GIGANTIC_POKEDOLL_SHINY_BELLOSSOM_BLOCK_ENTITY,
+			ResourceConstants.POKEDOLL_BELLOSSOM_MODEL,
+			ResourceConstants.POKEDOLL_SHINY_BELLOSSOM_TEXTURE,
+			SCALE
+		);
+
 		registerBlockEntityRenderer(
 			ModBlockEntities.POKEDOLL_MIMIKYU_BLOCK_ENTITY,
 			ResourceConstants.POKEDOLL_MIMIKYU_MODEL,

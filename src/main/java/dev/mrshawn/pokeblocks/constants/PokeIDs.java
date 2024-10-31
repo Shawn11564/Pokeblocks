@@ -237,4 +237,10 @@ public class PokeIDs {
 	public static final String POKEDOLL_SHINY_ROWLET = "pokedoll_shiny_rowlet";
 	public static final String POKEDOLL_MIMIKYU = "pokedoll_mimikyu";
 	public static final String POKEDOLL_SHINY_MIMIKYU = "pokedoll_shiny_mimikyu";
+	public static final String GIGANTIC_POKEDOLL_BELLOSSOM = "gigantic_pokedoll_bellossom";
+	public static final String GIGANTIC_POKEDOLL_SHINY_BELLOSSOM = "gigantic_pokedoll_shiny_bellossom";
+	public static final String GIGANTIC_POKEDOLL_MIMIKYU = "gigantic_pokedoll_mimikyu";
+	public static final String GIGANTIC_POKEDOLL_SHINY_MIMIKYU = "gigantic_pokedoll_shiny_mimikyu";
+	public static final String GIGANTIC_POKEDOLL_ROWLET = "gigantic_pokedoll_rowlet";
+	public static final String GIGANTIC_POKEDOLL_SHINY_ROWLET = "gigantic_pokedoll_shiny_rowlet";
 }

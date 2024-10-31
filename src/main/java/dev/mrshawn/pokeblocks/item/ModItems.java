@@ -1405,6 +1405,51 @@ public class ModItems {
         DollRarity.SHINY
     );
 
+    public static final Item GIGANTIC_POKEDOLL_ROWLET_BLOCK_ITEM = registerItem(
+        PokeIDs.GIGANTIC_POKEDOLL_ROWLET,
+        ModBlocks.GIGANTIC_POKEDOLL_ROWLET,
+        ResourceConstants.POKEDOLL_ROWLET_MODEL,
+        ResourceConstants.POKEDOLL_ROWLET_TEXTURE,
+        DollRarity.GIGANTIC
+    );
+    public static final Item GIGANTIC_POKEDOLL_SHINY_ROWLET_BLOCK_ITEM = registerItem(
+        PokeIDs.GIGANTIC_POKEDOLL_SHINY_ROWLET,
+        ModBlocks.GIGANTIC_POKEDOLL_SHINY_ROWLET,
+        ResourceConstants.POKEDOLL_ROWLET_MODEL,
+        ResourceConstants.POKEDOLL_SHINY_ROWLET_TEXTURE,
+        DollRarity.SHINY
+    );
+
+    public static final Item GIGANTIC_POKEDOLL_MIMIKYU_BLOCK_ITEM = registerItem(
+        PokeIDs.GIGANTIC_POKEDOLL_MIMIKYU,
+        ModBlocks.GIGANTIC_POKEDOLL_MIMIKYU,
+        ResourceConstants.POKEDOLL_MIMIKYU_MODEL,
+        ResourceConstants.POKEDOLL_MIMIKYU_TEXTURE,
+        DollRarity.GIGANTIC
+    );
+    public static final Item GIGANTIC_POKEDOLL_SHINY_MIMIKYU_BLOCK_ITEM = registerItem(
+        PokeIDs.GIGANTIC_POKEDOLL_SHINY_MIMIKYU,
+        ModBlocks.GIGANTIC_POKEDOLL_SHINY_MIMIKYU,
+        ResourceConstants.POKEDOLL_MIMIKYU_MODEL,
+        ResourceConstants.POKEDOLL_SHINY_MIMIKYU_TEXTURE,
+        DollRarity.SHINY
+    );
+
+    public static final Item GIGANTIC_POKEDOLL_BELLOSSOM_BLOCK_ITEM = registerItem(
+        PokeIDs.GIGANTIC_POKEDOLL_BELLOSSOM,
+        ModBlocks.GIGANTIC_POKEDOLL_BELLOSSOM,
+        ResourceConstants.POKEDOLL_BELLOSSOM_MODEL,
+        ResourceConstants.POKEDOLL_BELLOSSOM_TEXTURE,
+        DollRarity.GIGANTIC
+    );
+    public static final Item GIGANTIC_POKEDOLL_SHINY_BELLOSSOM_BLOCK_ITEM = registerItem(
+        PokeIDs.GIGANTIC_POKEDOLL_SHINY_BELLOSSOM,
+        ModBlocks.GIGANTIC_POKEDOLL_SHINY_BELLOSSOM,
+        ResourceConstants.POKEDOLL_BELLOSSOM_MODEL,
+        ResourceConstants.POKEDOLL_SHINY_BELLOSSOM_TEXTURE,
+        DollRarity.SHINY
+    );
+
     public static final Item GIGANTIC_POKEDOLL_TREVENANT_BLOCK_ITEM = registerItem(
         PokeIDs.GIGANTIC_POKEDOLL_TREVENANT,
         ModBlocks.GIGANTIC_POKEDOLL_TREVENANT,
