@@ -245,7 +245,7 @@ for folder_name in os.listdir(block_entity_dir):
                         },
                         "gui": {
                             "rotation": [0, 135, 0],
-                            "scale": [1.0, 1.0, 1.0],
+                            "scale": [0.7, 0.7, 0.7],
                             "translation": [0, -8, 0]
                         }
                     }
@@ -279,7 +279,7 @@ for folder_name in os.listdir(block_entity_dir):
                         },
                         "gui": {
                             "rotation": [0, 135, 0],
-                            "scale": [1.0, 1.0, 1.0],
+                            "scale": [0.7, 0.7, 0.7],
                             "translation": [0, -8, 0]
                         }
                     }
