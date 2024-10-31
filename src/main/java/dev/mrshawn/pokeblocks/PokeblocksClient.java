@@ -18,6 +18,18 @@ public class PokeblocksClient implements ClientModInitializer {
 	@Override
 	public void onInitializeClient() {
 		ServerHandler.register();
+		registerBlockEntityRenderer(
+			ModBlockEntities.FIGURINE_POHELLO_BLOCK_ENTITY,
+			ResourceConstants.POHELLO_FIGURINE_MODEL,
+			ResourceConstants.POHELLO_FIGURINE_TEXTURE
+		);
+
+		registerBlockEntityRenderer(
+			ModBlockEntities.FIGURINE_MIK_03_BLOCK_ENTITY,
+			ResourceConstants.MIK_03_FIGURINE_MODEL,
+			ResourceConstants.MIK_03_FIGURINE_TEXTURE
+		);
+
 		registerScaledBlockEntityRenderer(
 			ModBlockEntities.GIGANTIC_POKEDOLL_ROWLET_BLOCK_ENTITY,
 			ResourceConstants.POKEDOLL_ROWLET_MODEL,

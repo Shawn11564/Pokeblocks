@@ -248,6 +248,8 @@ public class ModItemGroups {
 						entries.add(ModBlocks.A09ROBERT_FIGURINE);
 						entries.add(ModBlocks.RED_COMMUNISM_FIGURINE);
 						entries.add(ModBlocks.TROPSIC0_FIGURINE);
+						entries.add(ModBlocks.FIGURINE_MIK_03);
+						entries.add(ModBlocks.FIGURINE_POHELLO);
 						entries.add(ModBlocks.POKEDOLL_APPLIN_BASKET);
 						entries.add(ModBlocks.POKEDOLL_SHINY_APPLIN_BASKET);
 						entries.add(ModBlocks.POKEDOLL_MAGIKARP_FISHBOWL);

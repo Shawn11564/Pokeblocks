@@ -1405,6 +1405,22 @@ public class ModItems {
         DollRarity.SHINY
     );
 
+    public static final Item FIGURINE_MIK_03_BLOCK_ITEM = registerItem(
+        PokeIDs.MIK_03_FIGURINE,
+        ModBlocks.FIGURINE_MIK_03,
+        ResourceConstants.MIK_03_FIGURINE_MODEL,
+        ResourceConstants.MIK_03_FIGURINE_TEXTURE,
+        DollRarity.NONE
+    );
+
+    public static final Item FIGURINE_POHELLO_BLOCK_ITEM = registerItem(
+        PokeIDs.POHELLO_FIGURINE,
+        ModBlocks.FIGURINE_POHELLO,
+        ResourceConstants.POHELLO_FIGURINE_MODEL,
+        ResourceConstants.POHELLO_FIGURINE_TEXTURE,
+        DollRarity.NONE
+    );
+
     public static final Item GIGANTIC_POKEDOLL_ROWLET_BLOCK_ITEM = registerItem(
         PokeIDs.GIGANTIC_POKEDOLL_ROWLET,
         ModBlocks.GIGANTIC_POKEDOLL_ROWLET,

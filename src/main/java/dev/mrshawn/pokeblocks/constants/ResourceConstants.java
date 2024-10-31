@@ -196,4 +196,8 @@ public class ResourceConstants {
 	public static final String POKEDOLL_MIMIKYU_TEXTURE = "pokedoll_mimikyu_texture.png";
 	public static final String POKEDOLL_SHINY_MIMIKYU_TEXTURE = "pokedoll_mimikyu_shiny_texture.png";
 	public static final String POKEDOLL_MIMIKYU_MODEL = "pokedoll_mimikyu.geo.json";
+	public static final String MIK_03_FIGURINE_TEXTURE = "mik_03_figurine_texture.png";
+	public static final String MIK_03_FIGURINE_MODEL = "mik_03_figurine.geo.json";
+	public static final String POHELLO_FIGURINE_TEXTURE = "pohello_figurine_texture.png";
+	public static final String POHELLO_FIGURINE_MODEL = "pohello_figurine.geo.json";
 }

@@ -112,6 +112,7 @@ import dev.mrshawn.pokeblocks.block.entity.mareep.PokedollGiganticShinyMareepBlo
 import dev.mrshawn.pokeblocks.block.entity.mareep.PokedollMareepBlockEntity;
 import dev.mrshawn.pokeblocks.block.entity.mareep.PokedollShinyMareepBlockEntity;
 import dev.mrshawn.pokeblocks.block.entity.marshadow.*;
+import dev.mrshawn.pokeblocks.block.entity.mik_03_figurine.PokedollMik03FigurineBlockEntity;
 import dev.mrshawn.pokeblocks.block.entity.mimikyu.PokedollGiganticMimikyuBlockEntity;
 import dev.mrshawn.pokeblocks.block.entity.mimikyu.PokedollGiganticShinyMimikyuBlockEntity;
 import dev.mrshawn.pokeblocks.block.entity.mimikyu.PokedollMimikyuBlockEntity;
@@ -128,6 +129,7 @@ import dev.mrshawn.pokeblocks.block.entity.phantump.PokedollGiganticPhantumpBloc
 import dev.mrshawn.pokeblocks.block.entity.phantump.PokedollGiganticShinyPhantumpBlockEntity;
 import dev.mrshawn.pokeblocks.block.entity.phantump.PokedollPhantumpBlockEntity;
 import dev.mrshawn.pokeblocks.block.entity.phantump.PokedollShinyPhantumpBlockEntity;
+import dev.mrshawn.pokeblocks.block.entity.pohello_figurine.PokedollPohelloFigurineBlockEntity;
 import dev.mrshawn.pokeblocks.block.entity.pokemon_trophy.PokedollPokemonTrophyBlockEntity;
 import dev.mrshawn.pokeblocks.block.entity.pumpkaboo.PokedollGiganticPumpkabooBlockEntity;
 import dev.mrshawn.pokeblocks.block.entity.pumpkaboo.PokedollGiganticShinyPumpkabooBlockEntity;
@@ -575,6 +577,12 @@ public class ModBlocks {
             new PokedollBlock<>(() -> PokedollMimikyuBlockEntity.class));
     public static final Block POKEDOLL_SHINY_MIMIKYU = Registry.register(Registries.BLOCK, new Identifier(Pokeblocks.MOD_ID, PokeIDs.POKEDOLL_SHINY_MIMIKYU),
             new PokedollBlock<>(() -> PokedollShinyMimikyuBlockEntity.class));
+
+    public static final Block FIGURINE_MIK_03 = Registry.register(Registries.BLOCK, new Identifier(Pokeblocks.MOD_ID, PokeIDs.MIK_03_FIGURINE),
+            new PokedollBlock<>(() -> PokedollMik03FigurineBlockEntity.class));
+
+    public static final Block FIGURINE_POHELLO = Registry.register(Registries.BLOCK, new Identifier(Pokeblocks.MOD_ID, PokeIDs.POHELLO_FIGURINE),
+            new PokedollBlock<>(() -> PokedollPohelloFigurineBlockEntity.class));
 
     public static final Block GIGANTIC_POKEDOLL_ROWLET = Registry.register(Registries.BLOCK, new Identifier(Pokeblocks.MOD_ID, PokeIDs.GIGANTIC_POKEDOLL_ROWLET),
         new PokedollBlock<>(() -> PokedollGiganticRowletBlockEntity.class));

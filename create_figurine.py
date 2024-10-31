@@ -32,42 +32,41 @@ for folder_name in os.listdir(input_dir):
             shutil.copy(f"{input_dir}/{folder_name}/{file_name}", f"{output_dir}/geo")
 
     # 3. Copy and modify blockstate file
-    # Copy the template file to create the new file
     shutil.copy(f"{template_dir}/blockstates/template_blockstate.json",
-                f"{output_dir}/blockstates/figurine_{file_base_name}.json")
+                f"{output_dir}/blockstates/{file_base_name}_figurine.json")
 
-    with open(f"{output_dir}/blockstates/figurine_{file_base_name}.json", "r") as file:
+    with open(f"{output_dir}/blockstates/{file_base_name}_figurine.json", "r") as file:
         content = file.read()
     content = content.replace("<pokemon name>", file_base_name)
-    with open(f"{output_dir}/blockstates/figurine_{file_base_name}.json", "w") as file:
+    with open(f"{output_dir}/blockstates/{file_base_name}_figurine.json", "w") as file:
         file.write(content)
 
     # 4. Copy and modify block model file
     shutil.copy(f"{template_dir}/models/block/template_block_model.json",
-                f"{output_dir}/models/block/figurine_{file_base_name}.json")
+                f"{output_dir}/models/block/{file_base_name}_figurine.json")
 
-    with open(f"{output_dir}/models/block/figurine_{file_base_name}.json", "r") as file:
+    with open(f"{output_dir}/models/block/{file_base_name}_figurine.json", "r") as file:
         content = file.read()
     content = content.replace("<pokemon name>", file_base_name)
-    with open(f"{output_dir}/models/block/figurine_{file_base_name}.json", "w") as file:
+    with open(f"{output_dir}/models/block/{file_base_name}_figurine.json", "w") as file:
         file.write(content)
 
     # 5. Copy and modify item model file
     shutil.copy(f"{template_dir}/models/item/template_item_model.json",
-                f"{output_dir}/models/item/figurine_{file_base_name}.json")
+                f"{output_dir}/models/item/{file_base_name}_figurine.json")
 
-    with open(f"{output_dir}/models/item/figurine_{file_base_name}.json", "r") as file:
+    with open(f"{output_dir}/models/item/{file_base_name}_figurine.json", "r") as file:
         content = file.read()
     content = content.replace("<pokemon name>", file_base_name)
-    with open(f"{output_dir}/models/item/figurine_{file_base_name}.json", "w") as file:
+    with open(f"{output_dir}/models/item/{file_base_name}_figurine.json", "w") as file:
         file.write(content)
 
     # 6. Modify en_us.json
     with open(f"{output_dir}/lang/en_us.json", "r+") as file:
         data = json.load(file)
         display_name = " ".join(word.capitalize() for word in base_name.split("_"))
-        data[f"item.pokeblocks.figurine_{file_base_name}"] = f"{display_name} Figurine"
-        data[f"block.pokeblocks.figurine_{file_base_name}"] = f"{display_name} Figurine"
+        data[f"item.pokeblocks.{file_base_name}_figurine"] = f"{display_name} Figurine"
+        data[f"block.pokeblocks.{file_base_name}_figurine"] = f"{display_name} Figurine"
         file.seek(0)
         json.dump(data, file, indent=4)
         file.truncate()
@@ -84,7 +83,7 @@ for folder_name in os.listdir(input_dir):
 
     if last_curly_bracket_line != -1:
         new_lines = [
-            f"	public static final String FIGURINE_{file_base_name.upper()} = \"figurine_{file_base_name}\";\n"
+            f"	public static final String FIGURINE_{file_base_name.upper()} = \"{file_base_name}_figurine\";\n"
         ]
         for new_line in reversed(new_lines):
             lines.insert(last_curly_bracket_line, new_line)
@@ -104,8 +103,8 @@ for folder_name in os.listdir(input_dir):
 
     if last_curly_bracket_line != -1:
         new_lines = [
-            f"	public static final String FIGURINE_{file_base_name.upper()}_TEXTURE = \"figurine_{file_base_name}_texture.png\";\n",
-            f"	public static final String FIGURINE_{file_base_name.upper()}_MODEL = \"figurine_{file_base_name}.geo.json\";\n"
+            f"	public static final String FIGURINE_{file_base_name.upper()}_TEXTURE = \"{file_base_name}_figurine_texture.png\";\n",
+            f"	public static final String FIGURINE_{file_base_name.upper()}_MODEL = \"{file_base_name}_figurine.geo.json\";\n"
         ]
         for new_line in reversed(new_lines):
             lines.insert(last_curly_bracket_line, new_line)
@@ -154,7 +153,7 @@ for folder_name in os.listdir(input_dir):
         class_name = "".join(word.capitalize() for word in file_base_name.split("_"))
         new_lines = [
             f"\n    public static final Block FIGURINE_{file_base_name.upper()} = Registry.register(Registries.BLOCK, new Identifier(Pokeblocks.MOD_ID, PokeIDs.FIGURINE_{file_base_name.upper()}),",
-            f"\n            new FigurineBlock<>(() -> Pokedoll{class_name}FigurineBlockEntity.class));\n"
+            f"\n            new PokedollBlock<>(() -> Pokedoll{class_name}FigurineBlockEntity.class));\n"
         ]
         for new_line in reversed(new_lines):
             lines.insert(last_entry_line + 1, new_line)
