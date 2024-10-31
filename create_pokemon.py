@@ -112,8 +112,8 @@ for pokemon_name in os.listdir(input_dir):
     # If found, insert the new entries before that line
     if last_curly_bracket_line != -1:
         new_lines = [
-            f"  public static final String POKEDOLL_{pokemon_name.upper()} = \"pokedoll_{pokemon_name}\";\n",
-            f"  public static final String POKEDOLL_SHINY_{pokemon_name.upper()} = \"pokedoll_shiny_{pokemon_name}\";\n"
+            f"	public static final String POKEDOLL_{pokemon_name.upper()} = \"pokedoll_{pokemon_name}\";\n",
+            f"	public static final String POKEDOLL_SHINY_{pokemon_name.upper()} = \"pokedoll_shiny_{pokemon_name}\";\n"
         ]
         for new_line in reversed(new_lines):
             lines.insert(last_curly_bracket_line, new_line)
@@ -193,9 +193,9 @@ for pokemon_name in os.listdir(input_dir):
     if last_entry_line != -1:
         new_lines = [
             f"\n    public static final Block POKEDOLL_{pokemon_name.upper()} = Registry.register(Registries.BLOCK, new Identifier(Pokeblocks.MOD_ID, PokeIDs.POKEDOLL_{pokemon_name.upper()}),",
-            f"\n        new PokedollBlock<>(() -> Pokedoll{pokemon_name.capitalize()}BlockEntity.class));",
+            f"\n            new PokedollBlock<>(() -> Pokedoll{pokemon_name.capitalize()}BlockEntity.class));",
             f"\n    public static final Block POKEDOLL_SHINY_{pokemon_name.upper()} = Registry.register(Registries.BLOCK, new Identifier(Pokeblocks.MOD_ID, PokeIDs.POKEDOLL_SHINY_{pokemon_name.upper()}),",
-            f"\n        new PokedollBlock<>(() -> PokedollShiny{pokemon_name.capitalize()}BlockEntity.class));",
+            f"\n            new PokedollBlock<>(() -> PokedollShiny{pokemon_name.capitalize()}BlockEntity.class));",
             f"\n"
         ]
         for new_line in reversed(new_lines):
@@ -224,12 +224,14 @@ for pokemon_name in os.listdir(input_dir):
             f"\n        ModBlocks.POKEDOLL_{pokemon_name.upper()},",
             f"\n        ResourceConstants.POKEDOLL_{pokemon_name.upper()}_MODEL,",
             f"\n        ResourceConstants.POKEDOLL_{pokemon_name.upper()}_TEXTURE",
+            f"\n        DollRarity.UNCLASSIFIED",
             f"\n    );",
             f"\n    public static final Item POKEDOLL_SHINY_{pokemon_name.upper()}_BLOCK_ITEM = registerItem(",
             f"\n        PokeIDs.POKEDOLL_SHINY_{pokemon_name.upper()},",
             f"\n        ModBlocks.POKEDOLL_SHINY_{pokemon_name.upper()},",
             f"\n        ResourceConstants.POKEDOLL_{pokemon_name.upper()}_MODEL,",
             f"\n        ResourceConstants.POKEDOLL_SHINY_{pokemon_name.upper()}_TEXTURE",
+            f"\n        DollRarity.SHINY",
             f"\n    );",
             f"\n"
         ]
