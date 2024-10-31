@@ -154,7 +154,7 @@ for folder_name in os.listdir(input_dir):
         class_name = "".join(word.capitalize() for word in file_base_name.split("_"))
         new_lines = [
             f"\n    public static final Block FIGURINE_{file_base_name.upper()} = Registry.register(Registries.BLOCK, new Identifier(Pokeblocks.MOD_ID, PokeIDs.FIGURINE_{file_base_name.upper()}),",
-            f"\n            new FigurineBlock<>(() -> Figurine{class_name}BlockEntity.class));\n"
+            f"\n            new FigurineBlock<>(() -> Pokedoll{class_name}FigurineBlockEntity.class));\n"
         ]
         for new_line in reversed(new_lines):
             lines.insert(last_entry_line + 1, new_line)
@@ -222,7 +222,7 @@ for folder_name in os.listdir(input_dir):
 
     last_entry_line = -1
     for i, line in enumerate(lines):
-        if "public static BlockEntityType<Figurine" in line:
+        if "public static BlockEntityType<Pokedoll" in line and "FigurineBlockEntity>" in line:
             last_entry_line = i
 
     if last_entry_line == -1:  # If no figurine entries found, look for pokedoll entries
@@ -233,7 +233,7 @@ for folder_name in os.listdir(input_dir):
     if last_entry_line != -1:
         class_name = "".join(word.capitalize() for word in file_base_name.split("_"))
         new_lines = [
-            f"\n    public static BlockEntityType<Figurine{class_name}BlockEntity> FIGURINE_{file_base_name.upper()}_BLOCK_ENTITY;\n"
+            f"\n    public static BlockEntityType<Pokedoll{class_name}FigurineBlockEntity> FIGURINE_{file_base_name.upper()}_BLOCK_ENTITY;\n"
         ]
         for new_line in reversed(new_lines):
             lines.insert(last_entry_line + 1, new_line)
@@ -254,8 +254,8 @@ for folder_name in os.listdir(input_dir):
         new_lines = [
             f"\n        FIGURINE_{file_base_name.upper()}_BLOCK_ENTITY = registerBlockEntity(",
             f"\n                new Identifier(Pokeblocks.MOD_ID, PokeIDs.FIGURINE_{file_base_name.upper()}),",
-            f"\n                FabricBlockEntityTypeBuilder.create(Figurine{class_name}BlockEntity::new, ModBlocks.FIGURINE_{file_base_name.upper()}),",
-            f"\n                Figurine{class_name}BlockEntity.class",
+            f"\n                FabricBlockEntityTypeBuilder.create(Pokedoll{class_name}FigurineBlockEntity::new, ModBlocks.FIGURINE_{file_base_name.upper()}),",
+            f"\n                Pokedoll{class_name}FigurineBlockEntity.class",
             f"\n        );\n"
         ]
         for new_line in reversed(new_lines):
@@ -265,17 +265,25 @@ for folder_name in os.listdir(input_dir):
         file.writelines(lines)
 
     # 14. Copy and modify block entity file
-    os.makedirs(f"{src_dir}/block/entity/{file_base_name}", exist_ok=True)
-    shutil.copy(f"{template_dir}/block/entity/template_block_entity.java",
-                f"{src_dir}/block/entity/{file_base_name}/Figurine{class_name}BlockEntity.java")
+    figurine_package_path = f"{src_dir}/block/entity/{file_base_name}_figurine"
+    os.makedirs(figurine_package_path, exist_ok=True)
+    class_name = "".join(word.capitalize() for word in file_base_name.split("_"))
+    
+    shutil.copy(f"{template_dir}/block/entity/template_figurine_block_entity.java",
+                f"{figurine_package_path}/Pokedoll{class_name}FigurineBlockEntity.java")
 
     # Modify the block entity file
-    with open(f"{src_dir}/block/entity/{file_base_name}/Figurine{class_name}BlockEntity.java", "r") as file:
+    with open(f"{figurine_package_path}/Pokedoll{class_name}FigurineBlockEntity.java", "r") as file:
         content = file.read()
     
-    class_name = "".join(word.capitalize() for word in file_base_name.split("_"))
-    content = content.replace("<Pokemon name>", class_name)
-    content = content.replace("<pokemon name>", file_base_name)
+    # Replace the package name placeholder
+    content = content.replace(
+        "package dev.mrshawn.pokeblocks.block.entity.<figurine name>;",
+        f"package dev.mrshawn.pokeblocks.block.entity.{file_base_name}_figurine;"
+    )
+    
+    # Replace all instances of the figurine name placeholder
+    content = content.replace("<Figurine name>", class_name)
 
-    with open(f"{src_dir}/block/entity/{file_base_name}/Figurine{class_name}BlockEntity.java", "w") as file:
+    with open(f"{figurine_package_path}/Pokedoll{class_name}FigurineBlockEntity.java", "w") as file:
         file.write(content)
