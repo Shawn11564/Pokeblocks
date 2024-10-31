@@ -299,7 +299,7 @@ for pokemon_name in os.listdir(input_dir):
             f"\n                new Identifier(Pokeblocks.MOD_ID, PokeIDs.POKEDOLL_{pokemon_name.upper()}),",
             f"\n                FabricBlockEntityTypeBuilder.create(Pokedoll{pokemon_name.capitalize()}BlockEntity::new, ModBlocks.POKEDOLL_{pokemon_name.upper()}),",
             f"\n                Pokedoll{pokemon_name.capitalize()}BlockEntity.class",
-            f"\n)       ;",
+            f"\n        );",
             f"\n        POKEDOLL_SHINY_{pokemon_name.upper()}_BLOCK_ENTITY = registerBlockEntity(",
             f"\n                new Identifier(Pokeblocks.MOD_ID, PokeIDs.POKEDOLL_SHINY_{pokemon_name.upper()}),",
             f"\n                FabricBlockEntityTypeBuilder.create(PokedollShiny{pokemon_name.capitalize()}BlockEntity::new, ModBlocks.POKEDOLL_SHINY_{pokemon_name.upper()}),",
