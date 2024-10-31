@@ -1,0 +1,6 @@
+{
+  "parent": "item/generated",
+  "textures": {
+    "layer0": "pokeblocks:item/summer_raid_soul_texture"
+  }
+}

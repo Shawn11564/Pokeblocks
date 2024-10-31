@@ -1,0 +1,21 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "category": "misc",
+  "key": {
+    "d": {
+      "item": "pokeblocks:pokedoll_shiny_cloyster"
+    },
+    "w": {
+      "tag": "minecraft:wool"
+    }
+  },
+  "pattern": [
+    " d ",
+    "dwd",
+    " d "
+  ],
+  "result": {
+    "item": "pokeblocks:gigantic_pokedoll_shiny_cloyster"
+  },
+  "show_notification": true
+}

@@ -1,0 +1,35 @@
+{
+  "parent": "minecraft:recipes/root",
+  "criteria": {
+    "has_pokedoll_shiny_marshadow_zenith": {
+      "conditions": {
+        "items": [
+          {
+            "items": [
+              "pokeblocks:pokedoll_shiny_marshadow_zenith"
+            ]
+          }
+        ]
+      },
+      "trigger": "minecraft:inventory_changed"
+    },
+    "has_the_recipe": {
+      "conditions": {
+        "recipe": "pokeblocks:gigantic_pokedoll_shiny_marshadow_zenith"
+      },
+      "trigger": "minecraft:recipe_unlocked"
+    }
+  },
+  "requirements": [
+    [
+      "has_pokedoll_shiny_marshadow_zenith",
+      "has_the_recipe"
+    ]
+  ],
+  "rewards": {
+    "recipes": [
+      "pokeblocks:gigantic_pokedoll_shiny_marshadow_zenith"
+    ]
+  },
+  "sends_telemetry_event": false
+}

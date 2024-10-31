@@ -1,0 +1,35 @@
+{
+  "parent": "minecraft:recipes/root",
+  "criteria": {
+    "has_pokedoll_phantump": {
+      "conditions": {
+        "items": [
+          {
+            "items": [
+              "pokeblocks:pokedoll_phantump"
+            ]
+          }
+        ]
+      },
+      "trigger": "minecraft:inventory_changed"
+    },
+    "has_the_recipe": {
+      "conditions": {
+        "recipe": "pokeblocks:gigantic_pokedoll_phantump"
+      },
+      "trigger": "minecraft:recipe_unlocked"
+    }
+  },
+  "requirements": [
+    [
+      "has_pokedoll_phantump",
+      "has_the_recipe"
+    ]
+  ],
+  "rewards": {
+    "recipes": [
+      "pokeblocks:gigantic_pokedoll_phantump"
+    ]
+  },
+  "sends_telemetry_event": false
+}
