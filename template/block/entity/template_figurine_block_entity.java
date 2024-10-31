@@ -5,8 +5,8 @@ import dev.mrshawn.pokeblocks.block.entity.PokedollBlockEntity;
 import net.minecraft.block.BlockState;
 import net.minecraft.util.math.BlockPos;
 
-public class Pokedoll<Figurine name>BlockEntity extends PokedollBlockEntity {
-	public Pokedoll<Figurine name>BlockEntity(BlockPos pos, BlockState state) {
-		super(BlockEntityTypeRegistry.get(Pokedoll<Figurine name>BlockEntity.class), pos, state);
+public class Pokedoll<Figurine name>FigurineBlockEntity extends PokedollBlockEntity {
+	public Pokedoll<Figurine name>FigurineBlockEntity(BlockPos pos, BlockState state) {
+		super(BlockEntityTypeRegistry.get(Pokedoll<Figurine name>FigurineBlockEntity.class), pos, state);
 	}
 }
