@@ -84,6 +84,7 @@ import dev.mrshawn.pokeblocks.block.entity.gastly.PokedollGastlyBlockEntity;
 import dev.mrshawn.pokeblocks.block.entity.gastly.PokedollGiganticGastlyBlockEntity;
 import dev.mrshawn.pokeblocks.block.entity.gastly.PokedollGiganticShinyGastlyBlockEntity;
 import dev.mrshawn.pokeblocks.block.entity.gastly.PokedollShinyGastlyBlockEntity;
+import dev.mrshawn.pokeblocks.block.entity.generic.PokedollGenericBlockEntity;
 import dev.mrshawn.pokeblocks.block.entity.gengar.PokedollGengarBlockEntity;
 import dev.mrshawn.pokeblocks.block.entity.gengar.PokedollGiganticGengarBlockEntity;
 import dev.mrshawn.pokeblocks.block.entity.gengar.PokedollGiganticShinyGengarBlockEntity;
@@ -880,6 +881,9 @@ public class ModBlocks {
 			new PokedollBlock<>(Shapes.FIGURINE_SHAPE, () -> RedCommunismFigurineBlockEntity.class));
 	public static final Block TROPSIC0_FIGURINE = Registry.register(Registries.BLOCK, new Identifier(Pokeblocks.MOD_ID, PokeIDs.TROPSIC0_FIGURINE),
 			new PokedollBlock<>(Shapes.FIGURINE_SHAPE, () -> Tropsic0FigurineBlockEntity.class));
+
+	public static final Block GENERIC_BLOCK_ENTITY = Registry.register(Registries.BLOCK, new Identifier(Pokeblocks.MOD_ID, PokeIDs.GENERIC_BLOCK_ENTITY),
+			new PokedollBlock<>(() -> PokedollGenericBlockEntity.class));
 
 	private static Block registerBlock(String name, Block block) {
 		registerBlockItem(name, block);

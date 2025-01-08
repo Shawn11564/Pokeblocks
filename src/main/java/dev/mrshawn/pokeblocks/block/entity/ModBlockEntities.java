@@ -84,6 +84,7 @@ import dev.mrshawn.pokeblocks.block.entity.gastly.PokedollGastlyBlockEntity;
 import dev.mrshawn.pokeblocks.block.entity.gastly.PokedollGiganticGastlyBlockEntity;
 import dev.mrshawn.pokeblocks.block.entity.gastly.PokedollGiganticShinyGastlyBlockEntity;
 import dev.mrshawn.pokeblocks.block.entity.gastly.PokedollShinyGastlyBlockEntity;
+import dev.mrshawn.pokeblocks.block.entity.generic.PokedollGenericBlockEntity;
 import dev.mrshawn.pokeblocks.block.entity.gengar.PokedollGengarBlockEntity;
 import dev.mrshawn.pokeblocks.block.entity.gengar.PokedollGiganticGengarBlockEntity;
 import dev.mrshawn.pokeblocks.block.entity.gengar.PokedollGiganticShinyGengarBlockEntity;
@@ -542,7 +543,15 @@ public class ModBlockEntities {
 	public static BlockEntityType<RedCommunismFigurineBlockEntity> RED_COMMUNISM_FIGURINE_BLOCK_ENTITY;
 	public static BlockEntityType<Tropsic0FigurineBlockEntity> TROPSIC0_FIGURINE_BLOCK_ENTITY;
 
+	public static BlockEntityType<PokedollGenericBlockEntity> GENERIC_BLOCK_ENTITY;
+
 	public static void registerAllBlockEntities() {
+		GENERIC_BLOCK_ENTITY = registerBlockEntity(
+				new Identifier(Pokeblocks.MOD_ID, PokeIDs.GENERIC_BLOCK_ENTITY),
+				FabricBlockEntityTypeBuilder.create(PokedollGenericBlockEntity::new, ModBlocks.GENERIC_BLOCK_ENTITY),
+				PokedollGenericBlockEntity.class
+		);
+
 		POKEDOLL_CALYREX_BLOCK_ENTITY = registerBlockEntity(
 				new Identifier(Pokeblocks.MOD_ID, PokeIDs.POKEDOLL_CALYREX),
 				FabricBlockEntityTypeBuilder.create(PokedollCalyrexBlockEntity::new, ModBlocks.POKEDOLL_CALYREX),

@@ -1468,6 +1468,12 @@ public class PokeblocksClient implements ClientModInitializer {
 				ResourceConstants.POKEDOLL_FURRET_MODEL,
 				ResourceConstants.POKEDOLL_SHINY_FURRET_TEXTURE
 		);
+		// GENERIC
+		registerBlockEntityRenderer(
+				ModBlockEntities.GENERIC_BLOCK_ENTITY,
+				ResourceConstants.POKEDOLL_CHARMANDER_MODEL,
+				ResourceConstants.POKEDOLL_CHARMANDER_TEXTURE
+		);
 	}
 
 	private static <T extends PokedollBlockEntity> void registerBlockEntityRenderer(BlockEntityType<T> type, String modelResourcePath, String textureResourcePath, String animationResourcePath) {

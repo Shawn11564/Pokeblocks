@@ -245,4 +245,5 @@ public class PokeIDs {
 	public static final String GIGANTIC_POKEDOLL_SHINY_ROWLET = "gigantic_pokedoll_shiny_rowlet";
 	public static final String MIK_03_FIGURINE = "mik_03_figurine";
 	public static final String POHELLO_FIGURINE = "pohello_figurine";
+	public static final String GENERIC_BLOCK_ENTITY = "generic_block_entity";
 }
