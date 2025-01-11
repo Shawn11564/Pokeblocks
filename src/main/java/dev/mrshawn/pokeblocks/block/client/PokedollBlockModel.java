@@ -32,16 +32,16 @@ public class PokedollBlockModel extends GeoModel<PokedollBlockEntity> {
 
 	@Override
 	public Identifier getModelResource(PokedollBlockEntity animatable) {
-		return new Identifier(Pokeblocks.MOD_ID, "geo/" + modelResourcePath);
+		return Identifier.of(Pokeblocks.MOD_ID, "geo/" + modelResourcePath);
 	}
 
 	@Override
 	public Identifier getTextureResource(PokedollBlockEntity animatable) {
-		return new Identifier(Pokeblocks.MOD_ID, "textures/block/" + textureResourcePath);
+		return Identifier.of(Pokeblocks.MOD_ID, "textures/block/" + textureResourcePath);
 	}
 
 	@Override
 	public Identifier getAnimationResource(PokedollBlockEntity animatable) {
-		return new Identifier(Pokeblocks.MOD_ID, "animations/block/" + animationResourcePath);
+		return Identifier.of(Pokeblocks.MOD_ID, "animations/block/" + animationResourcePath);
 	}
 }

@@ -1,0 +1,32 @@
+{
+  "parent": "minecraft:recipes/root",
+  "criteria": {
+    "has_pokedoll_absol": {
+      "conditions": {
+        "items": [
+          {
+            "items": "pokeblocks:pokedoll_absol"
+          }
+        ]
+      },
+      "trigger": "minecraft:inventory_changed"
+    },
+    "has_the_recipe": {
+      "conditions": {
+        "recipe": "pokeblocks:gigantic_pokedoll_absol"
+      },
+      "trigger": "minecraft:recipe_unlocked"
+    }
+  },
+  "requirements": [
+    [
+      "has_the_recipe",
+      "has_pokedoll_absol"
+    ]
+  ],
+  "rewards": {
+    "recipes": [
+      "pokeblocks:gigantic_pokedoll_absol"
+    ]
+  }
+}

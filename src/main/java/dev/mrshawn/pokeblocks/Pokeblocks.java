@@ -5,15 +5,15 @@ import dev.mrshawn.pokeblocks.block.entity.ModBlockEntities;
 import dev.mrshawn.pokeblocks.item.ModItemGroups;
 import dev.mrshawn.pokeblocks.item.ModItems;
 import net.fabricmc.api.ModInitializer;
-import net.fabricmc.fabric.api.loot.v2.LootTableEvents;
+import net.fabricmc.fabric.api.loot.v3.LootTableEvents;
 import net.minecraft.item.Items;
 import net.minecraft.loot.LootPool;
+import net.minecraft.loot.LootTable;
 import net.minecraft.loot.LootTables;
 import net.minecraft.loot.entry.ItemEntry;
-import net.minecraft.util.Identifier;
+import net.minecraft.registry.RegistryKey;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import software.bernie.geckolib.GeckoLib;
 
 import java.util.List;
 
@@ -21,7 +21,7 @@ public class Pokeblocks implements ModInitializer {
 
 	public static final String MOD_ID = "pokeblocks";
     public static final Logger LOGGER = LoggerFactory.getLogger(MOD_ID);
-	private static final List<Identifier> LOOT_TABLES = List.of(
+	private static final List<RegistryKey<LootTable>> LOOT_TABLES = List.of(
 			LootTables.END_CITY_TREASURE_CHEST,
 			LootTables.SIMPLE_DUNGEON_CHEST,
 			LootTables.VILLAGE_WEAPONSMITH_CHEST,
@@ -65,22 +65,17 @@ public class Pokeblocks implements ModInitializer {
 		ModBlocks.registerModBlocks();
 		ModBlockEntities.registerAllBlockEntities();
 
-		GeckoLib.initialize();
-
 		int totalWeight = ModItems.getCombinedWeight();
 		int newValue = (int)(totalWeight / 0.3) - totalWeight;
 
-		LootTableEvents.MODIFY.register((resourceManager, lootManager, id, tableBuilder, source) -> {
-			if (source.isBuiltin() && LOOT_TABLES.contains(id)) {
+		LootTableEvents.MODIFY.register((key, tableBuilder, source, registries) -> {
+			if (LOOT_TABLES.contains(key) && source.isBuiltin()) {
 				LootPool.Builder poolBuilder = LootPool.builder();
-				ModItems.getAllDolls(false).forEach(doll -> {
-					poolBuilder.with(
-							ItemEntry.builder(doll.getBlock())
-									.weight(doll.getRarity().getWeight())
-					);
-				});
+				ModItems.getAllDolls(false).forEach(doll -> poolBuilder.with(
+						ItemEntry.builder(doll.getBlock())
+								.weight(doll.getRarity().getWeight())
+				));
 				poolBuilder.with(ItemEntry.builder(Items.AIR).weight(newValue));
-
 				tableBuilder.pool(poolBuilder);
 			}
 		});

@@ -15,7 +15,7 @@ import java.util.HashMap;
 public class ModItemGroups {
 
 	public static final ItemGroup POKEBLOCKS = Registry.register(Registries.ITEM_GROUP,
-			new Identifier(Pokeblocks.MOD_ID, "pokeblocks"),
+			Identifier.of(Pokeblocks.MOD_ID, "pokeblocks"),
 			FabricItemGroup.builder()
 					.displayName(Text.translatable("itemgroup.pokeblocks"))
 					.icon(() -> new ItemStack(ModItems.POKEDOLL_CALYREX_BLOCK_ITEM))

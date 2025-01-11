@@ -226,7 +226,6 @@ import dev.mrshawn.pokeblocks.block.entity.wooper.PokedollWooperBlockEntity;
 import dev.mrshawn.pokeblocks.constants.PokeIDs;
 import dev.mrshawn.pokeblocks.constants.Shapes;
 import dev.mrshawn.pokeblocks.utils.ServerHandler;
-import net.fabricmc.fabric.api.item.v1.FabricItemSettings;
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockState;
 import net.minecraft.block.Blocks;
@@ -244,7 +243,6 @@ import net.minecraft.sound.SoundEvents;
 import net.minecraft.state.property.Properties;
 import net.minecraft.util.ActionResult;
 import net.minecraft.util.Formatting;
-import net.minecraft.util.Hand;
 import net.minecraft.util.Identifier;
 import net.minecraft.util.hit.BlockHitResult;
 import net.minecraft.util.math.BlockPos;
@@ -259,58 +257,58 @@ import java.util.List;
 
 public class ModBlocks {
 
-	public static final Block POKEDOLL_CALYREX = Registry.register(Registries.BLOCK, new Identifier(Pokeblocks.MOD_ID, PokeIDs.POKEDOLL_CALYREX),
+	public static final Block POKEDOLL_CALYREX = Registry.register(Registries.BLOCK, Identifier.of(Pokeblocks.MOD_ID, PokeIDs.POKEDOLL_CALYREX),
 			new PokedollBlock<>(() -> PokedollCalyrexBlockEntity.class));
-	public static final Block POKEDOLL_SHINY_CALYREX = Registry.register(Registries.BLOCK, new Identifier(Pokeblocks.MOD_ID, PokeIDs.POKEDOLL_SHINY_CALYREX),
+	public static final Block POKEDOLL_SHINY_CALYREX = Registry.register(Registries.BLOCK, Identifier.of(Pokeblocks.MOD_ID, PokeIDs.POKEDOLL_SHINY_CALYREX),
 			new PokedollBlock<>(() -> PokedollShinyCalyrexBlockEntity.class));
-	public static final Block POKEDOLL_CALYREX_ANIMATED = Registry.register(Registries.BLOCK, new Identifier(Pokeblocks.MOD_ID, PokeIDs.POKEDOLL_CALYREX_ANIMATED),
+	public static final Block POKEDOLL_CALYREX_ANIMATED = Registry.register(Registries.BLOCK, Identifier.of(Pokeblocks.MOD_ID, PokeIDs.POKEDOLL_CALYREX_ANIMATED),
 			new PokedollBlock<>(() -> PokedollCalyrexAnimatedBlockEntity.class));
-	public static final Block POKEDOLL_SHINY_CALYREX_ANIMATED = Registry.register(Registries.BLOCK, new Identifier(Pokeblocks.MOD_ID, PokeIDs.POKEDOLL_SHINY_CALYREX_ANIMATED),
+	public static final Block POKEDOLL_SHINY_CALYREX_ANIMATED = Registry.register(Registries.BLOCK, Identifier.of(Pokeblocks.MOD_ID, PokeIDs.POKEDOLL_SHINY_CALYREX_ANIMATED),
 			new PokedollBlock<>(() -> PokedollShinyCalyrexAnimatedBlockEntity.class));
-	public static final Block POKEDOLL_BULBASAUR = Registry.register(Registries.BLOCK, new Identifier(Pokeblocks.MOD_ID, PokeIDs.POKEDOLL_BULBASAUR),
+	public static final Block POKEDOLL_BULBASAUR = Registry.register(Registries.BLOCK, Identifier.of(Pokeblocks.MOD_ID, PokeIDs.POKEDOLL_BULBASAUR),
 			new PokedollBlock<>(() -> PokedollBulbasaurBlockEntity.class));
-	public static final Block POKEDOLL_SHINY_BULBASAUR = Registry.register(Registries.BLOCK, new Identifier(Pokeblocks.MOD_ID, PokeIDs.POKEDOLL_SHINY_BULBASAUR),
+	public static final Block POKEDOLL_SHINY_BULBASAUR = Registry.register(Registries.BLOCK, Identifier.of(Pokeblocks.MOD_ID, PokeIDs.POKEDOLL_SHINY_BULBASAUR),
 			new PokedollBlock<>(() -> PokedollShinyBulbasaurBlockEntity.class));
-	public static final Block POKEDOLL_BULBASAUR_POSED = Registry.register(Registries.BLOCK, new Identifier(Pokeblocks.MOD_ID, PokeIDs.POKEDOLL_BULBASAUR_POSED),
+	public static final Block POKEDOLL_BULBASAUR_POSED = Registry.register(Registries.BLOCK, Identifier.of(Pokeblocks.MOD_ID, PokeIDs.POKEDOLL_BULBASAUR_POSED),
 			new PokedollBlock<>(() -> PokedollBulbasaurPosedBlockEntity.class));
-	public static final Block POKEDOLL_SHINY_BULBASAUR_POSED = Registry.register(Registries.BLOCK, new Identifier(Pokeblocks.MOD_ID, PokeIDs.POKEDOLL_SHINY_BULBASAUR_POSED),
+	public static final Block POKEDOLL_SHINY_BULBASAUR_POSED = Registry.register(Registries.BLOCK, Identifier.of(Pokeblocks.MOD_ID, PokeIDs.POKEDOLL_SHINY_BULBASAUR_POSED),
 			new PokedollBlock<>(() -> PokedollShinyBulbasaurPosedBlockEntity.class));
-	public static final Block POKEDOLL_SQUIRTLE = Registry.register(Registries.BLOCK, new Identifier(Pokeblocks.MOD_ID, PokeIDs.POKEDOLL_SQUIRTLE),
+	public static final Block POKEDOLL_SQUIRTLE = Registry.register(Registries.BLOCK, Identifier.of(Pokeblocks.MOD_ID, PokeIDs.POKEDOLL_SQUIRTLE),
 			new PokedollBlock<>(() -> PokedollSquirtleBlockEntity.class));
-	public static final Block POKEDOLL_SHINY_SQUIRTLE = Registry.register(Registries.BLOCK, new Identifier(Pokeblocks.MOD_ID, PokeIDs.POKEDOLL_SHINY_SQUIRTLE),
+	public static final Block POKEDOLL_SHINY_SQUIRTLE = Registry.register(Registries.BLOCK, Identifier.of(Pokeblocks.MOD_ID, PokeIDs.POKEDOLL_SHINY_SQUIRTLE),
 			new PokedollBlock<>(() -> PokedollShinySquirtleBlockEntity.class));
-	public static final Block POKEDOLL_CHARMANDER = Registry.register(Registries.BLOCK, new Identifier(Pokeblocks.MOD_ID, PokeIDs.POKEDOLL_CHARMANDER),
+	public static final Block POKEDOLL_CHARMANDER = Registry.register(Registries.BLOCK, Identifier.of(Pokeblocks.MOD_ID, PokeIDs.POKEDOLL_CHARMANDER),
 			new PokedollBlock<>(() -> PokedollCharmanderBlockEntity.class));
-	public static final Block POKEDOLL_SHINY_CHARMANDER = Registry.register(Registries.BLOCK, new Identifier(Pokeblocks.MOD_ID, PokeIDs.POKEDOLL_SHINY_CHARMANDER),
+	public static final Block POKEDOLL_SHINY_CHARMANDER = Registry.register(Registries.BLOCK, Identifier.of(Pokeblocks.MOD_ID, PokeIDs.POKEDOLL_SHINY_CHARMANDER),
 			new PokedollBlock<>(() -> PokedollShinyCharmanderBlockEntity.class));
-	public static final Block POKEDOLL_LICKITUNG = Registry.register(Registries.BLOCK, new Identifier(Pokeblocks.MOD_ID, PokeIDs.POKEDOLL_LICKITUNG),
+	public static final Block POKEDOLL_LICKITUNG = Registry.register(Registries.BLOCK, Identifier.of(Pokeblocks.MOD_ID, PokeIDs.POKEDOLL_LICKITUNG),
 			new PokedollBlock<>(() -> PokedollLickitungBlockEntity.class));
-	public static final Block POKEDOLL_SHINY_LICKITUNG = Registry.register(Registries.BLOCK, new Identifier(Pokeblocks.MOD_ID, PokeIDs.POKEDOLL_SHINY_LICKITUNG),
+	public static final Block POKEDOLL_SHINY_LICKITUNG = Registry.register(Registries.BLOCK, Identifier.of(Pokeblocks.MOD_ID, PokeIDs.POKEDOLL_SHINY_LICKITUNG),
 			new PokedollBlock<>(() -> PokedollShinyLickitungBlockEntity.class));
-	public static final Block POKEDOLL_MAREEP = Registry.register(Registries.BLOCK, new Identifier(Pokeblocks.MOD_ID, PokeIDs.POKEDOLL_MAREEP),
+	public static final Block POKEDOLL_MAREEP = Registry.register(Registries.BLOCK, Identifier.of(Pokeblocks.MOD_ID, PokeIDs.POKEDOLL_MAREEP),
 			new PokedollBlock<>(() -> PokedollMareepBlockEntity.class));
-	public static final Block POKEDOLL_SHINY_MAREEP = Registry.register(Registries.BLOCK, new Identifier(Pokeblocks.MOD_ID, PokeIDs.POKEDOLL_SHINY_MAREEP),
+	public static final Block POKEDOLL_SHINY_MAREEP = Registry.register(Registries.BLOCK, Identifier.of(Pokeblocks.MOD_ID, PokeIDs.POKEDOLL_SHINY_MAREEP),
 			new PokedollBlock<>(() -> PokedollShinyMareepBlockEntity.class));
-	public static final Block POKEDOLL_FLAAFFY = Registry.register(Registries.BLOCK, new Identifier(Pokeblocks.MOD_ID, PokeIDs.POKEDOLL_FLAAFFY),
+	public static final Block POKEDOLL_FLAAFFY = Registry.register(Registries.BLOCK, Identifier.of(Pokeblocks.MOD_ID, PokeIDs.POKEDOLL_FLAAFFY),
 			new PokedollBlock<>(() -> PokedollFlaaffyBlockEntity.class));
-	public static final Block POKEDOLL_SHINY_FLAAFFY = Registry.register(Registries.BLOCK, new Identifier(Pokeblocks.MOD_ID, PokeIDs.POKEDOLL_SHINY_FLAAFFY),
+	public static final Block POKEDOLL_SHINY_FLAAFFY = Registry.register(Registries.BLOCK, Identifier.of(Pokeblocks.MOD_ID, PokeIDs.POKEDOLL_SHINY_FLAAFFY),
 			new PokedollBlock<>(() -> PokedollShinyFlaaffyBlockEntity.class));
-	public static final Block POKEDOLL_SMOLIV = Registry.register(Registries.BLOCK, new Identifier(Pokeblocks.MOD_ID, PokeIDs.POKEDOLL_SMOLIV),
+	public static final Block POKEDOLL_SMOLIV = Registry.register(Registries.BLOCK, Identifier.of(Pokeblocks.MOD_ID, PokeIDs.POKEDOLL_SMOLIV),
 			new PokedollBlock<>(() -> PokedollSmolivBlockEntity.class));
-	public static final Block POKEDOLL_SHINY_SMOLIV = Registry.register(Registries.BLOCK, new Identifier(Pokeblocks.MOD_ID, PokeIDs.POKEDOLL_SHINY_SMOLIV),
+	public static final Block POKEDOLL_SHINY_SMOLIV = Registry.register(Registries.BLOCK, Identifier.of(Pokeblocks.MOD_ID, PokeIDs.POKEDOLL_SHINY_SMOLIV),
 			new PokedollBlock<>(() -> PokedollShinySmolivBlockEntity.class));
-	public static final Block POKEDOLL_DOLLIV = Registry.register(Registries.BLOCK, new Identifier(Pokeblocks.MOD_ID, PokeIDs.POKEDOLL_DOLLIV),
+	public static final Block POKEDOLL_DOLLIV = Registry.register(Registries.BLOCK, Identifier.of(Pokeblocks.MOD_ID, PokeIDs.POKEDOLL_DOLLIV),
 			new PokedollBlock<>(() -> PokedollDollivBlockEntity.class));
-	public static final Block POKEDOLL_SHINY_DOLLIV = Registry.register(Registries.BLOCK, new Identifier(Pokeblocks.MOD_ID, PokeIDs.POKEDOLL_SHINY_DOLLIV),
+	public static final Block POKEDOLL_SHINY_DOLLIV = Registry.register(Registries.BLOCK, Identifier.of(Pokeblocks.MOD_ID, PokeIDs.POKEDOLL_SHINY_DOLLIV),
 			new PokedollBlock<>(() -> PokedollShinyDollivBlockEntity.class));
-	public static final Block POKEDOLL_ARBOLIVA = Registry.register(Registries.BLOCK, new Identifier(Pokeblocks.MOD_ID, PokeIDs.POKEDOLL_ARBOLIVA),
+	public static final Block POKEDOLL_ARBOLIVA = Registry.register(Registries.BLOCK, Identifier.of(Pokeblocks.MOD_ID, PokeIDs.POKEDOLL_ARBOLIVA),
 			new PokedollBlock<>(() -> PokedollArbolivaBlockEntity.class));
-	public static final Block POKEDOLL_SHINY_ARBOLIVA = Registry.register(Registries.BLOCK, new Identifier(Pokeblocks.MOD_ID, PokeIDs.POKEDOLL_SHINY_ARBOLIVA),
+	public static final Block POKEDOLL_SHINY_ARBOLIVA = Registry.register(Registries.BLOCK, Identifier.of(Pokeblocks.MOD_ID, PokeIDs.POKEDOLL_SHINY_ARBOLIVA),
 			new PokedollBlock<>(() -> PokedollShinyArbolivaBlockEntity.class));
-	public static final Block POKEDOLL_WASHING_MACHINE = Registry.register(Registries.BLOCK, new Identifier(Pokeblocks.MOD_ID, PokeIDs.POKEDOLL_WASHING_MACHINE),
+	public static final Block POKEDOLL_WASHING_MACHINE = Registry.register(Registries.BLOCK, Identifier.of(Pokeblocks.MOD_ID, PokeIDs.POKEDOLL_WASHING_MACHINE),
 			new PokedollBlock<>(() -> PokedollWashingMachineBlockEntity.class) {
 				@Override
-				public ActionResult onUse(BlockState state, World world, BlockPos pos, PlayerEntity player, Hand hand, BlockHitResult hit) {
+				protected ActionResult onUse(BlockState state, World world, BlockPos pos, PlayerEntity player, BlockHitResult hit) {
 					world.playSound(player, pos, SoundEvents.BLOCK_WATER_AMBIENT, SoundCategory.BLOCKS, 1f, 1f);
 
 					if (world.random.nextDouble() < 0.5) {
@@ -339,63 +337,63 @@ public class ModBlocks {
 					return ActionResult.SUCCESS;
 				}
 			});
-	public static final Block POKEDOLL_SNORLAX = Registry.register(Registries.BLOCK, new Identifier(Pokeblocks.MOD_ID, PokeIDs.POKEDOLL_SNORLAX),
+	public static final Block POKEDOLL_SNORLAX = Registry.register(Registries.BLOCK, Identifier.of(Pokeblocks.MOD_ID, PokeIDs.POKEDOLL_SNORLAX),
 			new PokedollBlock<>(() -> PokedollSnorlaxBlockEntity.class));
-	public static final Block POKEDOLL_SHINY_SNORLAX = Registry.register(Registries.BLOCK, new Identifier(Pokeblocks.MOD_ID, PokeIDs.POKEDOLL_SHINY_SNORLAX),
+	public static final Block POKEDOLL_SHINY_SNORLAX = Registry.register(Registries.BLOCK, Identifier.of(Pokeblocks.MOD_ID, PokeIDs.POKEDOLL_SHINY_SNORLAX),
 			new PokedollBlock<>(() -> PokedollShinySnorlaxBlockEntity.class));
-	public static final Block POKEDOLL_AMPHAROS = Registry.register(Registries.BLOCK, new Identifier(Pokeblocks.MOD_ID, PokeIDs.POKEDOLL_AMPHAROS),
+	public static final Block POKEDOLL_AMPHAROS = Registry.register(Registries.BLOCK, Identifier.of(Pokeblocks.MOD_ID, PokeIDs.POKEDOLL_AMPHAROS),
 			new PokedollBlock<>(() -> PokedollAmpharosBlockEntity.class));
-	public static final Block POKEDOLL_SHINY_AMPHAROS = Registry.register(Registries.BLOCK, new Identifier(Pokeblocks.MOD_ID, PokeIDs.POKEDOLL_SHINY_AMPHAROS),
+	public static final Block POKEDOLL_SHINY_AMPHAROS = Registry.register(Registries.BLOCK, Identifier.of(Pokeblocks.MOD_ID, PokeIDs.POKEDOLL_SHINY_AMPHAROS),
 			new PokedollBlock<>(() -> PokedollShinyAmpharosBlockEntity.class));
-	public static final Block POKEDOLL_SENTRET = Registry.register(Registries.BLOCK, new Identifier(Pokeblocks.MOD_ID, PokeIDs.POKEDOLL_SENTRET),
+	public static final Block POKEDOLL_SENTRET = Registry.register(Registries.BLOCK, Identifier.of(Pokeblocks.MOD_ID, PokeIDs.POKEDOLL_SENTRET),
 			new PokedollBlock<>(() -> PokedollSentretBlockEntity.class));
-	public static final Block POKEDOLL_SHINY_SENTRET = Registry.register(Registries.BLOCK, new Identifier(Pokeblocks.MOD_ID, PokeIDs.POKEDOLL_SHINY_SENTRET),
+	public static final Block POKEDOLL_SHINY_SENTRET = Registry.register(Registries.BLOCK, Identifier.of(Pokeblocks.MOD_ID, PokeIDs.POKEDOLL_SHINY_SENTRET),
 			new PokedollBlock<>(() -> PokedollShinySentretBlockEntity.class));
-	public static final Block POKEDOLL_FURRET = Registry.register(Registries.BLOCK, new Identifier(Pokeblocks.MOD_ID, PokeIDs.POKEDOLL_FURRET),
+	public static final Block POKEDOLL_FURRET = Registry.register(Registries.BLOCK, Identifier.of(Pokeblocks.MOD_ID, PokeIDs.POKEDOLL_FURRET),
 			new PokedollBlock<>(() -> PokedollFurretBlockEntity.class));
-	public static final Block POKEDOLL_SHINY_FURRET = Registry.register(Registries.BLOCK, new Identifier(Pokeblocks.MOD_ID, PokeIDs.POKEDOLL_SHINY_FURRET),
+	public static final Block POKEDOLL_SHINY_FURRET = Registry.register(Registries.BLOCK, Identifier.of(Pokeblocks.MOD_ID, PokeIDs.POKEDOLL_SHINY_FURRET),
 			new PokedollBlock<>(() -> PokedollShinyFurretBlockEntity.class));
-	public static final Block POKEDOLL_APPLIN_BASKET = Registry.register(Registries.BLOCK, new Identifier(Pokeblocks.MOD_ID, PokeIDs.APPLIN_BASKET),
+	public static final Block POKEDOLL_APPLIN_BASKET = Registry.register(Registries.BLOCK, Identifier.of(Pokeblocks.MOD_ID, PokeIDs.APPLIN_BASKET),
 			new PokedollBlock<>(Blocks.OAK_PLANKS, null, () -> PokedollApplinBasketBlockEntity.class));
-	public static final Block POKEDOLL_SHINY_APPLIN_BASKET = Registry.register(Registries.BLOCK, new Identifier(Pokeblocks.MOD_ID, PokeIDs.SHINY_APPLIN_BASKET),
+	public static final Block POKEDOLL_SHINY_APPLIN_BASKET = Registry.register(Registries.BLOCK, Identifier.of(Pokeblocks.MOD_ID, PokeIDs.SHINY_APPLIN_BASKET),
 			new PokedollBlock<>(Blocks.OAK_PLANKS, null, () -> PokedollShinyApplinBasketBlockEntity.class));
-	public static final Block POKEDOLL_MUNCHLAX = Registry.register(Registries.BLOCK, new Identifier(Pokeblocks.MOD_ID, PokeIDs.POKEDOLL_MUNCHLAX),
+	public static final Block POKEDOLL_MUNCHLAX = Registry.register(Registries.BLOCK, Identifier.of(Pokeblocks.MOD_ID, PokeIDs.POKEDOLL_MUNCHLAX),
 			new PokedollBlock<>(() -> PokedollMunchlaxBlockEntity.class));
-	public static final Block POKEDOLL_SHINY_MUNCHLAX = Registry.register(Registries.BLOCK, new Identifier(Pokeblocks.MOD_ID, PokeIDs.POKEDOLL_SHINY_MUNCHLAX),
+	public static final Block POKEDOLL_SHINY_MUNCHLAX = Registry.register(Registries.BLOCK, Identifier.of(Pokeblocks.MOD_ID, PokeIDs.POKEDOLL_SHINY_MUNCHLAX),
 			new PokedollBlock<>(() -> PokedollShinyMunchlaxBlockEntity.class));
-	public static final Block POKEDOLL_RABSCA = Registry.register(Registries.BLOCK, new Identifier(Pokeblocks.MOD_ID, PokeIDs.POKEDOLL_RABSCA),
+	public static final Block POKEDOLL_RABSCA = Registry.register(Registries.BLOCK, Identifier.of(Pokeblocks.MOD_ID, PokeIDs.POKEDOLL_RABSCA),
 			new PokedollBlock<>(() -> PokedollRabscaBlockEntity.class));
-	public static final Block POKEDOLL_SHINY_RABSCA = Registry.register(Registries.BLOCK, new Identifier(Pokeblocks.MOD_ID, PokeIDs.POKEDOLL_SHINY_RABSCA),
+	public static final Block POKEDOLL_SHINY_RABSCA = Registry.register(Registries.BLOCK, Identifier.of(Pokeblocks.MOD_ID, PokeIDs.POKEDOLL_SHINY_RABSCA),
 			new PokedollBlock<>(() -> PokedollShinyRabscaBlockEntity.class));
-	public static final Block POKEDOLL_RELLOR = Registry.register(Registries.BLOCK, new Identifier(Pokeblocks.MOD_ID, PokeIDs.POKEDOLL_RELLOR),
+	public static final Block POKEDOLL_RELLOR = Registry.register(Registries.BLOCK, Identifier.of(Pokeblocks.MOD_ID, PokeIDs.POKEDOLL_RELLOR),
 			new PokedollBlock<>(() -> PokedollRellorBlockEntity.class));
-	public static final Block POKEDOLL_SHINY_RELLOR = Registry.register(Registries.BLOCK, new Identifier(Pokeblocks.MOD_ID, PokeIDs.POKEDOLL_SHINY_RELLOR),
+	public static final Block POKEDOLL_SHINY_RELLOR = Registry.register(Registries.BLOCK, Identifier.of(Pokeblocks.MOD_ID, PokeIDs.POKEDOLL_SHINY_RELLOR),
 			new PokedollBlock<>(() -> PokedollShinyRellorBlockEntity.class));
-	public static final Block POKEDOLL_WARTORTLE = Registry.register(Registries.BLOCK, new Identifier(Pokeblocks.MOD_ID, PokeIDs.POKEDOLL_WARTORTLE),
+	public static final Block POKEDOLL_WARTORTLE = Registry.register(Registries.BLOCK, Identifier.of(Pokeblocks.MOD_ID, PokeIDs.POKEDOLL_WARTORTLE),
 			new PokedollBlock<>(() -> PokedollWartortleBlockEntity.class));
-	public static final Block POKEDOLL_SHINY_WARTORTLE = Registry.register(Registries.BLOCK, new Identifier(Pokeblocks.MOD_ID, PokeIDs.POKEDOLL_SHINY_WARTORTLE),
+	public static final Block POKEDOLL_SHINY_WARTORTLE = Registry.register(Registries.BLOCK, Identifier.of(Pokeblocks.MOD_ID, PokeIDs.POKEDOLL_SHINY_WARTORTLE),
 			new PokedollBlock<>(() -> PokedollShinyWartortleBlockEntity.class));
-	public static final Block POKEDOLL_SABLEYE = Registry.register(Registries.BLOCK, new Identifier(Pokeblocks.MOD_ID, PokeIDs.POKEDOLL_SABLEYE),
+	public static final Block POKEDOLL_SABLEYE = Registry.register(Registries.BLOCK, Identifier.of(Pokeblocks.MOD_ID, PokeIDs.POKEDOLL_SABLEYE),
 			new PokedollBlock<>(() -> PokedollSableyeBlockEntity.class));
-	public static final Block POKEDOLL_SHINY_SABLEYE = Registry.register(Registries.BLOCK, new Identifier(Pokeblocks.MOD_ID, PokeIDs.POKEDOLL_SHINY_SABLEYE),
+	public static final Block POKEDOLL_SHINY_SABLEYE = Registry.register(Registries.BLOCK, Identifier.of(Pokeblocks.MOD_ID, PokeIDs.POKEDOLL_SHINY_SABLEYE),
 			new PokedollBlock<>(() -> PokedollShinySableyeBlockEntity.class));
-	public static final Block POKEDOLL_ABSOL = Registry.register(Registries.BLOCK, new Identifier(Pokeblocks.MOD_ID, PokeIDs.POKEDOLL_ABSOL),
+	public static final Block POKEDOLL_ABSOL = Registry.register(Registries.BLOCK, Identifier.of(Pokeblocks.MOD_ID, PokeIDs.POKEDOLL_ABSOL),
 			new PokedollBlock<>(() -> PokedollAbsolBlockEntity.class));
-	public static final Block POKEDOLL_SHINY_ABSOL = Registry.register(Registries.BLOCK, new Identifier(Pokeblocks.MOD_ID, PokeIDs.POKEDOLL_SHINY_ABSOL),
+	public static final Block POKEDOLL_SHINY_ABSOL = Registry.register(Registries.BLOCK, Identifier.of(Pokeblocks.MOD_ID, PokeIDs.POKEDOLL_SHINY_ABSOL),
 			new PokedollBlock<>(() -> PokedollShinyAbsolBlockEntity.class));
-	public static final Block POKEDOLL_HAPPINY = Registry.register(Registries.BLOCK, new Identifier(Pokeblocks.MOD_ID, PokeIDs.POKEDOLL_HAPPINY),
+	public static final Block POKEDOLL_HAPPINY = Registry.register(Registries.BLOCK, Identifier.of(Pokeblocks.MOD_ID, PokeIDs.POKEDOLL_HAPPINY),
 			new PokedollBlock<>(() -> PokedollHappinyBlockEntity.class));
-	public static final Block POKEDOLL_SHINY_HAPPINY = Registry.register(Registries.BLOCK, new Identifier(Pokeblocks.MOD_ID, PokeIDs.POKEDOLL_SHINY_HAPPINY),
+	public static final Block POKEDOLL_SHINY_HAPPINY = Registry.register(Registries.BLOCK, Identifier.of(Pokeblocks.MOD_ID, PokeIDs.POKEDOLL_SHINY_HAPPINY),
 			new PokedollBlock<>(() -> PokedollShinyHappinyBlockEntity.class));
-	public static final Block POKEDOLL_IVYSAUR = Registry.register(Registries.BLOCK, new Identifier(Pokeblocks.MOD_ID, PokeIDs.POKEDOLL_IVYSAUR),
+	public static final Block POKEDOLL_IVYSAUR = Registry.register(Registries.BLOCK, Identifier.of(Pokeblocks.MOD_ID, PokeIDs.POKEDOLL_IVYSAUR),
 			new PokedollBlock<>(() -> PokedollIvysaurBlockEntity.class));
-	public static final Block POKEDOLL_SHINY_IVYSAUR = Registry.register(Registries.BLOCK, new Identifier(Pokeblocks.MOD_ID, PokeIDs.POKEDOLL_SHINY_IVYSAUR),
+	public static final Block POKEDOLL_SHINY_IVYSAUR = Registry.register(Registries.BLOCK, Identifier.of(Pokeblocks.MOD_ID, PokeIDs.POKEDOLL_SHINY_IVYSAUR),
 			new PokedollBlock<>(() -> PokedollShinyIvysaurBlockEntity.class));
-	public static final Block POKEDOLL_VENUSAUR = Registry.register(Registries.BLOCK, new Identifier(Pokeblocks.MOD_ID, PokeIDs.POKEDOLL_VENUSAUR),
+	public static final Block POKEDOLL_VENUSAUR = Registry.register(Registries.BLOCK, Identifier.of(Pokeblocks.MOD_ID, PokeIDs.POKEDOLL_VENUSAUR),
 			new PokedollBlock<>(() -> PokedollVenusaurBlockEntity.class));
-	public static final Block POKEDOLL_SHINY_VENUSAUR = Registry.register(Registries.BLOCK, new Identifier(Pokeblocks.MOD_ID, PokeIDs.POKEDOLL_SHINY_VENUSAUR),
+	public static final Block POKEDOLL_SHINY_VENUSAUR = Registry.register(Registries.BLOCK, Identifier.of(Pokeblocks.MOD_ID, PokeIDs.POKEDOLL_SHINY_VENUSAUR),
 			new PokedollBlock<>(() -> PokedollShinyVenusaurBlockEntity.class));
-	public static final Block POKEDOLL_MAGIKARP_FISHBOWL = Registry.register(Registries.BLOCK, new Identifier(Pokeblocks.MOD_ID, PokeIDs.MAGIKARP_FISHBOWL),
+	public static final Block POKEDOLL_MAGIKARP_FISHBOWL = Registry.register(Registries.BLOCK, Identifier.of(Pokeblocks.MOD_ID, PokeIDs.MAGIKARP_FISHBOWL),
 			new PokedollBlock<>(Blocks.GLASS, () -> PokedollMagikarpFishbowlBlockEntity.class) {
 				@Override
 				public void onBroken(WorldAccess world, BlockPos pos, BlockState state) {
@@ -410,7 +408,7 @@ public class ModBlocks {
 				}
 			}
 	);
-	public static final Block POKEDOLL_SHINY_MAGIKARP_FISHBOWL = Registry.register(Registries.BLOCK, new Identifier(Pokeblocks.MOD_ID, PokeIDs.SHINY_MAGIKARP_FISHBOWL),
+	public static final Block POKEDOLL_SHINY_MAGIKARP_FISHBOWL = Registry.register(Registries.BLOCK, Identifier.of(Pokeblocks.MOD_ID, PokeIDs.SHINY_MAGIKARP_FISHBOWL),
 			new PokedollBlock<>(Blocks.GLASS, () -> PokedollShinyMagikarpFishbowlBlockEntity.class) {
 				@Override
 				public void onBroken(WorldAccess world, BlockPos pos, BlockState state) {
@@ -424,295 +422,295 @@ public class ModBlocks {
 					}
 				}
 			});
-	public static final Block POKEDOLL_POKEMON_TROPHY = Registry.register(Registries.BLOCK, new Identifier(Pokeblocks.MOD_ID, PokeIDs.POKEMON_TROPHY),
+	public static final Block POKEDOLL_POKEMON_TROPHY = Registry.register(Registries.BLOCK, Identifier.of(Pokeblocks.MOD_ID, PokeIDs.POKEMON_TROPHY),
 			new PokedollBlock<>(Blocks.GOLD_BLOCK, Shapes.TROPHY_SHAPE, () -> PokedollPokemonTrophyBlockEntity.class));
-	public static final Block POKEDOLL_BLASTOISE = Registry.register(Registries.BLOCK, new Identifier(Pokeblocks.MOD_ID, PokeIDs.POKEDOLL_BLASTOISE),
+	public static final Block POKEDOLL_BLASTOISE = Registry.register(Registries.BLOCK, Identifier.of(Pokeblocks.MOD_ID, PokeIDs.POKEDOLL_BLASTOISE),
 			new PokedollBlock<>(() -> PokedollBlastoiseBlockEntity.class));
-	public static final Block POKEDOLL_SHINY_BLASTOISE = Registry.register(Registries.BLOCK, new Identifier(Pokeblocks.MOD_ID, PokeIDs.POKEDOLL_SHINY_BLASTOISE),
+	public static final Block POKEDOLL_SHINY_BLASTOISE = Registry.register(Registries.BLOCK, Identifier.of(Pokeblocks.MOD_ID, PokeIDs.POKEDOLL_SHINY_BLASTOISE),
 			new PokedollBlock<>(() -> PokedollShinyBlastoiseBlockEntity.class));
-	public static final Block POKEDOLL_SWINUB = Registry.register(Registries.BLOCK, new Identifier(Pokeblocks.MOD_ID, PokeIDs.POKEDOLL_SWINUB),
+	public static final Block POKEDOLL_SWINUB = Registry.register(Registries.BLOCK, Identifier.of(Pokeblocks.MOD_ID, PokeIDs.POKEDOLL_SWINUB),
 			new PokedollBlock<>(() -> PokedollSwinubBlockEntity.class));
-	public static final Block POKEDOLL_SHINY_SWINUB = Registry.register(Registries.BLOCK, new Identifier(Pokeblocks.MOD_ID, PokeIDs.POKEDOLL_SHINY_SWINUB),
+	public static final Block POKEDOLL_SHINY_SWINUB = Registry.register(Registries.BLOCK, Identifier.of(Pokeblocks.MOD_ID, PokeIDs.POKEDOLL_SHINY_SWINUB),
 			new PokedollBlock<>(() -> PokedollShinySwinubBlockEntity.class));
-	public static final Block POKEDOLL_AIRUHSEA_FIGURINE = Registry.register(Registries.BLOCK, new Identifier(Pokeblocks.MOD_ID, PokeIDs.AIRUHSEA_FIGURINE),
+	public static final Block POKEDOLL_AIRUHSEA_FIGURINE = Registry.register(Registries.BLOCK, Identifier.of(Pokeblocks.MOD_ID, PokeIDs.AIRUHSEA_FIGURINE),
 			new PokedollBlock<>(Shapes.FIGURINE_SHAPE, () -> PokedollAiruhseaFigurineBlockEntity.class));
-	public static final Block POKEDOLL_DAMORGO_FIGURINE = Registry.register(Registries.BLOCK, new Identifier(Pokeblocks.MOD_ID, PokeIDs.DAMORGO_FIGURINE),
+	public static final Block POKEDOLL_DAMORGO_FIGURINE = Registry.register(Registries.BLOCK, Identifier.of(Pokeblocks.MOD_ID, PokeIDs.DAMORGO_FIGURINE),
 			new PokedollBlock<>(Shapes.FIGURINE_SHAPE, () -> PokedollDamorgoFigurineBlockEntity.class));
-	public static final Block POKEDOLL_DONCHEADLE_FIGURINE = Registry.register(Registries.BLOCK, new Identifier(Pokeblocks.MOD_ID, PokeIDs.DONCHEADLE_FIGURINE),
+	public static final Block POKEDOLL_DONCHEADLE_FIGURINE = Registry.register(Registries.BLOCK, Identifier.of(Pokeblocks.MOD_ID, PokeIDs.DONCHEADLE_FIGURINE),
 			new PokedollBlock<>(Shapes.FIGURINE_SHAPE, () -> PokedollDoncheadleFigurineBlockEntity.class));
-	public static final Block POKEDOLL_WOOPER = Registry.register(Registries.BLOCK, new Identifier(Pokeblocks.MOD_ID, PokeIDs.POKEDOLL_WOOPER),
+	public static final Block POKEDOLL_WOOPER = Registry.register(Registries.BLOCK, Identifier.of(Pokeblocks.MOD_ID, PokeIDs.POKEDOLL_WOOPER),
 			new PokedollBlock<>(() -> PokedollWooperBlockEntity.class));
-	public static final Block POKEDOLL_SHINY_WOOPER = Registry.register(Registries.BLOCK, new Identifier(Pokeblocks.MOD_ID, PokeIDs.POKEDOLL_SHINY_WOOPER),
+	public static final Block POKEDOLL_SHINY_WOOPER = Registry.register(Registries.BLOCK, Identifier.of(Pokeblocks.MOD_ID, PokeIDs.POKEDOLL_SHINY_WOOPER),
 			new PokedollBlock<>(() -> PokedollShinyWooperBlockEntity.class));
-	public static final Block POKEDOLL_QUAGSIRE = Registry.register(Registries.BLOCK, new Identifier(Pokeblocks.MOD_ID, PokeIDs.POKEDOLL_QUAGSIRE),
+	public static final Block POKEDOLL_QUAGSIRE = Registry.register(Registries.BLOCK, Identifier.of(Pokeblocks.MOD_ID, PokeIDs.POKEDOLL_QUAGSIRE),
 			new PokedollBlock<>(() -> PokedollQuagsireBlockEntity.class));
-	public static final Block POKEDOLL_SHINY_QUAGSIRE = Registry.register(Registries.BLOCK, new Identifier(Pokeblocks.MOD_ID, PokeIDs.POKEDOLL_SHINY_QUAGSIRE),
+	public static final Block POKEDOLL_SHINY_QUAGSIRE = Registry.register(Registries.BLOCK, Identifier.of(Pokeblocks.MOD_ID, PokeIDs.POKEDOLL_SHINY_QUAGSIRE),
 			new PokedollBlock<>(() -> PokedollShinyQuagsireBlockEntity.class));
 
-	public static final Block POKEDOLL_GASTLY = Registry.register(Registries.BLOCK, new Identifier(Pokeblocks.MOD_ID, PokeIDs.POKEDOLL_GASTLY),
+	public static final Block POKEDOLL_GASTLY = Registry.register(Registries.BLOCK, Identifier.of(Pokeblocks.MOD_ID, PokeIDs.POKEDOLL_GASTLY),
 			new PokedollBlock<>(() -> PokedollGastlyBlockEntity.class));
-	public static final Block POKEDOLL_SHINY_GASTLY = Registry.register(Registries.BLOCK, new Identifier(Pokeblocks.MOD_ID, PokeIDs.POKEDOLL_SHINY_GASTLY),
+	public static final Block POKEDOLL_SHINY_GASTLY = Registry.register(Registries.BLOCK, Identifier.of(Pokeblocks.MOD_ID, PokeIDs.POKEDOLL_SHINY_GASTLY),
 			new PokedollBlock<>(() -> PokedollShinyGastlyBlockEntity.class));
 
-	public static final Block POKEDOLL_GENGAR = Registry.register(Registries.BLOCK, new Identifier(Pokeblocks.MOD_ID, PokeIDs.POKEDOLL_GENGAR),
+	public static final Block POKEDOLL_GENGAR = Registry.register(Registries.BLOCK, Identifier.of(Pokeblocks.MOD_ID, PokeIDs.POKEDOLL_GENGAR),
 			new PokedollBlock<>(() -> PokedollGengarBlockEntity.class));
-	public static final Block POKEDOLL_SHINY_GENGAR = Registry.register(Registries.BLOCK, new Identifier(Pokeblocks.MOD_ID, PokeIDs.POKEDOLL_SHINY_GENGAR),
+	public static final Block POKEDOLL_SHINY_GENGAR = Registry.register(Registries.BLOCK, Identifier.of(Pokeblocks.MOD_ID, PokeIDs.POKEDOLL_SHINY_GENGAR),
 			new PokedollBlock<>(() -> PokedollShinyGengarBlockEntity.class));
 
-	public static final Block POKEDOLL_DRIFLOON = Registry.register(Registries.BLOCK, new Identifier(Pokeblocks.MOD_ID, PokeIDs.POKEDOLL_DRIFLOON),
+	public static final Block POKEDOLL_DRIFLOON = Registry.register(Registries.BLOCK, Identifier.of(Pokeblocks.MOD_ID, PokeIDs.POKEDOLL_DRIFLOON),
 			new PokedollBlock<>(() -> PokedollDrifloonBlockEntity.class));
-	public static final Block POKEDOLL_SHINY_DRIFLOON = Registry.register(Registries.BLOCK, new Identifier(Pokeblocks.MOD_ID, PokeIDs.POKEDOLL_SHINY_DRIFLOON),
+	public static final Block POKEDOLL_SHINY_DRIFLOON = Registry.register(Registries.BLOCK, Identifier.of(Pokeblocks.MOD_ID, PokeIDs.POKEDOLL_SHINY_DRIFLOON),
 			new PokedollBlock<>(() -> PokedollShinyDrifloonBlockEntity.class));
 
-	public static final Block POKEDOLL_ROOKIDEE = Registry.register(Registries.BLOCK, new Identifier(Pokeblocks.MOD_ID, PokeIDs.POKEDOLL_ROOKIDEE),
+	public static final Block POKEDOLL_ROOKIDEE = Registry.register(Registries.BLOCK, Identifier.of(Pokeblocks.MOD_ID, PokeIDs.POKEDOLL_ROOKIDEE),
 			new PokedollBlock<>(() -> PokedollRookideeBlockEntity.class));
-	public static final Block POKEDOLL_SHINY_ROOKIDEE = Registry.register(Registries.BLOCK, new Identifier(Pokeblocks.MOD_ID, PokeIDs.POKEDOLL_SHINY_ROOKIDEE),
+	public static final Block POKEDOLL_SHINY_ROOKIDEE = Registry.register(Registries.BLOCK, Identifier.of(Pokeblocks.MOD_ID, PokeIDs.POKEDOLL_SHINY_ROOKIDEE),
 			new PokedollBlock<>(() -> PokedollShinyRookideeBlockEntity.class));
 
-	public static final Block POKEDOLL_CORVISQUIRE = Registry.register(Registries.BLOCK, new Identifier(Pokeblocks.MOD_ID, PokeIDs.POKEDOLL_CORVISQUIRE),
+	public static final Block POKEDOLL_CORVISQUIRE = Registry.register(Registries.BLOCK, Identifier.of(Pokeblocks.MOD_ID, PokeIDs.POKEDOLL_CORVISQUIRE),
 			new PokedollBlock<>(() -> PokedollCorvisquireBlockEntity.class));
-	public static final Block POKEDOLL_SHINY_CORVISQUIRE = Registry.register(Registries.BLOCK, new Identifier(Pokeblocks.MOD_ID, PokeIDs.POKEDOLL_SHINY_CORVISQUIRE),
+	public static final Block POKEDOLL_SHINY_CORVISQUIRE = Registry.register(Registries.BLOCK, Identifier.of(Pokeblocks.MOD_ID, PokeIDs.POKEDOLL_SHINY_CORVISQUIRE),
 			new PokedollBlock<>(() -> PokedollShinyCorvisquireBlockEntity.class));
 
-	public static final Block POKEDOLL_CORVIKNIGHT = Registry.register(Registries.BLOCK, new Identifier(Pokeblocks.MOD_ID, PokeIDs.POKEDOLL_CORVIKNIGHT),
+	public static final Block POKEDOLL_CORVIKNIGHT = Registry.register(Registries.BLOCK, Identifier.of(Pokeblocks.MOD_ID, PokeIDs.POKEDOLL_CORVIKNIGHT),
 			new PokedollBlock<>(() -> PokedollCorviknightBlockEntity.class));
-	public static final Block POKEDOLL_SHINY_CORVIKNIGHT = Registry.register(Registries.BLOCK, new Identifier(Pokeblocks.MOD_ID, PokeIDs.POKEDOLL_SHINY_CORVIKNIGHT),
+	public static final Block POKEDOLL_SHINY_CORVIKNIGHT = Registry.register(Registries.BLOCK, Identifier.of(Pokeblocks.MOD_ID, PokeIDs.POKEDOLL_SHINY_CORVIKNIGHT),
 			new PokedollBlock<>(() -> PokedollShinyCorviknightBlockEntity.class));
 
-	public static final Block POKEDOLL_STONJOURNER = Registry.register(Registries.BLOCK, new Identifier(Pokeblocks.MOD_ID, PokeIDs.POKEDOLL_STONJOURNER),
+	public static final Block POKEDOLL_STONJOURNER = Registry.register(Registries.BLOCK, Identifier.of(Pokeblocks.MOD_ID, PokeIDs.POKEDOLL_STONJOURNER),
 			new PokedollBlock<>(() -> PokedollStonjournerBlockEntity.class));
-	public static final Block POKEDOLL_SHINY_STONJOURNER = Registry.register(Registries.BLOCK, new Identifier(Pokeblocks.MOD_ID, PokeIDs.POKEDOLL_SHINY_STONJOURNER),
+	public static final Block POKEDOLL_SHINY_STONJOURNER = Registry.register(Registries.BLOCK, Identifier.of(Pokeblocks.MOD_ID, PokeIDs.POKEDOLL_SHINY_STONJOURNER),
 			new PokedollBlock<>(() -> PokedollShinyStonjournerBlockEntity.class));
 
-	public static final Block POKEDOLL_EEVEE = Registry.register(Registries.BLOCK, new Identifier(Pokeblocks.MOD_ID, PokeIDs.POKEDOLL_EEVEE),
+	public static final Block POKEDOLL_EEVEE = Registry.register(Registries.BLOCK, Identifier.of(Pokeblocks.MOD_ID, PokeIDs.POKEDOLL_EEVEE),
 			new PokedollBlock<>(() -> PokedollEeveeBlockEntity.class));
-	public static final Block POKEDOLL_SHINY_EEVEE = Registry.register(Registries.BLOCK, new Identifier(Pokeblocks.MOD_ID, PokeIDs.POKEDOLL_SHINY_EEVEE),
+	public static final Block POKEDOLL_SHINY_EEVEE = Registry.register(Registries.BLOCK, Identifier.of(Pokeblocks.MOD_ID, PokeIDs.POKEDOLL_SHINY_EEVEE),
 			new PokedollBlock<>(() -> PokedollShinyEeveeBlockEntity.class));
 
-	public static final Block POKEDOLL_SANDYGAST = Registry.register(Registries.BLOCK, new Identifier(Pokeblocks.MOD_ID, PokeIDs.POKEDOLL_SANDYGAST),
+	public static final Block POKEDOLL_SANDYGAST = Registry.register(Registries.BLOCK, Identifier.of(Pokeblocks.MOD_ID, PokeIDs.POKEDOLL_SANDYGAST),
 			new PokedollBlock<>(() -> PokedollSandygastBlockEntity.class));
-	public static final Block POKEDOLL_SHINY_SANDYGAST = Registry.register(Registries.BLOCK, new Identifier(Pokeblocks.MOD_ID, PokeIDs.POKEDOLL_SHINY_SANDYGAST),
+	public static final Block POKEDOLL_SHINY_SANDYGAST = Registry.register(Registries.BLOCK, Identifier.of(Pokeblocks.MOD_ID, PokeIDs.POKEDOLL_SHINY_SANDYGAST),
 			new PokedollBlock<>(() -> PokedollShinySandygastBlockEntity.class));
 
-	public static final Block POKEDOLL_PALOSSAND = Registry.register(Registries.BLOCK, new Identifier(Pokeblocks.MOD_ID, PokeIDs.POKEDOLL_PALOSSAND),
+	public static final Block POKEDOLL_PALOSSAND = Registry.register(Registries.BLOCK, Identifier.of(Pokeblocks.MOD_ID, PokeIDs.POKEDOLL_PALOSSAND),
 			new PokedollBlock<>(() -> PokedollPalossandBlockEntity.class));
-	public static final Block POKEDOLL_SHINY_PALOSSAND = Registry.register(Registries.BLOCK, new Identifier(Pokeblocks.MOD_ID, PokeIDs.POKEDOLL_SHINY_PALOSSAND),
+	public static final Block POKEDOLL_SHINY_PALOSSAND = Registry.register(Registries.BLOCK, Identifier.of(Pokeblocks.MOD_ID, PokeIDs.POKEDOLL_SHINY_PALOSSAND),
 			new PokedollBlock<>(() -> PokedollShinyPalossandBlockEntity.class));
 
-	public static final Block POKEDOLL_GHOLDENGO = Registry.register(Registries.BLOCK, new Identifier(Pokeblocks.MOD_ID, PokeIDs.POKEDOLL_GHOLDENGO),
+	public static final Block POKEDOLL_GHOLDENGO = Registry.register(Registries.BLOCK, Identifier.of(Pokeblocks.MOD_ID, PokeIDs.POKEDOLL_GHOLDENGO),
 			new PokedollBlock<>(() -> PokedollGholdengoBlockEntity.class));
-	public static final Block POKEDOLL_SHINY_GHOLDENGO = Registry.register(Registries.BLOCK, new Identifier(Pokeblocks.MOD_ID, PokeIDs.POKEDOLL_SHINY_GHOLDENGO),
+	public static final Block POKEDOLL_SHINY_GHOLDENGO = Registry.register(Registries.BLOCK, Identifier.of(Pokeblocks.MOD_ID, PokeIDs.POKEDOLL_SHINY_GHOLDENGO),
 			new PokedollBlock<>(() -> PokedollShinyGholdengoBlockEntity.class));
-	public static final Block POKEDOLL_NETHERITE_GHOLDENGO = Registry.register(Registries.BLOCK, new Identifier(Pokeblocks.MOD_ID, PokeIDs.POKEDOLL_NETHERITE_GHOLDENGO),
+	public static final Block POKEDOLL_NETHERITE_GHOLDENGO = Registry.register(Registries.BLOCK, Identifier.of(Pokeblocks.MOD_ID, PokeIDs.POKEDOLL_NETHERITE_GHOLDENGO),
 			new PokedollBlock<>(() -> PokedollNetheriteGholdengoBlockEntity.class));
-	public static final Block POKEDOLL_SHINY_NETHERITE_GHOLDENGO = Registry.register(Registries.BLOCK, new Identifier(Pokeblocks.MOD_ID, PokeIDs.POKEDOLL_SHINY_NETHERITE_GHOLDENGO),
+	public static final Block POKEDOLL_SHINY_NETHERITE_GHOLDENGO = Registry.register(Registries.BLOCK, Identifier.of(Pokeblocks.MOD_ID, PokeIDs.POKEDOLL_SHINY_NETHERITE_GHOLDENGO),
 			new PokedollBlock<>(() -> PokedollShinyNetheriteGholdengoBlockEntity.class));
 
-	public static final Block POKEDOLL_SHELLDER = Registry.register(Registries.BLOCK, new Identifier(Pokeblocks.MOD_ID, PokeIDs.POKEDOLL_SHELLDER),
+	public static final Block POKEDOLL_SHELLDER = Registry.register(Registries.BLOCK, Identifier.of(Pokeblocks.MOD_ID, PokeIDs.POKEDOLL_SHELLDER),
 			new PokedollBlock<>(() -> PokedollShellderBlockEntity.class));
-	public static final Block POKEDOLL_SHINY_SHELLDER = Registry.register(Registries.BLOCK, new Identifier(Pokeblocks.MOD_ID, PokeIDs.POKEDOLL_SHINY_SHELLDER),
+	public static final Block POKEDOLL_SHINY_SHELLDER = Registry.register(Registries.BLOCK, Identifier.of(Pokeblocks.MOD_ID, PokeIDs.POKEDOLL_SHINY_SHELLDER),
 			new PokedollBlock<>(() -> PokedollShinyShellderBlockEntity.class));
 
-	public static final Block POKEDOLL_CLOYSTER = Registry.register(Registries.BLOCK, new Identifier(Pokeblocks.MOD_ID, PokeIDs.POKEDOLL_CLOYSTER),
+	public static final Block POKEDOLL_CLOYSTER = Registry.register(Registries.BLOCK, Identifier.of(Pokeblocks.MOD_ID, PokeIDs.POKEDOLL_CLOYSTER),
 			new PokedollBlock<>(() -> PokedollCloysterBlockEntity.class));
-	public static final Block POKEDOLL_SHINY_CLOYSTER = Registry.register(Registries.BLOCK, new Identifier(Pokeblocks.MOD_ID, PokeIDs.POKEDOLL_SHINY_CLOYSTER),
+	public static final Block POKEDOLL_SHINY_CLOYSTER = Registry.register(Registries.BLOCK, Identifier.of(Pokeblocks.MOD_ID, PokeIDs.POKEDOLL_SHINY_CLOYSTER),
 			new PokedollBlock<>(() -> PokedollShinyCloysterBlockEntity.class));
 
-	public static final Block POKEDOLL_WAILMER = Registry.register(Registries.BLOCK, new Identifier(Pokeblocks.MOD_ID, PokeIDs.POKEDOLL_WAILMER),
+	public static final Block POKEDOLL_WAILMER = Registry.register(Registries.BLOCK, Identifier.of(Pokeblocks.MOD_ID, PokeIDs.POKEDOLL_WAILMER),
 			new PokedollBlock<>(() -> PokedollWailmerBlockEntity.class));
-	public static final Block POKEDOLL_SHINY_WAILMER = Registry.register(Registries.BLOCK, new Identifier(Pokeblocks.MOD_ID, PokeIDs.POKEDOLL_SHINY_WAILMER),
+	public static final Block POKEDOLL_SHINY_WAILMER = Registry.register(Registries.BLOCK, Identifier.of(Pokeblocks.MOD_ID, PokeIDs.POKEDOLL_SHINY_WAILMER),
 			new PokedollBlock<>(() -> PokedollShinyWailmerBlockEntity.class));
 
-	public static final Block POKEDOLL_WAILORD = Registry.register(Registries.BLOCK, new Identifier(Pokeblocks.MOD_ID, PokeIDs.POKEDOLL_WAILORD),
+	public static final Block POKEDOLL_WAILORD = Registry.register(Registries.BLOCK, Identifier.of(Pokeblocks.MOD_ID, PokeIDs.POKEDOLL_WAILORD),
 			new PokedollBlock<>(() -> PokedollWailordBlockEntity.class));
-	public static final Block POKEDOLL_SHINY_WAILORD = Registry.register(Registries.BLOCK, new Identifier(Pokeblocks.MOD_ID, PokeIDs.POKEDOLL_SHINY_WAILORD),
+	public static final Block POKEDOLL_SHINY_WAILORD = Registry.register(Registries.BLOCK, Identifier.of(Pokeblocks.MOD_ID, PokeIDs.POKEDOLL_SHINY_WAILORD),
 			new PokedollBlock<>(() -> PokedollShinyWailordBlockEntity.class));
 
-	public static final Block POKEDOLL_TROPIUS = Registry.register(Registries.BLOCK, new Identifier(Pokeblocks.MOD_ID, PokeIDs.POKEDOLL_TROPIUS),
+	public static final Block POKEDOLL_TROPIUS = Registry.register(Registries.BLOCK, Identifier.of(Pokeblocks.MOD_ID, PokeIDs.POKEDOLL_TROPIUS),
 			new PokedollBlock<>(() -> PokedollTropiusBlockEntity.class));
-	public static final Block POKEDOLL_SHINY_TROPIUS = Registry.register(Registries.BLOCK, new Identifier(Pokeblocks.MOD_ID, PokeIDs.POKEDOLL_SHINY_TROPIUS),
+	public static final Block POKEDOLL_SHINY_TROPIUS = Registry.register(Registries.BLOCK, Identifier.of(Pokeblocks.MOD_ID, PokeIDs.POKEDOLL_SHINY_TROPIUS),
 			new PokedollBlock<>(() -> PokedollShinyTropiusBlockEntity.class));
 
-	public static final Block POKEDOLL_KYOGRE = Registry.register(Registries.BLOCK, new Identifier(Pokeblocks.MOD_ID, PokeIDs.POKEDOLL_KYOGRE),
+	public static final Block POKEDOLL_KYOGRE = Registry.register(Registries.BLOCK, Identifier.of(Pokeblocks.MOD_ID, PokeIDs.POKEDOLL_KYOGRE),
 			new PokedollBlock<>(() -> PokedollKyogreBlockEntity.class));
-	public static final Block POKEDOLL_SHINY_KYOGRE = Registry.register(Registries.BLOCK, new Identifier(Pokeblocks.MOD_ID, PokeIDs.POKEDOLL_SHINY_KYOGRE),
+	public static final Block POKEDOLL_SHINY_KYOGRE = Registry.register(Registries.BLOCK, Identifier.of(Pokeblocks.MOD_ID, PokeIDs.POKEDOLL_SHINY_KYOGRE),
 			new PokedollBlock<>(() -> PokedollShinyKyogreBlockEntity.class));
 
-	public static final Block POKEDOLL_PHANTUMP = Registry.register(Registries.BLOCK, new Identifier(Pokeblocks.MOD_ID, PokeIDs.POKEDOLL_PHANTUMP),
+	public static final Block POKEDOLL_PHANTUMP = Registry.register(Registries.BLOCK, Identifier.of(Pokeblocks.MOD_ID, PokeIDs.POKEDOLL_PHANTUMP),
 			new PokedollBlock<>(() -> PokedollPhantumpBlockEntity.class));
-	public static final Block POKEDOLL_SHINY_PHANTUMP = Registry.register(Registries.BLOCK, new Identifier(Pokeblocks.MOD_ID, PokeIDs.POKEDOLL_SHINY_PHANTUMP),
+	public static final Block POKEDOLL_SHINY_PHANTUMP = Registry.register(Registries.BLOCK, Identifier.of(Pokeblocks.MOD_ID, PokeIDs.POKEDOLL_SHINY_PHANTUMP),
 			new PokedollBlock<>(() -> PokedollShinyPhantumpBlockEntity.class));
 
-	public static final Block POKEDOLL_PUMPKABOO = Registry.register(Registries.BLOCK, new Identifier(Pokeblocks.MOD_ID, PokeIDs.POKEDOLL_PUMPKABOO),
+	public static final Block POKEDOLL_PUMPKABOO = Registry.register(Registries.BLOCK, Identifier.of(Pokeblocks.MOD_ID, PokeIDs.POKEDOLL_PUMPKABOO),
 			new PokedollBlock<>(() -> PokedollPumpkabooBlockEntity.class));
-	public static final Block POKEDOLL_SHINY_PUMPKABOO = Registry.register(Registries.BLOCK, new Identifier(Pokeblocks.MOD_ID, PokeIDs.POKEDOLL_SHINY_PUMPKABOO),
+	public static final Block POKEDOLL_SHINY_PUMPKABOO = Registry.register(Registries.BLOCK, Identifier.of(Pokeblocks.MOD_ID, PokeIDs.POKEDOLL_SHINY_PUMPKABOO),
 			new PokedollBlock<>(() -> PokedollShinyPumpkabooBlockEntity.class));
 
-	public static final Block POKEDOLL_TREVENANT = Registry.register(Registries.BLOCK, new Identifier(Pokeblocks.MOD_ID, PokeIDs.POKEDOLL_TREVENANT),
+	public static final Block POKEDOLL_TREVENANT = Registry.register(Registries.BLOCK, Identifier.of(Pokeblocks.MOD_ID, PokeIDs.POKEDOLL_TREVENANT),
 			new PokedollBlock<>(() -> PokedollTrevenantBlockEntity.class));
-	public static final Block POKEDOLL_SHINY_TREVENANT = Registry.register(Registries.BLOCK, new Identifier(Pokeblocks.MOD_ID, PokeIDs.POKEDOLL_SHINY_TREVENANT),
+	public static final Block POKEDOLL_SHINY_TREVENANT = Registry.register(Registries.BLOCK, Identifier.of(Pokeblocks.MOD_ID, PokeIDs.POKEDOLL_SHINY_TREVENANT),
 			new PokedollBlock<>(() -> PokedollShinyTrevenantBlockEntity.class));
 
-	public static final Block POKEDOLL_MARSHADOW = Registry.register(Registries.BLOCK, new Identifier(Pokeblocks.MOD_ID, PokeIDs.POKEDOLL_MARSHADOW),
+	public static final Block POKEDOLL_MARSHADOW = Registry.register(Registries.BLOCK, Identifier.of(Pokeblocks.MOD_ID, PokeIDs.POKEDOLL_MARSHADOW),
 			new PokedollBlock<>(() -> PokedollMarshadowBlockEntity.class));
-	public static final Block POKEDOLL_SHINY_MARSHADOW = Registry.register(Registries.BLOCK, new Identifier(Pokeblocks.MOD_ID, PokeIDs.POKEDOLL_SHINY_MARSHADOW),
+	public static final Block POKEDOLL_SHINY_MARSHADOW = Registry.register(Registries.BLOCK, Identifier.of(Pokeblocks.MOD_ID, PokeIDs.POKEDOLL_SHINY_MARSHADOW),
 			new PokedollBlock<>(() -> PokedollShinyMarshadowBlockEntity.class));
 
-	public static final Block POKEDOLL_MARSHADOW_ZENITH = Registry.register(Registries.BLOCK, new Identifier(Pokeblocks.MOD_ID, PokeIDs.POKEDOLL_MARSHADOW_ZENITH),
+	public static final Block POKEDOLL_MARSHADOW_ZENITH = Registry.register(Registries.BLOCK, Identifier.of(Pokeblocks.MOD_ID, PokeIDs.POKEDOLL_MARSHADOW_ZENITH),
 			new PokedollBlock<>(() -> PokedollMarshadowZenithBlockEntity.class));
-	public static final Block POKEDOLL_SHINY_MARSHADOW_ZENITH = Registry.register(Registries.BLOCK, new Identifier(Pokeblocks.MOD_ID, PokeIDs.POKEDOLL_SHINY_MARSHADOW_ZENITH),
+	public static final Block POKEDOLL_SHINY_MARSHADOW_ZENITH = Registry.register(Registries.BLOCK, Identifier.of(Pokeblocks.MOD_ID, PokeIDs.POKEDOLL_SHINY_MARSHADOW_ZENITH),
 			new PokedollBlock<>(() -> PokedollShinyMarshadowZenithBlockEntity.class));
 
-    public static final Block POKEDOLL_BELLOSSOM = Registry.register(Registries.BLOCK, new Identifier(Pokeblocks.MOD_ID, PokeIDs.POKEDOLL_BELLOSSOM),
+    public static final Block POKEDOLL_BELLOSSOM = Registry.register(Registries.BLOCK, Identifier.of(Pokeblocks.MOD_ID, PokeIDs.POKEDOLL_BELLOSSOM),
             new PokedollBlock<>(() -> PokedollBellossomBlockEntity.class));
-    public static final Block POKEDOLL_SHINY_BELLOSSOM = Registry.register(Registries.BLOCK, new Identifier(Pokeblocks.MOD_ID, PokeIDs.POKEDOLL_SHINY_BELLOSSOM),
+    public static final Block POKEDOLL_SHINY_BELLOSSOM = Registry.register(Registries.BLOCK, Identifier.of(Pokeblocks.MOD_ID, PokeIDs.POKEDOLL_SHINY_BELLOSSOM),
             new PokedollBlock<>(() -> PokedollShinyBellossomBlockEntity.class));
 
-    public static final Block POKEDOLL_ROWLET = Registry.register(Registries.BLOCK, new Identifier(Pokeblocks.MOD_ID, PokeIDs.POKEDOLL_ROWLET),
+    public static final Block POKEDOLL_ROWLET = Registry.register(Registries.BLOCK, Identifier.of(Pokeblocks.MOD_ID, PokeIDs.POKEDOLL_ROWLET),
             new PokedollBlock<>(() -> PokedollRowletBlockEntity.class));
-    public static final Block POKEDOLL_SHINY_ROWLET = Registry.register(Registries.BLOCK, new Identifier(Pokeblocks.MOD_ID, PokeIDs.POKEDOLL_SHINY_ROWLET),
+    public static final Block POKEDOLL_SHINY_ROWLET = Registry.register(Registries.BLOCK, Identifier.of(Pokeblocks.MOD_ID, PokeIDs.POKEDOLL_SHINY_ROWLET),
             new PokedollBlock<>(() -> PokedollShinyRowletBlockEntity.class));
 
-    public static final Block POKEDOLL_MIMIKYU = Registry.register(Registries.BLOCK, new Identifier(Pokeblocks.MOD_ID, PokeIDs.POKEDOLL_MIMIKYU),
+    public static final Block POKEDOLL_MIMIKYU = Registry.register(Registries.BLOCK, Identifier.of(Pokeblocks.MOD_ID, PokeIDs.POKEDOLL_MIMIKYU),
             new PokedollBlock<>(() -> PokedollMimikyuBlockEntity.class));
-    public static final Block POKEDOLL_SHINY_MIMIKYU = Registry.register(Registries.BLOCK, new Identifier(Pokeblocks.MOD_ID, PokeIDs.POKEDOLL_SHINY_MIMIKYU),
+    public static final Block POKEDOLL_SHINY_MIMIKYU = Registry.register(Registries.BLOCK, Identifier.of(Pokeblocks.MOD_ID, PokeIDs.POKEDOLL_SHINY_MIMIKYU),
             new PokedollBlock<>(() -> PokedollShinyMimikyuBlockEntity.class));
 
-    public static final Block FIGURINE_MIK_03 = Registry.register(Registries.BLOCK, new Identifier(Pokeblocks.MOD_ID, PokeIDs.MIK_03_FIGURINE),
+    public static final Block FIGURINE_MIK_03 = Registry.register(Registries.BLOCK, Identifier.of(Pokeblocks.MOD_ID, PokeIDs.MIK_03_FIGURINE),
             new PokedollBlock<>(() -> PokedollMik03FigurineBlockEntity.class));
 
-    public static final Block FIGURINE_POHELLO = Registry.register(Registries.BLOCK, new Identifier(Pokeblocks.MOD_ID, PokeIDs.POHELLO_FIGURINE),
+    public static final Block FIGURINE_POHELLO = Registry.register(Registries.BLOCK, Identifier.of(Pokeblocks.MOD_ID, PokeIDs.POHELLO_FIGURINE),
             new PokedollBlock<>(() -> PokedollPohelloFigurineBlockEntity.class));
 
-    public static final Block GIGANTIC_POKEDOLL_ROWLET = Registry.register(Registries.BLOCK, new Identifier(Pokeblocks.MOD_ID, PokeIDs.GIGANTIC_POKEDOLL_ROWLET),
+    public static final Block GIGANTIC_POKEDOLL_ROWLET = Registry.register(Registries.BLOCK, Identifier.of(Pokeblocks.MOD_ID, PokeIDs.GIGANTIC_POKEDOLL_ROWLET),
         new PokedollBlock<>(() -> PokedollGiganticRowletBlockEntity.class));
-    public static final Block GIGANTIC_POKEDOLL_SHINY_ROWLET = Registry.register(Registries.BLOCK, new Identifier(Pokeblocks.MOD_ID, PokeIDs.GIGANTIC_POKEDOLL_SHINY_ROWLET),
+    public static final Block GIGANTIC_POKEDOLL_SHINY_ROWLET = Registry.register(Registries.BLOCK, Identifier.of(Pokeblocks.MOD_ID, PokeIDs.GIGANTIC_POKEDOLL_SHINY_ROWLET),
         new PokedollBlock<>(() -> PokedollGiganticShinyRowletBlockEntity.class));
-    public static final Block GIGANTIC_POKEDOLL_MIMIKYU = Registry.register(Registries.BLOCK, new Identifier(Pokeblocks.MOD_ID, PokeIDs.GIGANTIC_POKEDOLL_MIMIKYU),
+    public static final Block GIGANTIC_POKEDOLL_MIMIKYU = Registry.register(Registries.BLOCK, Identifier.of(Pokeblocks.MOD_ID, PokeIDs.GIGANTIC_POKEDOLL_MIMIKYU),
         new PokedollBlock<>(() -> PokedollGiganticMimikyuBlockEntity.class));
-    public static final Block GIGANTIC_POKEDOLL_SHINY_MIMIKYU = Registry.register(Registries.BLOCK, new Identifier(Pokeblocks.MOD_ID, PokeIDs.GIGANTIC_POKEDOLL_SHINY_MIMIKYU),
+    public static final Block GIGANTIC_POKEDOLL_SHINY_MIMIKYU = Registry.register(Registries.BLOCK, Identifier.of(Pokeblocks.MOD_ID, PokeIDs.GIGANTIC_POKEDOLL_SHINY_MIMIKYU),
         new PokedollBlock<>(() -> PokedollGiganticShinyMimikyuBlockEntity.class));
-    public static final Block GIGANTIC_POKEDOLL_BELLOSSOM = Registry.register(Registries.BLOCK, new Identifier(Pokeblocks.MOD_ID, PokeIDs.GIGANTIC_POKEDOLL_BELLOSSOM),
+    public static final Block GIGANTIC_POKEDOLL_BELLOSSOM = Registry.register(Registries.BLOCK, Identifier.of(Pokeblocks.MOD_ID, PokeIDs.GIGANTIC_POKEDOLL_BELLOSSOM),
         new PokedollBlock<>(() -> PokedollGiganticBellossomBlockEntity.class));
-    public static final Block GIGANTIC_POKEDOLL_SHINY_BELLOSSOM = Registry.register(Registries.BLOCK, new Identifier(Pokeblocks.MOD_ID, PokeIDs.GIGANTIC_POKEDOLL_SHINY_BELLOSSOM),
+    public static final Block GIGANTIC_POKEDOLL_SHINY_BELLOSSOM = Registry.register(Registries.BLOCK, Identifier.of(Pokeblocks.MOD_ID, PokeIDs.GIGANTIC_POKEDOLL_SHINY_BELLOSSOM),
         new PokedollBlock<>(() -> PokedollGiganticShinyBellossomBlockEntity.class));
-    public static final Block GIGANTIC_POKEDOLL_TREVENANT = Registry.register(Registries.BLOCK, new Identifier(Pokeblocks.MOD_ID, PokeIDs.GIGANTIC_POKEDOLL_TREVENANT),
+    public static final Block GIGANTIC_POKEDOLL_TREVENANT = Registry.register(Registries.BLOCK, Identifier.of(Pokeblocks.MOD_ID, PokeIDs.GIGANTIC_POKEDOLL_TREVENANT),
         new PokedollBlock<>(() -> PokedollGiganticTrevenantBlockEntity.class));
-    public static final Block GIGANTIC_POKEDOLL_SHINY_TREVENANT = Registry.register(Registries.BLOCK, new Identifier(Pokeblocks.MOD_ID, PokeIDs.GIGANTIC_POKEDOLL_SHINY_TREVENANT),
+    public static final Block GIGANTIC_POKEDOLL_SHINY_TREVENANT = Registry.register(Registries.BLOCK, Identifier.of(Pokeblocks.MOD_ID, PokeIDs.GIGANTIC_POKEDOLL_SHINY_TREVENANT),
         new PokedollBlock<>(() -> PokedollGiganticShinyTrevenantBlockEntity.class));
-    public static final Block GIGANTIC_POKEDOLL_PUMPKABOO = Registry.register(Registries.BLOCK, new Identifier(Pokeblocks.MOD_ID, PokeIDs.GIGANTIC_POKEDOLL_PUMPKABOO),
+    public static final Block GIGANTIC_POKEDOLL_PUMPKABOO = Registry.register(Registries.BLOCK, Identifier.of(Pokeblocks.MOD_ID, PokeIDs.GIGANTIC_POKEDOLL_PUMPKABOO),
         new PokedollBlock<>(() -> PokedollGiganticPumpkabooBlockEntity.class));
-    public static final Block GIGANTIC_POKEDOLL_SHINY_PUMPKABOO = Registry.register(Registries.BLOCK, new Identifier(Pokeblocks.MOD_ID, PokeIDs.GIGANTIC_POKEDOLL_SHINY_PUMPKABOO),
+    public static final Block GIGANTIC_POKEDOLL_SHINY_PUMPKABOO = Registry.register(Registries.BLOCK, Identifier.of(Pokeblocks.MOD_ID, PokeIDs.GIGANTIC_POKEDOLL_SHINY_PUMPKABOO),
         new PokedollBlock<>(() -> PokedollGiganticShinyPumpkabooBlockEntity.class));
-    public static final Block GIGANTIC_POKEDOLL_PHANTUMP = Registry.register(Registries.BLOCK, new Identifier(Pokeblocks.MOD_ID, PokeIDs.GIGANTIC_POKEDOLL_PHANTUMP),
+    public static final Block GIGANTIC_POKEDOLL_PHANTUMP = Registry.register(Registries.BLOCK, Identifier.of(Pokeblocks.MOD_ID, PokeIDs.GIGANTIC_POKEDOLL_PHANTUMP),
         new PokedollBlock<>(() -> PokedollGiganticPhantumpBlockEntity.class));
-    public static final Block GIGANTIC_POKEDOLL_SHINY_PHANTUMP = Registry.register(Registries.BLOCK, new Identifier(Pokeblocks.MOD_ID, PokeIDs.GIGANTIC_POKEDOLL_SHINY_PHANTUMP),
+    public static final Block GIGANTIC_POKEDOLL_SHINY_PHANTUMP = Registry.register(Registries.BLOCK, Identifier.of(Pokeblocks.MOD_ID, PokeIDs.GIGANTIC_POKEDOLL_SHINY_PHANTUMP),
         new PokedollBlock<>(() -> PokedollGiganticShinyPhantumpBlockEntity.class));
-    public static final Block GIGANTIC_POKEDOLL_MARSHADOW = Registry.register(Registries.BLOCK, new Identifier(Pokeblocks.MOD_ID, PokeIDs.GIGANTIC_POKEDOLL_MARSHADOW),
+    public static final Block GIGANTIC_POKEDOLL_MARSHADOW = Registry.register(Registries.BLOCK, Identifier.of(Pokeblocks.MOD_ID, PokeIDs.GIGANTIC_POKEDOLL_MARSHADOW),
         new PokedollBlock<>(() -> PokedollGiganticMarshadowBlockEntity.class));
-    public static final Block GIGANTIC_POKEDOLL_SHINY_MARSHADOW = Registry.register(Registries.BLOCK, new Identifier(Pokeblocks.MOD_ID, PokeIDs.GIGANTIC_POKEDOLL_SHINY_MARSHADOW),
+    public static final Block GIGANTIC_POKEDOLL_SHINY_MARSHADOW = Registry.register(Registries.BLOCK, Identifier.of(Pokeblocks.MOD_ID, PokeIDs.GIGANTIC_POKEDOLL_SHINY_MARSHADOW),
         new PokedollBlock<>(() -> PokedollGiganticShinyMarshadowBlockEntity.class));
-	public static final Block GIGANTIC_POKEDOLL_MARSHADOW_ZENITH = Registry.register(Registries.BLOCK, new Identifier(Pokeblocks.MOD_ID, PokeIDs.GIGANTIC_POKEDOLL_MARSHADOW_ZENITH),
+	public static final Block GIGANTIC_POKEDOLL_MARSHADOW_ZENITH = Registry.register(Registries.BLOCK, Identifier.of(Pokeblocks.MOD_ID, PokeIDs.GIGANTIC_POKEDOLL_MARSHADOW_ZENITH),
         new PokedollBlock<>(() -> PokedollGiganticMarshadowZenithBlockEntity.class));
-    public static final Block GIGANTIC_POKEDOLL_SHINY_MARSHADOW_ZENITH = Registry.register(Registries.BLOCK, new Identifier(Pokeblocks.MOD_ID, PokeIDs.GIGANTIC_POKEDOLL_SHINY_MARSHADOW_ZENITH),
+    public static final Block GIGANTIC_POKEDOLL_SHINY_MARSHADOW_ZENITH = Registry.register(Registries.BLOCK, Identifier.of(Pokeblocks.MOD_ID, PokeIDs.GIGANTIC_POKEDOLL_SHINY_MARSHADOW_ZENITH),
         new PokedollBlock<>(() -> PokedollGiganticShinyMarshadowZenithBlockEntity.class));
-	public static final Block GIGANTIC_POKEDOLL_WAILORD = Registry.register(Registries.BLOCK, new Identifier(Pokeblocks.MOD_ID, PokeIDs.GIGANTIC_POKEDOLL_WAILORD),
+	public static final Block GIGANTIC_POKEDOLL_WAILORD = Registry.register(Registries.BLOCK, Identifier.of(Pokeblocks.MOD_ID, PokeIDs.GIGANTIC_POKEDOLL_WAILORD),
 			new PokedollBlock<>(() -> PokedollGiganticWailordBlockEntity.class));
-	public static final Block GIGANTIC_POKEDOLL_SHINY_WAILORD = Registry.register(Registries.BLOCK, new Identifier(Pokeblocks.MOD_ID, PokeIDs.GIGANTIC_POKEDOLL_SHINY_WAILORD),
+	public static final Block GIGANTIC_POKEDOLL_SHINY_WAILORD = Registry.register(Registries.BLOCK, Identifier.of(Pokeblocks.MOD_ID, PokeIDs.GIGANTIC_POKEDOLL_SHINY_WAILORD),
 			new PokedollBlock<>(() -> PokedollGiganticShinyWailordBlockEntity.class));
 
-	public static final Block GIGANTIC_POKEDOLL_WAILMER = Registry.register(Registries.BLOCK, new Identifier(Pokeblocks.MOD_ID, PokeIDs.GIGANTIC_POKEDOLL_WAILMER),
+	public static final Block GIGANTIC_POKEDOLL_WAILMER = Registry.register(Registries.BLOCK, Identifier.of(Pokeblocks.MOD_ID, PokeIDs.GIGANTIC_POKEDOLL_WAILMER),
 			new PokedollBlock<>(() -> PokedollGiganticWailmerBlockEntity.class));
-	public static final Block GIGANTIC_POKEDOLL_SHINY_WAILMER = Registry.register(Registries.BLOCK, new Identifier(Pokeblocks.MOD_ID, PokeIDs.GIGANTIC_POKEDOLL_SHINY_WAILMER),
+	public static final Block GIGANTIC_POKEDOLL_SHINY_WAILMER = Registry.register(Registries.BLOCK, Identifier.of(Pokeblocks.MOD_ID, PokeIDs.GIGANTIC_POKEDOLL_SHINY_WAILMER),
 			new PokedollBlock<>(() -> PokedollGiganticShinyWailmerBlockEntity.class));
 
-	public static final Block GIGANTIC_POKEDOLL_TROPIUS = Registry.register(Registries.BLOCK, new Identifier(Pokeblocks.MOD_ID, PokeIDs.GIGANTIC_POKEDOLL_TROPIUS),
+	public static final Block GIGANTIC_POKEDOLL_TROPIUS = Registry.register(Registries.BLOCK, Identifier.of(Pokeblocks.MOD_ID, PokeIDs.GIGANTIC_POKEDOLL_TROPIUS),
 			new PokedollBlock<>(() -> PokedollGiganticTropiusBlockEntity.class));
-	public static final Block GIGANTIC_POKEDOLL_SHINY_TROPIUS = Registry.register(Registries.BLOCK, new Identifier(Pokeblocks.MOD_ID, PokeIDs.GIGANTIC_POKEDOLL_SHINY_TROPIUS),
+	public static final Block GIGANTIC_POKEDOLL_SHINY_TROPIUS = Registry.register(Registries.BLOCK, Identifier.of(Pokeblocks.MOD_ID, PokeIDs.GIGANTIC_POKEDOLL_SHINY_TROPIUS),
 			new PokedollBlock<>(() -> PokedollGiganticShinyTropiusBlockEntity.class));
 
-	public static final Block GIGANTIC_POKEDOLL_SHELLDER = Registry.register(Registries.BLOCK, new Identifier(Pokeblocks.MOD_ID, PokeIDs.GIGANTIC_POKEDOLL_SHELLDER),
+	public static final Block GIGANTIC_POKEDOLL_SHELLDER = Registry.register(Registries.BLOCK, Identifier.of(Pokeblocks.MOD_ID, PokeIDs.GIGANTIC_POKEDOLL_SHELLDER),
 			new PokedollBlock<>(() -> PokedollGiganticShellderBlockEntity.class));
-	public static final Block GIGANTIC_POKEDOLL_SHINY_SHELLDER = Registry.register(Registries.BLOCK, new Identifier(Pokeblocks.MOD_ID, PokeIDs.GIGANTIC_POKEDOLL_SHINY_SHELLDER),
+	public static final Block GIGANTIC_POKEDOLL_SHINY_SHELLDER = Registry.register(Registries.BLOCK, Identifier.of(Pokeblocks.MOD_ID, PokeIDs.GIGANTIC_POKEDOLL_SHINY_SHELLDER),
 			new PokedollBlock<>(() -> PokedollGiganticShinyShellderBlockEntity.class));
 
-	public static final Block GIGANTIC_POKEDOLL_KYOGRE = Registry.register(Registries.BLOCK, new Identifier(Pokeblocks.MOD_ID, PokeIDs.GIGANTIC_POKEDOLL_KYOGRE),
+	public static final Block GIGANTIC_POKEDOLL_KYOGRE = Registry.register(Registries.BLOCK, Identifier.of(Pokeblocks.MOD_ID, PokeIDs.GIGANTIC_POKEDOLL_KYOGRE),
 			new PokedollBlock<>(() -> PokedollGiganticKyogreBlockEntity.class));
-	public static final Block GIGANTIC_POKEDOLL_SHINY_KYOGRE = Registry.register(Registries.BLOCK, new Identifier(Pokeblocks.MOD_ID, PokeIDs.GIGANTIC_POKEDOLL_SHINY_KYOGRE),
+	public static final Block GIGANTIC_POKEDOLL_SHINY_KYOGRE = Registry.register(Registries.BLOCK, Identifier.of(Pokeblocks.MOD_ID, PokeIDs.GIGANTIC_POKEDOLL_SHINY_KYOGRE),
 			new PokedollBlock<>(() -> PokedollGiganticShinyKyogreBlockEntity.class));
 
-	public static final Block GIGANTIC_POKEDOLL_CLOYSTER = Registry.register(Registries.BLOCK, new Identifier(Pokeblocks.MOD_ID, PokeIDs.GIGANTIC_POKEDOLL_CLOYSTER),
+	public static final Block GIGANTIC_POKEDOLL_CLOYSTER = Registry.register(Registries.BLOCK, Identifier.of(Pokeblocks.MOD_ID, PokeIDs.GIGANTIC_POKEDOLL_CLOYSTER),
 			new PokedollBlock<>(() -> PokedollGiganticCloysterBlockEntity.class));
-	public static final Block GIGANTIC_POKEDOLL_SHINY_CLOYSTER = Registry.register(Registries.BLOCK, new Identifier(Pokeblocks.MOD_ID, PokeIDs.GIGANTIC_POKEDOLL_SHINY_CLOYSTER),
+	public static final Block GIGANTIC_POKEDOLL_SHINY_CLOYSTER = Registry.register(Registries.BLOCK, Identifier.of(Pokeblocks.MOD_ID, PokeIDs.GIGANTIC_POKEDOLL_SHINY_CLOYSTER),
 			new PokedollBlock<>(() -> PokedollGiganticShinyCloysterBlockEntity.class));
-	public static final Block GIGANTIC_POKEDOLL_SANDYGAST = Registry.register(Registries.BLOCK, new Identifier(Pokeblocks.MOD_ID, PokeIDs.GIGANTIC_POKEDOLL_SANDYGAST),
+	public static final Block GIGANTIC_POKEDOLL_SANDYGAST = Registry.register(Registries.BLOCK, Identifier.of(Pokeblocks.MOD_ID, PokeIDs.GIGANTIC_POKEDOLL_SANDYGAST),
 			new PokedollBlock<>(() -> PokedollGiganticSandygastBlockEntity.class));
-	public static final Block GIGANTIC_POKEDOLL_SHINY_SANDYGAST = Registry.register(Registries.BLOCK, new Identifier(Pokeblocks.MOD_ID, PokeIDs.GIGANTIC_POKEDOLL_SHINY_SANDYGAST),
+	public static final Block GIGANTIC_POKEDOLL_SHINY_SANDYGAST = Registry.register(Registries.BLOCK, Identifier.of(Pokeblocks.MOD_ID, PokeIDs.GIGANTIC_POKEDOLL_SHINY_SANDYGAST),
 			new PokedollBlock<>(() -> PokedollGiganticShinySandygastBlockEntity.class));
 
-	public static final Block GIGANTIC_POKEDOLL_PALOSSAND = Registry.register(Registries.BLOCK, new Identifier(Pokeblocks.MOD_ID, PokeIDs.GIGANTIC_POKEDOLL_PALOSSAND),
+	public static final Block GIGANTIC_POKEDOLL_PALOSSAND = Registry.register(Registries.BLOCK, Identifier.of(Pokeblocks.MOD_ID, PokeIDs.GIGANTIC_POKEDOLL_PALOSSAND),
 			new PokedollBlock<>(() -> PokedollGiganticPalossandBlockEntity.class));
-	public static final Block GIGANTIC_POKEDOLL_SHINY_PALOSSAND = Registry.register(Registries.BLOCK, new Identifier(Pokeblocks.MOD_ID, PokeIDs.GIGANTIC_POKEDOLL_SHINY_PALOSSAND),
+	public static final Block GIGANTIC_POKEDOLL_SHINY_PALOSSAND = Registry.register(Registries.BLOCK, Identifier.of(Pokeblocks.MOD_ID, PokeIDs.GIGANTIC_POKEDOLL_SHINY_PALOSSAND),
 			new PokedollBlock<>(() -> PokedollGiganticShinyPalossandBlockEntity.class));
 
-	public static final Block GIGANTIC_POKEDOLL_GHOLDENGO = Registry.register(Registries.BLOCK, new Identifier(Pokeblocks.MOD_ID, PokeIDs.GIGANTIC_POKEDOLL_GHOLDENGO),
+	public static final Block GIGANTIC_POKEDOLL_GHOLDENGO = Registry.register(Registries.BLOCK, Identifier.of(Pokeblocks.MOD_ID, PokeIDs.GIGANTIC_POKEDOLL_GHOLDENGO),
 			new PokedollBlock<>(() -> PokedollGiganticGholdengoBlockEntity.class));
-	public static final Block GIGANTIC_POKEDOLL_SHINY_GHOLDENGO = Registry.register(Registries.BLOCK, new Identifier(Pokeblocks.MOD_ID, PokeIDs.GIGANTIC_POKEDOLL_SHINY_GHOLDENGO),
+	public static final Block GIGANTIC_POKEDOLL_SHINY_GHOLDENGO = Registry.register(Registries.BLOCK, Identifier.of(Pokeblocks.MOD_ID, PokeIDs.GIGANTIC_POKEDOLL_SHINY_GHOLDENGO),
 			new PokedollBlock<>(() -> PokedollGiganticShinyGholdengoBlockEntity.class));
-	public static final Block GIGANTIC_POKEDOLL_NETHERITE_GHOLDENGO = Registry.register(Registries.BLOCK, new Identifier(Pokeblocks.MOD_ID, PokeIDs.GIGANTIC_POKEDOLL_NETHERITE_GHOLDENGO),
+	public static final Block GIGANTIC_POKEDOLL_NETHERITE_GHOLDENGO = Registry.register(Registries.BLOCK, Identifier.of(Pokeblocks.MOD_ID, PokeIDs.GIGANTIC_POKEDOLL_NETHERITE_GHOLDENGO),
 			new PokedollBlock<>(() -> PokedollGiganticNetheriteGholdengoBlockEntity.class));
-	public static final Block GIGANTIC_POKEDOLL_SHINY_NETHERITE_GHOLDENGO = Registry.register(Registries.BLOCK, new Identifier(Pokeblocks.MOD_ID, PokeIDs.GIGANTIC_POKEDOLL_SHINY_NETHERITE_GHOLDENGO),
+	public static final Block GIGANTIC_POKEDOLL_SHINY_NETHERITE_GHOLDENGO = Registry.register(Registries.BLOCK, Identifier.of(Pokeblocks.MOD_ID, PokeIDs.GIGANTIC_POKEDOLL_SHINY_NETHERITE_GHOLDENGO),
 			new PokedollBlock<>(() -> PokedollGiganticShinyNetheriteGholdengoBlockEntity.class));
 
-	public static final Block GIGANTIC_POKEDOLL_EEVEE = Registry.register(Registries.BLOCK, new Identifier(Pokeblocks.MOD_ID, PokeIDs.GIGANTIC_POKEDOLL_EEVEE),
+	public static final Block GIGANTIC_POKEDOLL_EEVEE = Registry.register(Registries.BLOCK, Identifier.of(Pokeblocks.MOD_ID, PokeIDs.GIGANTIC_POKEDOLL_EEVEE),
 			new PokedollBlock<>(() -> PokedollGiganticEeveeBlockEntity.class));
-	public static final Block GIGANTIC_POKEDOLL_SHINY_EEVEE = Registry.register(Registries.BLOCK, new Identifier(Pokeblocks.MOD_ID, PokeIDs.GIGANTIC_POKEDOLL_SHINY_EEVEE),
+	public static final Block GIGANTIC_POKEDOLL_SHINY_EEVEE = Registry.register(Registries.BLOCK, Identifier.of(Pokeblocks.MOD_ID, PokeIDs.GIGANTIC_POKEDOLL_SHINY_EEVEE),
 			new PokedollBlock<>(() -> PokedollGiganticShinyEeveeBlockEntity.class));
 
-	public static final Block GIGANTIC_POKEDOLL_STONJOURNER = Registry.register(Registries.BLOCK, new Identifier(Pokeblocks.MOD_ID, PokeIDs.GIGANTIC_POKEDOLL_STONJOURNER),
+	public static final Block GIGANTIC_POKEDOLL_STONJOURNER = Registry.register(Registries.BLOCK, Identifier.of(Pokeblocks.MOD_ID, PokeIDs.GIGANTIC_POKEDOLL_STONJOURNER),
 			new PokedollBlock<>(() -> PokedollGiganticStonjournerBlockEntity.class));
-	public static final Block GIGANTIC_POKEDOLL_SHINY_STONJOURNER = Registry.register(Registries.BLOCK, new Identifier(Pokeblocks.MOD_ID, PokeIDs.GIGANTIC_POKEDOLL_SHINY_STONJOURNER),
+	public static final Block GIGANTIC_POKEDOLL_SHINY_STONJOURNER = Registry.register(Registries.BLOCK, Identifier.of(Pokeblocks.MOD_ID, PokeIDs.GIGANTIC_POKEDOLL_SHINY_STONJOURNER),
 			new PokedollBlock<>(() -> PokedollGiganticShinyStonjournerBlockEntity.class));
 
-	public static final Block GIGANTIC_POKEDOLL_ROOKIDEE = Registry.register(Registries.BLOCK, new Identifier(Pokeblocks.MOD_ID, PokeIDs.GIGANTIC_POKEDOLL_ROOKIDEE),
+	public static final Block GIGANTIC_POKEDOLL_ROOKIDEE = Registry.register(Registries.BLOCK, Identifier.of(Pokeblocks.MOD_ID, PokeIDs.GIGANTIC_POKEDOLL_ROOKIDEE),
 			new PokedollBlock<>(() -> PokedollGiganticRookideeBlockEntity.class));
-	public static final Block GIGANTIC_POKEDOLL_SHINY_ROOKIDEE = Registry.register(Registries.BLOCK, new Identifier(Pokeblocks.MOD_ID, PokeIDs.GIGANTIC_POKEDOLL_SHINY_ROOKIDEE),
+	public static final Block GIGANTIC_POKEDOLL_SHINY_ROOKIDEE = Registry.register(Registries.BLOCK, Identifier.of(Pokeblocks.MOD_ID, PokeIDs.GIGANTIC_POKEDOLL_SHINY_ROOKIDEE),
 			new PokedollBlock<>(() -> PokedollGiganticShinyRookideeBlockEntity.class));
 
-	public static final Block GIGANTIC_POKEDOLL_GENGAR = Registry.register(Registries.BLOCK, new Identifier(Pokeblocks.MOD_ID, PokeIDs.GIGANTIC_POKEDOLL_GENGAR),
+	public static final Block GIGANTIC_POKEDOLL_GENGAR = Registry.register(Registries.BLOCK, Identifier.of(Pokeblocks.MOD_ID, PokeIDs.GIGANTIC_POKEDOLL_GENGAR),
 			new PokedollBlock<>(() -> PokedollGiganticGengarBlockEntity.class));
-	public static final Block GIGANTIC_POKEDOLL_SHINY_GENGAR = Registry.register(Registries.BLOCK, new Identifier(Pokeblocks.MOD_ID, PokeIDs.GIGANTIC_POKEDOLL_SHINY_GENGAR),
+	public static final Block GIGANTIC_POKEDOLL_SHINY_GENGAR = Registry.register(Registries.BLOCK, Identifier.of(Pokeblocks.MOD_ID, PokeIDs.GIGANTIC_POKEDOLL_SHINY_GENGAR),
 			new PokedollBlock<>(() -> PokedollGiganticShinyGengarBlockEntity.class));
 
-	public static final Block GIGANTIC_POKEDOLL_GASTLY = Registry.register(Registries.BLOCK, new Identifier(Pokeblocks.MOD_ID, PokeIDs.GIGANTIC_POKEDOLL_GASTLY),
+	public static final Block GIGANTIC_POKEDOLL_GASTLY = Registry.register(Registries.BLOCK, Identifier.of(Pokeblocks.MOD_ID, PokeIDs.GIGANTIC_POKEDOLL_GASTLY),
 			new PokedollBlock<>(() -> PokedollGiganticGastlyBlockEntity.class));
-	public static final Block GIGANTIC_POKEDOLL_SHINY_GASTLY = Registry.register(Registries.BLOCK, new Identifier(Pokeblocks.MOD_ID, PokeIDs.GIGANTIC_POKEDOLL_SHINY_GASTLY),
+	public static final Block GIGANTIC_POKEDOLL_SHINY_GASTLY = Registry.register(Registries.BLOCK, Identifier.of(Pokeblocks.MOD_ID, PokeIDs.GIGANTIC_POKEDOLL_SHINY_GASTLY),
 			new PokedollBlock<>(() -> PokedollGiganticShinyGastlyBlockEntity.class));
 
-	public static final Block GIGANTIC_POKEDOLL_DRIFLOON = Registry.register(Registries.BLOCK, new Identifier(Pokeblocks.MOD_ID, PokeIDs.GIGANTIC_POKEDOLL_DRIFLOON),
+	public static final Block GIGANTIC_POKEDOLL_DRIFLOON = Registry.register(Registries.BLOCK, Identifier.of(Pokeblocks.MOD_ID, PokeIDs.GIGANTIC_POKEDOLL_DRIFLOON),
 			new PokedollBlock<>(() -> PokedollGiganticDrifloonBlockEntity.class));
-	public static final Block GIGANTIC_POKEDOLL_SHINY_DRIFLOON = Registry.register(Registries.BLOCK, new Identifier(Pokeblocks.MOD_ID, PokeIDs.GIGANTIC_POKEDOLL_SHINY_DRIFLOON),
+	public static final Block GIGANTIC_POKEDOLL_SHINY_DRIFLOON = Registry.register(Registries.BLOCK, Identifier.of(Pokeblocks.MOD_ID, PokeIDs.GIGANTIC_POKEDOLL_SHINY_DRIFLOON),
 			new PokedollBlock<>(() -> PokedollGiganticShinyDrifloonBlockEntity.class));
 
-	public static final Block GIGANTIC_POKEDOLL_CORVISQUIRE = Registry.register(Registries.BLOCK, new Identifier(Pokeblocks.MOD_ID, PokeIDs.GIGANTIC_POKEDOLL_CORVISQUIRE),
+	public static final Block GIGANTIC_POKEDOLL_CORVISQUIRE = Registry.register(Registries.BLOCK, Identifier.of(Pokeblocks.MOD_ID, PokeIDs.GIGANTIC_POKEDOLL_CORVISQUIRE),
 			new PokedollBlock<>(() -> PokedollGiganticCorvisquireBlockEntity.class));
-	public static final Block GIGANTIC_POKEDOLL_SHINY_CORVISQUIRE = Registry.register(Registries.BLOCK, new Identifier(Pokeblocks.MOD_ID, PokeIDs.GIGANTIC_POKEDOLL_SHINY_CORVISQUIRE),
+	public static final Block GIGANTIC_POKEDOLL_SHINY_CORVISQUIRE = Registry.register(Registries.BLOCK, Identifier.of(Pokeblocks.MOD_ID, PokeIDs.GIGANTIC_POKEDOLL_SHINY_CORVISQUIRE),
 			new PokedollBlock<>(() -> PokedollGiganticShinyCorvisquireBlockEntity.class));
 
-	public static final Block GIGANTIC_POKEDOLL_CORVIKNIGHT = Registry.register(Registries.BLOCK, new Identifier(Pokeblocks.MOD_ID, PokeIDs.GIGANTIC_POKEDOLL_CORVIKNIGHT),
+	public static final Block GIGANTIC_POKEDOLL_CORVIKNIGHT = Registry.register(Registries.BLOCK, Identifier.of(Pokeblocks.MOD_ID, PokeIDs.GIGANTIC_POKEDOLL_CORVIKNIGHT),
 			new PokedollBlock<>(() -> PokedollGiganticCorviknightBlockEntity.class));
-	public static final Block GIGANTIC_POKEDOLL_SHINY_CORVIKNIGHT = Registry.register(Registries.BLOCK, new Identifier(Pokeblocks.MOD_ID, PokeIDs.GIGANTIC_POKEDOLL_SHINY_CORVIKNIGHT),
+	public static final Block GIGANTIC_POKEDOLL_SHINY_CORVIKNIGHT = Registry.register(Registries.BLOCK, Identifier.of(Pokeblocks.MOD_ID, PokeIDs.GIGANTIC_POKEDOLL_SHINY_CORVIKNIGHT),
 			new PokedollBlock<>(() -> PokedollGiganticShinyCorviknightBlockEntity.class));
 
-	public static final Block GIGANTIC_POKEDOLL_WOOPER = Registry.register(Registries.BLOCK, new Identifier(Pokeblocks.MOD_ID, PokeIDs.GIGANTIC_POKEDOLL_WOOPER),
+	public static final Block GIGANTIC_POKEDOLL_WOOPER = Registry.register(Registries.BLOCK, Identifier.of(Pokeblocks.MOD_ID, PokeIDs.GIGANTIC_POKEDOLL_WOOPER),
 			new PokedollBlock<>(() -> PokedollGiganticWooperBlockEntity.class));
-	public static final Block GIGANTIC_POKEDOLL_SHINY_WOOPER = Registry.register(Registries.BLOCK, new Identifier(Pokeblocks.MOD_ID, PokeIDs.GIGANTIC_POKEDOLL_SHINY_WOOPER),
+	public static final Block GIGANTIC_POKEDOLL_SHINY_WOOPER = Registry.register(Registries.BLOCK, Identifier.of(Pokeblocks.MOD_ID, PokeIDs.GIGANTIC_POKEDOLL_SHINY_WOOPER),
 			new PokedollBlock<>(() -> PokedollGiganticShinyWooperBlockEntity.class));
 
-	public static final Block GIGANTIC_POKEDOLL_WASHING_MACHINE = Registry.register(Registries.BLOCK, new Identifier(Pokeblocks.MOD_ID, PokeIDs.GIGANTIC_POKEDOLL_WASHING_MACHINE),
+	public static final Block GIGANTIC_POKEDOLL_WASHING_MACHINE = Registry.register(Registries.BLOCK, Identifier.of(Pokeblocks.MOD_ID, PokeIDs.GIGANTIC_POKEDOLL_WASHING_MACHINE),
 			new PokedollBlock<>(() -> PokedollGiganticWashingMachineBlockEntity.class) {
 				@Override
-				public ActionResult onUse(BlockState state, World world, BlockPos pos, PlayerEntity player, Hand hand, BlockHitResult hit) {
+				protected ActionResult onUse(BlockState state, World world, BlockPos pos, PlayerEntity player, BlockHitResult hit) {
 					world.playSound(player, pos, SoundEvents.BLOCK_WATER_AMBIENT, SoundCategory.BLOCKS, 1f, 1f);
 
 					if (world.random.nextDouble() < 0.5) {
@@ -742,153 +740,153 @@ public class ModBlocks {
 				}
 			});
 
-	public static final Block GIGANTIC_POKEDOLL_WARTORTLE = Registry.register(Registries.BLOCK, new Identifier(Pokeblocks.MOD_ID, PokeIDs.GIGANTIC_POKEDOLL_WARTORTLE),
+	public static final Block GIGANTIC_POKEDOLL_WARTORTLE = Registry.register(Registries.BLOCK, Identifier.of(Pokeblocks.MOD_ID, PokeIDs.GIGANTIC_POKEDOLL_WARTORTLE),
 			new PokedollBlock<>(() -> PokedollGiganticWartortleBlockEntity.class));
-	public static final Block GIGANTIC_POKEDOLL_SHINY_WARTORTLE = Registry.register(Registries.BLOCK, new Identifier(Pokeblocks.MOD_ID, PokeIDs.GIGANTIC_POKEDOLL_SHINY_WARTORTLE),
+	public static final Block GIGANTIC_POKEDOLL_SHINY_WARTORTLE = Registry.register(Registries.BLOCK, Identifier.of(Pokeblocks.MOD_ID, PokeIDs.GIGANTIC_POKEDOLL_SHINY_WARTORTLE),
 			new PokedollBlock<>(() -> PokedollGiganticShinyWartortleBlockEntity.class));
 
-	public static final Block GIGANTIC_POKEDOLL_VENUSAUR = Registry.register(Registries.BLOCK, new Identifier(Pokeblocks.MOD_ID, PokeIDs.GIGANTIC_POKEDOLL_VENUSAUR),
+	public static final Block GIGANTIC_POKEDOLL_VENUSAUR = Registry.register(Registries.BLOCK, Identifier.of(Pokeblocks.MOD_ID, PokeIDs.GIGANTIC_POKEDOLL_VENUSAUR),
 			new PokedollBlock<>(() -> PokedollGiganticVenusaurBlockEntity.class));
-	public static final Block GIGANTIC_POKEDOLL_SHINY_VENUSAUR = Registry.register(Registries.BLOCK, new Identifier(Pokeblocks.MOD_ID, PokeIDs.GIGANTIC_POKEDOLL_SHINY_VENUSAUR),
+	public static final Block GIGANTIC_POKEDOLL_SHINY_VENUSAUR = Registry.register(Registries.BLOCK, Identifier.of(Pokeblocks.MOD_ID, PokeIDs.GIGANTIC_POKEDOLL_SHINY_VENUSAUR),
 			new PokedollBlock<>(() -> PokedollGiganticShinyVenusaurBlockEntity.class));
 
-	public static final Block GIGANTIC_POKEDOLL_SWINUB = Registry.register(Registries.BLOCK, new Identifier(Pokeblocks.MOD_ID, PokeIDs.GIGANTIC_POKEDOLL_SWINUB),
+	public static final Block GIGANTIC_POKEDOLL_SWINUB = Registry.register(Registries.BLOCK, Identifier.of(Pokeblocks.MOD_ID, PokeIDs.GIGANTIC_POKEDOLL_SWINUB),
 			new PokedollBlock<>(() -> PokedollGiganticSwinubBlockEntity.class));
-	public static final Block GIGANTIC_POKEDOLL_SHINY_SWINUB = Registry.register(Registries.BLOCK, new Identifier(Pokeblocks.MOD_ID, PokeIDs.GIGANTIC_POKEDOLL_SHINY_SWINUB),
+	public static final Block GIGANTIC_POKEDOLL_SHINY_SWINUB = Registry.register(Registries.BLOCK, Identifier.of(Pokeblocks.MOD_ID, PokeIDs.GIGANTIC_POKEDOLL_SHINY_SWINUB),
 			new PokedollBlock<>(() -> PokedollGiganticShinySwinubBlockEntity.class));
 
-	public static final Block GIGANTIC_POKEDOLL_SQUIRTLE = Registry.register(Registries.BLOCK, new Identifier(Pokeblocks.MOD_ID, PokeIDs.GIGANTIC_POKEDOLL_SQUIRTLE),
+	public static final Block GIGANTIC_POKEDOLL_SQUIRTLE = Registry.register(Registries.BLOCK, Identifier.of(Pokeblocks.MOD_ID, PokeIDs.GIGANTIC_POKEDOLL_SQUIRTLE),
 			new PokedollBlock<>(() -> PokedollGiganticSquirtleBlockEntity.class));
-	public static final Block GIGANTIC_POKEDOLL_SHINY_SQUIRTLE = Registry.register(Registries.BLOCK, new Identifier(Pokeblocks.MOD_ID, PokeIDs.GIGANTIC_POKEDOLL_SHINY_SQUIRTLE),
+	public static final Block GIGANTIC_POKEDOLL_SHINY_SQUIRTLE = Registry.register(Registries.BLOCK, Identifier.of(Pokeblocks.MOD_ID, PokeIDs.GIGANTIC_POKEDOLL_SHINY_SQUIRTLE),
 			new PokedollBlock<>(() -> PokedollGiganticShinySquirtleBlockEntity.class));
 
-	public static final Block GIGANTIC_POKEDOLL_SNORLAX = Registry.register(Registries.BLOCK, new Identifier(Pokeblocks.MOD_ID, PokeIDs.GIGANTIC_POKEDOLL_SNORLAX),
+	public static final Block GIGANTIC_POKEDOLL_SNORLAX = Registry.register(Registries.BLOCK, Identifier.of(Pokeblocks.MOD_ID, PokeIDs.GIGANTIC_POKEDOLL_SNORLAX),
 			new PokedollBlock<>(() -> PokedollGiganticSnorlaxBlockEntity.class));
-	public static final Block GIGANTIC_POKEDOLL_SHINY_SNORLAX = Registry.register(Registries.BLOCK, new Identifier(Pokeblocks.MOD_ID, PokeIDs.GIGANTIC_POKEDOLL_SHINY_SNORLAX),
+	public static final Block GIGANTIC_POKEDOLL_SHINY_SNORLAX = Registry.register(Registries.BLOCK, Identifier.of(Pokeblocks.MOD_ID, PokeIDs.GIGANTIC_POKEDOLL_SHINY_SNORLAX),
 			new PokedollBlock<>(() -> PokedollGiganticShinySnorlaxBlockEntity.class));
 
-	public static final Block GIGANTIC_POKEDOLL_SMOLIV = Registry.register(Registries.BLOCK, new Identifier(Pokeblocks.MOD_ID, PokeIDs.GIGANTIC_POKEDOLL_SMOLIV),
+	public static final Block GIGANTIC_POKEDOLL_SMOLIV = Registry.register(Registries.BLOCK, Identifier.of(Pokeblocks.MOD_ID, PokeIDs.GIGANTIC_POKEDOLL_SMOLIV),
 			new PokedollBlock<>(() -> PokedollGiganticSmolivBlockEntity.class));
-	public static final Block GIGANTIC_POKEDOLL_SHINY_SMOLIV = Registry.register(Registries.BLOCK, new Identifier(Pokeblocks.MOD_ID, PokeIDs.GIGANTIC_POKEDOLL_SHINY_SMOLIV),
+	public static final Block GIGANTIC_POKEDOLL_SHINY_SMOLIV = Registry.register(Registries.BLOCK, Identifier.of(Pokeblocks.MOD_ID, PokeIDs.GIGANTIC_POKEDOLL_SHINY_SMOLIV),
 			new PokedollBlock<>(() -> PokedollGiganticShinySmolivBlockEntity.class));
 
-	public static final Block GIGANTIC_POKEDOLL_SENTRET = Registry.register(Registries.BLOCK, new Identifier(Pokeblocks.MOD_ID, PokeIDs.GIGANTIC_POKEDOLL_SENTRET),
+	public static final Block GIGANTIC_POKEDOLL_SENTRET = Registry.register(Registries.BLOCK, Identifier.of(Pokeblocks.MOD_ID, PokeIDs.GIGANTIC_POKEDOLL_SENTRET),
 			new PokedollBlock<>(() -> PokedollGiganticSentretBlockEntity.class));
-	public static final Block GIGANTIC_POKEDOLL_SHINY_SENTRET = Registry.register(Registries.BLOCK, new Identifier(Pokeblocks.MOD_ID, PokeIDs.GIGANTIC_POKEDOLL_SHINY_SENTRET),
+	public static final Block GIGANTIC_POKEDOLL_SHINY_SENTRET = Registry.register(Registries.BLOCK, Identifier.of(Pokeblocks.MOD_ID, PokeIDs.GIGANTIC_POKEDOLL_SHINY_SENTRET),
 			new PokedollBlock<>(() -> PokedollGiganticShinySentretBlockEntity.class));
 
-	public static final Block GIGANTIC_POKEDOLL_SABLEYE = Registry.register(Registries.BLOCK, new Identifier(Pokeblocks.MOD_ID, PokeIDs.GIGANTIC_POKEDOLL_SABLEYE),
+	public static final Block GIGANTIC_POKEDOLL_SABLEYE = Registry.register(Registries.BLOCK, Identifier.of(Pokeblocks.MOD_ID, PokeIDs.GIGANTIC_POKEDOLL_SABLEYE),
 			new PokedollBlock<>(() -> PokedollGiganticSableyeBlockEntity.class));
-	public static final Block GIGANTIC_POKEDOLL_SHINY_SABLEYE = Registry.register(Registries.BLOCK, new Identifier(Pokeblocks.MOD_ID, PokeIDs.GIGANTIC_POKEDOLL_SHINY_SABLEYE),
+	public static final Block GIGANTIC_POKEDOLL_SHINY_SABLEYE = Registry.register(Registries.BLOCK, Identifier.of(Pokeblocks.MOD_ID, PokeIDs.GIGANTIC_POKEDOLL_SHINY_SABLEYE),
 			new PokedollBlock<>(() -> PokedollGiganticShinySableyeBlockEntity.class));
 
-	public static final Block GIGANTIC_POKEDOLL_RELLOR = Registry.register(Registries.BLOCK, new Identifier(Pokeblocks.MOD_ID, PokeIDs.GIGANTIC_POKEDOLL_RELLOR),
+	public static final Block GIGANTIC_POKEDOLL_RELLOR = Registry.register(Registries.BLOCK, Identifier.of(Pokeblocks.MOD_ID, PokeIDs.GIGANTIC_POKEDOLL_RELLOR),
 			new PokedollBlock<>(() -> PokedollGiganticRellorBlockEntity.class));
-	public static final Block GIGANTIC_POKEDOLL_SHINY_RELLOR = Registry.register(Registries.BLOCK, new Identifier(Pokeblocks.MOD_ID, PokeIDs.GIGANTIC_POKEDOLL_SHINY_RELLOR),
+	public static final Block GIGANTIC_POKEDOLL_SHINY_RELLOR = Registry.register(Registries.BLOCK, Identifier.of(Pokeblocks.MOD_ID, PokeIDs.GIGANTIC_POKEDOLL_SHINY_RELLOR),
 			new PokedollBlock<>(() -> PokedollGiganticShinyRellorBlockEntity.class));
-	public static final Block GIGANTIC_POKEDOLL_RABSCA = Registry.register(Registries.BLOCK, new Identifier(Pokeblocks.MOD_ID, PokeIDs.GIGANTIC_POKEDOLL_RABSCA),
+	public static final Block GIGANTIC_POKEDOLL_RABSCA = Registry.register(Registries.BLOCK, Identifier.of(Pokeblocks.MOD_ID, PokeIDs.GIGANTIC_POKEDOLL_RABSCA),
 			new PokedollBlock<>(() -> PokedollGiganticRabscaBlockEntity.class));
-	public static final Block GIGANTIC_POKEDOLL_SHINY_RABSCA = Registry.register(Registries.BLOCK, new Identifier(Pokeblocks.MOD_ID, PokeIDs.GIGANTIC_POKEDOLL_SHINY_RABSCA),
+	public static final Block GIGANTIC_POKEDOLL_SHINY_RABSCA = Registry.register(Registries.BLOCK, Identifier.of(Pokeblocks.MOD_ID, PokeIDs.GIGANTIC_POKEDOLL_SHINY_RABSCA),
 			new PokedollBlock<>(() -> PokedollGiganticShinyRabscaBlockEntity.class));
-	public static final Block GIGANTIC_POKEDOLL_QUAGSIRE = Registry.register(Registries.BLOCK, new Identifier(Pokeblocks.MOD_ID, PokeIDs.GIGANTIC_POKEDOLL_QUAGSIRE),
+	public static final Block GIGANTIC_POKEDOLL_QUAGSIRE = Registry.register(Registries.BLOCK, Identifier.of(Pokeblocks.MOD_ID, PokeIDs.GIGANTIC_POKEDOLL_QUAGSIRE),
 			new PokedollBlock<>(() -> PokedollGiganticQuagsireBlockEntity.class));
-	public static final Block GIGANTIC_POKEDOLL_SHINY_QUAGSIRE = Registry.register(Registries.BLOCK, new Identifier(Pokeblocks.MOD_ID, PokeIDs.GIGANTIC_POKEDOLL_SHINY_QUAGSIRE),
+	public static final Block GIGANTIC_POKEDOLL_SHINY_QUAGSIRE = Registry.register(Registries.BLOCK, Identifier.of(Pokeblocks.MOD_ID, PokeIDs.GIGANTIC_POKEDOLL_SHINY_QUAGSIRE),
 			new PokedollBlock<>(() -> PokedollGiganticShinyQuagsireBlockEntity.class));
-	public static final Block GIGANTIC_POKEDOLL_MUNCHLAX = Registry.register(Registries.BLOCK, new Identifier(Pokeblocks.MOD_ID, PokeIDs.GIGANTIC_POKEDOLL_MUNCHLAX),
+	public static final Block GIGANTIC_POKEDOLL_MUNCHLAX = Registry.register(Registries.BLOCK, Identifier.of(Pokeblocks.MOD_ID, PokeIDs.GIGANTIC_POKEDOLL_MUNCHLAX),
 			new PokedollBlock<>(() -> PokedollGiganticMunchlaxBlockEntity.class));
-	public static final Block GIGANTIC_POKEDOLL_SHINY_MUNCHLAX = Registry.register(Registries.BLOCK, new Identifier(Pokeblocks.MOD_ID, PokeIDs.GIGANTIC_POKEDOLL_SHINY_MUNCHLAX),
+	public static final Block GIGANTIC_POKEDOLL_SHINY_MUNCHLAX = Registry.register(Registries.BLOCK, Identifier.of(Pokeblocks.MOD_ID, PokeIDs.GIGANTIC_POKEDOLL_SHINY_MUNCHLAX),
 			new PokedollBlock<>(() -> PokedollGiganticShinyMunchlaxBlockEntity.class));
-	public static final Block GIGANTIC_POKEDOLL_MAREEP = Registry.register(Registries.BLOCK, new Identifier(Pokeblocks.MOD_ID, PokeIDs.GIGANTIC_POKEDOLL_MAREEP),
+	public static final Block GIGANTIC_POKEDOLL_MAREEP = Registry.register(Registries.BLOCK, Identifier.of(Pokeblocks.MOD_ID, PokeIDs.GIGANTIC_POKEDOLL_MAREEP),
 			new PokedollBlock<>(() -> PokedollGiganticMareepBlockEntity.class));
-	public static final Block GIGANTIC_POKEDOLL_SHINY_MAREEP = Registry.register(Registries.BLOCK, new Identifier(Pokeblocks.MOD_ID, PokeIDs.GIGANTIC_POKEDOLL_SHINY_MAREEP),
+	public static final Block GIGANTIC_POKEDOLL_SHINY_MAREEP = Registry.register(Registries.BLOCK, Identifier.of(Pokeblocks.MOD_ID, PokeIDs.GIGANTIC_POKEDOLL_SHINY_MAREEP),
 			new PokedollBlock<>(() -> PokedollGiganticShinyMareepBlockEntity.class));
-	public static final Block GIGANTIC_POKEDOLL_LICKITUNG = Registry.register(Registries.BLOCK, new Identifier(Pokeblocks.MOD_ID, PokeIDs.GIGANTIC_POKEDOLL_LICKITUNG),
+	public static final Block GIGANTIC_POKEDOLL_LICKITUNG = Registry.register(Registries.BLOCK, Identifier.of(Pokeblocks.MOD_ID, PokeIDs.GIGANTIC_POKEDOLL_LICKITUNG),
 			new PokedollBlock<>(() -> PokedollGiganticLickitungBlockEntity.class));
-	public static final Block GIGANTIC_POKEDOLL_SHINY_LICKITUNG = Registry.register(Registries.BLOCK, new Identifier(Pokeblocks.MOD_ID, PokeIDs.GIGANTIC_POKEDOLL_SHINY_LICKITUNG),
+	public static final Block GIGANTIC_POKEDOLL_SHINY_LICKITUNG = Registry.register(Registries.BLOCK, Identifier.of(Pokeblocks.MOD_ID, PokeIDs.GIGANTIC_POKEDOLL_SHINY_LICKITUNG),
 			new PokedollBlock<>(() -> PokedollGiganticShinyLickitungBlockEntity.class));
 
-	public static final Block GIGANTIC_POKEDOLL_IVYSAUR = Registry.register(Registries.BLOCK, new Identifier(Pokeblocks.MOD_ID, PokeIDs.GIGANTIC_POKEDOLL_IVYSAUR),
+	public static final Block GIGANTIC_POKEDOLL_IVYSAUR = Registry.register(Registries.BLOCK, Identifier.of(Pokeblocks.MOD_ID, PokeIDs.GIGANTIC_POKEDOLL_IVYSAUR),
 			new PokedollBlock<>(() -> PokedollGiganticIvysaurBlockEntity.class));
-	public static final Block GIGANTIC_POKEDOLL_SHINY_IVYSAUR = Registry.register(Registries.BLOCK, new Identifier(Pokeblocks.MOD_ID, PokeIDs.GIGANTIC_POKEDOLL_SHINY_IVYSAUR),
+	public static final Block GIGANTIC_POKEDOLL_SHINY_IVYSAUR = Registry.register(Registries.BLOCK, Identifier.of(Pokeblocks.MOD_ID, PokeIDs.GIGANTIC_POKEDOLL_SHINY_IVYSAUR),
 			new PokedollBlock<>(() -> PokedollGiganticShinyIvysaurBlockEntity.class));
 
-	public static final Block GIGANTIC_POKEDOLL_HAPPINY = Registry.register(Registries.BLOCK, new Identifier(Pokeblocks.MOD_ID, PokeIDs.GIGANTIC_POKEDOLL_HAPPINY),
+	public static final Block GIGANTIC_POKEDOLL_HAPPINY = Registry.register(Registries.BLOCK, Identifier.of(Pokeblocks.MOD_ID, PokeIDs.GIGANTIC_POKEDOLL_HAPPINY),
 			new PokedollBlock<>(() -> PokedollGiganticHappinyBlockEntity.class));
-	public static final Block GIGANTIC_POKEDOLL_SHINY_HAPPINY = Registry.register(Registries.BLOCK, new Identifier(Pokeblocks.MOD_ID, PokeIDs.GIGANTIC_POKEDOLL_SHINY_HAPPINY),
+	public static final Block GIGANTIC_POKEDOLL_SHINY_HAPPINY = Registry.register(Registries.BLOCK, Identifier.of(Pokeblocks.MOD_ID, PokeIDs.GIGANTIC_POKEDOLL_SHINY_HAPPINY),
 			new PokedollBlock<>(() -> PokedollGiganticShinyHappinyBlockEntity.class));
 
-	public static final Block GIGANTIC_POKEDOLL_FURRET = Registry.register(Registries.BLOCK, new Identifier(Pokeblocks.MOD_ID, PokeIDs.GIGANTIC_POKEDOLL_FURRET),
+	public static final Block GIGANTIC_POKEDOLL_FURRET = Registry.register(Registries.BLOCK, Identifier.of(Pokeblocks.MOD_ID, PokeIDs.GIGANTIC_POKEDOLL_FURRET),
 			new PokedollBlock<>(() -> PokedollGiganticFurretBlockEntity.class));
-	public static final Block GIGANTIC_POKEDOLL_SHINY_FURRET = Registry.register(Registries.BLOCK, new Identifier(Pokeblocks.MOD_ID, PokeIDs.GIGANTIC_POKEDOLL_SHINY_FURRET),
+	public static final Block GIGANTIC_POKEDOLL_SHINY_FURRET = Registry.register(Registries.BLOCK, Identifier.of(Pokeblocks.MOD_ID, PokeIDs.GIGANTIC_POKEDOLL_SHINY_FURRET),
 			new PokedollBlock<>(() -> PokedollGiganticShinyFurretBlockEntity.class));
 
-	public static final Block GIGANTIC_POKEDOLL_FLAAFFY = Registry.register(Registries.BLOCK, new Identifier(Pokeblocks.MOD_ID, PokeIDs.GIGANTIC_POKEDOLL_FLAAFFY),
+	public static final Block GIGANTIC_POKEDOLL_FLAAFFY = Registry.register(Registries.BLOCK, Identifier.of(Pokeblocks.MOD_ID, PokeIDs.GIGANTIC_POKEDOLL_FLAAFFY),
 			new PokedollBlock<>(() -> PokedollGiganticFlaaffyBlockEntity.class));
-	public static final Block GIGANTIC_POKEDOLL_SHINY_FLAAFFY = Registry.register(Registries.BLOCK, new Identifier(Pokeblocks.MOD_ID, PokeIDs.GIGANTIC_POKEDOLL_SHINY_FLAAFFY),
+	public static final Block GIGANTIC_POKEDOLL_SHINY_FLAAFFY = Registry.register(Registries.BLOCK, Identifier.of(Pokeblocks.MOD_ID, PokeIDs.GIGANTIC_POKEDOLL_SHINY_FLAAFFY),
 			new PokedollBlock<>(() -> PokedollGiganticShinyFlaaffyBlockEntity.class));
 
-	public static final Block GIGANTIC_POKEDOLL_DOLLIV = Registry.register(Registries.BLOCK, new Identifier(Pokeblocks.MOD_ID, PokeIDs.GIGANTIC_POKEDOLL_DOLLIV),
+	public static final Block GIGANTIC_POKEDOLL_DOLLIV = Registry.register(Registries.BLOCK, Identifier.of(Pokeblocks.MOD_ID, PokeIDs.GIGANTIC_POKEDOLL_DOLLIV),
 			new PokedollBlock<>(() -> PokedollGiganticDollivBlockEntity.class));
-	public static final Block GIGANTIC_POKEDOLL_SHINY_DOLLIV = Registry.register(Registries.BLOCK, new Identifier(Pokeblocks.MOD_ID, PokeIDs.GIGANTIC_POKEDOLL_SHINY_DOLLIV),
+	public static final Block GIGANTIC_POKEDOLL_SHINY_DOLLIV = Registry.register(Registries.BLOCK, Identifier.of(Pokeblocks.MOD_ID, PokeIDs.GIGANTIC_POKEDOLL_SHINY_DOLLIV),
 			new PokedollBlock<>(() -> PokedollGiganticShinyDollivBlockEntity.class));
 
-	public static final Block GIGANTIC_POKEDOLL_CHARMANDER = Registry.register(Registries.BLOCK, new Identifier(Pokeblocks.MOD_ID, PokeIDs.GIGANTIC_POKEDOLL_CHARMANDER),
+	public static final Block GIGANTIC_POKEDOLL_CHARMANDER = Registry.register(Registries.BLOCK, Identifier.of(Pokeblocks.MOD_ID, PokeIDs.GIGANTIC_POKEDOLL_CHARMANDER),
 			new PokedollBlock<>(() -> PokedollGiganticCharmanderBlockEntity.class));
-	public static final Block GIGANTIC_POKEDOLL_SHINY_CHARMANDER = Registry.register(Registries.BLOCK, new Identifier(Pokeblocks.MOD_ID, PokeIDs.GIGANTIC_POKEDOLL_SHINY_CHARMANDER),
+	public static final Block GIGANTIC_POKEDOLL_SHINY_CHARMANDER = Registry.register(Registries.BLOCK, Identifier.of(Pokeblocks.MOD_ID, PokeIDs.GIGANTIC_POKEDOLL_SHINY_CHARMANDER),
 			new PokedollBlock<>(() -> PokedollGiganticShinyCharmanderBlockEntity.class));
 
-	public static final Block GIGANTIC_POKEDOLL_CALYREX = Registry.register(Registries.BLOCK, new Identifier(Pokeblocks.MOD_ID, PokeIDs.GIGANTIC_POKEDOLL_CALYREX),
+	public static final Block GIGANTIC_POKEDOLL_CALYREX = Registry.register(Registries.BLOCK, Identifier.of(Pokeblocks.MOD_ID, PokeIDs.GIGANTIC_POKEDOLL_CALYREX),
 			new PokedollBlock<>(() -> PokedollGiganticCalyrexBlockEntity.class));
-	public static final Block GIGANTIC_POKEDOLL_CALYREX_ANIMATED = Registry.register(Registries.BLOCK, new Identifier(Pokeblocks.MOD_ID, PokeIDs.GIGANTIC_POKEDOLL_CALYREX_ANIMATED),
+	public static final Block GIGANTIC_POKEDOLL_CALYREX_ANIMATED = Registry.register(Registries.BLOCK, Identifier.of(Pokeblocks.MOD_ID, PokeIDs.GIGANTIC_POKEDOLL_CALYREX_ANIMATED),
 			new PokedollBlock<>(() -> PokedollGiganticCalyrexAnimatedBlockEntity.class));
-	public static final Block GIGANTIC_POKEDOLL_SHINY_CALYREX = Registry.register(Registries.BLOCK, new Identifier(Pokeblocks.MOD_ID, PokeIDs.GIGANTIC_POKEDOLL_SHINY_CALYREX),
+	public static final Block GIGANTIC_POKEDOLL_SHINY_CALYREX = Registry.register(Registries.BLOCK, Identifier.of(Pokeblocks.MOD_ID, PokeIDs.GIGANTIC_POKEDOLL_SHINY_CALYREX),
 			new PokedollBlock<>(() -> PokedollGiganticShinyCalyrexBlockEntity.class));
-	public static final Block GIGANTIC_POKEDOLL_SHINY_CALYREX_ANIMATED = Registry.register(Registries.BLOCK, new Identifier(Pokeblocks.MOD_ID, PokeIDs.GIGANTIC_POKEDOLL_SHINY_CALYREX_ANIMATED),
+	public static final Block GIGANTIC_POKEDOLL_SHINY_CALYREX_ANIMATED = Registry.register(Registries.BLOCK, Identifier.of(Pokeblocks.MOD_ID, PokeIDs.GIGANTIC_POKEDOLL_SHINY_CALYREX_ANIMATED),
 			new PokedollBlock<>(() -> PokedollGiganticShinyCalyrexAnimatedBlockEntity.class));
 
-	public static final Block GIGANTIC_POKEDOLL_BULBASAUR = Registry.register(Registries.BLOCK, new Identifier(Pokeblocks.MOD_ID, PokeIDs.GIGANTIC_POKEDOLL_BULBASAUR),
+	public static final Block GIGANTIC_POKEDOLL_BULBASAUR = Registry.register(Registries.BLOCK, Identifier.of(Pokeblocks.MOD_ID, PokeIDs.GIGANTIC_POKEDOLL_BULBASAUR),
 			new PokedollBlock<>(() -> PokedollGiganticBulbasaurBlockEntity.class));
-	public static final Block GIGANTIC_POKEDOLL_BULBASAUR_POSED = Registry.register(Registries.BLOCK, new Identifier(Pokeblocks.MOD_ID, PokeIDs.GIGANTIC_POKEDOLL_BULBASAUR_POSED),
+	public static final Block GIGANTIC_POKEDOLL_BULBASAUR_POSED = Registry.register(Registries.BLOCK, Identifier.of(Pokeblocks.MOD_ID, PokeIDs.GIGANTIC_POKEDOLL_BULBASAUR_POSED),
 			new PokedollBlock<>(() -> PokedollGiganticBulbasaurPosedBlockEntity.class));
-	public static final Block GIGANTIC_POKEDOLL_SHINY_BULBASAUR = Registry.register(Registries.BLOCK, new Identifier(Pokeblocks.MOD_ID, PokeIDs.GIGANTIC_POKEDOLL_SHINY_BULBASAUR),
+	public static final Block GIGANTIC_POKEDOLL_SHINY_BULBASAUR = Registry.register(Registries.BLOCK, Identifier.of(Pokeblocks.MOD_ID, PokeIDs.GIGANTIC_POKEDOLL_SHINY_BULBASAUR),
 			new PokedollBlock<>(() -> PokedollGiganticShinyBulbasaurBlockEntity.class));
-	public static final Block GIGANTIC_POKEDOLL_SHINY_BULBASAUR_POSED = Registry.register(Registries.BLOCK, new Identifier(Pokeblocks.MOD_ID, PokeIDs.GIGANTIC_POKEDOLL_SHINY_BULBASAUR_POSED),
+	public static final Block GIGANTIC_POKEDOLL_SHINY_BULBASAUR_POSED = Registry.register(Registries.BLOCK, Identifier.of(Pokeblocks.MOD_ID, PokeIDs.GIGANTIC_POKEDOLL_SHINY_BULBASAUR_POSED),
 			new PokedollBlock<>(() -> PokedollGiganticShinyBulbasaurPosedBlockEntity.class));
 
-	public static final Block GIGANTIC_POKEDOLL_BLASTOISE = Registry.register(Registries.BLOCK, new Identifier(Pokeblocks.MOD_ID, PokeIDs.GIGANTIC_POKEDOLL_BLASTOISE),
+	public static final Block GIGANTIC_POKEDOLL_BLASTOISE = Registry.register(Registries.BLOCK, Identifier.of(Pokeblocks.MOD_ID, PokeIDs.GIGANTIC_POKEDOLL_BLASTOISE),
 			new PokedollBlock<>(() -> PokedollGiganticBlastoiseBlockEntity.class));
-	public static final Block GIGANTIC_POKEDOLL_SHINY_BLASTOISE = Registry.register(Registries.BLOCK, new Identifier(Pokeblocks.MOD_ID, PokeIDs.GIGANTIC_POKEDOLL_SHINY_BLASTOISE),
+	public static final Block GIGANTIC_POKEDOLL_SHINY_BLASTOISE = Registry.register(Registries.BLOCK, Identifier.of(Pokeblocks.MOD_ID, PokeIDs.GIGANTIC_POKEDOLL_SHINY_BLASTOISE),
 			new PokedollBlock<>(() -> PokedollGiganticShinyBlastoiseBlockEntity.class));
 
-	public static final Block GIGANTIC_POKEDOLL_ARBOLIVA = Registry.register(Registries.BLOCK, new Identifier(Pokeblocks.MOD_ID, PokeIDs.GIGANTIC_POKEDOLL_ARBOLIVA),
+	public static final Block GIGANTIC_POKEDOLL_ARBOLIVA = Registry.register(Registries.BLOCK, Identifier.of(Pokeblocks.MOD_ID, PokeIDs.GIGANTIC_POKEDOLL_ARBOLIVA),
 			new PokedollBlock<>(() -> PokedollGiganticArbolivaBlockEntity.class));
-	public static final Block GIGANTIC_POKEDOLL_SHINY_ARBOLIVA = Registry.register(Registries.BLOCK, new Identifier(Pokeblocks.MOD_ID, PokeIDs.GIGANTIC_POKEDOLL_SHINY_ARBOLIVA),
+	public static final Block GIGANTIC_POKEDOLL_SHINY_ARBOLIVA = Registry.register(Registries.BLOCK, Identifier.of(Pokeblocks.MOD_ID, PokeIDs.GIGANTIC_POKEDOLL_SHINY_ARBOLIVA),
 			new PokedollBlock<>(() -> PokedollGiganticShinyArbolivaBlockEntity.class));
 
-	public static final Block GIGANTIC_POKEDOLL_AMPHAROS = Registry.register(Registries.BLOCK, new Identifier(Pokeblocks.MOD_ID, PokeIDs.GIGANTIC_POKEDOLL_AMPHAROS),
+	public static final Block GIGANTIC_POKEDOLL_AMPHAROS = Registry.register(Registries.BLOCK, Identifier.of(Pokeblocks.MOD_ID, PokeIDs.GIGANTIC_POKEDOLL_AMPHAROS),
 			new PokedollBlock<>(() -> PokedollGiganticAmpharosBlockEntity.class));
-	public static final Block GIGANTIC_POKEDOLL_SHINY_AMPHAROS = Registry.register(Registries.BLOCK, new Identifier(Pokeblocks.MOD_ID, PokeIDs.GIGANTIC_POKEDOLL_SHINY_AMPHAROS),
+	public static final Block GIGANTIC_POKEDOLL_SHINY_AMPHAROS = Registry.register(Registries.BLOCK, Identifier.of(Pokeblocks.MOD_ID, PokeIDs.GIGANTIC_POKEDOLL_SHINY_AMPHAROS),
 			new PokedollBlock<>(() -> PokedollGiganticShinyAmpharosBlockEntity.class));
 
-	public static final Block GIGANTIC_POKEDOLL_ABSOL = Registry.register(Registries.BLOCK, new Identifier(Pokeblocks.MOD_ID, PokeIDs.GIGANTIC_POKEDOLL_ABSOL),
+	public static final Block GIGANTIC_POKEDOLL_ABSOL = Registry.register(Registries.BLOCK, Identifier.of(Pokeblocks.MOD_ID, PokeIDs.GIGANTIC_POKEDOLL_ABSOL),
 			new PokedollBlock<>(() -> PokedollGiganticAbsolBlockEntity.class));
-	public static final Block GIGANTIC_POKEDOLL_SHINY_ABSOL = Registry.register(Registries.BLOCK, new Identifier(Pokeblocks.MOD_ID, PokeIDs.GIGANTIC_POKEDOLL_SHINY_ABSOL),
+	public static final Block GIGANTIC_POKEDOLL_SHINY_ABSOL = Registry.register(Registries.BLOCK, Identifier.of(Pokeblocks.MOD_ID, PokeIDs.GIGANTIC_POKEDOLL_SHINY_ABSOL),
 			new PokedollBlock<>(() -> PokedollGiganticShinyAbsolBlockEntity.class));
-	public static final Block A09ROBERT_FIGURINE = Registry.register(Registries.BLOCK, new Identifier(Pokeblocks.MOD_ID, PokeIDs.A09ROBERT_FIGURINE),
+	public static final Block A09ROBERT_FIGURINE = Registry.register(Registries.BLOCK, Identifier.of(Pokeblocks.MOD_ID, PokeIDs.A09ROBERT_FIGURINE),
 			new PokedollBlock<>(Shapes.FIGURINE_SHAPE, () -> A09RobertFigurineBlockEntity.class));
-	public static final Block RED_COMMUNISM_FIGURINE = Registry.register(Registries.BLOCK, new Identifier(Pokeblocks.MOD_ID, PokeIDs.RED_COMMUNISM_FIGURINE),
+	public static final Block RED_COMMUNISM_FIGURINE = Registry.register(Registries.BLOCK, Identifier.of(Pokeblocks.MOD_ID, PokeIDs.RED_COMMUNISM_FIGURINE),
 			new PokedollBlock<>(Shapes.FIGURINE_SHAPE, () -> RedCommunismFigurineBlockEntity.class));
-	public static final Block TROPSIC0_FIGURINE = Registry.register(Registries.BLOCK, new Identifier(Pokeblocks.MOD_ID, PokeIDs.TROPSIC0_FIGURINE),
+	public static final Block TROPSIC0_FIGURINE = Registry.register(Registries.BLOCK, Identifier.of(Pokeblocks.MOD_ID, PokeIDs.TROPSIC0_FIGURINE),
 			new PokedollBlock<>(Shapes.FIGURINE_SHAPE, () -> Tropsic0FigurineBlockEntity.class));
 
 	private static Block registerBlock(String name, Block block) {
 		registerBlockItem(name, block);
-		return Registry.register(Registries.BLOCK, new Identifier(Pokeblocks.MOD_ID, name), block);
+		return Registry.register(Registries.BLOCK, Identifier.of(Pokeblocks.MOD_ID, name), block);
 	}
 
 	private static Item registerBlockItem(String name, Block block) {
-		return Registry.register(Registries.ITEM, new Identifier(Pokeblocks.MOD_ID, name),
-				new BlockItem(block, new FabricItemSettings()));
+		return Registry.register(Registries.ITEM, Identifier.of(Pokeblocks.MOD_ID, name),
+				new BlockItem(block, new Item.Settings()));
 	}
 
 	public static Block getGiganticPokedollBlock(String pokemonName) {
