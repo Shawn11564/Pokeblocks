@@ -397,7 +397,9 @@ public class ModBlocks {
 			new PokedollBlock<>(Blocks.GLASS, () -> PokedollMagikarpFishbowlBlockEntity.class) {
 				@Override
 				public void onBroken(WorldAccess world, BlockPos pos, BlockState state) {
-					world.setBlockState(pos, Blocks.WATER.getDefaultState(), 8);
+					if (!world.getDimension().ultrawarm()) {
+						world.setBlockState(pos, Blocks.WATER.getDefaultState(), 8);
+					}
 					if (world instanceof ServerWorld serverWorld) {
 						SalmonEntity salmon = EntityType.SALMON.create(serverWorld);
 						if (salmon != null) {
@@ -412,7 +414,9 @@ public class ModBlocks {
 			new PokedollBlock<>(Blocks.GLASS, () -> PokedollShinyMagikarpFishbowlBlockEntity.class) {
 				@Override
 				public void onBroken(WorldAccess world, BlockPos pos, BlockState state) {
-					world.setBlockState(pos, Blocks.WATER.getDefaultState(), 8);
+					if (!world.getDimension().ultrawarm()) {
+						world.setBlockState(pos, Blocks.WATER.getDefaultState(), 8);
+					}
 					if (world instanceof ServerWorld serverWorld) {
 						SalmonEntity salmon = EntityType.SALMON.create(serverWorld);
 						if (salmon != null) {
