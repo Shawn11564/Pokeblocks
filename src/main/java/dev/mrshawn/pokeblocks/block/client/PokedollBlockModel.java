@@ -2,28 +2,11 @@ package dev.mrshawn.pokeblocks.block.client;
 
 import dev.mrshawn.pokeblocks.Pokeblocks;
 import dev.mrshawn.pokeblocks.block.entity.PokedollBlockEntity;
-import dev.mrshawn.pokeblocks.constants.ResourceConstants;
 import net.minecraft.client.render.RenderLayer;
 import net.minecraft.util.Identifier;
 import software.bernie.geckolib.model.GeoModel;
 
 public class PokedollBlockModel extends GeoModel<PokedollBlockEntity> {
-
-	private final String modelResourcePath;
-	private final String textureResourcePath;
-	private final String animationResourcePath;
-
-	public PokedollBlockModel(String modelResourcePath, String textureResourcePath, String animationResourcePath) {
-		this.modelResourcePath = modelResourcePath;
-		this.textureResourcePath = textureResourcePath;
-		this.animationResourcePath = animationResourcePath;
-	}
-
-	public PokedollBlockModel(String modelResourcePath, String textureResourcePath) {
-		this.modelResourcePath = modelResourcePath;
-		this.textureResourcePath = textureResourcePath;
-		this.animationResourcePath = ResourceConstants.SPIN_ANIMATION;
-	}
 
 	@Override
 	public RenderLayer getRenderType(PokedollBlockEntity animatable, Identifier texture) {
@@ -32,16 +15,17 @@ public class PokedollBlockModel extends GeoModel<PokedollBlockEntity> {
 
 	@Override
 	public Identifier getModelResource(PokedollBlockEntity animatable) {
-		return Identifier.of(Pokeblocks.MOD_ID, "geo/" + modelResourcePath);
+		return Identifier.of(Pokeblocks.MOD_ID, "geo/" + animatable.getModelPath());
 	}
 
 	@Override
 	public Identifier getTextureResource(PokedollBlockEntity animatable) {
-		return Identifier.of(Pokeblocks.MOD_ID, "textures/block/" + textureResourcePath);
+		return Identifier.of(Pokeblocks.MOD_ID, "textures/block/" + animatable.getTexturePath());
 	}
 
 	@Override
 	public Identifier getAnimationResource(PokedollBlockEntity animatable) {
-		return Identifier.of(Pokeblocks.MOD_ID, "animations/block/" + animationResourcePath);
+		return Identifier.of(Pokeblocks.MOD_ID, "animations/block/" + animatable.getAnimationPath());
 	}
+
 }

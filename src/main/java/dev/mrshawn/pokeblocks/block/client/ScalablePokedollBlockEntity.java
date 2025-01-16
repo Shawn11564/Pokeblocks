@@ -5,21 +5,20 @@ import net.minecraft.block.BlockState;
 import net.minecraft.block.entity.BlockEntityType;
 import net.minecraft.util.math.BlockPos;
 
-public abstract class ScalablePokedollBlockEntity extends PokedollBlockEntity {
-	private final float scaleWidth;
-	private final float scaleHeight;
+public class ScalablePokedollBlockEntity extends PokedollBlockEntity {
 
-	public ScalablePokedollBlockEntity(BlockEntityType<?> type, BlockPos pos, BlockState state, float scaleWidth, float scaleHeight) {
+	public ScalablePokedollBlockEntity(BlockEntityType<?> type, BlockPos pos, BlockState state,
+									   float scaleWidth, float scaleHeight) {
 		super(type, pos, state);
-		this.scaleWidth = scaleWidth;
-		this.scaleHeight = scaleHeight;
+		setScale(scaleWidth, scaleHeight);
 	}
 
-	public float getScaleWidth() {
-		return scaleWidth;
+	public ScalablePokedollBlockEntity(BlockEntityType<?> type, BlockPos pos, BlockState state,
+									   String modelPath, String texturePath,
+									   String animationPath, String animationName,
+									   float scaleWidth, float scaleHeight) {
+		super(type, pos, state, modelPath, texturePath, animationPath, animationName);
+		setScale(scaleWidth, scaleHeight);
 	}
 
-	public float getScaleHeight() {
-		return scaleHeight;
-	}
 }

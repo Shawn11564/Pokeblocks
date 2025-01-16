@@ -10,8 +10,8 @@ public class PokedollMagikarpFishbowlBlockEntity extends PokedollBlockEntity {
 		super(BlockEntityTypeRegistry.get(PokedollMagikarpFishbowlBlockEntity.class), pos, state);
 	}
 
-	@Override
-	protected String getAnimationName() {
-		return "animation.magikarp_fishbowl.swim";
-	}
+//	@Override
+//	protected String getAnimationName() {
+//		return "animation.magikarp_fishbowl.swim";
+//	}
 }
