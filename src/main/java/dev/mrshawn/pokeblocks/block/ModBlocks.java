@@ -18,6 +18,8 @@ import dev.mrshawn.pokeblocks.block.entity.arboliva.PokedollArbolivaBlockEntity;
 import dev.mrshawn.pokeblocks.block.entity.arboliva.PokedollGiganticArbolivaBlockEntity;
 import dev.mrshawn.pokeblocks.block.entity.arboliva.PokedollGiganticShinyArbolivaBlockEntity;
 import dev.mrshawn.pokeblocks.block.entity.arboliva.PokedollShinyArbolivaBlockEntity;
+import dev.mrshawn.pokeblocks.block.entity.beartic.PokedollBearticBlockEntity;
+import dev.mrshawn.pokeblocks.block.entity.beartic.PokedollShinyBearticBlockEntity;
 import dev.mrshawn.pokeblocks.block.entity.bellossom.PokedollBellossomBlockEntity;
 import dev.mrshawn.pokeblocks.block.entity.bellossom.PokedollGiganticBellossomBlockEntity;
 import dev.mrshawn.pokeblocks.block.entity.bellossom.PokedollGiganticShinyBellossomBlockEntity;
@@ -58,6 +60,8 @@ import dev.mrshawn.pokeblocks.block.entity.corvisquire.PokedollCorvisquireBlockE
 import dev.mrshawn.pokeblocks.block.entity.corvisquire.PokedollGiganticCorvisquireBlockEntity;
 import dev.mrshawn.pokeblocks.block.entity.corvisquire.PokedollGiganticShinyCorvisquireBlockEntity;
 import dev.mrshawn.pokeblocks.block.entity.corvisquire.PokedollShinyCorvisquireBlockEntity;
+import dev.mrshawn.pokeblocks.block.entity.cubchoo.PokedollCubchooBlockEntity;
+import dev.mrshawn.pokeblocks.block.entity.cubchoo.PokedollShinyCubchooBlockEntity;
 import dev.mrshawn.pokeblocks.block.entity.damorgo_figurine.PokedollDamorgoFigurineBlockEntity;
 import dev.mrshawn.pokeblocks.block.entity.dolliv.PokedollDollivBlockEntity;
 import dev.mrshawn.pokeblocks.block.entity.dolliv.PokedollGiganticDollivBlockEntity;
@@ -72,6 +76,8 @@ import dev.mrshawn.pokeblocks.block.entity.eevee.PokedollEeveeBlockEntity;
 import dev.mrshawn.pokeblocks.block.entity.eevee.PokedollGiganticEeveeBlockEntity;
 import dev.mrshawn.pokeblocks.block.entity.eevee.PokedollGiganticShinyEeveeBlockEntity;
 import dev.mrshawn.pokeblocks.block.entity.eevee.PokedollShinyEeveeBlockEntity;
+import dev.mrshawn.pokeblocks.block.entity.eiscue.PokedollEiscueBlockEntity;
+import dev.mrshawn.pokeblocks.block.entity.eiscue.PokedollShinyEiscueBlockEntity;
 import dev.mrshawn.pokeblocks.block.entity.flaaffy.PokedollFlaaffyBlockEntity;
 import dev.mrshawn.pokeblocks.block.entity.flaaffy.PokedollGiganticFlaaffyBlockEntity;
 import dev.mrshawn.pokeblocks.block.entity.flaaffy.PokedollGiganticShinyFlaaffyBlockEntity;
@@ -93,6 +99,8 @@ import dev.mrshawn.pokeblocks.block.entity.happiny.PokedollGiganticHappinyBlockE
 import dev.mrshawn.pokeblocks.block.entity.happiny.PokedollGiganticShinyHappinyBlockEntity;
 import dev.mrshawn.pokeblocks.block.entity.happiny.PokedollHappinyBlockEntity;
 import dev.mrshawn.pokeblocks.block.entity.happiny.PokedollShinyHappinyBlockEntity;
+import dev.mrshawn.pokeblocks.block.entity.headpile.EiscueHeadpileBlockEntity;
+import dev.mrshawn.pokeblocks.block.entity.headpile.EiscueShinyHeadpileBlockEntity;
 import dev.mrshawn.pokeblocks.block.entity.ivysaur.PokedollGiganticIvysaurBlockEntity;
 import dev.mrshawn.pokeblocks.block.entity.ivysaur.PokedollGiganticShinyIvysaurBlockEntity;
 import dev.mrshawn.pokeblocks.block.entity.ivysaur.PokedollIvysaurBlockEntity;
@@ -121,6 +129,8 @@ import dev.mrshawn.pokeblocks.block.entity.munchlax.PokedollGiganticMunchlaxBloc
 import dev.mrshawn.pokeblocks.block.entity.munchlax.PokedollGiganticShinyMunchlaxBlockEntity;
 import dev.mrshawn.pokeblocks.block.entity.munchlax.PokedollMunchlaxBlockEntity;
 import dev.mrshawn.pokeblocks.block.entity.munchlax.PokedollShinyMunchlaxBlockEntity;
+import dev.mrshawn.pokeblocks.block.entity.noice.PokedollNoiceBlockEntity;
+import dev.mrshawn.pokeblocks.block.entity.noice.PokedollShinyNoiceBlockEntity;
 import dev.mrshawn.pokeblocks.block.entity.palossand.PokedollGiganticPalossandBlockEntity;
 import dev.mrshawn.pokeblocks.block.entity.palossand.PokedollGiganticShinyPalossandBlockEntity;
 import dev.mrshawn.pokeblocks.block.entity.palossand.PokedollPalossandBlockEntity;
@@ -129,6 +139,8 @@ import dev.mrshawn.pokeblocks.block.entity.phantump.PokedollGiganticPhantumpBloc
 import dev.mrshawn.pokeblocks.block.entity.phantump.PokedollGiganticShinyPhantumpBlockEntity;
 import dev.mrshawn.pokeblocks.block.entity.phantump.PokedollPhantumpBlockEntity;
 import dev.mrshawn.pokeblocks.block.entity.phantump.PokedollShinyPhantumpBlockEntity;
+import dev.mrshawn.pokeblocks.block.entity.piloswine.PokedollPiloswineBlockEntity;
+import dev.mrshawn.pokeblocks.block.entity.piloswine.PokedollShinyPiloswineBlockEntity;
 import dev.mrshawn.pokeblocks.block.entity.pohello_figurine.PokedollPohelloFigurineBlockEntity;
 import dev.mrshawn.pokeblocks.block.entity.pokemon_trophy.PokedollPokemonTrophyBlockEntity;
 import dev.mrshawn.pokeblocks.block.entity.pumpkaboo.PokedollGiganticPumpkabooBlockEntity;
@@ -225,16 +237,20 @@ import dev.mrshawn.pokeblocks.block.entity.wooper.PokedollShinyWooperBlockEntity
 import dev.mrshawn.pokeblocks.block.entity.wooper.PokedollWooperBlockEntity;
 import dev.mrshawn.pokeblocks.constants.PokeIDs;
 import dev.mrshawn.pokeblocks.constants.Shapes;
+import dev.mrshawn.pokeblocks.item.ModItems;
 import dev.mrshawn.pokeblocks.utils.ServerHandler;
 import net.fabricmc.fabric.api.item.v1.FabricItemSettings;
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockState;
 import net.minecraft.block.Blocks;
 import net.minecraft.entity.EntityType;
+import net.minecraft.entity.ItemEntity;
 import net.minecraft.entity.passive.SalmonEntity;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.BlockItem;
 import net.minecraft.item.Item;
+import net.minecraft.item.ItemStack;
+import net.minecraft.item.ShearsItem;
 import net.minecraft.particle.ParticleTypes;
 import net.minecraft.registry.Registries;
 import net.minecraft.registry.Registry;
@@ -577,6 +593,176 @@ public class ModBlocks {
             new PokedollBlock<>(() -> PokedollMimikyuBlockEntity.class));
     public static final Block POKEDOLL_SHINY_MIMIKYU = Registry.register(Registries.BLOCK, new Identifier(Pokeblocks.MOD_ID, PokeIDs.POKEDOLL_SHINY_MIMIKYU),
             new PokedollBlock<>(() -> PokedollShinyMimikyuBlockEntity.class));
+
+    public static final Block POKEDOLL_PILOSWINE = Registry.register(Registries.BLOCK, new Identifier(Pokeblocks.MOD_ID, PokeIDs.POKEDOLL_PILOSWINE),
+            new PokedollBlock<>(() -> PokedollPiloswineBlockEntity.class));
+    public static final Block POKEDOLL_SHINY_PILOSWINE = Registry.register(Registries.BLOCK, new Identifier(Pokeblocks.MOD_ID, PokeIDs.POKEDOLL_SHINY_PILOSWINE),
+            new PokedollBlock<>(() -> PokedollShinyPiloswineBlockEntity.class));
+
+    public static final Block POKEDOLL_CUBCHOO = Registry.register(Registries.BLOCK, new Identifier(Pokeblocks.MOD_ID, PokeIDs.POKEDOLL_CUBCHOO),
+            new PokedollBlock<>(() -> PokedollCubchooBlockEntity.class));
+    public static final Block POKEDOLL_SHINY_CUBCHOO = Registry.register(Registries.BLOCK, new Identifier(Pokeblocks.MOD_ID, PokeIDs.POKEDOLL_SHINY_CUBCHOO),
+            new PokedollBlock<>(() -> PokedollShinyCubchooBlockEntity.class));
+
+    public static final Block POKEDOLL_BEARTIC = Registry.register(Registries.BLOCK, new Identifier(Pokeblocks.MOD_ID, PokeIDs.POKEDOLL_BEARTIC),
+            new PokedollBlock<>(() -> PokedollBearticBlockEntity.class));
+    public static final Block POKEDOLL_SHINY_BEARTIC = Registry.register(Registries.BLOCK, new Identifier(Pokeblocks.MOD_ID, PokeIDs.POKEDOLL_SHINY_BEARTIC),
+            new PokedollBlock<>(() -> PokedollShinyBearticBlockEntity.class));
+
+	public static final Block POKEDOLL_EISCUE = Registry.register(Registries.BLOCK, new Identifier(Pokeblocks.MOD_ID, PokeIDs.POKEDOLL_EISCUE),
+			new PokedollBlock<>(() -> PokedollEiscueBlockEntity.class) {
+				@Override
+				public ActionResult onUse(BlockState state, World world, BlockPos pos, PlayerEntity player, Hand hand, BlockHitResult hit) {
+					ItemStack heldItem = player.getStackInHand(hand);
+
+					// Check if the player is holding shears
+					if (heldItem.getItem() instanceof ShearsItem) {
+						// Only process on server side
+						if (!world.isClient()) {
+							// Change the block to POKEDOLL_NOICE
+							world.setBlockState(pos, ModBlocks.POKEDOLL_NOICE.getDefaultState());
+
+							// Drop the EISCUE_HEAD_PILE item
+							ItemEntity itemEntity = new ItemEntity(
+									world,
+									pos.getX() + 0.5,
+									pos.getY() + 0.5,
+									pos.getZ() + 0.5,
+									new ItemStack(ModItems.EISCUE_HEAD_PILE_BLOCK_ITEM)
+							);
+							world.spawnEntity(itemEntity);
+
+							// Play shearing sound
+							world.playSound(null, pos, SoundEvents.ENTITY_SHEEP_SHEAR, SoundCategory.BLOCKS, 1.0f, 1.0f);
+
+							// Damage the shears
+							if (!player.getAbilities().creativeMode) {
+								heldItem.damage(1, player, (p) -> p.sendToolBreakStatus(hand));
+							}
+						}
+
+						return ActionResult.success(world.isClient());
+					}
+
+					// If not handling shears, defer to parent class behavior
+					return super.onUse(state, world, pos, player, hand, hit);
+				}
+			});
+	public static final Block POKEDOLL_SHINY_EISCUE = Registry.register(Registries.BLOCK, new Identifier(Pokeblocks.MOD_ID, PokeIDs.POKEDOLL_SHINY_EISCUE),
+			new PokedollBlock<>(() -> PokedollShinyEiscueBlockEntity.class) {
+				@Override
+				public ActionResult onUse(BlockState state, World world, BlockPos pos, PlayerEntity player, Hand hand, BlockHitResult hit) {
+					ItemStack heldItem = player.getStackInHand(hand);
+
+					// Check if the player is holding shears
+					if (heldItem.getItem() instanceof ShearsItem) {
+						// Only process on server side
+						if (!world.isClient()) {
+							// Change the block to POKEDOLL_NOICE
+							world.setBlockState(pos, ModBlocks.POKEDOLL_SHINY_NOICE.getDefaultState());
+
+							// Drop the EISCUE_HEAD_PILE item
+							ItemEntity itemEntity = new ItemEntity(
+									world,
+									pos.getX() + 0.5,
+									pos.getY() + 0.5,
+									pos.getZ() + 0.5,
+									new ItemStack(ModItems.EISCUE_SHINY_HEAD_PILE_BLOCK_ITEM)
+							);
+							world.spawnEntity(itemEntity);
+
+							// Play shearing sound
+							world.playSound(null, pos, SoundEvents.ENTITY_SHEEP_SHEAR, SoundCategory.BLOCKS, 1.0f, 1.0f);
+
+							// Damage the shears
+							if (!player.getAbilities().creativeMode) {
+								heldItem.damage(1, player, (p) -> p.sendToolBreakStatus(hand));
+							}
+						}
+
+						return ActionResult.success(world.isClient());
+					}
+
+					// If not handling shears, defer to parent class behavior
+					return super.onUse(state, world, pos, player, hand, hit);
+				}
+			});
+
+    public static final Block POKEDOLL_NOICE = Registry.register(Registries.BLOCK, new Identifier(Pokeblocks.MOD_ID, PokeIDs.POKEDOLL_NOICE),
+            new PokedollBlock<>(() -> PokedollNoiceBlockEntity.class));
+    public static final Block POKEDOLL_SHINY_NOICE = Registry.register(Registries.BLOCK, new Identifier(Pokeblocks.MOD_ID, PokeIDs.POKEDOLL_SHINY_NOICE),
+            new PokedollBlock<>(() -> PokedollShinyNoiceBlockEntity.class));
+
+	public static final Block EISCUE_HEAD_PILE = Registry.register(Registries.BLOCK, new Identifier(Pokeblocks.MOD_ID, PokeIDs.EISCUE_HEAD_PILE),
+			new PokedollBlock<>(() -> EiscueHeadpileBlockEntity.class) {
+				@Override
+				public ActionResult onUse(BlockState state, World world, BlockPos pos, PlayerEntity player, Hand hand, BlockHitResult hit) {
+					ItemStack heldItem = player.getStackInHand(hand);
+
+					// Check if the player is holding another head pile item
+					if (heldItem.getItem().equals(ModItems.EISCUE_HEAD_PILE_BLOCK_ITEM)) {
+						// Get the block entity
+						if (world.getBlockEntity(pos) instanceof EiscueHeadpileBlockEntity headPile) {
+							// Cycle the model and texture
+							boolean success = headPile.cycleModelAndTexture();
+
+							if (success) {
+								// Play a sound effect for feedback
+								world.playSound(player, pos, SoundEvents.ENTITY_ITEM_PICKUP, SoundCategory.BLOCKS, 0.5f, 1.2f);
+
+								// Only decrease stack if player is not in creative mode
+								if (!player.getAbilities().creativeMode && !world.isClient()) {
+									heldItem.decrement(1);
+								}
+
+								// Return success result
+								return ActionResult.success(world.isClient());
+							} else {
+								return super.onUse(state, world, pos, player, hand, hit);
+							}
+						}
+					}
+
+					// If none of the conditions are met, defer to parent class behavior
+					return super.onUse(state, world, pos, player, hand, hit);
+				}
+			}
+	);
+	public static final Block EISCUE_SHINY_HEAD_PILE = Registry.register(Registries.BLOCK, new Identifier(Pokeblocks.MOD_ID, PokeIDs.EISCUE_SHINY_HEAD_PILE),
+			new PokedollBlock<>(() -> EiscueShinyHeadpileBlockEntity.class) {
+				@Override
+				public ActionResult onUse(BlockState state, World world, BlockPos pos, PlayerEntity player, Hand hand, BlockHitResult hit) {
+					ItemStack heldItem = player.getStackInHand(hand);
+
+					// Check if the player is holding another head pile item
+					if (heldItem.getItem().equals(ModItems.EISCUE_SHINY_HEAD_PILE_BLOCK_ITEM)) {
+						// Get the block entity
+						if (world.getBlockEntity(pos) instanceof EiscueShinyHeadpileBlockEntity headPile) {
+							// Cycle the model and texture
+							boolean success = headPile.cycleModelAndTexture();
+
+							if (success) {
+								// Play a sound effect for feedback
+								world.playSound(player, pos, SoundEvents.ENTITY_ITEM_PICKUP, SoundCategory.BLOCKS, 0.5f, 1.2f);
+
+								// Only decrease stack if player is not in creative mode
+								if (!player.getAbilities().creativeMode && !world.isClient()) {
+									heldItem.decrement(1);
+								}
+
+								// Return success result
+								return ActionResult.success(world.isClient());
+							} else {
+								return super.onUse(state, world, pos, player, hand, hit);
+							}
+						}
+					}
+
+					// If none of the conditions are met, defer to parent class behavior
+					return super.onUse(state, world, pos, player, hand, hit);
+				}
+			}
+	);
 
     public static final Block FIGURINE_MIK_03 = Registry.register(Registries.BLOCK, new Identifier(Pokeblocks.MOD_ID, PokeIDs.MIK_03_FIGURINE),
             new PokedollBlock<>(() -> PokedollMik03FigurineBlockEntity.class));

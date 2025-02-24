@@ -245,4 +245,16 @@ public class PokeIDs {
 	public static final String GIGANTIC_POKEDOLL_SHINY_ROWLET = "gigantic_pokedoll_shiny_rowlet";
 	public static final String MIK_03_FIGURINE = "mik_03_figurine";
 	public static final String POHELLO_FIGURINE = "pohello_figurine";
+	public static final String POKEDOLL_PILOSWINE = "pokedoll_piloswine";
+	public static final String POKEDOLL_SHINY_PILOSWINE = "pokedoll_shiny_piloswine";
+	public static final String POKEDOLL_CUBCHOO = "pokedoll_cubchoo";
+	public static final String POKEDOLL_SHINY_CUBCHOO = "pokedoll_shiny_cubchoo";
+	public static final String POKEDOLL_BEARTIC = "pokedoll_beartic";
+	public static final String POKEDOLL_SHINY_BEARTIC = "pokedoll_shiny_beartic";
+	public static final String POKEDOLL_EISCUE = "pokedoll_eiscue";
+	public static final String POKEDOLL_SHINY_EISCUE = "pokedoll_shiny_eiscue";
+	public static final String POKEDOLL_NOICE = "pokedoll_noice";
+	public static final String POKEDOLL_SHINY_NOICE = "pokedoll_shiny_noice";
+	public static final String EISCUE_HEAD_PILE = "eiscue_head_pile";
+	public static final String EISCUE_SHINY_HEAD_PILE = "eiscue_shiny_head_pile";
 }

@@ -9,9 +9,9 @@ import software.bernie.geckolib.model.GeoModel;
 
 public class PokedollBlockModel extends GeoModel<PokedollBlockEntity> {
 
-	private final String modelResourcePath;
-	private final String textureResourcePath;
-	private final String animationResourcePath;
+	protected final String modelResourcePath;
+	protected final String textureResourcePath;
+	protected final String animationResourcePath;
 
 	public PokedollBlockModel(String modelResourcePath, String textureResourcePath, String animationResourcePath) {
 		this.modelResourcePath = modelResourcePath;

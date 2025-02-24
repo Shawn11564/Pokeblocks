@@ -5,6 +5,7 @@ import dev.mrshawn.pokeblocks.block.client.PokedollBlockRenderer;
 import dev.mrshawn.pokeblocks.block.client.PokedollScaledBlockRenderer;
 import dev.mrshawn.pokeblocks.block.entity.ModBlockEntities;
 import dev.mrshawn.pokeblocks.block.entity.PokedollBlockEntity;
+import dev.mrshawn.pokeblocks.block.entity.headpile.EiscueHeadpileBlockModel;
 import dev.mrshawn.pokeblocks.constants.ResourceConstants;
 import dev.mrshawn.pokeblocks.utils.ServerHandler;
 import net.fabricmc.api.ClientModInitializer;
@@ -18,6 +19,78 @@ public class PokeblocksClient implements ClientModInitializer {
 	@Override
 	public void onInitializeClient() {
 		ServerHandler.register();
+		registerBlockEntityRenderer(
+				ModBlockEntities.POKEDOLL_HEADPILE_BLOCK_ENTITY,
+				new EiscueHeadpileBlockModel(
+						ResourceConstants.EISCUE_HEAD_PILE_1_MODEL,
+						ResourceConstants.EISCUE_HEAD_PILE_1_TEXTURE,
+						ResourceConstants.GENERIC_ANIMATION_PATH
+				)
+		);
+		registerBlockEntityRenderer(
+				ModBlockEntities.EISCUE_SHINY_HEAD_PILE_BLOCK_ENTITY,
+				new EiscueHeadpileBlockModel(
+						ResourceConstants.EISCUE_HEAD_PILE_1_MODEL,
+						ResourceConstants.EISCUE_SHINY_HEAD_PILE_1_TEXTURE,
+						ResourceConstants.GENERIC_ANIMATION_PATH
+				)
+		);
+
+		registerBlockEntityRenderer(
+			ModBlockEntities.POKEDOLL_NOICE_BLOCK_ENTITY,
+			ResourceConstants.POKEDOLL_NOICE_MODEL,
+			ResourceConstants.POKEDOLL_NOICE_TEXTURE
+		);
+		registerBlockEntityRenderer(
+			ModBlockEntities.POKEDOLL_SHINY_NOICE_BLOCK_ENTITY,
+			ResourceConstants.POKEDOLL_NOICE_MODEL,
+			ResourceConstants.POKEDOLL_SHINY_NOICE_TEXTURE
+		);
+
+		registerBlockEntityRenderer(
+			ModBlockEntities.POKEDOLL_EISCUE_BLOCK_ENTITY,
+			ResourceConstants.POKEDOLL_EISCUE_MODEL,
+			ResourceConstants.POKEDOLL_EISCUE_TEXTURE
+		);
+		registerBlockEntityRenderer(
+			ModBlockEntities.POKEDOLL_SHINY_EISCUE_BLOCK_ENTITY,
+			ResourceConstants.POKEDOLL_EISCUE_MODEL,
+			ResourceConstants.POKEDOLL_SHINY_EISCUE_TEXTURE
+		);
+
+		registerBlockEntityRenderer(
+			ModBlockEntities.POKEDOLL_BEARTIC_BLOCK_ENTITY,
+			ResourceConstants.POKEDOLL_BEARTIC_MODEL,
+			ResourceConstants.POKEDOLL_BEARTIC_TEXTURE
+		);
+		registerBlockEntityRenderer(
+			ModBlockEntities.POKEDOLL_SHINY_BEARTIC_BLOCK_ENTITY,
+			ResourceConstants.POKEDOLL_BEARTIC_MODEL,
+			ResourceConstants.POKEDOLL_SHINY_BEARTIC_TEXTURE
+		);
+
+		registerBlockEntityRenderer(
+			ModBlockEntities.POKEDOLL_CUBCHOO_BLOCK_ENTITY,
+			ResourceConstants.POKEDOLL_CUBCHOO_MODEL,
+			ResourceConstants.POKEDOLL_CUBCHOO_TEXTURE
+		);
+		registerBlockEntityRenderer(
+			ModBlockEntities.POKEDOLL_SHINY_CUBCHOO_BLOCK_ENTITY,
+			ResourceConstants.POKEDOLL_CUBCHOO_MODEL,
+			ResourceConstants.POKEDOLL_SHINY_CUBCHOO_TEXTURE
+		);
+
+		registerBlockEntityRenderer(
+			ModBlockEntities.POKEDOLL_PILOSWINE_BLOCK_ENTITY,
+			ResourceConstants.POKEDOLL_PILOSWINE_MODEL,
+			ResourceConstants.POKEDOLL_PILOSWINE_TEXTURE
+		);
+		registerBlockEntityRenderer(
+			ModBlockEntities.POKEDOLL_SHINY_PILOSWINE_BLOCK_ENTITY,
+			ResourceConstants.POKEDOLL_PILOSWINE_MODEL,
+			ResourceConstants.POKEDOLL_SHINY_PILOSWINE_TEXTURE
+		);
+
 		registerBlockEntityRenderer(
 			ModBlockEntities.FIGURINE_POHELLO_BLOCK_ENTITY,
 			ResourceConstants.POHELLO_FIGURINE_MODEL,
@@ -1481,6 +1554,10 @@ public class PokeblocksClient implements ClientModInitializer {
 
 	private static <T extends PokedollBlockEntity> void registerBlockEntityRenderer(BlockEntityType<T> type, String modelResourcePath, String textureResourcePath) {
 		registerBlockEntityRenderer(type, modelResourcePath, textureResourcePath, ResourceConstants.GENERIC_ANIMATION_PATH);
+	}
+
+	private static <T extends PokedollBlockEntity> void registerBlockEntityRenderer(BlockEntityType<T> type, PokedollBlockModel blockModel) {
+		BlockEntityRendererFactories.register(type, context -> new PokedollBlockRenderer(context, blockModel));
 	}
 
 	private static <T extends PokedollBlockEntity> void registerScaledBlockEntityRenderer(BlockEntityType<T> type, String modelResourcePath, String textureResourcePath, String animationResourcePath, float scale) {

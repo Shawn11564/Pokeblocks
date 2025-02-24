@@ -1,0 +1,11 @@
+{
+  "credit": "Made with Blockbench",
+  "parent": "builtin/entity",
+  "texture_size": [
+    64,
+    64
+  ],
+  "textures": {
+    "particle": "pokeblocks:block/eiscue_head_pile_1_shiny_texture"
+  }
+}
