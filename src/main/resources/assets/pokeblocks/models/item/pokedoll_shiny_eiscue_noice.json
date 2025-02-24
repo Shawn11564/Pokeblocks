@@ -1,5 +1,5 @@
 {
-  "parent": "pokeblocks:block/pokedoll_noice",
+  "parent": "pokeblocks:block/pokedoll_shiny_eiscue_noice",
   "display": {
     "thirdperson_righthand": {
       "rotation": [0, 135, 0],

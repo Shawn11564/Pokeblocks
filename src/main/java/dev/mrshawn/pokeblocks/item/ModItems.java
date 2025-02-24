@@ -1466,17 +1466,17 @@ public class ModItems {
     );
 
     public static final Item POKEDOLL_NOICE_BLOCK_ITEM = registerItem(
-        PokeIDs.POKEDOLL_NOICE,
+        PokeIDs.POKEDOLL_EISCUE_NOICE,
         ModBlocks.POKEDOLL_NOICE,
-        ResourceConstants.POKEDOLL_NOICE_MODEL,
-        ResourceConstants.POKEDOLL_NOICE_TEXTURE,
+        ResourceConstants.POKEDOLL_EISCUE_NOICE_MODEL,
+        ResourceConstants.POKEDOLL_EISCUE_NOICE_TEXTURE,
         DollRarity.UNCLASSIFIED
     );
     public static final Item POKEDOLL_SHINY_NOICE_BLOCK_ITEM = registerItem(
-        PokeIDs.POKEDOLL_SHINY_NOICE,
+        PokeIDs.POKEDOLL_EISCUE_SHINY_NOICE,
         ModBlocks.POKEDOLL_SHINY_NOICE,
-        ResourceConstants.POKEDOLL_NOICE_MODEL,
-        ResourceConstants.POKEDOLL_SHINY_NOICE_TEXTURE,
+        ResourceConstants.POKEDOLL_EISCUE_NOICE_MODEL,
+        ResourceConstants.POKEDOLL_SHINY_EISCUE_NOICE_TEXTURE,
         DollRarity.SHINY
     );
 

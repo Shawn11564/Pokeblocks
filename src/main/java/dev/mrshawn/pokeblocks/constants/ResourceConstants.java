@@ -212,9 +212,9 @@ public class ResourceConstants {
 	public static final String POKEDOLL_EISCUE_TEXTURE = "pokedoll_eiscue_texture.png";
 	public static final String POKEDOLL_SHINY_EISCUE_TEXTURE = "pokedoll_eiscue_shiny_texture.png";
 	public static final String POKEDOLL_EISCUE_MODEL = "pokedoll_eiscue.geo.json";
-	public static final String POKEDOLL_NOICE_TEXTURE = "pokedoll_noice_texture.png";
-	public static final String POKEDOLL_SHINY_NOICE_TEXTURE = "pokedoll_noice_shiny_texture.png";
-	public static final String POKEDOLL_NOICE_MODEL = "pokedoll_noice.geo.json";
+	public static final String POKEDOLL_EISCUE_NOICE_TEXTURE = "pokedoll_eiscue_noice_texture.png";
+	public static final String POKEDOLL_SHINY_EISCUE_NOICE_TEXTURE = "pokedoll_eiscue_noice_shiny_texture.png";
+	public static final String POKEDOLL_EISCUE_NOICE_MODEL = "pokedoll_eiscue_noice.geo.json";
 	public static final String EISCUE_HEAD_PILE_1_TEXTURE = "eiscue_head_pile_1_texture.png";
 	public static final String EISCUE_HEAD_PILE_2_TEXTURE = "eiscue_head_pile_2_texture.png";
 	public static final String EISCUE_HEAD_PILE_3_TEXTURE = "eiscue_head_pile_3_texture.png";

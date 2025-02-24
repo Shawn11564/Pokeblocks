@@ -563,8 +563,8 @@ public class ModBlockEntities {
     public static BlockEntityType<PokedollEiscueBlockEntity> POKEDOLL_EISCUE_BLOCK_ENTITY;
     public static BlockEntityType<PokedollShinyEiscueBlockEntity> POKEDOLL_SHINY_EISCUE_BLOCK_ENTITY;
 
-    public static BlockEntityType<PokedollNoiceBlockEntity> POKEDOLL_NOICE_BLOCK_ENTITY;
-    public static BlockEntityType<PokedollShinyNoiceBlockEntity> POKEDOLL_SHINY_NOICE_BLOCK_ENTITY;
+    public static BlockEntityType<PokedollNoiceBlockEntity> POKEDOLL_EISCUE_NOICE_BLOCK_ENTITY;
+    public static BlockEntityType<PokedollShinyNoiceBlockEntity> POKEDOLL_SHINY_EISCUE_NOICE_BLOCK_ENTITY;
 
     public static BlockEntityType<EiscueHeadpileBlockEntity> POKEDOLL_HEADPILE_BLOCK_ENTITY;
     public static BlockEntityType<EiscueShinyHeadpileBlockEntity> EISCUE_SHINY_HEAD_PILE_BLOCK_ENTITY;
@@ -1894,13 +1894,13 @@ public class ModBlockEntities {
                 PokedollShinyEiscueBlockEntity.class
         );
 
-        POKEDOLL_NOICE_BLOCK_ENTITY = registerBlockEntity(
-                new Identifier(Pokeblocks.MOD_ID, PokeIDs.POKEDOLL_NOICE),
+        POKEDOLL_EISCUE_NOICE_BLOCK_ENTITY = registerBlockEntity(
+                new Identifier(Pokeblocks.MOD_ID, PokeIDs.POKEDOLL_EISCUE_NOICE),
                 FabricBlockEntityTypeBuilder.create(PokedollNoiceBlockEntity::new, ModBlocks.POKEDOLL_NOICE),
                 PokedollNoiceBlockEntity.class
         );
-        POKEDOLL_SHINY_NOICE_BLOCK_ENTITY = registerBlockEntity(
-                new Identifier(Pokeblocks.MOD_ID, PokeIDs.POKEDOLL_SHINY_NOICE),
+        POKEDOLL_SHINY_EISCUE_NOICE_BLOCK_ENTITY = registerBlockEntity(
+                new Identifier(Pokeblocks.MOD_ID, PokeIDs.POKEDOLL_EISCUE_SHINY_NOICE),
                 FabricBlockEntityTypeBuilder.create(PokedollShinyNoiceBlockEntity::new, ModBlocks.POKEDOLL_SHINY_NOICE),
                 PokedollShinyNoiceBlockEntity.class
         );

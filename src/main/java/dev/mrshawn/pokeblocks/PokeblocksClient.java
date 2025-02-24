@@ -37,14 +37,14 @@ public class PokeblocksClient implements ClientModInitializer {
 		);
 
 		registerBlockEntityRenderer(
-			ModBlockEntities.POKEDOLL_NOICE_BLOCK_ENTITY,
-			ResourceConstants.POKEDOLL_NOICE_MODEL,
-			ResourceConstants.POKEDOLL_NOICE_TEXTURE
+			ModBlockEntities.POKEDOLL_EISCUE_NOICE_BLOCK_ENTITY,
+			ResourceConstants.POKEDOLL_EISCUE_NOICE_MODEL,
+			ResourceConstants.POKEDOLL_EISCUE_NOICE_TEXTURE
 		);
 		registerBlockEntityRenderer(
-			ModBlockEntities.POKEDOLL_SHINY_NOICE_BLOCK_ENTITY,
-			ResourceConstants.POKEDOLL_NOICE_MODEL,
-			ResourceConstants.POKEDOLL_SHINY_NOICE_TEXTURE
+			ModBlockEntities.POKEDOLL_SHINY_EISCUE_NOICE_BLOCK_ENTITY,
+			ResourceConstants.POKEDOLL_EISCUE_NOICE_MODEL,
+			ResourceConstants.POKEDOLL_SHINY_EISCUE_NOICE_TEXTURE
 		);
 
 		registerBlockEntityRenderer(
