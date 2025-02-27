@@ -281,4 +281,6 @@ public class PokeIDs {
 	public static final String POKEDOLL_SHINY_FRIGIBAX = "pokedoll_shiny_frigibax";
 	public static final String POKEDOLL_ANIMATED_CUBCHOO = "pokedoll_cubchoo_animated";
 	public static final String POKEDOLL_SHINY_ANIMATED_CUBCHOO = "pokedoll_shiny_cubchoo_animated";
+	public static final String POKEDOLL_SNORUNT_FAMILY = "pokedoll_snorunt_family";
+	public static final String POKEDOLL_SHINY_SNORUNT_FAMILY = "pokedoll_shiny_snorunt_family";
 }

@@ -268,5 +268,9 @@ public class ResourceConstants {
 	public static final String POKEDOLL_ANIMATED_CUBCHOO_MODEL = "pokedoll_cubchoo_animated.geo.json";
 	public static final String POKEDOLL_CUBCHOO_ANIMATED_ANIMATION = "pokedoll_cubchoo_animated.animation.json";
 	public static final String POKEDOLL_CUBCHOO_ANIMATED_ANIMATION_NAME = "animation.pokedoll_cubchoo.idle";
-
+	public static final String POKEDOLL_SNORUNT_FAMILY_TEXTURE = "pokedoll_snorunt_family_animated_texture.png";
+	public static final String POKEDOLL_SHINY_SNORUNT_FAMILY_TEXTURE = "pokedoll_snorunt_family_shiny_animated_texture.png";
+	public static final String POKEDOLL_SNORUNT_FAMILY_MODEL = "pokedoll_snorunt_family_animated.geo.json";
+	public static final String POKEDOLL_SNORUNT_ANIMATED_ANIMATION = "pokedoll_snorunt_family.animation.json";
+	public static final String POKEDOLL_SNORUNT_ANIMATED_ANIMATION_NAME = "snorunt_family_pose";
 }

@@ -24,6 +24,19 @@ public class PokeblocksClient implements ClientModInitializer {
 		EntityRendererRegistry.register(ModEntities.SITTABLE, SittableRenderer::new);
 		ServerHandler.register();
 		registerBlockEntityRenderer(
+			ModBlockEntities.POKEDOLL_SNORUNT_FAMILY_BLOCK_ENTITY,
+			ResourceConstants.POKEDOLL_SNORUNT_FAMILY_MODEL,
+			ResourceConstants.POKEDOLL_SNORUNT_FAMILY_TEXTURE,
+			ResourceConstants.POKEDOLL_SNORUNT_ANIMATED_ANIMATION
+		);
+		registerBlockEntityRenderer(
+			ModBlockEntities.POKEDOLL_SHINY_SNORUNT_FAMILY_BLOCK_ENTITY,
+			ResourceConstants.POKEDOLL_SNORUNT_FAMILY_MODEL,
+			ResourceConstants.POKEDOLL_SHINY_SNORUNT_FAMILY_TEXTURE,
+			ResourceConstants.POKEDOLL_SNORUNT_ANIMATED_ANIMATION
+		);
+
+		registerBlockEntityRenderer(
 			ModBlockEntities.POKEDOLL_ANIMATED_CUBCHOO_BLOCK_ENTITY,
 			ResourceConstants.POKEDOLL_ANIMATED_CUBCHOO_MODEL,
 			ResourceConstants.POKEDOLL_ANIMATED_CUBCHOO_TEXTURE,

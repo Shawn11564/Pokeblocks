@@ -1673,6 +1673,25 @@ public class ModItems {
         ResourceConstants.POKEDOLL_SHINY_ANIMATED_CUBCHOO_TEXTURE,
 		ResourceConstants.POKEDOLL_CUBCHOO_ANIMATED_ANIMATION,
 		ResourceConstants.POKEDOLL_CUBCHOO_ANIMATED_ANIMATION_NAME,
+		DollRarity.SHINY
+    );
+
+    public static final Item POKEDOLL_SNORUNT_FAMILY_BLOCK_ITEM = registerItem(
+        PokeIDs.POKEDOLL_SNORUNT_FAMILY,
+        ModBlocks.POKEDOLL_SNORUNT_FAMILY,
+        ResourceConstants.POKEDOLL_SNORUNT_FAMILY_MODEL,
+        ResourceConstants.POKEDOLL_SNORUNT_FAMILY_TEXTURE,
+		ResourceConstants.POKEDOLL_SNORUNT_ANIMATED_ANIMATION,
+		ResourceConstants.POKEDOLL_SNORUNT_ANIMATED_ANIMATION_NAME,
+        DollRarity.UNCLASSIFIED
+    );
+    public static final Item POKEDOLL_SHINY_SNORUNT_FAMILY_BLOCK_ITEM = registerItem(
+        PokeIDs.POKEDOLL_SHINY_SNORUNT_FAMILY,
+        ModBlocks.POKEDOLL_SHINY_SNORUNT_FAMILY,
+        ResourceConstants.POKEDOLL_SNORUNT_FAMILY_MODEL,
+        ResourceConstants.POKEDOLL_SHINY_SNORUNT_FAMILY_TEXTURE,
+		ResourceConstants.POKEDOLL_SNORUNT_ANIMATED_ANIMATION,
+		ResourceConstants.POKEDOLL_SNORUNT_ANIMATED_ANIMATION_NAME,
         DollRarity.SHINY
     );
 

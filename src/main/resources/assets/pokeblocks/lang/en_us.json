@@ -550,5 +550,9 @@
     "item.pokeblocks.pokedoll_AnimatedCubchoo": "Animatedcubchoo Pokedoll",
     "item.pokeblocks.pokedoll_shiny_AnimatedCubchoo": "Shiny Animatedcubchoo Pokedoll",
     "block.pokeblocks.pokedoll_AnimatedCubchoo": "Animatedcubchoo Pokedoll",
-    "block.pokeblocks.pokedoll_shiny_AnimatedCubchoo": "Shiny Animatedcubchoo Pokedoll"
+    "block.pokeblocks.pokedoll_shiny_AnimatedCubchoo": "Shiny Animatedcubchoo Pokedoll",
+    "item.pokeblocks.pokedoll_snorunt_family": "Snorunt_family Pokedoll",
+    "item.pokeblocks.pokedoll_shiny_snorunt_family": "Shiny Snorunt_family Pokedoll",
+    "block.pokeblocks.pokedoll_snorunt_family": "Snorunt_family Pokedoll",
+    "block.pokeblocks.pokedoll_shiny_snorunt_family": "Shiny Snorunt_family Pokedoll"
 }

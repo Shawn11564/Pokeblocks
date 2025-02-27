@@ -213,6 +213,8 @@ import dev.mrshawn.pokeblocks.block.entity.snorlax.PokedollShinySnorlaxBlockEnti
 import dev.mrshawn.pokeblocks.block.entity.snorlax.PokedollSnorlaxBlockEntity;
 import dev.mrshawn.pokeblocks.block.entity.snorunt.PokedollShinySnoruntBlockEntity;
 import dev.mrshawn.pokeblocks.block.entity.snorunt.PokedollSnoruntBlockEntity;
+import dev.mrshawn.pokeblocks.block.entity.snorunt.snorunt_family.PokedollShinySnoruntFamilyBlockEntity;
+import dev.mrshawn.pokeblocks.block.entity.snorunt.snorunt_family.PokedollSnoruntFamilyBlockEntity;
 import dev.mrshawn.pokeblocks.block.entity.spheal.PokedollShinySphealBlockEntity;
 import dev.mrshawn.pokeblocks.block.entity.spheal.PokedollSphealBlockEntity;
 import dev.mrshawn.pokeblocks.block.entity.squirtle.PokedollGiganticShinySquirtleBlockEntity;
@@ -777,6 +779,11 @@ public class ModBlocks {
             new PokedollBlock<>(() -> PokedollAnimatedCubchooBlockEntity.class));
     public static final Block POKEDOLL_SHINY_ANIMATED_CUBCHOO = Registry.register(Registries.BLOCK, new Identifier(Pokeblocks.MOD_ID, PokeIDs.POKEDOLL_SHINY_ANIMATED_CUBCHOO),
             new PokedollBlock<>(() -> PokedollShinyAnimatedCubchooBlockEntity.class));
+
+    public static final Block POKEDOLL_SNORUNT_FAMILY = Registry.register(Registries.BLOCK, new Identifier(Pokeblocks.MOD_ID, PokeIDs.POKEDOLL_SNORUNT_FAMILY),
+            new PokedollBlock<>(() -> PokedollSnoruntFamilyBlockEntity.class));
+    public static final Block POKEDOLL_SHINY_SNORUNT_FAMILY = Registry.register(Registries.BLOCK, new Identifier(Pokeblocks.MOD_ID, PokeIDs.POKEDOLL_SHINY_SNORUNT_FAMILY),
+            new PokedollBlock<>(() -> PokedollShinySnoruntFamilyBlockEntity.class));
 
 	public static final Block EISCUE_HEAD_PILE = Registry.register(Registries.BLOCK, new Identifier(Pokeblocks.MOD_ID, PokeIDs.EISCUE_HEAD_PILE),
 			new PokedollBlock<>(() -> EiscueHeadpileBlockEntity.class) {
