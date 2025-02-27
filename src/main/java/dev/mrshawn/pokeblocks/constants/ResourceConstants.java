@@ -224,4 +224,10 @@ public class ResourceConstants {
 	public static final String EISCUE_HEAD_PILE_1_MODEL = "eiscue_head_pile_1.geo.json";
 	public static final String EISCUE_HEAD_PILE_2_MODEL = "eiscue_head_pile_2.geo.json";
 	public static final String EISCUE_HEAD_PILE_3_MODEL = "eiscue_head_pile_3.geo.json";
+	public static final String POKEDOLL_CETODDLE_TEXTURE = "pokedoll_cetoddle_texture.png";
+	public static final String POKEDOLL_SHINY_CETODDLE_TEXTURE = "pokedoll_cetoddle_shiny_texture.png";
+	public static final String POKEDOLL_CETODDLE_MODEL = "pokedoll_cetoddle.geo.json";
+	public static final String LUVDISC_CUSHION_TEXTURE = "luvdisc_cushion_texture.png";
+	public static final String SHINY_LUVDISC_CUSHION_TEXTURE = "luvdisc_cushion_shiny_texture.png";
+	public static final String LUVDISC_CUSHION_MODEL = "luvdisc_cushion.geo.json";
 }

@@ -502,5 +502,13 @@
     "item.pokeblocks.pokedoll_headpile": "Headpile Pokedoll",
     "item.pokeblocks.pokedoll_shiny_headpile": "Shiny Headpile Pokedoll",
     "block.pokeblocks.pokedoll_headpile": "Headpile Pokedoll",
-    "block.pokeblocks.pokedoll_shiny_headpile": "Shiny Headpile Pokedoll"
+    "block.pokeblocks.pokedoll_shiny_headpile": "Shiny Headpile Pokedoll",
+    "item.pokeblocks.pokedoll_cetoddle": "Cetoddle Pokedoll",
+    "item.pokeblocks.pokedoll_shiny_cetoddle": "Shiny Cetoddle Pokedoll",
+    "block.pokeblocks.pokedoll_cetoddle": "Cetoddle Pokedoll",
+    "block.pokeblocks.pokedoll_shiny_cetoddle": "Shiny Cetoddle Pokedoll",
+    "item.pokeblocks.pokedoll_LuvdiscCushion": "Luvdisccushion Pokedoll",
+    "item.pokeblocks.pokedoll_shiny_LuvdiscCushion": "Shiny Luvdisccushion Pokedoll",
+    "block.pokeblocks.pokedoll_LuvdiscCushion": "Luvdisccushion Pokedoll",
+    "block.pokeblocks.pokedoll_shiny_LuvdiscCushion": "Shiny Luvdisccushion Pokedoll"
 }

@@ -1480,6 +1480,36 @@ public class ModItems {
         DollRarity.SHINY
     );
 
+    public static final Item POKEDOLL_CETODDLE_BLOCK_ITEM = registerItem(
+        PokeIDs.POKEDOLL_CETODDLE,
+        ModBlocks.POKEDOLL_CETODDLE,
+        ResourceConstants.POKEDOLL_CETODDLE_MODEL,
+        ResourceConstants.POKEDOLL_CETODDLE_TEXTURE,
+        DollRarity.UNCLASSIFIED
+    );
+    public static final Item POKEDOLL_SHINY_CETODDLE_BLOCK_ITEM = registerItem(
+        PokeIDs.POKEDOLL_SHINY_CETODDLE,
+        ModBlocks.POKEDOLL_SHINY_CETODDLE,
+        ResourceConstants.POKEDOLL_CETODDLE_MODEL,
+        ResourceConstants.POKEDOLL_SHINY_CETODDLE_TEXTURE,
+        DollRarity.SHINY
+    );
+
+    public static final Item POKEDOLL_LUVDISC_CUSHION_BLOCK_ITEM = registerItem(
+        PokeIDs.LUVDISC_CUSHION,
+        ModBlocks.POKEDOLL_LUVDISC_CUSHION,
+        ResourceConstants.LUVDISC_CUSHION_MODEL,
+        ResourceConstants.LUVDISC_CUSHION_TEXTURE,
+        DollRarity.UNCLASSIFIED
+    );
+    public static final Item POKEDOLL_SHINY_LUVDISC_CUSHION_BLOCK_ITEM = registerItem(
+        PokeIDs.POKEDOLL_SHINY_LUVDISC_CUSHION,
+        ModBlocks.POKEDOLL_SHINY_LUVDISC_CUSHION,
+        ResourceConstants.LUVDISC_CUSHION_MODEL,
+        ResourceConstants.SHINY_LUVDISC_CUSHION_TEXTURE,
+        DollRarity.SHINY
+    );
+
     public static final Item EISCUE_HEAD_PILE_BLOCK_ITEM = registerItem(
         PokeIDs.EISCUE_HEAD_PILE,
         ModBlocks.EISCUE_HEAD_PILE,
@@ -1966,7 +1996,7 @@ public class ModItems {
 	private static Item registerItem(String name, Block block, String modelResourcePath, String textureResourcePath, DollRarity rarity) {
 		return registerItem(
 				name,
-				new PokedollBlockItem(block, rarity, () -> new PokedollBlockItemModel(
+				new WearablePokedollBlockItem(block, rarity, () -> new PokedollBlockItemModel(
 						modelResourcePath,
 						textureResourcePath,
 						ResourceConstants.GENERIC_ANIMATION_PATH

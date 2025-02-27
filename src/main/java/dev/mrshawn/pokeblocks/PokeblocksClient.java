@@ -7,8 +7,11 @@ import dev.mrshawn.pokeblocks.block.entity.ModBlockEntities;
 import dev.mrshawn.pokeblocks.block.entity.PokedollBlockEntity;
 import dev.mrshawn.pokeblocks.block.entity.headpile.EiscueHeadpileBlockModel;
 import dev.mrshawn.pokeblocks.constants.ResourceConstants;
+import dev.mrshawn.pokeblocks.entity.ModEntities;
+import dev.mrshawn.pokeblocks.entity.client.SittableRenderer;
 import dev.mrshawn.pokeblocks.utils.ServerHandler;
 import net.fabricmc.api.ClientModInitializer;
+import net.fabricmc.fabric.api.client.rendering.v1.EntityRendererRegistry;
 import net.minecraft.block.entity.BlockEntityType;
 import net.minecraft.client.render.block.entity.BlockEntityRendererFactories;
 
@@ -18,7 +21,30 @@ public class PokeblocksClient implements ClientModInitializer {
 
 	@Override
 	public void onInitializeClient() {
+		EntityRendererRegistry.register(ModEntities.SITTABLE, SittableRenderer::new);
 		ServerHandler.register();
+		registerBlockEntityRenderer(
+			ModBlockEntities.POKEDOLL_LUVDISC_CUSHION_BLOCK_ENTITY,
+			ResourceConstants.LUVDISC_CUSHION_MODEL,
+			ResourceConstants.LUVDISC_CUSHION_TEXTURE
+		);
+		registerBlockEntityRenderer(
+			ModBlockEntities.POKEDOLL_SHINY_LUVDISC_CUSHION_BLOCK_ENTITY,
+			ResourceConstants.LUVDISC_CUSHION_MODEL,
+			ResourceConstants.SHINY_LUVDISC_CUSHION_TEXTURE
+		);
+
+		registerBlockEntityRenderer(
+			ModBlockEntities.POKEDOLL_CETODDLE_BLOCK_ENTITY,
+			ResourceConstants.POKEDOLL_CETODDLE_MODEL,
+			ResourceConstants.POKEDOLL_CETODDLE_TEXTURE
+		);
+		registerBlockEntityRenderer(
+			ModBlockEntities.POKEDOLL_SHINY_CETODDLE_BLOCK_ENTITY,
+			ResourceConstants.POKEDOLL_CETODDLE_MODEL,
+			ResourceConstants.POKEDOLL_SHINY_CETODDLE_TEXTURE
+		);
+
 		registerBlockEntityRenderer(
 				ModBlockEntities.POKEDOLL_HEADPILE_BLOCK_ENTITY,
 				new EiscueHeadpileBlockModel(

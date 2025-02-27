@@ -257,4 +257,8 @@ public class PokeIDs {
 	public static final String POKEDOLL_EISCUE_SHINY_NOICE = "pokedoll_eiscue_shiny_noice";
 	public static final String EISCUE_HEAD_PILE = "eiscue_head_pile";
 	public static final String EISCUE_SHINY_HEAD_PILE = "eiscue_shiny_head_pile";
+	public static final String POKEDOLL_CETODDLE = "pokedoll_cetoddle";
+	public static final String POKEDOLL_SHINY_CETODDLE = "pokedoll_shiny_cetoddle";
+	public static final String LUVDISC_CUSHION = "luvdisc_cushion";
+	public static final String POKEDOLL_SHINY_LUVDISC_CUSHION = "pokedoll_shiny_luvdisc_cushion";
 }
