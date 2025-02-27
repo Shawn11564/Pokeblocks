@@ -24,6 +24,124 @@ public class PokeblocksClient implements ClientModInitializer {
 		EntityRendererRegistry.register(ModEntities.SITTABLE, SittableRenderer::new);
 		ServerHandler.register();
 		registerBlockEntityRenderer(
+			ModBlockEntities.POKEDOLL_ANIMATED_CUBCHOO_BLOCK_ENTITY,
+			ResourceConstants.POKEDOLL_ANIMATED_CUBCHOO_MODEL,
+			ResourceConstants.POKEDOLL_ANIMATED_CUBCHOO_TEXTURE,
+			ResourceConstants.POKEDOLL_CUBCHOO_ANIMATED_ANIMATION
+		);
+		registerBlockEntityRenderer(
+			ModBlockEntities.POKEDOLL_SHINY_ANIMATED_CUBCHOO_BLOCK_ENTITY,
+			ResourceConstants.POKEDOLL_ANIMATED_CUBCHOO_MODEL,
+			ResourceConstants.POKEDOLL_SHINY_ANIMATED_CUBCHOO_TEXTURE,
+			ResourceConstants.POKEDOLL_CUBCHOO_ANIMATED_ANIMATION
+		);
+
+		registerBlockEntityRenderer(
+			ModBlockEntities.POKEDOLL_FRIGIBAX_BLOCK_ENTITY,
+			ResourceConstants.POKEDOLL_FRIGIBAX_MODEL,
+			ResourceConstants.POKEDOLL_FRIGIBAX_TEXTURE
+		);
+		registerBlockEntityRenderer(
+			ModBlockEntities.POKEDOLL_SHINY_FRIGIBAX_BLOCK_ENTITY,
+			ResourceConstants.POKEDOLL_FRIGIBAX_MODEL,
+			ResourceConstants.POKEDOLL_SHINY_FRIGIBAX_TEXTURE
+		);
+
+		registerBlockEntityRenderer(
+			ModBlockEntities.POKEDOLL_FROSLASS_BLOCK_ENTITY,
+			ResourceConstants.POKEDOLL_FROSLASS_MODEL,
+			ResourceConstants.POKEDOLL_FROSLASS_TEXTURE,
+			ResourceConstants.POKEDOLL_FROSLASS_ANIMATED_ANIMATION
+		);
+		registerBlockEntityRenderer(
+			ModBlockEntities.POKEDOLL_SHINY_FROSLASS_BLOCK_ENTITY,
+			ResourceConstants.POKEDOLL_FROSLASS_MODEL,
+			ResourceConstants.POKEDOLL_SHINY_FROSLASS_TEXTURE,
+			ResourceConstants.POKEDOLL_FROSLASS_ANIMATED_ANIMATION
+		);
+
+		registerBlockEntityRenderer(
+			ModBlockEntities.POKEDOLL_RIOLU_BLOCK_ENTITY,
+			ResourceConstants.POKEDOLL_RIOLU_MODEL,
+			ResourceConstants.POKEDOLL_RIOLU_TEXTURE,
+			ResourceConstants.POKEDOLL_RIOLU_ANIMATED_ANIMATION
+		);
+		registerBlockEntityRenderer(
+			ModBlockEntities.POKEDOLL_SHINY_RIOLU_BLOCK_ENTITY,
+			ResourceConstants.POKEDOLL_RIOLU_MODEL,
+			ResourceConstants.POKEDOLL_SHINY_RIOLU_TEXTURE,
+			ResourceConstants.POKEDOLL_RIOLU_ANIMATED_ANIMATION
+		);
+
+		registerBlockEntityRenderer(
+			ModBlockEntities.POKEDOLL_LUVDISC_BLOCK_ENTITY,
+			ResourceConstants.POKEDOLL_LUVDISC_MODEL,
+			ResourceConstants.POKEDOLL_LUVDISC_TEXTURE
+		);
+		registerBlockEntityRenderer(
+			ModBlockEntities.POKEDOLL_SHINY_LUVDISC_BLOCK_ENTITY,
+			ResourceConstants.POKEDOLL_LUVDISC_MODEL,
+			ResourceConstants.POKEDOLL_SHINY_LUVDISC_TEXTURE
+		);
+
+		registerBlockEntityRenderer(
+			ModBlockEntities.POKEDOLL_SPHEAL_BLOCK_ENTITY,
+			ResourceConstants.POKEDOLL_SPHEAL_MODEL,
+			ResourceConstants.POKEDOLL_SPHEAL_TEXTURE
+		);
+		registerBlockEntityRenderer(
+			ModBlockEntities.POKEDOLL_SHINY_SPHEAL_BLOCK_ENTITY,
+			ResourceConstants.POKEDOLL_SPHEAL_MODEL,
+			ResourceConstants.POKEDOLL_SHINY_SPHEAL_TEXTURE
+		);
+
+		registerBlockEntityRenderer(
+			ModBlockEntities.POKEDOLL_GLALIE_BLOCK_ENTITY,
+			ResourceConstants.POKEDOLL_GLALIE_MODEL,
+			ResourceConstants.POKEDOLL_GLALIE_TEXTURE
+		);
+		registerBlockEntityRenderer(
+			ModBlockEntities.POKEDOLL_SHINY_GLALIE_BLOCK_ENTITY,
+			ResourceConstants.POKEDOLL_GLALIE_MODEL,
+			ResourceConstants.POKEDOLL_SHINY_GLALIE_TEXTURE
+		);
+
+		registerBlockEntityRenderer(
+			ModBlockEntities.POKEDOLL_SNORUNT_BLOCK_ENTITY,
+			ResourceConstants.POKEDOLL_SNORUNT_MODEL,
+			ResourceConstants.POKEDOLL_SNORUNT_TEXTURE
+		);
+		registerBlockEntityRenderer(
+			ModBlockEntities.POKEDOLL_SHINY_SNORUNT_BLOCK_ENTITY,
+			ResourceConstants.POKEDOLL_SNORUNT_MODEL,
+			ResourceConstants.POKEDOLL_SHINY_SNORUNT_TEXTURE
+		);
+
+		registerBlockEntityRenderer(
+			ModBlockEntities.POKEDOLL_TREECKO_BLOCK_ENTITY,
+			ResourceConstants.POKEDOLL_TREECKO_MODEL,
+			ResourceConstants.POKEDOLL_TREECKO_TEXTURE,
+			ResourceConstants.POKEDOLL_TREECKO_ANIMATED_ANIMATION
+		);
+		registerBlockEntityRenderer(
+			ModBlockEntities.POKEDOLL_SHINY_TREECKO_BLOCK_ENTITY,
+			ResourceConstants.POKEDOLL_TREECKO_MODEL,
+			ResourceConstants.POKEDOLL_SHINY_TREECKO_TEXTURE,
+			ResourceConstants.POKEDOLL_TREECKO_ANIMATED_ANIMATION
+		);
+
+		registerBlockEntityRenderer(
+			ModBlockEntities.POKEDOLL_DELIBIRD_BLOCK_ENTITY,
+			ResourceConstants.POKEDOLL_DELIBIRD_MODEL,
+			ResourceConstants.POKEDOLL_DELIBIRD_TEXTURE
+		);
+		registerBlockEntityRenderer(
+			ModBlockEntities.POKEDOLL_SHINY_DELIBIRD_BLOCK_ENTITY,
+			ResourceConstants.POKEDOLL_DELIBIRD_MODEL,
+			ResourceConstants.POKEDOLL_SHINY_DELIBIRD_TEXTURE
+		);
+
+		registerBlockEntityRenderer(
 			ModBlockEntities.POKEDOLL_LUVDISC_CUSHION_BLOCK_ENTITY,
 			ResourceConstants.LUVDISC_CUSHION_MODEL,
 			ResourceConstants.LUVDISC_CUSHION_TEXTURE
