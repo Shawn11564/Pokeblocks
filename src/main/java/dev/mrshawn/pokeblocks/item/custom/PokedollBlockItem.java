@@ -32,17 +32,20 @@ public class PokedollBlockItem extends BlockItem implements GeoItem {
 	private final Supplier<Object> renderProvider = GeoItem.makeRenderer(this);
 	private final Supplier<PokedollBlockItemModel> blockItemModelSupplier;
 	private final DollRarity rarity;
+	private final int dexNumber;
 
-	public PokedollBlockItem(Block block, Settings settings, DollRarity rarity, Supplier<PokedollBlockItemModel> blockItemModelSupplier) {
+	public PokedollBlockItem(Block block, Settings settings, DollRarity rarity, int dexNumber, Supplier<PokedollBlockItemModel> blockItemModelSupplier) {
 		super(block, settings);
 		this.rarity = rarity;
+		this.dexNumber = dexNumber;
 		SingletonGeoAnimatable.registerSyncedAnimatable(this);
 		this.blockItemModelSupplier = blockItemModelSupplier;
 	}
 
-	public PokedollBlockItem(Block block, DollRarity rarity, Supplier<PokedollBlockItemModel> blockItemModelSupplier) {
+	public PokedollBlockItem(Block block, DollRarity rarity, int dexNumber, Supplier<PokedollBlockItemModel> blockItemModelSupplier) {
 		super(block, new FabricItemSettings());
 		this.rarity = rarity;
+		this.dexNumber = dexNumber;
 		SingletonGeoAnimatable.registerSyncedAnimatable(this);
 		this.blockItemModelSupplier = blockItemModelSupplier;
 	}
@@ -84,6 +87,10 @@ public class PokedollBlockItem extends BlockItem implements GeoItem {
 
 	public DollRarity getRarity() {
 		return rarity;
+	}
+
+	public int getDexNumber() {
+		return dexNumber;
 	}
 
 	@Override

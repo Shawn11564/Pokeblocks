@@ -10,12 +10,12 @@ import java.util.function.Supplier;
 
 public class WearablePokedollBlockItem extends PokedollBlockItem implements Equipment {
 
-	public WearablePokedollBlockItem(Block block, Settings settings, DollRarity rarity, Supplier<PokedollBlockItemModel> blockItemModelSupplier) {
-		super(block, settings, rarity, blockItemModelSupplier);
+	public WearablePokedollBlockItem(Block block, Settings settings, DollRarity rarity, int dexNumber, Supplier<PokedollBlockItemModel> blockItemModelSupplier) {
+		super(block, settings, rarity, dexNumber, blockItemModelSupplier);
 	}
 
-	public WearablePokedollBlockItem(Block block, DollRarity rarity, Supplier<PokedollBlockItemModel> blockItemModelSupplier) {
-		super(block, rarity, blockItemModelSupplier);
+	public WearablePokedollBlockItem(Block block, DollRarity rarity, int dexNumber, Supplier<PokedollBlockItemModel> blockItemModelSupplier) {
+		super(block, rarity, dexNumber, blockItemModelSupplier);
 	}
 
 	@Override
