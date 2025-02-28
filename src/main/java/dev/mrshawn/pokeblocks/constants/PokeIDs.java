@@ -254,13 +254,12 @@ public class PokeIDs {
 	public static final String POKEDOLL_EISCUE = "pokedoll_eiscue";
 	public static final String POKEDOLL_SHINY_EISCUE = "pokedoll_shiny_eiscue";
 	public static final String POKEDOLL_EISCUE_NOICE = "pokedoll_eiscue_noice";
-	public static final String POKEDOLL_EISCUE_SHINY_NOICE = "pokedoll_eiscue_shiny_noice";
+	public static final String POKEDOLL_SHINY_EISCUE_NOICE = "pokedoll_shiny_eiscue_noice";
 	public static final String EISCUE_HEAD_PILE = "eiscue_head_pile";
-	public static final String EISCUE_SHINY_HEAD_PILE = "eiscue_shiny_head_pile";
+	public static final String EISCUE_SHINY_HEAD_PILE = "shiny_eiscue_head_pile";
 	public static final String POKEDOLL_CETODDLE = "pokedoll_cetoddle";
 	public static final String POKEDOLL_SHINY_CETODDLE = "pokedoll_shiny_cetoddle";
 	public static final String LUVDISC_CUSHION = "luvdisc_cushion";
-	public static final String POKEDOLL_SHINY_LUVDISC_CUSHION = "pokedoll_shiny_luvdisc_cushion";
 	public static final String POKEDOLL_DELIBIRD = "pokedoll_delibird";
 	public static final String POKEDOLL_SHINY_DELIBIRD = "pokedoll_shiny_delibird";
 	public static final String POKEDOLL_TREECKO = "pokedoll_treecko";
@@ -283,4 +282,7 @@ public class PokeIDs {
 	public static final String POKEDOLL_SHINY_ANIMATED_CUBCHOO = "pokedoll_shiny_cubchoo_animated";
 	public static final String POKEDOLL_SNORUNT_FAMILY = "pokedoll_snorunt_family";
 	public static final String POKEDOLL_SHINY_SNORUNT_FAMILY = "pokedoll_shiny_snorunt_family";
+	public static final String FIGURINE_CHEEZYGRATE = "cheezygrate_figurine";
+	public static final String FIGURINE_EXHS = "exhs_figurine";
+	public static final String FIGURINE___MORPH = "__morph_figurine";
 }

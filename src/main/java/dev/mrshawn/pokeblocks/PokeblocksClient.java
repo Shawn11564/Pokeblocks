@@ -24,6 +24,24 @@ public class PokeblocksClient implements ClientModInitializer {
 		EntityRendererRegistry.register(ModEntities.SITTABLE, SittableRenderer::new);
 		ServerHandler.register();
 		registerBlockEntityRenderer(
+			ModBlockEntities.FIGURINE___MORPH_BLOCK_ENTITY,
+			ResourceConstants.FIGURINE___MORPH_MODEL,
+			ResourceConstants.FIGURINE___MORPH_TEXTURE
+		);
+
+		registerBlockEntityRenderer(
+			ModBlockEntities.FIGURINE_EXHS_BLOCK_ENTITY,
+			ResourceConstants.FIGURINE_EXHS_MODEL,
+			ResourceConstants.FIGURINE_EXHS_TEXTURE
+		);
+
+		registerBlockEntityRenderer(
+			ModBlockEntities.FIGURINE_CHEEZYGRATE_BLOCK_ENTITY,
+			ResourceConstants.FIGURINE_CHEEZYGRATE_MODEL,
+			ResourceConstants.FIGURINE_CHEEZYGRATE_TEXTURE
+		);
+
+		registerBlockEntityRenderer(
 			ModBlockEntities.POKEDOLL_SNORUNT_FAMILY_BLOCK_ENTITY,
 			ResourceConstants.POKEDOLL_SNORUNT_FAMILY_MODEL,
 			ResourceConstants.POKEDOLL_SNORUNT_FAMILY_TEXTURE,
@@ -158,11 +176,6 @@ public class PokeblocksClient implements ClientModInitializer {
 			ModBlockEntities.POKEDOLL_LUVDISC_CUSHION_BLOCK_ENTITY,
 			ResourceConstants.LUVDISC_CUSHION_MODEL,
 			ResourceConstants.LUVDISC_CUSHION_TEXTURE
-		);
-		registerBlockEntityRenderer(
-			ModBlockEntities.POKEDOLL_SHINY_LUVDISC_CUSHION_BLOCK_ENTITY,
-			ResourceConstants.LUVDISC_CUSHION_MODEL,
-			ResourceConstants.SHINY_LUVDISC_CUSHION_TEXTURE
 		);
 
 		registerBlockEntityRenderer(

@@ -1,4 +1,4 @@
-package dev.mrshawn.pokeblocks.block.entity.damorgo_figurine;
+package dev.mrshawn.pokeblocks.block.entity.figurines;
 
 import dev.mrshawn.pokeblocks.block.entity.BlockEntityTypeRegistry;
 import dev.mrshawn.pokeblocks.block.entity.PokedollBlockEntity;

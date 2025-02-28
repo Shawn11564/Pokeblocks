@@ -554,5 +554,11 @@
     "item.pokeblocks.pokedoll_snorunt_family": "Snorunt_family Pokedoll",
     "item.pokeblocks.pokedoll_shiny_snorunt_family": "Shiny Snorunt_family Pokedoll",
     "block.pokeblocks.pokedoll_snorunt_family": "Snorunt_family Pokedoll",
-    "block.pokeblocks.pokedoll_shiny_snorunt_family": "Shiny Snorunt_family Pokedoll"
+    "block.pokeblocks.pokedoll_shiny_snorunt_family": "Shiny Snorunt_family Pokedoll",
+    "item.pokeblocks.cheezygrate_figurine": "Cheezygrate Figurine",
+    "block.pokeblocks.cheezygrate_figurine": "Cheezygrate Figurine",
+    "item.pokeblocks.exhs_figurine": "Exhs Figurine",
+    "block.pokeblocks.exhs_figurine": "Exhs Figurine",
+    "item.pokeblocks.__morph_figurine": "  Morph Figurine",
+    "block.pokeblocks.__morph_figurine": "  Morph Figurine"
 }

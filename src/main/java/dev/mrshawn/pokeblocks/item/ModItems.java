@@ -1473,7 +1473,7 @@ public class ModItems {
         DollRarity.UNCLASSIFIED
     );
     public static final Item POKEDOLL_SHINY_NOICE_BLOCK_ITEM = registerItem(
-        PokeIDs.POKEDOLL_EISCUE_SHINY_NOICE,
+        PokeIDs.POKEDOLL_SHINY_EISCUE_NOICE,
         ModBlocks.POKEDOLL_SHINY_NOICE,
         ResourceConstants.POKEDOLL_EISCUE_NOICE_MODEL,
         ResourceConstants.POKEDOLL_SHINY_EISCUE_NOICE_TEXTURE,
@@ -1501,13 +1501,6 @@ public class ModItems {
         ResourceConstants.LUVDISC_CUSHION_MODEL,
         ResourceConstants.LUVDISC_CUSHION_TEXTURE,
         DollRarity.UNCLASSIFIED
-    );
-    public static final Item POKEDOLL_SHINY_LUVDISC_CUSHION_BLOCK_ITEM = registerItem(
-        PokeIDs.POKEDOLL_SHINY_LUVDISC_CUSHION,
-        ModBlocks.POKEDOLL_SHINY_LUVDISC_CUSHION,
-        ResourceConstants.LUVDISC_CUSHION_MODEL,
-        ResourceConstants.SHINY_LUVDISC_CUSHION_TEXTURE,
-        DollRarity.SHINY
     );
 
     public static final Item POKEDOLL_DELIBIRD_BLOCK_ITEM = registerItem(
@@ -1723,6 +1716,30 @@ public class ModItems {
         ModBlocks.FIGURINE_POHELLO,
         ResourceConstants.POHELLO_FIGURINE_MODEL,
         ResourceConstants.POHELLO_FIGURINE_TEXTURE,
+        DollRarity.NONE
+    );
+
+    public static final Item FIGURINE_CHEEZYGRATE_BLOCK_ITEM = registerItem(
+        PokeIDs.FIGURINE_CHEEZYGRATE,
+        ModBlocks.FIGURINE_CHEEZYGRATE,
+        ResourceConstants.FIGURINE_CHEEZYGRATE_MODEL,
+        ResourceConstants.FIGURINE_CHEEZYGRATE_TEXTURE,
+        DollRarity.NONE
+    );
+
+    public static final Item FIGURINE_EXHS_BLOCK_ITEM = registerItem(
+        PokeIDs.FIGURINE_EXHS,
+        ModBlocks.FIGURINE_EXHS,
+        ResourceConstants.FIGURINE_EXHS_MODEL,
+        ResourceConstants.FIGURINE_EXHS_TEXTURE,
+        DollRarity.NONE
+    );
+
+    public static final Item FIGURINE___MORPH_BLOCK_ITEM = registerItem(
+        PokeIDs.FIGURINE___MORPH,
+        ModBlocks.FIGURINE___MORPH,
+        ResourceConstants.FIGURINE___MORPH_MODEL,
+        ResourceConstants.FIGURINE___MORPH_TEXTURE,
         DollRarity.NONE
     );
 

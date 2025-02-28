@@ -1,5 +1,5 @@
 {
-  "parent": "pokeblocks:block/eiscue_shiny_head_pile",
+  "parent": "pokeblocks:block/shiny_eiscue_head_pile",
   "display": {
     "thirdperson_righthand": {
       "rotation": [0, 135, 0],

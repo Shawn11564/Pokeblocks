@@ -228,7 +228,6 @@ public class ResourceConstants {
 	public static final String POKEDOLL_SHINY_CETODDLE_TEXTURE = "pokedoll_cetoddle_shiny_texture.png";
 	public static final String POKEDOLL_CETODDLE_MODEL = "pokedoll_cetoddle.geo.json";
 	public static final String LUVDISC_CUSHION_TEXTURE = "luvdisc_cushion_texture.png";
-	public static final String SHINY_LUVDISC_CUSHION_TEXTURE = "luvdisc_cushion_shiny_texture.png";
 	public static final String LUVDISC_CUSHION_MODEL = "luvdisc_cushion.geo.json";
 	public static final String POKEDOLL_DELIBIRD_TEXTURE = "pokedoll_delibird_texture.png";
 	public static final String POKEDOLL_SHINY_DELIBIRD_TEXTURE = "pokedoll_delibird_shiny_texture.png";
@@ -273,4 +272,10 @@ public class ResourceConstants {
 	public static final String POKEDOLL_SNORUNT_FAMILY_MODEL = "pokedoll_snorunt_family_animated.geo.json";
 	public static final String POKEDOLL_SNORUNT_ANIMATED_ANIMATION = "pokedoll_snorunt_family.animation.json";
 	public static final String POKEDOLL_SNORUNT_ANIMATED_ANIMATION_NAME = "snorunt_family_pose";
+	public static final String FIGURINE_CHEEZYGRATE_TEXTURE = "cheezygrate_figurine_texture.png";
+	public static final String FIGURINE_CHEEZYGRATE_MODEL = "cheezygrate_figurine.geo.json";
+	public static final String FIGURINE_EXHS_TEXTURE = "exhs_figurine_texture.png";
+	public static final String FIGURINE_EXHS_MODEL = "exhs_figurine.geo.json";
+	public static final String FIGURINE___MORPH_TEXTURE = "__morph_figurine_texture.png";
+	public static final String FIGURINE___MORPH_MODEL = "__morph_figurine.geo.json";
 }
