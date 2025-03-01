@@ -1594,7 +1594,7 @@ public class ModItems {
 			ModBlocks.POKEDOLL_PILOSWINE,
 			ResourceConstants.POKEDOLL_PILOSWINE_MODEL,
 			ResourceConstants.POKEDOLL_PILOSWINE_TEXTURE,
-			DollRarity.UNCLASSIFIED,
+			DollRarity.UNCOMMON,
 			221
 	);
 	public static final Item POKEDOLL_SHINY_PILOSWINE_BLOCK_ITEM = registerItem(
@@ -1611,7 +1611,7 @@ public class ModItems {
 			ModBlocks.POKEDOLL_CUBCHOO,
 			ResourceConstants.POKEDOLL_CUBCHOO_MODEL,
 			ResourceConstants.POKEDOLL_CUBCHOO_TEXTURE,
-			DollRarity.UNCLASSIFIED,
+			DollRarity.UNCOMMON,
 			613
 	);
 	public static final Item POKEDOLL_SHINY_CUBCHOO_BLOCK_ITEM = registerItem(
@@ -1628,7 +1628,7 @@ public class ModItems {
 			ModBlocks.POKEDOLL_BEARTIC,
 			ResourceConstants.POKEDOLL_BEARTIC_MODEL,
 			ResourceConstants.POKEDOLL_BEARTIC_TEXTURE,
-			DollRarity.UNCLASSIFIED,
+			DollRarity.EPIC,
 			614
 	);
 	public static final Item POKEDOLL_SHINY_BEARTIC_BLOCK_ITEM = registerItem(
@@ -1645,7 +1645,7 @@ public class ModItems {
 			ModBlocks.POKEDOLL_EISCUE,
 			ResourceConstants.POKEDOLL_EISCUE_MODEL,
 			ResourceConstants.POKEDOLL_EISCUE_TEXTURE,
-			DollRarity.UNCLASSIFIED,
+			DollRarity.RARE,
 			875
 	);
 	public static final Item POKEDOLL_SHINY_EISCUE_BLOCK_ITEM = registerItem(
@@ -1662,7 +1662,7 @@ public class ModItems {
 			ModBlocks.POKEDOLL_NOICE,
 			ResourceConstants.POKEDOLL_EISCUE_NOICE_MODEL,
 			ResourceConstants.POKEDOLL_EISCUE_NOICE_TEXTURE,
-			DollRarity.UNCLASSIFIED,
+			DollRarity.RARE,
 			875
 	);
 	public static final Item POKEDOLL_SHINY_NOICE_BLOCK_ITEM = registerItem(
@@ -1679,7 +1679,7 @@ public class ModItems {
 			ModBlocks.POKEDOLL_CETODDLE,
 			ResourceConstants.POKEDOLL_CETODDLE_MODEL,
 			ResourceConstants.POKEDOLL_CETODDLE_TEXTURE,
-			DollRarity.UNCLASSIFIED,
+			DollRarity.UNCOMMON,
 			974
 	);
 	public static final Item POKEDOLL_SHINY_CETODDLE_BLOCK_ITEM = registerItem(
@@ -1696,7 +1696,7 @@ public class ModItems {
 			ModBlocks.POKEDOLL_LUVDISC_CUSHION,
 			ResourceConstants.LUVDISC_CUSHION_MODEL,
 			ResourceConstants.LUVDISC_CUSHION_TEXTURE,
-			DollRarity.UNCLASSIFIED,
+			DollRarity.NONE,
 			0
 	);
 
@@ -1705,7 +1705,7 @@ public class ModItems {
 			ModBlocks.POKEDOLL_DELIBIRD,
 			ResourceConstants.POKEDOLL_DELIBIRD_MODEL,
 			ResourceConstants.POKEDOLL_DELIBIRD_TEXTURE,
-			DollRarity.UNCLASSIFIED,
+			DollRarity.UNCOMMON,
 			225
 	);
 	public static final Item POKEDOLL_SHINY_DELIBIRD_BLOCK_ITEM = registerItem(
@@ -1724,7 +1724,7 @@ public class ModItems {
 			ResourceConstants.POKEDOLL_TREECKO_TEXTURE,
 			ResourceConstants.POKEDOLL_TREECKO_ANIMATED_ANIMATION,
 			ResourceConstants.POKEDOLL_TREECKO_ANIMATED_ANIMATION_NAME,
-			DollRarity.UNCLASSIFIED,
+			DollRarity.COMMON,
 			252
 	);
 	public static final Item POKEDOLL_SHINY_TREECKO_BLOCK_ITEM = registerItem(
@@ -1743,7 +1743,7 @@ public class ModItems {
 			ModBlocks.POKEDOLL_SNORUNT,
 			ResourceConstants.POKEDOLL_SNORUNT_MODEL,
 			ResourceConstants.POKEDOLL_SNORUNT_TEXTURE,
-			DollRarity.UNCLASSIFIED,
+			DollRarity.COMMON,
 			361
 	);
 	public static final Item POKEDOLL_SHINY_SNORUNT_BLOCK_ITEM = registerItem(
@@ -1760,7 +1760,7 @@ public class ModItems {
 			ModBlocks.POKEDOLL_GLALIE,
 			ResourceConstants.POKEDOLL_GLALIE_MODEL,
 			ResourceConstants.POKEDOLL_GLALIE_TEXTURE,
-			DollRarity.UNCLASSIFIED,
+			DollRarity.RARE,
 			362
 	);
 	public static final Item POKEDOLL_SHINY_GLALIE_BLOCK_ITEM = registerItem(
@@ -1777,7 +1777,7 @@ public class ModItems {
 			ModBlocks.POKEDOLL_SPHEAL,
 			ResourceConstants.POKEDOLL_SPHEAL_MODEL,
 			ResourceConstants.POKEDOLL_SPHEAL_TEXTURE,
-			DollRarity.UNCLASSIFIED,
+			DollRarity.COMMON,
 			363
 	);
 	public static final Item POKEDOLL_SHINY_SPHEAL_BLOCK_ITEM = registerItem(
@@ -1794,7 +1794,7 @@ public class ModItems {
 			ModBlocks.POKEDOLL_LUVDISC,
 			ResourceConstants.POKEDOLL_LUVDISC_MODEL,
 			ResourceConstants.POKEDOLL_LUVDISC_TEXTURE,
-			DollRarity.UNCLASSIFIED,
+			DollRarity.COMMON,
 			370
 	);
 	public static final Item POKEDOLL_SHINY_LUVDISC_BLOCK_ITEM = registerItem(
@@ -1813,7 +1813,7 @@ public class ModItems {
 			ResourceConstants.POKEDOLL_RIOLU_TEXTURE,
 			ResourceConstants.POKEDOLL_RIOLU_ANIMATED_ANIMATION,
 			ResourceConstants.POKEDOLL_RIOLU_ANIMATED_ANIMATION_NAME,
-			DollRarity.UNCLASSIFIED,
+			DollRarity.EPIC,
 			447
 	);
 	public static final Item POKEDOLL_SHINY_RIOLU_BLOCK_ITEM = registerItem(
@@ -1834,7 +1834,7 @@ public class ModItems {
 			ResourceConstants.POKEDOLL_FROSLASS_TEXTURE,
 			ResourceConstants.POKEDOLL_FROSLASS_ANIMATED_ANIMATION,
 			ResourceConstants.POKEDOLL_FROSLASS_ANIMATED_ANIMATION_NAME,
-			DollRarity.UNCLASSIFIED,
+			DollRarity.EPIC,
 			478
 	);
 	public static final Item POKEDOLL_SHINY_FROSLASS_BLOCK_ITEM = registerItem(
@@ -1853,7 +1853,7 @@ public class ModItems {
 			ModBlocks.POKEDOLL_FRIGIBAX,
 			ResourceConstants.POKEDOLL_FRIGIBAX_MODEL,
 			ResourceConstants.POKEDOLL_FRIGIBAX_TEXTURE,
-			DollRarity.UNCLASSIFIED,
+			DollRarity.RARE,
 			996
 	);
 	public static final Item POKEDOLL_SHINY_FRIGIBAX_BLOCK_ITEM = registerItem(
@@ -1872,7 +1872,7 @@ public class ModItems {
 			ResourceConstants.POKEDOLL_ANIMATED_CUBCHOO_TEXTURE,
 			ResourceConstants.POKEDOLL_CUBCHOO_ANIMATED_ANIMATION,
 			ResourceConstants.POKEDOLL_CUBCHOO_ANIMATED_ANIMATION_NAME,
-			DollRarity.UNCLASSIFIED,
+			DollRarity.EPIC,
 			613
 	);
 	public static final Item POKEDOLL_SHINY_ANIMATED_CUBCHOO_BLOCK_ITEM = registerItem(
@@ -1892,7 +1892,7 @@ public class ModItems {
 			ResourceConstants.POKEDOLL_ANIMATED_CUBCHOO_TEXTURE,
 			ResourceConstants.POKEDOLL_CUBCHOO_ANIMATED_ANIMATION,
 			ResourceConstants.POKEDOLL_CUBCHOO_ANIMATED_ANIMATION_NAME,
-			DollRarity.UNCLASSIFIED,
+			DollRarity.GIGANTIC,
 			613
 	);
 	public static final Item GIGANTIC_POKEDOLL_SHINY_ANIMATED_CUBCHOO_BLOCK_ITEM = registerItem(
@@ -1913,7 +1913,7 @@ public class ModItems {
 			ResourceConstants.POKEDOLL_SNORUNT_FAMILY_TEXTURE,
 			ResourceConstants.POKEDOLL_SNORUNT_ANIMATED_ANIMATION,
 			ResourceConstants.POKEDOLL_SNORUNT_ANIMATED_ANIMATION_NAME,
-			DollRarity.UNCLASSIFIED,
+			DollRarity.LEGENDARY,
 			361
 	);
 	public static final Item POKEDOLL_SHINY_SNORUNT_FAMILY_BLOCK_ITEM = registerItem(
@@ -2236,7 +2236,7 @@ public class ModItems {
 			ModBlocks.EISCUE_HEAD_PILE,
 			ResourceConstants.EISCUE_HEAD_PILE_1_MODEL,
 			ResourceConstants.EISCUE_HEAD_PILE_1_TEXTURE,
-			DollRarity.UNCLASSIFIED,
+			DollRarity.NONE,
 			0
 	);
 	public static final Item EISCUE_SHINY_HEAD_PILE_BLOCK_ITEM = registerItem(
