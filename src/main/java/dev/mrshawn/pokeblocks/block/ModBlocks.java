@@ -1002,12 +1002,12 @@ public class ModBlocks {
         new PokedollBlock<>(() -> PokedollGiganticShinyDelibirdBlockEntity.class));
     public static final Block GIGANTIC_POKEDOLL_CUBCHOO = Registry.register(Registries.BLOCK, new Identifier(Pokeblocks.MOD_ID, PokeIDs.GIGANTIC_POKEDOLL_CUBCHOO),
         new PokedollBlock<>(() -> PokedollGiganticCubchooBlockEntity.class));
+	public static final Block GIGANTIC_POKEDOLL_SHINY_CUBCHOO = Registry.register(Registries.BLOCK, new Identifier(Pokeblocks.MOD_ID, PokeIDs.GIGANTIC_POKEDOLL_SHINY_CUBCHOO),
+			new PokedollBlock<>(() -> PokedollGiganticShinyCubchooBlockEntity.class));
 	public static final Block GIGANTIC_POKEDOLL_ANIMATED_CUBCHOO = Registry.register(Registries.BLOCK, new Identifier(Pokeblocks.MOD_ID, PokeIDs.GIGANTIC_POKEDOLL_ANIMATED_CUBCHOO),
         new PokedollBlock<>(() -> PokedollGiganticAnimatedCubchooBlockEntity.class));
 	public static final Block GIGANTIC_POKEDOLL_SHINY_ANIMATED_CUBCHOO = Registry.register(Registries.BLOCK, new Identifier(Pokeblocks.MOD_ID, PokeIDs.GIGANTIC_POKEDOLL_SHINY_ANIMATED_CUBCHOO),
 			new PokedollBlock<>(() -> PokedollGiganticShinyAnimatedCubchooBlockEntity.class));
-    public static final Block GIGANTIC_POKEDOLL_SHINY_CUBCHOO = Registry.register(Registries.BLOCK, new Identifier(Pokeblocks.MOD_ID, PokeIDs.GIGANTIC_POKEDOLL_SHINY_CUBCHOO),
-        new PokedollBlock<>(() -> PokedollGiganticShinyCubchooBlockEntity.class));
     public static final Block GIGANTIC_POKEDOLL_CETODDLE = Registry.register(Registries.BLOCK, new Identifier(Pokeblocks.MOD_ID, PokeIDs.GIGANTIC_POKEDOLL_CETODDLE),
         new PokedollBlock<>(() -> PokedollGiganticCetoddleBlockEntity.class));
     public static final Block GIGANTIC_POKEDOLL_SHINY_CETODDLE = Registry.register(Registries.BLOCK, new Identifier(Pokeblocks.MOD_ID, PokeIDs.GIGANTIC_POKEDOLL_SHINY_CETODDLE),
