@@ -17,6 +17,7 @@ import net.minecraft.util.Identifier;
 import java.lang.reflect.Field;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
 
 public class ModItems {
 
@@ -2861,6 +2862,19 @@ public class ModItems {
 
 	public static List<ItemConvertible> getAllMiscItems() {
 		return MISC_ITEMS;
+	}
+
+	public static List<PokedollBlockItem> getAllLootTableItems() {
+		final List<ItemConvertible> blacklist = List.of(
+				ModItems.POKEDOLL_NOICE_BLOCK_ITEM,
+				ModItems.POKEDOLL_SHINY_NOICE_BLOCK_ITEM,
+				ModItems.EISCUE_HEAD_PILE_BLOCK_ITEM,
+				ModItems.EISCUE_SHINY_HEAD_PILE_BLOCK_ITEM
+		);
+
+		return getAllDolls(true)
+				.stream().filter(it -> !blacklist.contains(it))
+				.collect(Collectors.toList());
 	}
 
 	public static int getCombinedWeight() {

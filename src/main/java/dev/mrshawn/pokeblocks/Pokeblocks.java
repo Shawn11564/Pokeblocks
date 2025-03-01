@@ -75,7 +75,7 @@ public class Pokeblocks implements ModInitializer {
 		LootTableEvents.MODIFY.register((resourceManager, lootManager, id, tableBuilder, source) -> {
 			if (source.isBuiltin() && LOOT_TABLES.contains(id)) {
 				LootPool.Builder poolBuilder = LootPool.builder();
-				ModItems.getAllDolls(false).forEach(doll -> {
+				ModItems.getAllLootTableItems().forEach(doll -> {
 					poolBuilder.with(
 							ItemEntry.builder(doll.getBlock())
 									.weight(doll.getRarity().getWeight())
