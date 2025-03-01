@@ -663,8 +663,9 @@ public class ModBlocks {
 					if (heldItem.getItem() instanceof ShearsItem) {
 						// Only process on server side
 						if (!world.isClient()) {
+							Direction facing = state.get(FACING);
 							// Change the block to POKEDOLL_NOICE
-							world.setBlockState(pos, ModBlocks.POKEDOLL_NOICE.getDefaultState());
+							world.setBlockState(pos, ModBlocks.POKEDOLL_NOICE.getDefaultState().with(FACING, facing));
 
 							// Drop the EISCUE_HEAD_PILE item
 							ItemEntity itemEntity = new ItemEntity(
@@ -702,8 +703,9 @@ public class ModBlocks {
 					if (heldItem.getItem() instanceof ShearsItem) {
 						// Only process on server side
 						if (!world.isClient()) {
+							Direction facing = state.get(FACING);
 							// Change the block to POKEDOLL_NOICE
-							world.setBlockState(pos, ModBlocks.POKEDOLL_SHINY_NOICE.getDefaultState());
+							world.setBlockState(pos, ModBlocks.POKEDOLL_SHINY_NOICE.getDefaultState().with(FACING, facing));
 
 							// Drop the EISCUE_HEAD_PILE item
 							ItemEntity itemEntity = new ItemEntity(
@@ -922,8 +924,9 @@ public class ModBlocks {
 				if (heldItem.getItem() instanceof ShearsItem) {
 					// Only process on server side
 					if (!world.isClient()) {
+						Direction facing = state.get(FACING);
 						// Change the block to POKEDOLL_NOICE
-						world.setBlockState(pos, ModBlocks.GIGANTIC_POKEDOLL_NOICE.getDefaultState());
+						world.setBlockState(pos, ModBlocks.GIGANTIC_POKEDOLL_NOICE.getDefaultState().with(FACING, facing));
 
 						// Drop the EISCUE_HEAD_PILE item
 						ItemEntity itemEntity = new ItemEntity(

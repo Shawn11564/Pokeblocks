@@ -8,7 +8,9 @@ import net.minecraft.item.ItemPlacementContext;
 import net.minecraft.item.ItemStack;
 import net.minecraft.loot.context.LootContextParameterSet;
 import net.minecraft.state.StateManager;
-import net.minecraft.state.property.Properties;
+import net.minecraft.state.property.DirectionProperty;
+import net.minecraft.util.BlockMirror;
+import net.minecraft.util.BlockRotation;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.Direction;
 import net.minecraft.util.shape.VoxelShape;
@@ -21,6 +23,8 @@ import java.util.function.Supplier;
 
 public class PokedollBlock <T extends BlockEntity> extends BlockWithEntity {
 
+	public static final DirectionProperty FACING = HorizontalFacingBlock.FACING;
+
 	private Supplier<Class<T>> blockEntitySupplier;
 	private VoxelShape shape = Shapes.DOLL_SHAPE;
 
@@ -28,14 +32,14 @@ public class PokedollBlock <T extends BlockEntity> extends BlockWithEntity {
 		super(FabricBlockSettings.copy(copiedBlock).strength(0.4f).nonOpaque().solidBlock((state, world, pos) -> false));
 		this.blockEntitySupplier = blockEntitySupplier;
 		this.shape = shape;
-		setDefaultState(this.getStateManager().getDefaultState().with(Properties.HORIZONTAL_FACING, Direction.NORTH));
+		setDefaultState(this.getStateManager().getDefaultState().with(FACING, Direction.NORTH));
 		if (this.blockEntitySupplier.get().getSimpleName().toLowerCase().contains("gigantic")) { this.shape = Shapes.GIGANTIC_DOLL_SHAPE; }
 	}
 
 	public PokedollBlock(Block copiedBlock, Supplier<Class<T>> blockEntitySupplier) {
 		super(FabricBlockSettings.copy(copiedBlock).strength(0.4f).nonOpaque().solidBlock((state, world, pos) -> false));
 		this.blockEntitySupplier = blockEntitySupplier;
-		setDefaultState(this.getStateManager().getDefaultState().with(Properties.HORIZONTAL_FACING, Direction.NORTH));
+		setDefaultState(this.getStateManager().getDefaultState().with(FACING, Direction.NORTH));
 		if (this.blockEntitySupplier.get().getSimpleName().toLowerCase().contains("gigantic")) { this.shape = Shapes.GIGANTIC_DOLL_SHAPE; }
 	}
 
@@ -43,14 +47,14 @@ public class PokedollBlock <T extends BlockEntity> extends BlockWithEntity {
 		super(FabricBlockSettings.copy(Blocks.WHITE_WOOL).strength(0.4f).nonOpaque().solidBlock((state, world, pos) -> false));
 		this.blockEntitySupplier = blockEntitySupplier;
 		this.shape = shape;
-		setDefaultState(this.getStateManager().getDefaultState().with(Properties.HORIZONTAL_FACING, Direction.NORTH));
+		setDefaultState(this.getStateManager().getDefaultState().with(FACING, Direction.NORTH));
 		if (this.blockEntitySupplier.get().getSimpleName().toLowerCase().contains("gigantic")) { this.shape = Shapes.GIGANTIC_DOLL_SHAPE; }
 	}
 
 	public PokedollBlock(Settings settings, Supplier<Class<T>> blockEntitySupplier) {
 		super(settings);
 		this.blockEntitySupplier = blockEntitySupplier;
-		setDefaultState(this.getStateManager().getDefaultState().with(Properties.HORIZONTAL_FACING, Direction.NORTH));
+		setDefaultState(this.getStateManager().getDefaultState().with(FACING, Direction.NORTH));
 		if (this.blockEntitySupplier.get().getSimpleName().toLowerCase().contains("gigantic")) { this.shape = Shapes.GIGANTIC_DOLL_SHAPE; }
 	}
 
@@ -78,12 +82,22 @@ public class PokedollBlock <T extends BlockEntity> extends BlockWithEntity {
 	@Nullable
 	@Override
 	public BlockState getPlacementState(ItemPlacementContext ctx) {
-		return this.getDefaultState().with(Properties.HORIZONTAL_FACING, ctx.getHorizontalPlayerFacing().getOpposite());
+		return this.getDefaultState().with(FACING, ctx.getHorizontalPlayerFacing().getOpposite());
 	}
 
 	@Override
 	protected void appendProperties(StateManager.Builder<Block, BlockState> builder) {
-		builder.add(Properties.HORIZONTAL_FACING);
+		builder.add(FACING);
+	}
+
+	@Override
+	public BlockState rotate(BlockState state, BlockRotation rotation) {
+		return state.with(FACING, rotation.rotate(state.get(FACING)));
+	}
+
+	@Override
+	public BlockState mirror(BlockState state, BlockMirror mirror) {
+		return state.rotate(mirror.getRotation(state.get(FACING)));
 	}
 
 	@Override
