@@ -5,7 +5,7 @@ import dev.mrshawn.pokeblocks.block.client.PokedollBlockRenderer;
 import dev.mrshawn.pokeblocks.block.client.PokedollScaledBlockRenderer;
 import dev.mrshawn.pokeblocks.block.entity.ModBlockEntities;
 import dev.mrshawn.pokeblocks.block.entity.PokedollBlockEntity;
-import dev.mrshawn.pokeblocks.block.entity.headpile.EiscueHeadpileBlockModel;
+import dev.mrshawn.pokeblocks.block.entity.headpile.EiscueHeadPileBlockModel;
 import dev.mrshawn.pokeblocks.constants.ResourceConstants;
 import dev.mrshawn.pokeblocks.entity.ModEntities;
 import dev.mrshawn.pokeblocks.entity.client.SittableRenderer;
@@ -23,6 +23,273 @@ public class PokeblocksClient implements ClientModInitializer {
 	public void onInitializeClient() {
 		EntityRendererRegistry.register(ModEntities.SITTABLE, SittableRenderer::new);
 		ServerHandler.register();
+
+		registerScaledBlockEntityRenderer(
+			ModBlockEntities.GIGANTIC_POKEDOLL_TREECKO_BLOCK_ENTITY,
+			ResourceConstants.POKEDOLL_TREECKO_MODEL,
+			ResourceConstants.POKEDOLL_TREECKO_TEXTURE,
+			SCALE
+		);
+
+		registerScaledBlockEntityRenderer(
+			ModBlockEntities.GIGANTIC_POKEDOLL_SHINY_TREECKO_BLOCK_ENTITY,
+			ResourceConstants.POKEDOLL_TREECKO_MODEL,
+			ResourceConstants.POKEDOLL_SHINY_TREECKO_TEXTURE,
+			SCALE
+		);
+
+		registerScaledBlockEntityRenderer(
+			ModBlockEntities.GIGANTIC_POKEDOLL_SPHEAL_BLOCK_ENTITY,
+			ResourceConstants.POKEDOLL_SPHEAL_MODEL,
+			ResourceConstants.POKEDOLL_SPHEAL_TEXTURE,
+			SCALE
+		);
+
+		registerScaledBlockEntityRenderer(
+			ModBlockEntities.GIGANTIC_POKEDOLL_SHINY_SPHEAL_BLOCK_ENTITY,
+			ResourceConstants.POKEDOLL_SPHEAL_MODEL,
+			ResourceConstants.POKEDOLL_SHINY_SPHEAL_TEXTURE,
+			SCALE
+		);
+
+		registerScaledBlockEntityRenderer(
+			ModBlockEntities.GIGANTIC_POKEDOLL_SNORUNT_BLOCK_ENTITY,
+			ResourceConstants.POKEDOLL_SNORUNT_MODEL,
+			ResourceConstants.POKEDOLL_SNORUNT_TEXTURE,
+			SCALE
+		);
+
+		registerScaledBlockEntityRenderer(
+			ModBlockEntities.GIGANTIC_POKEDOLL_SHINY_SNORUNT_BLOCK_ENTITY,
+			ResourceConstants.POKEDOLL_SNORUNT_MODEL,
+			ResourceConstants.POKEDOLL_SHINY_SNORUNT_TEXTURE,
+			SCALE
+		);
+
+		registerScaledBlockEntityRenderer(
+				ModBlockEntities.GIGANTIC_POKEDOLL_SNORUNT_FAMILY_BLOCK_ENTITY,
+				ResourceConstants.POKEDOLL_SNORUNT_FAMILY_MODEL,
+				ResourceConstants.POKEDOLL_SNORUNT_FAMILY_TEXTURE,
+				ResourceConstants.POKEDOLL_SNORUNT_ANIMATED_ANIMATION,
+				SCALE
+		);
+
+		registerScaledBlockEntityRenderer(
+				ModBlockEntities.GIGANTIC_POKEDOLL_SHINY_SNORUNT_FAMILY_BLOCK_ENTITY,
+				ResourceConstants.POKEDOLL_SNORUNT_FAMILY_MODEL,
+				ResourceConstants.POKEDOLL_SHINY_SNORUNT_FAMILY_TEXTURE,
+				ResourceConstants.POKEDOLL_SNORUNT_ANIMATED_ANIMATION,
+				SCALE
+		);
+
+		registerScaledBlockEntityRenderer(
+			ModBlockEntities.GIGANTIC_POKEDOLL_RIOLU_BLOCK_ENTITY,
+			ResourceConstants.POKEDOLL_RIOLU_MODEL,
+			ResourceConstants.POKEDOLL_RIOLU_TEXTURE,
+			ResourceConstants.POKEDOLL_RIOLU_ANIMATED_ANIMATION,
+			SCALE
+		);
+
+		registerScaledBlockEntityRenderer(
+			ModBlockEntities.GIGANTIC_POKEDOLL_SHINY_RIOLU_BLOCK_ENTITY,
+			ResourceConstants.POKEDOLL_RIOLU_MODEL,
+			ResourceConstants.POKEDOLL_SHINY_RIOLU_TEXTURE,
+			ResourceConstants.POKEDOLL_RIOLU_ANIMATED_ANIMATION,
+			SCALE
+		);
+
+		registerScaledBlockEntityRenderer(
+			ModBlockEntities.GIGANTIC_POKEDOLL_PILOSWINE_BLOCK_ENTITY,
+			ResourceConstants.POKEDOLL_PILOSWINE_MODEL,
+			ResourceConstants.POKEDOLL_PILOSWINE_TEXTURE,
+			SCALE
+		);
+
+		registerScaledBlockEntityRenderer(
+			ModBlockEntities.GIGANTIC_POKEDOLL_SHINY_PILOSWINE_BLOCK_ENTITY,
+			ResourceConstants.POKEDOLL_PILOSWINE_MODEL,
+			ResourceConstants.POKEDOLL_SHINY_PILOSWINE_TEXTURE,
+			SCALE
+		);
+
+		registerScaledBlockEntityRenderer(
+			ModBlockEntities.GIGANTIC_POKEDOLL_NOICE_BLOCK_ENTITY,
+			ResourceConstants.POKEDOLL_EISCUE_NOICE_MODEL,
+			ResourceConstants.POKEDOLL_EISCUE_NOICE_TEXTURE,
+			SCALE
+		);
+
+		registerScaledBlockEntityRenderer(
+			ModBlockEntities.GIGANTIC_POKEDOLL_SHINY_NOICE_BLOCK_ENTITY,
+			ResourceConstants.POKEDOLL_EISCUE_NOICE_MODEL,
+			ResourceConstants.POKEDOLL_SHINY_EISCUE_NOICE_TEXTURE,
+			SCALE
+		);
+
+		registerScaledBlockEntityRenderer(
+			ModBlockEntities.GIGANTIC_POKEDOLL_LUVDISC_BLOCK_ENTITY,
+			ResourceConstants.POKEDOLL_LUVDISC_MODEL,
+			ResourceConstants.POKEDOLL_LUVDISC_TEXTURE,
+			SCALE
+		);
+
+		registerScaledBlockEntityRenderer(
+			ModBlockEntities.GIGANTIC_POKEDOLL_SHINY_LUVDISC_BLOCK_ENTITY,
+			ResourceConstants.POKEDOLL_LUVDISC_MODEL,
+			ResourceConstants.POKEDOLL_SHINY_LUVDISC_TEXTURE,
+			SCALE
+		);
+
+		registerScaledBlockEntityRenderer(
+				ModBlockEntities.GIGANTIC_EISCUE_HEAD_PILE_BLOCK_ENTITY,
+				new EiscueHeadPileBlockModel(
+						ResourceConstants.EISCUE_HEAD_PILE_1_MODEL,
+						ResourceConstants.EISCUE_HEAD_PILE_1_TEXTURE,
+						ResourceConstants.GENERIC_ANIMATION_PATH
+				),
+				SCALE
+		);
+
+		registerScaledBlockEntityRenderer(
+				ModBlockEntities.GIGANTIC_SHINY_EISCUE_HEAD_PILE_BLOCK_ENTITY,
+				new EiscueHeadPileBlockModel(
+						ResourceConstants.EISCUE_HEAD_PILE_1_MODEL,
+						ResourceConstants.EISCUE_SHINY_HEAD_PILE_1_TEXTURE,
+						ResourceConstants.GENERIC_ANIMATION_PATH
+				),
+				SCALE
+		);
+
+		registerScaledBlockEntityRenderer(
+			ModBlockEntities.GIGANTIC_POKEDOLL_GLALIE_BLOCK_ENTITY,
+			ResourceConstants.POKEDOLL_GLALIE_MODEL,
+			ResourceConstants.POKEDOLL_GLALIE_TEXTURE,
+			SCALE
+		);
+
+		registerScaledBlockEntityRenderer(
+			ModBlockEntities.GIGANTIC_POKEDOLL_SHINY_GLALIE_BLOCK_ENTITY,
+			ResourceConstants.POKEDOLL_GLALIE_MODEL,
+			ResourceConstants.POKEDOLL_SHINY_GLALIE_TEXTURE,
+			SCALE
+		);
+
+		registerScaledBlockEntityRenderer(
+			ModBlockEntities.GIGANTIC_POKEDOLL_FROSLASS_BLOCK_ENTITY,
+			ResourceConstants.POKEDOLL_FROSLASS_MODEL,
+			ResourceConstants.POKEDOLL_FROSLASS_TEXTURE,
+			ResourceConstants.POKEDOLL_FROSLASS_ANIMATED_ANIMATION,
+			SCALE
+		);
+
+		registerScaledBlockEntityRenderer(
+			ModBlockEntities.GIGANTIC_POKEDOLL_SHINY_FROSLASS_BLOCK_ENTITY,
+			ResourceConstants.POKEDOLL_FROSLASS_MODEL,
+			ResourceConstants.POKEDOLL_SHINY_FROSLASS_TEXTURE,
+			ResourceConstants.POKEDOLL_FROSLASS_ANIMATED_ANIMATION,
+			SCALE
+		);
+
+		registerScaledBlockEntityRenderer(
+			ModBlockEntities.GIGANTIC_POKEDOLL_FRIGIBAX_BLOCK_ENTITY,
+			ResourceConstants.POKEDOLL_FRIGIBAX_MODEL,
+			ResourceConstants.POKEDOLL_FRIGIBAX_TEXTURE,
+			SCALE
+		);
+
+		registerScaledBlockEntityRenderer(
+			ModBlockEntities.GIGANTIC_POKEDOLL_SHINY_FRIGIBAX_BLOCK_ENTITY,
+			ResourceConstants.POKEDOLL_FRIGIBAX_MODEL,
+			ResourceConstants.POKEDOLL_SHINY_FRIGIBAX_TEXTURE,
+			SCALE
+		);
+
+		registerScaledBlockEntityRenderer(
+			ModBlockEntities.GIGANTIC_POKEDOLL_EISCUE_BLOCK_ENTITY,
+			ResourceConstants.POKEDOLL_EISCUE_MODEL,
+			ResourceConstants.POKEDOLL_EISCUE_TEXTURE,
+			SCALE
+		);
+
+		registerScaledBlockEntityRenderer(
+			ModBlockEntities.GIGANTIC_POKEDOLL_SHINY_EISCUE_BLOCK_ENTITY,
+			ResourceConstants.POKEDOLL_EISCUE_MODEL,
+			ResourceConstants.POKEDOLL_SHINY_EISCUE_TEXTURE,
+			SCALE
+		);
+
+		registerScaledBlockEntityRenderer(
+			ModBlockEntities.GIGANTIC_POKEDOLL_DELIBIRD_BLOCK_ENTITY,
+			ResourceConstants.POKEDOLL_DELIBIRD_MODEL,
+			ResourceConstants.POKEDOLL_DELIBIRD_TEXTURE,
+			SCALE
+		);
+
+		registerScaledBlockEntityRenderer(
+			ModBlockEntities.GIGANTIC_POKEDOLL_SHINY_DELIBIRD_BLOCK_ENTITY,
+			ResourceConstants.POKEDOLL_DELIBIRD_MODEL,
+			ResourceConstants.POKEDOLL_SHINY_DELIBIRD_TEXTURE,
+			SCALE
+		);
+
+		registerScaledBlockEntityRenderer(
+			ModBlockEntities.GIGANTIC_POKEDOLL_CUBCHOO_BLOCK_ENTITY,
+			ResourceConstants.POKEDOLL_CUBCHOO_MODEL,
+			ResourceConstants.POKEDOLL_CUBCHOO_TEXTURE,
+			SCALE
+		);
+
+		registerScaledBlockEntityRenderer(
+			ModBlockEntities.GIGANTIC_POKEDOLL_SHINY_CUBCHOO_BLOCK_ENTITY,
+			ResourceConstants.POKEDOLL_CUBCHOO_MODEL,
+			ResourceConstants.POKEDOLL_SHINY_CUBCHOO_TEXTURE,
+			SCALE
+		);
+
+		registerScaledBlockEntityRenderer(
+				ModBlockEntities.GIGANTIC_POKEDOLL_ANIMATED_CUBCHOO_BLOCK_ENTITY,
+				ResourceConstants.POKEDOLL_ANIMATED_CUBCHOO_MODEL,
+				ResourceConstants.POKEDOLL_ANIMATED_CUBCHOO_TEXTURE,
+				ResourceConstants.POKEDOLL_CUBCHOO_ANIMATED_ANIMATION,
+				SCALE
+		);
+
+		registerScaledBlockEntityRenderer(
+				ModBlockEntities.GIGANTIC_POKEDOLL_SHINY_ANIMATED_CUBCHOO_BLOCK_ENTITY,
+				ResourceConstants.POKEDOLL_ANIMATED_CUBCHOO_MODEL,
+				ResourceConstants.POKEDOLL_SHINY_ANIMATED_CUBCHOO_TEXTURE,
+				ResourceConstants.POKEDOLL_CUBCHOO_ANIMATED_ANIMATION,
+				SCALE
+		);
+
+		registerScaledBlockEntityRenderer(
+			ModBlockEntities.GIGANTIC_POKEDOLL_CETODDLE_BLOCK_ENTITY,
+			ResourceConstants.POKEDOLL_CETODDLE_MODEL,
+			ResourceConstants.POKEDOLL_CETODDLE_TEXTURE,
+			SCALE
+		);
+
+		registerScaledBlockEntityRenderer(
+			ModBlockEntities.GIGANTIC_POKEDOLL_SHINY_CETODDLE_BLOCK_ENTITY,
+			ResourceConstants.POKEDOLL_CETODDLE_MODEL,
+			ResourceConstants.POKEDOLL_SHINY_CETODDLE_TEXTURE,
+			SCALE
+		);
+
+		registerScaledBlockEntityRenderer(
+			ModBlockEntities.GIGANTIC_POKEDOLL_BEARTIC_BLOCK_ENTITY,
+			ResourceConstants.POKEDOLL_BEARTIC_MODEL,
+			ResourceConstants.POKEDOLL_BEARTIC_TEXTURE,
+			SCALE
+		);
+
+		registerScaledBlockEntityRenderer(
+			ModBlockEntities.GIGANTIC_POKEDOLL_SHINY_BEARTIC_BLOCK_ENTITY,
+			ResourceConstants.POKEDOLL_BEARTIC_MODEL,
+			ResourceConstants.POKEDOLL_SHINY_BEARTIC_TEXTURE,
+			SCALE
+		);
+
 		registerBlockEntityRenderer(
 			ModBlockEntities.FIGURINE___MORPH_BLOCK_ENTITY,
 			ResourceConstants.FIGURINE___MORPH_MODEL,
@@ -190,8 +457,8 @@ public class PokeblocksClient implements ClientModInitializer {
 		);
 
 		registerBlockEntityRenderer(
-				ModBlockEntities.POKEDOLL_HEADPILE_BLOCK_ENTITY,
-				new EiscueHeadpileBlockModel(
+				ModBlockEntities.EISCUE_HEAD_PILE_BLOCK_ENTITY,
+				new EiscueHeadPileBlockModel(
 						ResourceConstants.EISCUE_HEAD_PILE_1_MODEL,
 						ResourceConstants.EISCUE_HEAD_PILE_1_TEXTURE,
 						ResourceConstants.GENERIC_ANIMATION_PATH
@@ -199,7 +466,7 @@ public class PokeblocksClient implements ClientModInitializer {
 		);
 		registerBlockEntityRenderer(
 				ModBlockEntities.EISCUE_SHINY_HEAD_PILE_BLOCK_ENTITY,
-				new EiscueHeadpileBlockModel(
+				new EiscueHeadPileBlockModel(
 						ResourceConstants.EISCUE_HEAD_PILE_1_MODEL,
 						ResourceConstants.EISCUE_SHINY_HEAD_PILE_1_TEXTURE,
 						ResourceConstants.GENERIC_ANIMATION_PATH
@@ -1741,6 +2008,10 @@ public class PokeblocksClient implements ClientModInitializer {
 
 	private static <T extends PokedollBlockEntity> void registerScaledBlockEntityRenderer(BlockEntityType<T> type, String modelResourcePath, String textureResourcePath, float scale) {
 		registerScaledBlockEntityRenderer(type, modelResourcePath, textureResourcePath, ResourceConstants.GENERIC_ANIMATION_PATH, scale);
+	}
+
+	private static <T extends PokedollBlockEntity> void registerScaledBlockEntityRenderer(BlockEntityType<T> type, PokedollBlockModel blockModel, float scale) {
+		BlockEntityRendererFactories.register(type, context -> new PokedollScaledBlockRenderer(context, blockModel, scale));
 	}
 
 }
