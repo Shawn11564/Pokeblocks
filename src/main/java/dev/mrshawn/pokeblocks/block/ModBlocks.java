@@ -826,9 +826,9 @@ public class ModBlocks {
         new PokedollBlock<>(() -> PokedollGiganticPiloswineBlockEntity.class));
     public static final Block GIGANTIC_POKEDOLL_SHINY_PILOSWINE = Registry.register(Registries.BLOCK, new Identifier(Pokeblocks.MOD_ID, PokeIDs.GIGANTIC_POKEDOLL_SHINY_PILOSWINE),
         new PokedollBlock<>(() -> PokedollGiganticShinyPiloswineBlockEntity.class));
-    public static final Block GIGANTIC_POKEDOLL_NOICE = Registry.register(Registries.BLOCK, new Identifier(Pokeblocks.MOD_ID, PokeIDs.GIGANTIC_POKEDOLL_EISCUE_NOICE),
+    public static final Block GIGANTIC_POKEDOLL_EISCUE_NOICE = Registry.register(Registries.BLOCK, new Identifier(Pokeblocks.MOD_ID, PokeIDs.GIGANTIC_POKEDOLL_EISCUE_NOICE),
         new PokedollBlock<>(() -> PokedollGiganticNoiceBlockEntity.class));
-    public static final Block GIGANTIC_POKEDOLL_SHINY_NOICE = Registry.register(Registries.BLOCK, new Identifier(Pokeblocks.MOD_ID, PokeIDs.GIGANTIC_POKEDOLL_SHINY_EISCUE_NOICE),
+    public static final Block GIGANTIC_POKEDOLL_SHINY_EISCUE_NOICE = Registry.register(Registries.BLOCK, new Identifier(Pokeblocks.MOD_ID, PokeIDs.GIGANTIC_POKEDOLL_SHINY_EISCUE_NOICE),
         new PokedollBlock<>(() -> PokedollGiganticShinyNoiceBlockEntity.class));
     public static final Block GIGANTIC_POKEDOLL_LUVDISC = Registry.register(Registries.BLOCK, new Identifier(Pokeblocks.MOD_ID, PokeIDs.GIGANTIC_POKEDOLL_LUVDISC),
         new PokedollBlock<>(() -> PokedollGiganticLuvdiscBlockEntity.class));
@@ -926,7 +926,7 @@ public class ModBlocks {
 					if (!world.isClient()) {
 						Direction facing = state.get(FACING);
 						// Change the block to POKEDOLL_NOICE
-						world.setBlockState(pos, ModBlocks.GIGANTIC_POKEDOLL_NOICE.getDefaultState().with(FACING, facing));
+						world.setBlockState(pos, ModBlocks.GIGANTIC_POKEDOLL_EISCUE_NOICE.getDefaultState().with(FACING, facing));
 
 						// Drop the EISCUE_HEAD_PILE item
 						ItemEntity itemEntity = new ItemEntity(
@@ -968,7 +968,7 @@ public class ModBlocks {
 							Direction facing = state.get(FACING);
 
 							// Change the block to POKEDOLL_NOICE while preserving the facing direction
-							world.setBlockState(pos, ModBlocks.GIGANTIC_POKEDOLL_SHINY_NOICE.getDefaultState().with(FACING, facing));
+							world.setBlockState(pos, ModBlocks.GIGANTIC_POKEDOLL_SHINY_EISCUE_NOICE.getDefaultState().with(FACING, facing));
 
 							// Drop the EISCUE_HEAD_PILE item
 							ItemEntity itemEntity = new ItemEntity(
@@ -1004,9 +1004,9 @@ public class ModBlocks {
         new PokedollBlock<>(() -> PokedollGiganticCubchooBlockEntity.class));
 	public static final Block GIGANTIC_POKEDOLL_SHINY_CUBCHOO = Registry.register(Registries.BLOCK, new Identifier(Pokeblocks.MOD_ID, PokeIDs.GIGANTIC_POKEDOLL_SHINY_CUBCHOO),
 			new PokedollBlock<>(() -> PokedollGiganticShinyCubchooBlockEntity.class));
-	public static final Block GIGANTIC_POKEDOLL_ANIMATED_CUBCHOO = Registry.register(Registries.BLOCK, new Identifier(Pokeblocks.MOD_ID, PokeIDs.GIGANTIC_POKEDOLL_ANIMATED_CUBCHOO),
+	public static final Block GIGANTIC_POKEDOLL_CUBCHOO_ANIMATED = Registry.register(Registries.BLOCK, new Identifier(Pokeblocks.MOD_ID, PokeIDs.GIGANTIC_POKEDOLL_ANIMATED_CUBCHOO),
         new PokedollBlock<>(() -> PokedollGiganticAnimatedCubchooBlockEntity.class));
-	public static final Block GIGANTIC_POKEDOLL_SHINY_ANIMATED_CUBCHOO = Registry.register(Registries.BLOCK, new Identifier(Pokeblocks.MOD_ID, PokeIDs.GIGANTIC_POKEDOLL_SHINY_ANIMATED_CUBCHOO),
+	public static final Block GIGANTIC_POKEDOLL_SHINY_CUBCHOO_ANIMATED = Registry.register(Registries.BLOCK, new Identifier(Pokeblocks.MOD_ID, PokeIDs.GIGANTIC_POKEDOLL_SHINY_ANIMATED_CUBCHOO),
 			new PokedollBlock<>(() -> PokedollGiganticShinyAnimatedCubchooBlockEntity.class));
     public static final Block GIGANTIC_POKEDOLL_CETODDLE = Registry.register(Registries.BLOCK, new Identifier(Pokeblocks.MOD_ID, PokeIDs.GIGANTIC_POKEDOLL_CETODDLE),
         new PokedollBlock<>(() -> PokedollGiganticCetoddleBlockEntity.class));

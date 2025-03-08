@@ -5,8 +5,6 @@ import net.fabricmc.fabric.api.object.builder.v1.block.FabricBlockSettings;
 import net.minecraft.block.*;
 import net.minecraft.block.entity.BlockEntity;
 import net.minecraft.item.ItemPlacementContext;
-import net.minecraft.item.ItemStack;
-import net.minecraft.loot.context.LootContextParameterSet;
 import net.minecraft.state.StateManager;
 import net.minecraft.state.property.DirectionProperty;
 import net.minecraft.util.BlockMirror;
@@ -17,8 +15,6 @@ import net.minecraft.util.shape.VoxelShape;
 import net.minecraft.world.BlockView;
 import org.jetbrains.annotations.Nullable;
 
-import java.util.Collections;
-import java.util.List;
 import java.util.function.Supplier;
 
 public class PokedollBlock <T extends BlockEntity> extends BlockWithEntity {
@@ -105,10 +101,11 @@ public class PokedollBlock <T extends BlockEntity> extends BlockWithEntity {
 		return 1f;
 	}
 
-	@Override
-	public List<ItemStack> getDroppedStacks(BlockState state, LootContextParameterSet.Builder builder) {
-		return Collections.singletonList(new ItemStack(this));
-	}
+//	@Override
+//	public List<ItemStack> getDroppedStacks(BlockState state, LootContextParameterSet.Builder builder) {
+//		Pokeblocks.LOGGER.info("Getting dropped stacks for " + this.getName().getString());
+//		return Collections.singletonList(new ItemStack(this));
+//	}
 
 	@Override
 	public VoxelShape getOutlineShape(BlockState state, BlockView world, BlockPos pos, ShapeContext context) {

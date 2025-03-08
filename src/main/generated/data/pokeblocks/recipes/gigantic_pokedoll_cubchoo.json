@@ -1,0 +1,21 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "category": "misc",
+  "key": {
+    "d": {
+      "item": "pokeblocks:pokedoll_cubchoo"
+    },
+    "w": {
+      "tag": "minecraft:wool"
+    }
+  },
+  "pattern": [
+    " d ",
+    "dwd",
+    " d "
+  ],
+  "result": {
+    "item": "pokeblocks:gigantic_pokedoll_cubchoo"
+  },
+  "show_notification": true
+}

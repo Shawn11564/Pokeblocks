@@ -1936,12 +1936,12 @@ public class ModBlockEntities {
 
 		GIGANTIC_POKEDOLL_ANIMATED_CUBCHOO_BLOCK_ENTITY = registerBlockEntity(
 				new Identifier(Pokeblocks.MOD_ID, PokeIDs.GIGANTIC_POKEDOLL_ANIMATED_CUBCHOO),
-				FabricBlockEntityTypeBuilder.create(PokedollGiganticAnimatedCubchooBlockEntity::new, ModBlocks.GIGANTIC_POKEDOLL_ANIMATED_CUBCHOO),
+				FabricBlockEntityTypeBuilder.create(PokedollGiganticAnimatedCubchooBlockEntity::new, ModBlocks.GIGANTIC_POKEDOLL_CUBCHOO_ANIMATED),
 				PokedollGiganticAnimatedCubchooBlockEntity.class
 		);
 		GIGANTIC_POKEDOLL_SHINY_ANIMATED_CUBCHOO_BLOCK_ENTITY = registerBlockEntity(
 				new Identifier(Pokeblocks.MOD_ID, PokeIDs.GIGANTIC_POKEDOLL_SHINY_ANIMATED_CUBCHOO),
-				FabricBlockEntityTypeBuilder.create(PokedollGiganticShinyAnimatedCubchooBlockEntity::new, ModBlocks.GIGANTIC_POKEDOLL_SHINY_ANIMATED_CUBCHOO),
+				FabricBlockEntityTypeBuilder.create(PokedollGiganticShinyAnimatedCubchooBlockEntity::new, ModBlocks.GIGANTIC_POKEDOLL_SHINY_CUBCHOO_ANIMATED),
 				PokedollGiganticShinyAnimatedCubchooBlockEntity.class
 		);
 
@@ -2024,12 +2024,12 @@ public class ModBlockEntities {
 
         GIGANTIC_POKEDOLL_NOICE_BLOCK_ENTITY = registerBlockEntity(
             new Identifier(Pokeblocks.MOD_ID, PokeIDs.GIGANTIC_POKEDOLL_EISCUE_NOICE),
-            FabricBlockEntityTypeBuilder.create(PokedollGiganticNoiceBlockEntity::new, ModBlocks.GIGANTIC_POKEDOLL_NOICE),
+            FabricBlockEntityTypeBuilder.create(PokedollGiganticNoiceBlockEntity::new, ModBlocks.GIGANTIC_POKEDOLL_EISCUE_NOICE),
             PokedollGiganticNoiceBlockEntity.class
         );
         GIGANTIC_POKEDOLL_SHINY_NOICE_BLOCK_ENTITY = registerBlockEntity(
             new Identifier(Pokeblocks.MOD_ID, PokeIDs.GIGANTIC_POKEDOLL_SHINY_EISCUE_NOICE),
-            FabricBlockEntityTypeBuilder.create(PokedollGiganticShinyNoiceBlockEntity::new, ModBlocks.GIGANTIC_POKEDOLL_SHINY_NOICE),
+            FabricBlockEntityTypeBuilder.create(PokedollGiganticShinyNoiceBlockEntity::new, ModBlocks.GIGANTIC_POKEDOLL_SHINY_EISCUE_NOICE),
             PokedollGiganticShinyNoiceBlockEntity.class
         );
 

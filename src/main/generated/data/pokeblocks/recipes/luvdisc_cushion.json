@@ -1,0 +1,18 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "category": "misc",
+  "key": {
+    "p": {
+      "item": "minecraft:pink_wool"
+    }
+  },
+  "pattern": [
+    "p p",
+    "ppp",
+    " p "
+  ],
+  "result": {
+    "item": "pokeblocks:luvdisc_cushion"
+  },
+  "show_notification": true
+}
