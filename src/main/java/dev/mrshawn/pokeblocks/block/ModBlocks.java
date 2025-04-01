@@ -3,6 +3,7 @@ package dev.mrshawn.pokeblocks.block;
 import dev.mrshawn.pokeblocks.Pokeblocks;
 import dev.mrshawn.pokeblocks.block.custom.PokedollBlock;
 import dev.mrshawn.pokeblocks.block.custom.SittablePokedollBlock;
+import dev.mrshawn.pokeblocks.block.entity.SkibidiMewlet.PokedollGiganticSkibidiMewletBlockEntity;
 import dev.mrshawn.pokeblocks.block.entity.SkibidiMewlet.PokedollSkibidiMewletBlockEntity;
 import dev.mrshawn.pokeblocks.block.entity.absol.PokedollAbsolBlockEntity;
 import dev.mrshawn.pokeblocks.block.entity.absol.PokedollGiganticAbsolBlockEntity;
@@ -809,6 +810,8 @@ public class ModBlocks {
     public static final Block POKEDOLL_SKIBIDI_MEWLET = Registry.register(Registries.BLOCK, new Identifier(Pokeblocks.MOD_ID, PokeIDs.POKEDOLL_SKIBIDI_MEWLET),
             new PokedollBlock<>(() -> PokedollSkibidiMewletBlockEntity.class));
 
+    public static final Block GIGANTIC_POKEDOLL_SKIBIDI_MEWLET = Registry.register(Registries.BLOCK, new Identifier(Pokeblocks.MOD_ID, PokeIDs.GIGANTIC_POKEDOLL_SKIBIDI_MEWLET),
+        new PokedollBlock<>(() -> PokedollGiganticSkibidiMewletBlockEntity.class));
     public static final Block GIGANTIC_POKEDOLL_TREECKO = Registry.register(Registries.BLOCK, new Identifier(Pokeblocks.MOD_ID, PokeIDs.GIGANTIC_POKEDOLL_TREECKO),
         new PokedollBlock<>(() -> PokedollGiganticTreeckoBlockEntity.class));
     public static final Block GIGANTIC_POKEDOLL_SHINY_TREECKO = Registry.register(Registries.BLOCK, new Identifier(Pokeblocks.MOD_ID, PokeIDs.GIGANTIC_POKEDOLL_SHINY_TREECKO),

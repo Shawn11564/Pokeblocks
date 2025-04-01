@@ -1935,6 +1935,15 @@ public class ModItems {
         ResourceConstants.POKEDOLL_SKIBIDI_MEWLET_TEXTURE,
         DollRarity.LEGENDARY,
 		0
+	);
+
+    public static final Item GIGANTIC_POKEDOLL_SKIBIDI_MEWLET_BLOCK_ITEM = registerItem(
+        PokeIDs.GIGANTIC_POKEDOLL_SKIBIDI_MEWLET,
+        ModBlocks.GIGANTIC_POKEDOLL_SKIBIDI_MEWLET,
+        ResourceConstants.POKEDOLL_SKIBIDI_MEWLET_MODEL,
+        ResourceConstants.POKEDOLL_SKIBIDI_MEWLET_TEXTURE,
+        DollRarity.GIGANTIC,
+		0
     );
 
 	public static final Item GIGANTIC_POKEDOLL_TREECKO_BLOCK_ITEM = registerItem(
