@@ -1,0 +1,89 @@
+{
+	"format_version": "1.8.0",
+	"animations": {
+		"animation.model.pose": {
+			"loop": true,
+			"bones": {
+				"pokedoll_froslass": {
+					"rotation": {
+						"vector": [0, -25, 0]
+					}
+				},
+				"body": {
+					"rotation": {
+						"vector": [5, 67.5, 0]
+					},
+					"position": {
+						"vector": [0, 0.2, 0]
+					}
+				},
+				"upper_torso": {
+					"rotation": {
+						"vector": [-10, 0, 0]
+					}
+				},
+				"neck": {
+					"rotation": {
+						"vector": [7.5, -10, 0]
+					}
+				},
+				"head": {
+					"rotation": {
+						"vector": [2.5, -5, 0]
+					}
+				},
+				"left_arm": {
+					"rotation": {
+						"vector": [10, 0, 0]
+					}
+				},
+				"left_elbow": {
+					"rotation": {
+						"vector": [-4.98107, 0.43523, 4.98107]
+					}
+				},
+				"left_forearm": {
+					"rotation": {
+						"vector": [-7.47178, 0.65182, 4.95744]
+					}
+				},
+				"left_hand": {
+					"rotation": {
+						"vector": [-12.45392, 1.08089, 4.88206]
+					}
+				},
+				"left_fabric": {
+					"rotation": {
+						"vector": [0, 15, 0]
+					}
+				},
+				"right_arm": {
+					"rotation": {
+						"vector": [-24.14314, 5.90316, 16.50371]
+					}
+				},
+				"right_elbow": {
+					"rotation": {
+						"vector": [-27.0623, -4.2453, -11.76782]
+					}
+				},
+				"right_forearm": {
+					"rotation": {
+						"vector": [-39.56869, -6.40865, -7.69263]
+					}
+				},
+				"right_hand": {
+					"rotation": {
+						"vector": [-35.49286, -3.94184, -41.91263]
+					}
+				},
+				"right_fabric": {
+					"rotation": {
+						"vector": [0, 10, 0]
+					}
+				}
+			}
+		}
+	},
+	"geckolib_format_version": 2
+}

@@ -5,11 +5,8 @@ import net.fabricmc.fabric.api.object.builder.v1.block.FabricBlockSettings;
 import net.minecraft.block.*;
 import net.minecraft.block.entity.BlockEntity;
 import net.minecraft.item.ItemPlacementContext;
-import net.minecraft.item.ItemStack;
-import net.minecraft.loot.context.LootContextParameterSet;
 import net.minecraft.state.StateManager;
 import net.minecraft.state.property.DirectionProperty;
-import net.minecraft.state.property.Properties;
 import net.minecraft.util.BlockMirror;
 import net.minecraft.util.BlockRotation;
 import net.minecraft.util.math.BlockPos;
@@ -18,8 +15,6 @@ import net.minecraft.util.shape.VoxelShape;
 import net.minecraft.world.BlockView;
 import org.jetbrains.annotations.Nullable;
 
-import java.util.Collections;
-import java.util.List;
 import java.util.function.Supplier;
 
 public class PokedollBlock <T extends BlockEntity> extends BlockWithEntity {
@@ -33,14 +28,14 @@ public class PokedollBlock <T extends BlockEntity> extends BlockWithEntity {
 		super(FabricBlockSettings.copy(copiedBlock).strength(0.4f).nonOpaque().solidBlock((state, world, pos) -> false));
 		this.blockEntitySupplier = blockEntitySupplier;
 		this.shape = shape;
-		setDefaultState(this.getStateManager().getDefaultState().with(Properties.HORIZONTAL_FACING, Direction.NORTH));
+		setDefaultState(this.getStateManager().getDefaultState().with(FACING, Direction.NORTH));
 		if (this.blockEntitySupplier.get().getSimpleName().toLowerCase().contains("gigantic")) { this.shape = Shapes.GIGANTIC_DOLL_SHAPE; }
 	}
 
 	public PokedollBlock(Block copiedBlock, Supplier<Class<T>> blockEntitySupplier) {
 		super(FabricBlockSettings.copy(copiedBlock).strength(0.4f).nonOpaque().solidBlock((state, world, pos) -> false));
 		this.blockEntitySupplier = blockEntitySupplier;
-		setDefaultState(this.getStateManager().getDefaultState().with(Properties.HORIZONTAL_FACING, Direction.NORTH));
+		setDefaultState(this.getStateManager().getDefaultState().with(FACING, Direction.NORTH));
 		if (this.blockEntitySupplier.get().getSimpleName().toLowerCase().contains("gigantic")) { this.shape = Shapes.GIGANTIC_DOLL_SHAPE; }
 	}
 
@@ -48,14 +43,14 @@ public class PokedollBlock <T extends BlockEntity> extends BlockWithEntity {
 		super(FabricBlockSettings.copy(Blocks.WHITE_WOOL).strength(0.4f).nonOpaque().solidBlock((state, world, pos) -> false));
 		this.blockEntitySupplier = blockEntitySupplier;
 		this.shape = shape;
-		setDefaultState(this.getStateManager().getDefaultState().with(Properties.HORIZONTAL_FACING, Direction.NORTH));
+		setDefaultState(this.getStateManager().getDefaultState().with(FACING, Direction.NORTH));
 		if (this.blockEntitySupplier.get().getSimpleName().toLowerCase().contains("gigantic")) { this.shape = Shapes.GIGANTIC_DOLL_SHAPE; }
 	}
 
 	public PokedollBlock(Settings settings, Supplier<Class<T>> blockEntitySupplier) {
 		super(settings);
 		this.blockEntitySupplier = blockEntitySupplier;
-		setDefaultState(this.getStateManager().getDefaultState().with(Properties.HORIZONTAL_FACING, Direction.NORTH));
+		setDefaultState(this.getStateManager().getDefaultState().with(FACING, Direction.NORTH));
 		if (this.blockEntitySupplier.get().getSimpleName().toLowerCase().contains("gigantic")) { this.shape = Shapes.GIGANTIC_DOLL_SHAPE; }
 	}
 
@@ -87,6 +82,11 @@ public class PokedollBlock <T extends BlockEntity> extends BlockWithEntity {
 	}
 
 	@Override
+	protected void appendProperties(StateManager.Builder<Block, BlockState> builder) {
+		builder.add(FACING);
+	}
+
+	@Override
 	public BlockState rotate(BlockState state, BlockRotation rotation) {
 		return state.with(FACING, rotation.rotate(state.get(FACING)));
 	}
@@ -97,19 +97,15 @@ public class PokedollBlock <T extends BlockEntity> extends BlockWithEntity {
 	}
 
 	@Override
-	protected void appendProperties(StateManager.Builder<Block, BlockState> builder) {
-		builder.add(FACING);
-	}
-
-	@Override
 	public float getAmbientOcclusionLightLevel(BlockState state, BlockView world, BlockPos pos) {
 		return 1f;
 	}
 
-	@Override
-	public List<ItemStack> getDroppedStacks(BlockState state, LootContextParameterSet.Builder builder) {
-		return Collections.singletonList(new ItemStack(this));
-	}
+//	@Override
+//	public List<ItemStack> getDroppedStacks(BlockState state, LootContextParameterSet.Builder builder) {
+//		Pokeblocks.LOGGER.info("Getting dropped stacks for " + this.getName().getString());
+//		return Collections.singletonList(new ItemStack(this));
+//	}
 
 	@Override
 	public VoxelShape getOutlineShape(BlockState state, BlockView world, BlockPos pos, ShapeContext context) {
@@ -118,7 +114,5 @@ public class PokedollBlock <T extends BlockEntity> extends BlockWithEntity {
 		} else {
 			return super.getOutlineShape(state, world, pos, context);
 		}
-
 	}
-
 }

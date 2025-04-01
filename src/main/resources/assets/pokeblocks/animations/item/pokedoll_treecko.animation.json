@@ -1,0 +1,113 @@
+{
+	"format_version": "1.8.0",
+	"animations": {
+		"animation.pokedoll_treecko.pose": {
+			"loop": true,
+			"bones": {
+				"pokedoll_treecko": {
+					"position": {
+						"vector": [0, -5, 0]
+					}
+				},
+				"head": {
+					"rotation": {
+						"vector": [-7.5, -12.5, 0]
+					}
+				},
+				"jaw": {
+					"rotation": {
+						"vector": [-5, 0, 0]
+					}
+				},
+				"left_arm": {
+					"rotation": {
+						"vector": [13.85707, -18.0395, 68.6034]
+					},
+					"position": {
+						"vector": [-0.3088, -0.37883, 0.00453]
+					}
+				},
+				"left_elbow": {
+					"rotation": {
+						"vector": [0, 22.5, 0]
+					}
+				},
+				"left_hand": {
+					"rotation": {
+						"vector": [0, 0, -72.5]
+					},
+					"position": {
+						"vector": [0, -0.25, 0]
+					}
+				},
+				"right_arm": {
+					"rotation": {
+						"vector": [13.85707, 18.0395, -68.6034]
+					},
+					"position": {
+						"vector": [1, 0, 0]
+					}
+				},
+				"right_elbow": {
+					"rotation": {
+						"vector": [0, -22.5, 0]
+					}
+				},
+				"right_hand": {
+					"rotation": {
+						"vector": [0, 0, 72.5]
+					},
+					"position": {
+						"vector": [-0.05864, -0.24148, 0.02735]
+					}
+				},
+				"legs": {
+					"position": {
+						"vector": [0, 0.5, 0]
+					}
+				},
+				"left_leg": {
+					"rotation": {
+						"vector": [-90, -22.5, 0]
+					}
+				},
+				"right_leg": {
+					"rotation": {
+						"vector": [-90, 22.5, 0]
+					}
+				},
+				"left_tail": {
+					"rotation": {
+						"vector": [22.5, 22.5, 0]
+					}
+				},
+				"left_tail_seg3": {
+					"rotation": {
+						"vector": [22.5, 0, 0]
+					}
+				},
+				"left_tail_seg4": {
+					"rotation": {
+						"vector": [22.5, 0, 0]
+					}
+				},
+				"right_tail": {
+					"rotation": {
+						"vector": [22.5, -22.5, 0]
+					}
+				},
+				"right_tail_seg3": {
+					"rotation": {
+						"vector": [22.5, 0, 0]
+					}
+				},
+				"right_tail_seg4": {
+					"rotation": {
+						"vector": [22.5, 0, 0]
+					}
+				}
+			}
+		}
+	},
+	"geckolib_format_version": 2
+}

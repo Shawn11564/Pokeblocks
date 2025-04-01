@@ -1,0 +1,51 @@
+{
+	"format_version": "1.8.0",
+	"animations": {
+		"animation.pokedoll_cubchoo.idle": {
+			"loop": true,
+			"bones": {
+				"torso_top": {
+					"rotation": {
+						"vector": [0, 0, "math.sin(query.anim_time*180*0.75)*2"]
+					}
+				},
+				"head": {
+					"rotation": {
+						"vector": [-10, 0, "math.sin(query.anim_time*180*0.75)*4"]
+					}
+				},
+				"left_ear": {
+					"rotation": {
+						"vector": [0, "math.cos(query.anim_time*90*1)*2", "-math.cos(query.anim_time*180*0.8)*3"]
+					}
+				},
+				"right_ear": {
+					"rotation": {
+						"vector": [0, "math.cos(query.anim_time*90*1)*2", "-math.cos(query.anim_time*180*0.8)*3"]
+					}
+				},
+				"snot": {
+					"rotation": {
+						"vector": [0, 0, "-math.sin(query.anim_time*135*1-90)*1.5"]
+					}
+				},
+				"snot_2": {
+					"rotation": {
+						"vector": [0, 0, "-math.sin(query.anim_time*135*1-60)*2"]
+					}
+				},
+				"snot_3": {
+					"rotation": {
+						"vector": [0, 0, "-math.sin(query.anim_time*135*1-30)*2.5"]
+					}
+				},
+				"tail": {
+					"rotation": {
+						"vector": ["math.cos(query.anim_time*90*1*1.2)*2", "-math.sin(query.anim_time*180*0.8)*4", 0]
+					}
+				}
+			}
+		}
+	},
+	"geckolib_format_version": 2
+}

@@ -6,6 +6,7 @@ import net.fabricmc.fabric.api.datagen.v1.provider.FabricRecipeProvider;
 import net.minecraft.block.Block;
 import net.minecraft.data.server.recipe.RecipeJsonProvider;
 import net.minecraft.data.server.recipe.ShapedRecipeJsonBuilder;
+import net.minecraft.item.Items;
 import net.minecraft.recipe.book.RecipeCategory;
 import net.minecraft.registry.tag.ItemTags;
 import net.minecraft.util.Identifier;
@@ -19,7 +20,8 @@ public class PokeblocksRecipeGenerator extends FabricRecipeProvider {
 			"APPLIN",
 			"FISHBOWL",
 			"TROPHY",
-			"FIGURINE"
+			"FIGURINE",
+			"CUSHION"
 	);
 
 	public PokeblocksRecipeGenerator(FabricDataOutput generator) {
@@ -58,5 +60,13 @@ public class PokeblocksRecipeGenerator extends FabricRecipeProvider {
 				e.printStackTrace();
 			}
 		}
+		ShapedRecipeJsonBuilder.create(RecipeCategory.DECORATIONS, ModBlocks.POKEDOLL_LUVDISC_CUSHION)
+				.pattern("p p")
+				.pattern("ppp")
+				.pattern(" p ")
+				.input('p', Items.PINK_WOOL)
+				.criterion(FabricRecipeProvider.hasItem(ModBlocks.POKEDOLL_LUVDISC_CUSHION),
+						FabricRecipeProvider.conditionsFromItem(ModBlocks.POKEDOLL_LUVDISC_CUSHION))
+				.offerTo(exporter, new Identifier("pokeblocks", "luvdisc_cushion"));
 	}
 }

@@ -1,0 +1,113 @@
+{
+	"format_version": "1.8.0",
+	"animations": {
+		"animation.model.pose": {
+			"loop": true,
+			"bones": {
+				"pokedoll_riolu": {
+					"position": {
+						"vector": [0, -5.75, 0]
+					}
+				},
+				"upper_torso": {
+					"rotation": {
+						"vector": [-5, 0, -7.5]
+					},
+					"position": {
+						"vector": [0, -0.25, 0]
+					}
+				},
+				"left_ear": {
+					"rotation": {
+						"vector": [0, 0, 50]
+					}
+				},
+				"left_ear_seg2": {
+					"rotation": {
+						"vector": [0, 0, 12.5]
+					}
+				},
+				"right_ear": {
+					"rotation": {
+						"vector": [0, 0, -52.5]
+					}
+				},
+				"right_ear_seg2": {
+					"rotation": {
+						"vector": [0, 0, -10]
+					}
+				},
+				"left_arm": {
+					"rotation": {
+						"vector": [-5.02173, 39.82033, -6.46629]
+					},
+					"position": {
+						"vector": [0.52835, 0.09475, -1.01211]
+					}
+				},
+				"left_elbow": {
+					"rotation": {
+						"vector": [0, 7.5, 30]
+					}
+				},
+				"left_paw": {
+					"rotation": {
+						"vector": [0, 12.5, 32.5]
+					}
+				},
+				"right_arm": {
+					"rotation": {
+						"vector": [-12.14797, 11.74702, -54.49232]
+					}
+				},
+				"right_elbow": {
+					"rotation": {
+						"vector": [0, 0, 7.5]
+					}
+				},
+				"right_paw": {
+					"rotation": {
+						"vector": [0, 0, 17.5]
+					}
+				},
+				"legs": {
+					"rotation": {
+						"vector": [-90, 0, 0]
+					},
+					"position": {
+						"vector": [0, 1, 0]
+					}
+				},
+				"left_thigh": {
+					"rotation": {
+						"vector": [-32.10382, -5.35355, -8.45862]
+					},
+					"position": {
+						"vector": [0.75, -0.5, -1.25]
+					}
+				},
+				"left_leg": {
+					"rotation": {
+						"vector": [90, 2, -15]
+					}
+				},
+				"left_calf": {
+					"rotation": {
+						"vector": [32.5, 0, 0]
+					}
+				},
+				"right_thigh": {
+					"rotation": {
+						"vector": [0, 0, 7.5]
+					}
+				},
+				"right_foot": {
+					"rotation": {
+						"vector": [20, 0, 0]
+					}
+				}
+			}
+		}
+	},
+	"geckolib_format_version": 2
+}

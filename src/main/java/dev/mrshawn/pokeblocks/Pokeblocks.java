@@ -2,6 +2,7 @@ package dev.mrshawn.pokeblocks;
 
 import dev.mrshawn.pokeblocks.block.ModBlocks;
 import dev.mrshawn.pokeblocks.block.entity.ModBlockEntities;
+import dev.mrshawn.pokeblocks.entity.ModEntities;
 import dev.mrshawn.pokeblocks.item.ModItemGroups;
 import dev.mrshawn.pokeblocks.item.ModItems;
 import net.fabricmc.api.ModInitializer;
@@ -64,6 +65,7 @@ public class Pokeblocks implements ModInitializer {
 		ModItems.registerModItems();
 		ModBlocks.registerModBlocks();
 		ModBlockEntities.registerAllBlockEntities();
+		ModEntities.registerAllEntities();
 
 		GeckoLib.initialize();
 
@@ -73,7 +75,7 @@ public class Pokeblocks implements ModInitializer {
 		LootTableEvents.MODIFY.register((resourceManager, lootManager, id, tableBuilder, source) -> {
 			if (source.isBuiltin() && LOOT_TABLES.contains(id)) {
 				LootPool.Builder poolBuilder = LootPool.builder();
-				ModItems.getAllDolls(false).forEach(doll -> {
+				ModItems.getAllLootTableItems().forEach(doll -> {
 					poolBuilder.with(
 							ItemEntry.builder(doll.getBlock())
 									.weight(doll.getRarity().getWeight())
