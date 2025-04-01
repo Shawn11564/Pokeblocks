@@ -278,4 +278,6 @@ public class ResourceConstants {
 	public static final String FIGURINE_EXHS_MODEL = "exhs_figurine.geo.json";
 	public static final String FIGURINE___MORPH_TEXTURE = "__morph_figurine_texture.png";
 	public static final String FIGURINE___MORPH_MODEL = "__morph_figurine.geo.json";
+	public static final String POKEDOLL_SKIBIDI_MEWLET_TEXTURE = "pokedoll_skibidi_mewlet_texture.png";
+	public static final String POKEDOLL_SKIBIDI_MEWLET_MODEL = "pokedoll_skibidi_mewlet.geo.json";
 }

@@ -2,6 +2,7 @@ package dev.mrshawn.pokeblocks.block.entity;
 
 import dev.mrshawn.pokeblocks.Pokeblocks;
 import dev.mrshawn.pokeblocks.block.ModBlocks;
+import dev.mrshawn.pokeblocks.block.entity.SkibidiMewlet.PokedollSkibidiMewletBlockEntity;
 import dev.mrshawn.pokeblocks.block.entity.absol.PokedollAbsolBlockEntity;
 import dev.mrshawn.pokeblocks.block.entity.absol.PokedollGiganticAbsolBlockEntity;
 import dev.mrshawn.pokeblocks.block.entity.absol.PokedollGiganticShinyAbsolBlockEntity;
@@ -703,6 +704,8 @@ public class ModBlockEntities {
 
     public static BlockEntityType<PokedollGiganticTreeckoBlockEntity> GIGANTIC_POKEDOLL_TREECKO_BLOCK_ENTITY;
     public static BlockEntityType<PokedollGiganticShinyTreeckoBlockEntity> GIGANTIC_POKEDOLL_SHINY_TREECKO_BLOCK_ENTITY;
+
+    public static BlockEntityType<PokedollSkibidiMewletBlockEntity> POKEDOLL_SKIBIDI_MEWLET_BLOCK_ENTITY;
 
     public static BlockEntityType<EiscueHeadpileBlockEntity> EISCUE_HEAD_PILE_BLOCK_ENTITY;
     public static BlockEntityType<EiscueShinyHeadpileBlockEntity> EISCUE_SHINY_HEAD_PILE_BLOCK_ENTITY;
@@ -2383,6 +2386,12 @@ public class ModBlockEntities {
                 new Identifier(Pokeblocks.MOD_ID, PokeIDs.POKEDOLL_SHINY_SNORUNT_FAMILY),
                 FabricBlockEntityTypeBuilder.create(PokedollShinySnoruntFamilyBlockEntity::new, ModBlocks.POKEDOLL_SHINY_SNORUNT_FAMILY),
                 PokedollShinySnoruntFamilyBlockEntity.class
+        );
+
+        POKEDOLL_SKIBIDI_MEWLET_BLOCK_ENTITY = registerBlockEntity(
+                new Identifier(Pokeblocks.MOD_ID, PokeIDs.POKEDOLL_SKIBIDI_MEWLET),
+                FabricBlockEntityTypeBuilder.create(PokedollSkibidiMewletBlockEntity::new, ModBlocks.POKEDOLL_SKIBIDI_MEWLET),
+                PokedollSkibidiMewletBlockEntity.class
         );
         EISCUE_SHINY_HEAD_PILE_BLOCK_ENTITY = registerBlockEntity(
                 new Identifier(Pokeblocks.MOD_ID, PokeIDs.EISCUE_SHINY_HEAD_PILE),

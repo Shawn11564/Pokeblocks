@@ -24,6 +24,12 @@ public class PokeblocksClient implements ClientModInitializer {
 		EntityRendererRegistry.register(ModEntities.SITTABLE, SittableRenderer::new);
 		ServerHandler.register();
 
+		registerBlockEntityRenderer(
+			ModBlockEntities.POKEDOLL_SKIBIDI_MEWLET_BLOCK_ENTITY,
+			ResourceConstants.POKEDOLL_SKIBIDI_MEWLET_MODEL,
+			ResourceConstants.POKEDOLL_SKIBIDI_MEWLET_TEXTURE
+		);
+
 		registerScaledBlockEntityRenderer(
 			ModBlockEntities.GIGANTIC_POKEDOLL_TREECKO_BLOCK_ENTITY,
 			ResourceConstants.POKEDOLL_TREECKO_MODEL,
