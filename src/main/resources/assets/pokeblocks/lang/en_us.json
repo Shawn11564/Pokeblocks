@@ -601,10 +601,6 @@
     "block.pokeblocks.gigantic_pokedoll_luvdisc": "Gigantic Luvdisc Pokedoll",
     "item.pokeblocks.gigantic_pokedoll_shiny_luvdisc": "Gigantic Shiny Luvdisc Pokedoll",
     "block.pokeblocks.gigantic_pokedoll_shiny_luvdisc": "Gigantic Shiny Luvdisc Pokedoll",
-    "item.pokeblocks.gigantic_pokedoll_noice": "Gigantic Noice Pokedoll",
-    "block.pokeblocks.gigantic_pokedoll_noice": "Gigantic Noice Pokedoll",
-    "item.pokeblocks.gigantic_pokedoll_shiny_noice": "Gigantic Shiny Noice Pokedoll",
-    "block.pokeblocks.gigantic_pokedoll_shiny_noice": "Gigantic Shiny Noice Pokedoll",
     "item.pokeblocks.gigantic_pokedoll_piloswine": "Gigantic Piloswine Pokedoll",
     "block.pokeblocks.gigantic_pokedoll_piloswine": "Gigantic Piloswine Pokedoll",
     "item.pokeblocks.gigantic_pokedoll_shiny_piloswine": "Gigantic Shiny Piloswine Pokedoll",
@@ -636,5 +632,9 @@
     "block.pokeblocks.gigantic_pokedoll_cubchoo_animated": "Gigantic Animated Cubchoo Pokedoll",
     "item.pokeblocks.gigantic_pokedoll_cubchoo_animated": "Gigantic Animated Cubchoo Pokedoll",
     "block.pokeblocks.gigantic_pokedoll_shiny_cubchoo_animated": "Gigantic Shiny Animated Cubchoo Pokedoll",
-    "item.pokeblocks.gigantic_pokedoll_shiny_cubchoo_animated": "Gigantic Shiny Animated Cubchoo Pokedoll"
+    "item.pokeblocks.gigantic_pokedoll_shiny_cubchoo_animated": "Gigantic Shiny Animated Cubchoo Pokedoll",
+    "block.pokeblocks.gigantic_pokedoll_eiscue_noice": "Gigantic Eiscue No-Ice Pokedoll",
+    "item.pokeblocks.gigantic_pokedoll_eiscue_noice": "Gigantic Eiscue No-Ice Pokedoll",
+    "block.pokeblocks.gigantic_pokedoll_shiny_eiscue_noice": "Gigantic Shiny Eiscue No-Ice Pokedoll",
+    "item.pokeblocks.gigantic_pokedoll_shiny_eiscue_noice": "Gigantic Shiny Eiscue No-Ice Pokedoll"
 }

@@ -114,7 +114,5 @@ public class PokedollBlock <T extends BlockEntity> extends BlockWithEntity {
 		} else {
 			return super.getOutlineShape(state, world, pos, context);
 		}
-
 	}
-
 }

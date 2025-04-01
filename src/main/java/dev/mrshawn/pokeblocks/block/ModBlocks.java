@@ -287,6 +287,7 @@ import net.fabricmc.fabric.api.item.v1.FabricItemSettings;
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockState;
 import net.minecraft.block.Blocks;
+import net.minecraft.block.entity.BlockEntity;
 import net.minecraft.entity.EntityType;
 import net.minecraft.entity.ItemEntity;
 import net.minecraft.entity.passive.SalmonEntity;
@@ -295,6 +296,7 @@ import net.minecraft.item.BlockItem;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.item.ShearsItem;
+import net.minecraft.nbt.NbtCompound;
 import net.minecraft.particle.ParticleTypes;
 import net.minecraft.registry.Registries;
 import net.minecraft.registry.Registry;
@@ -312,6 +314,7 @@ import net.minecraft.util.math.Box;
 import net.minecraft.util.math.Direction;
 import net.minecraft.world.World;
 import net.minecraft.world.WorldAccess;
+import org.jetbrains.annotations.Nullable;
 
 import java.lang.reflect.Field;
 import java.util.ArrayList;
@@ -485,7 +488,7 @@ public class ModBlocks {
 				}
 			});
 	public static final Block POKEDOLL_POKEMON_TROPHY = Registry.register(Registries.BLOCK, new Identifier(Pokeblocks.MOD_ID, PokeIDs.POKEMON_TROPHY),
-			new PokedollBlock<>(Blocks.GOLD_BLOCK, Shapes.TROPHY_SHAPE, () -> PokedollPokemonTrophyBlockEntity.class));
+			new PokedollBlock<>(Shapes.TROPHY_SHAPE, () -> PokedollPokemonTrophyBlockEntity.class));
 	public static final Block POKEDOLL_BLASTOISE = Registry.register(Registries.BLOCK, new Identifier(Pokeblocks.MOD_ID, PokeIDs.POKEDOLL_BLASTOISE),
 			new PokedollBlock<>(() -> PokedollBlastoiseBlockEntity.class));
 	public static final Block POKEDOLL_SHINY_BLASTOISE = Registry.register(Registries.BLOCK, new Identifier(Pokeblocks.MOD_ID, PokeIDs.POKEDOLL_SHINY_BLASTOISE),
@@ -867,6 +870,31 @@ public class ModBlocks {
 				// If none of the conditions are met, defer to parent class behavior
 				return super.onUse(state, world, pos, player, hand, hit);
 			}
+
+			@Override
+			public void afterBreak(World world, PlayerEntity player, BlockPos pos, BlockState state, @Nullable BlockEntity blockEntity, ItemStack tool) {
+				// First check if this is a head pile block entity
+				if (blockEntity instanceof PokedollGiganticHeadpileBlockEntity headPile) {
+					// Get the TextureIndex from the block entity
+					NbtCompound nbt = new NbtCompound();
+					headPile.writeNbt(nbt);
+					int textureIndex = nbt.getInt("TextureIndex");
+
+					// Calculate how many items to drop (TextureIndex + 1)
+					int count = textureIndex + 1;
+
+					// Create and drop the items
+					ItemStack dropStack = new ItemStack(this.asItem(), count);
+					ItemEntity itemEntity = new ItemEntity(world, pos.getX() + 0.5, pos.getY() + 0.5, pos.getZ() + 0.5, dropStack);
+					world.spawnEntity(itemEntity);
+
+					// Apply tool damage
+					tool.damage(1, player, (p) -> p.sendToolBreakStatus(player.getActiveHand()));
+				} else {
+					// If it's not our special block entity, fall back to default behavior
+					super.afterBreak(world, player, pos, state, blockEntity, tool);
+				}
+			}
 		});
     public static final Block GIGANTIC_EISCUE_SHINY_HEAD_PILE = Registry.register(Registries.BLOCK, new Identifier(Pokeblocks.MOD_ID, PokeIDs.GIGANTIC_EISCUE_SHINY_HEAD_PILE),
         new PokedollBlock<>(() -> PokedollGiganticShinyHeadpileBlockEntity.class) {
@@ -900,6 +928,31 @@ public class ModBlocks {
 
 				// If none of the conditions are met, defer to parent class behavior
 				return super.onUse(state, world, pos, player, hand, hit);
+			}
+
+			@Override
+			public void afterBreak(World world, PlayerEntity player, BlockPos pos, BlockState state, @Nullable BlockEntity blockEntity, ItemStack tool) {
+				// First check if this is a head pile block entity
+				if (blockEntity instanceof PokedollGiganticShinyHeadpileBlockEntity headPile) {
+					// Get the TextureIndex from the block entity
+					NbtCompound nbt = new NbtCompound();
+					headPile.writeNbt(nbt);
+					int textureIndex = nbt.getInt("TextureIndex");
+
+					// Calculate how many items to drop (TextureIndex + 1)
+					int count = textureIndex + 1;
+
+					// Create and drop the items
+					ItemStack dropStack = new ItemStack(this.asItem(), count);
+					ItemEntity itemEntity = new ItemEntity(world, pos.getX() + 0.5, pos.getY() + 0.5, pos.getZ() + 0.5, dropStack);
+					world.spawnEntity(itemEntity);
+
+					// Apply tool damage
+					tool.damage(1, player, (p) -> p.sendToolBreakStatus(player.getActiveHand()));
+				} else {
+					// If it's not our special block entity, fall back to default behavior
+					super.afterBreak(world, player, pos, state, blockEntity, tool);
+				}
 			}
 		});
     public static final Block GIGANTIC_POKEDOLL_GLALIE = Registry.register(Registries.BLOCK, new Identifier(Pokeblocks.MOD_ID, PokeIDs.GIGANTIC_POKEDOLL_GLALIE),
@@ -1049,6 +1102,31 @@ public class ModBlocks {
 					// If none of the conditions are met, defer to parent class behavior
 					return super.onUse(state, world, pos, player, hand, hit);
 				}
+
+				@Override
+				public void afterBreak(World world, PlayerEntity player, BlockPos pos, BlockState state, @Nullable BlockEntity blockEntity, ItemStack tool) {
+					// First check if this is a head pile block entity
+					if (blockEntity instanceof EiscueHeadpileBlockEntity headPile) {
+						// Get the TextureIndex from the block entity
+						NbtCompound nbt = new NbtCompound();
+						headPile.writeNbt(nbt);
+						int textureIndex = nbt.getInt("TextureIndex");
+
+						// Calculate how many items to drop (TextureIndex + 1)
+						int count = textureIndex + 1;
+
+						// Create and drop the items
+						ItemStack dropStack = new ItemStack(this.asItem(), count);
+						ItemEntity itemEntity = new ItemEntity(world, pos.getX() + 0.5, pos.getY() + 0.5, pos.getZ() + 0.5, dropStack);
+						world.spawnEntity(itemEntity);
+
+						// Apply tool damage
+						tool.damage(1, player, (p) -> p.sendToolBreakStatus(player.getActiveHand()));
+					} else {
+						// If it's not our special block entity, fall back to default behavior
+						super.afterBreak(world, player, pos, state, blockEntity, tool);
+					}
+				}
 			}
 	);
 	public static final Block EISCUE_SHINY_HEAD_PILE = Registry.register(Registries.BLOCK, new Identifier(Pokeblocks.MOD_ID, PokeIDs.EISCUE_SHINY_HEAD_PILE),
@@ -1083,6 +1161,31 @@ public class ModBlocks {
 
 					// If none of the conditions are met, defer to parent class behavior
 					return super.onUse(state, world, pos, player, hand, hit);
+				}
+
+				@Override
+				public void afterBreak(World world, PlayerEntity player, BlockPos pos, BlockState state, @Nullable BlockEntity blockEntity, ItemStack tool) {
+					// First check if this is a head pile block entity
+					if (blockEntity instanceof EiscueShinyHeadpileBlockEntity headPile) {
+						// Get the TextureIndex from the block entity
+						NbtCompound nbt = new NbtCompound();
+						headPile.writeNbt(nbt);
+						int textureIndex = nbt.getInt("TextureIndex");
+
+						// Calculate how many items to drop (TextureIndex + 1)
+						int count = textureIndex + 1;
+
+						// Create and drop the items
+						ItemStack dropStack = new ItemStack(this.asItem(), count);
+						ItemEntity itemEntity = new ItemEntity(world, pos.getX() + 0.5, pos.getY() + 0.5, pos.getZ() + 0.5, dropStack);
+						world.spawnEntity(itemEntity);
+
+						// Apply tool damage
+						tool.damage(1, player, (p) -> p.sendToolBreakStatus(player.getActiveHand()));
+					} else {
+						// If it's not our special block entity, fall back to default behavior
+						super.afterBreak(world, player, pos, state, blockEntity, tool);
+					}
 				}
 			}
 	);
