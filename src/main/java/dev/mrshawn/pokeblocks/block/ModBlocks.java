@@ -290,9 +290,7 @@ import net.minecraft.block.Block;
 import net.minecraft.block.BlockState;
 import net.minecraft.block.Blocks;
 import net.minecraft.block.entity.BlockEntity;
-import net.minecraft.entity.EntityType;
 import net.minecraft.entity.ItemEntity;
-import net.minecraft.entity.passive.SalmonEntity;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.BlockItem;
 import net.minecraft.item.Item;
@@ -302,7 +300,6 @@ import net.minecraft.nbt.NbtCompound;
 import net.minecraft.particle.ParticleTypes;
 import net.minecraft.registry.Registries;
 import net.minecraft.registry.Registry;
-import net.minecraft.server.world.ServerWorld;
 import net.minecraft.sound.SoundCategory;
 import net.minecraft.sound.SoundEvents;
 import net.minecraft.state.property.Properties;
@@ -315,7 +312,6 @@ import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.Box;
 import net.minecraft.util.math.Direction;
 import net.minecraft.world.World;
-import net.minecraft.world.WorldAccess;
 import org.jetbrains.annotations.Nullable;
 
 import java.lang.reflect.Field;
@@ -462,32 +458,32 @@ public class ModBlocks {
 			new PokedollBlock<>(() -> PokedollShinyVenusaurBlockEntity.class));
 	public static final Block POKEDOLL_MAGIKARP_FISHBOWL = Registry.register(Registries.BLOCK, new Identifier(Pokeblocks.MOD_ID, PokeIDs.MAGIKARP_FISHBOWL),
 			new PokedollBlock<>(Blocks.GLASS, () -> PokedollMagikarpFishbowlBlockEntity.class) {
-				@Override
-				public void onBroken(WorldAccess world, BlockPos pos, BlockState state) {
-					world.setBlockState(pos, Blocks.WATER.getDefaultState(), 8);
-					if (world instanceof ServerWorld serverWorld) {
-						SalmonEntity salmon = EntityType.SALMON.create(serverWorld);
-						if (salmon != null) {
-							salmon.refreshPositionAndAngles(pos.getX() + 0.5, pos.getY(), pos.getZ() + 0.5, 0.0f, 0.0f);
-							serverWorld.spawnEntity(salmon);
-						}
-					}
-				}
+//				@Override
+//				public void onBroken(WorldAccess world, BlockPos pos, BlockState state) {
+//					world.setBlockState(pos, Blocks.WATER.getDefaultState(), 8);
+//					if (world instanceof ServerWorld serverWorld) {
+//						SalmonEntity salmon = EntityType.SALMON.create(serverWorld);
+//						if (salmon != null) {
+//							salmon.refreshPositionAndAngles(pos.getX() + 0.5, pos.getY(), pos.getZ() + 0.5, 0.0f, 0.0f);
+//							serverWorld.spawnEntity(salmon);
+//						}
+//					}
+//				}
 			}
 	);
 	public static final Block POKEDOLL_SHINY_MAGIKARP_FISHBOWL = Registry.register(Registries.BLOCK, new Identifier(Pokeblocks.MOD_ID, PokeIDs.SHINY_MAGIKARP_FISHBOWL),
 			new PokedollBlock<>(Blocks.GLASS, () -> PokedollShinyMagikarpFishbowlBlockEntity.class) {
-				@Override
-				public void onBroken(WorldAccess world, BlockPos pos, BlockState state) {
-					world.setBlockState(pos, Blocks.WATER.getDefaultState(), 8);
-					if (world instanceof ServerWorld serverWorld) {
-						SalmonEntity salmon = EntityType.SALMON.create(serverWorld);
-						if (salmon != null) {
-							salmon.refreshPositionAndAngles(pos.getX() + 0.5, pos.getY(), pos.getZ() + 0.5, 0.0f, 0.0f);
-							serverWorld.spawnEntity(salmon);
-						}
-					}
-				}
+//				@Override
+//				public void onBroken(WorldAccess world, BlockPos pos, BlockState state) {
+//					world.setBlockState(pos, Blocks.WATER.getDefaultState(), 8);
+//					if (world instanceof ServerWorld serverWorld) {
+//						SalmonEntity salmon = EntityType.SALMON.create(serverWorld);
+//						if (salmon != null) {
+//							salmon.refreshPositionAndAngles(pos.getX() + 0.5, pos.getY(), pos.getZ() + 0.5, 0.0f, 0.0f);
+//							serverWorld.spawnEntity(salmon);
+//						}
+//					}
+//				}
 			});
 	public static final Block POKEDOLL_POKEMON_TROPHY = Registry.register(Registries.BLOCK, new Identifier(Pokeblocks.MOD_ID, PokeIDs.POKEMON_TROPHY),
 			new PokedollBlock<>(Shapes.TROPHY_SHAPE, () -> PokedollPokemonTrophyBlockEntity.class));
