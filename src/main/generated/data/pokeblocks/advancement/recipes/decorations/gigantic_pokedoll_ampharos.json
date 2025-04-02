@@ -1,0 +1,32 @@
+{
+  "parent": "minecraft:recipes/root",
+  "criteria": {
+    "has_pokedoll_ampharos": {
+      "conditions": {
+        "items": [
+          {
+            "items": "pokeblocks:pokedoll_ampharos"
+          }
+        ]
+      },
+      "trigger": "minecraft:inventory_changed"
+    },
+    "has_the_recipe": {
+      "conditions": {
+        "recipe": "pokeblocks:gigantic_pokedoll_ampharos"
+      },
+      "trigger": "minecraft:recipe_unlocked"
+    }
+  },
+  "requirements": [
+    [
+      "has_the_recipe",
+      "has_pokedoll_ampharos"
+    ]
+  ],
+  "rewards": {
+    "recipes": [
+      "pokeblocks:gigantic_pokedoll_ampharos"
+    ]
+  }
+}

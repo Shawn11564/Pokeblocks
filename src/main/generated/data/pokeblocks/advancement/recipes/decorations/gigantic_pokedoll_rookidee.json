@@ -1,0 +1,32 @@
+{
+  "parent": "minecraft:recipes/root",
+  "criteria": {
+    "has_pokedoll_rookidee": {
+      "conditions": {
+        "items": [
+          {
+            "items": "pokeblocks:pokedoll_rookidee"
+          }
+        ]
+      },
+      "trigger": "minecraft:inventory_changed"
+    },
+    "has_the_recipe": {
+      "conditions": {
+        "recipe": "pokeblocks:gigantic_pokedoll_rookidee"
+      },
+      "trigger": "minecraft:recipe_unlocked"
+    }
+  },
+  "requirements": [
+    [
+      "has_the_recipe",
+      "has_pokedoll_rookidee"
+    ]
+  ],
+  "rewards": {
+    "recipes": [
+      "pokeblocks:gigantic_pokedoll_rookidee"
+    ]
+  }
+}
