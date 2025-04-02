@@ -1,5 +1,6 @@
 package dev.mrshawn.pokeblocks.block.custom;
 
+import com.mojang.serialization.MapCodec;
 import dev.mrshawn.pokeblocks.constants.Shapes;
 import net.fabricmc.fabric.api.object.builder.v1.block.FabricBlockSettings;
 import net.minecraft.block.*;
@@ -68,6 +69,11 @@ public class PokedollBlock <T extends BlockEntity> extends BlockWithEntity {
 		} catch (Exception ex) {
 			throw new RuntimeException(ex);
 		}
+	}
+
+	@Override
+	protected MapCodec<? extends BlockWithEntity> getCodec() {
+		return null;
 	}
 
 	@Override

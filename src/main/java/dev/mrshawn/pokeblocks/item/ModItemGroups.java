@@ -18,7 +18,7 @@ import java.util.List;
 public class ModItemGroups {
 
 	public static final ItemGroup POKEBLOCKS = Registry.register(Registries.ITEM_GROUP,
-			new Identifier(Pokeblocks.MOD_ID, "pokeblocks"),
+			Identifier.of(Pokeblocks.MOD_ID, "pokeblocks"),
 			FabricItemGroup.builder()
 					.displayName(Text.translatable("itemgroup.pokeblocks"))
 					.icon(() -> new ItemStack(ModItems.POKEDOLL_CALYREX_BLOCK_ITEM))
@@ -39,7 +39,7 @@ public class ModItemGroups {
 	);
 
 	public static final ItemGroup GIGANTICS = Registry.register(Registries.ITEM_GROUP,
-			new Identifier(Pokeblocks.MOD_ID, "pokeblocks_gigantics"),
+			Identifier.of(Pokeblocks.MOD_ID, "pokeblocks_gigantics"),
 			FabricItemGroup.builder()
 					.displayName(Text.translatable("itemgroup.pokeblocks_gigantics"))
 					.icon(() -> new ItemStack(ModItems.GIGANTIC_POKEDOLL_CALYREX_BLOCK_ITEM))
@@ -60,7 +60,7 @@ public class ModItemGroups {
 	);
 
 	public static final ItemGroup MISC = Registry.register(Registries.ITEM_GROUP,
-			new Identifier(Pokeblocks.MOD_ID, "pokeblocks_misc"),
+			Identifier.of(Pokeblocks.MOD_ID, "pokeblocks_misc"),
 			FabricItemGroup.builder()
 					.displayName(Text.translatable("itemgroup.pokeblocks_misc"))
 					.icon(() -> new ItemStack(ModItems.POKEDOLL_DONCHEADLE_FIGURINE_BLOCK_ITEM))

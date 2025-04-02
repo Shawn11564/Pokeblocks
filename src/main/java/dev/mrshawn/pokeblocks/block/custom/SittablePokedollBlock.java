@@ -10,7 +10,6 @@ import net.minecraft.entity.SpawnReason;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.server.world.ServerWorld;
 import net.minecraft.util.ActionResult;
-import net.minecraft.util.Hand;
 import net.minecraft.util.hit.BlockHitResult;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.Box;
@@ -43,10 +42,10 @@ public class SittablePokedollBlock <T extends BlockEntity> extends PokedollBlock
 	}
 
 	@Override
-	public ActionResult onUse(BlockState state, World world, BlockPos pos, PlayerEntity player, Hand hand, BlockHitResult hit) {
+	public ActionResult onUse(BlockState state, World world, BlockPos pos, PlayerEntity player, BlockHitResult hit) {
 		// Skip if player is sneaking
 		if (player.isSneaking()) {
-			return super.onUse(state, world, pos, player, hand, hit);
+			return super.onUse(state, world, pos, player, hit);
 		}
 
 		if(!world.isClient()) {

@@ -2799,7 +2799,7 @@ public class ModItems {
 	);
 
 	private static Item registerItem(String name, Item item) {
-		return Registry.register(Registries.ITEM, new Identifier(Pokeblocks.MOD_ID, name), item);
+		return Registry.register(Registries.ITEM, Identifier.of(Pokeblocks.MOD_ID, name), item);
 	}
 
 	private static Item registerItem(String name, Block block, String modelResourcePath, String textureResourcePath, String animationResourcePath, String animationName, DollRarity rarity, int dexNumber) {

@@ -14,7 +14,7 @@ public class ModEntities {
 
 	public static final EntityType<SittableEntity> SITTABLE = Registry.register(
 			Registries.ENTITY_TYPE,
-			new Identifier(Pokeblocks.MOD_ID, "sittable"),
+			Identifier.of(Pokeblocks.MOD_ID, "sittable"),
 			FabricEntityTypeBuilder.<SittableEntity>create(SpawnGroup.MISC, SittableEntity::new)
 					.dimensions(EntityDimensions.fixed(0.5F, 0.5F))
 					.trackRangeBlocks(0)

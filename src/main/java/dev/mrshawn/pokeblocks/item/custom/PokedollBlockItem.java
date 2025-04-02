@@ -4,23 +4,22 @@ import dev.mrshawn.pokeblocks.constants.ResourceConstants;
 import dev.mrshawn.pokeblocks.item.DollRarity;
 import dev.mrshawn.pokeblocks.item.client.PokedollBlockItemModel;
 import dev.mrshawn.pokeblocks.item.client.PokedollBlockItemRenderer;
-import net.fabricmc.fabric.api.item.v1.FabricItemSettings;
 import net.minecraft.block.Block;
-import net.minecraft.client.item.TooltipContext;
 import net.minecraft.client.render.item.BuiltinModelItemRenderer;
 import net.minecraft.item.BlockItem;
+import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
+import net.minecraft.item.tooltip.TooltipType;
 import net.minecraft.text.Text;
-import net.minecraft.world.World;
 import org.jetbrains.annotations.Nullable;
+import software.bernie.geckolib.animatable.GeoAnimatable;
 import software.bernie.geckolib.animatable.GeoItem;
 import software.bernie.geckolib.animatable.SingletonGeoAnimatable;
-import software.bernie.geckolib.animatable.client.RenderProvider;
-import software.bernie.geckolib.core.animatable.GeoAnimatable;
-import software.bernie.geckolib.core.animatable.instance.AnimatableInstanceCache;
-import software.bernie.geckolib.core.animatable.instance.SingletonAnimatableInstanceCache;
-import software.bernie.geckolib.core.animation.*;
-import software.bernie.geckolib.core.object.PlayState;
+import software.bernie.geckolib.animatable.client.GeoRenderProvider;
+import software.bernie.geckolib.animatable.instance.AnimatableInstanceCache;
+import software.bernie.geckolib.animatable.instance.SingletonAnimatableInstanceCache;
+import software.bernie.geckolib.animation.*;
+import software.bernie.geckolib.renderer.GeoItemRenderer;
 
 import java.util.List;
 import java.util.function.Consumer;
@@ -29,7 +28,6 @@ import java.util.function.Supplier;
 public class PokedollBlockItem extends BlockItem implements GeoItem {
 
 	private AnimatableInstanceCache cache = new SingletonAnimatableInstanceCache(this);
-	private final Supplier<Object> renderProvider = GeoItem.makeRenderer(this);
 	private final Supplier<PokedollBlockItemModel> blockItemModelSupplier;
 	private final DollRarity rarity;
 	private final int dexNumber;
@@ -43,7 +41,7 @@ public class PokedollBlockItem extends BlockItem implements GeoItem {
 	}
 
 	public PokedollBlockItem(Block block, DollRarity rarity, int dexNumber, Supplier<PokedollBlockItemModel> blockItemModelSupplier) {
-		super(block, new FabricItemSettings());
+		super(block, new Item.Settings());
 		this.rarity = rarity;
 		this.dexNumber = dexNumber;
 		SingletonGeoAnimatable.registerSyncedAnimatable(this);
@@ -51,19 +49,19 @@ public class PokedollBlockItem extends BlockItem implements GeoItem {
 	}
 
 	@Override
-	public void createRenderer(Consumer<Object> consumer) {
-		consumer.accept(new RenderProvider() {
-			private final PokedollBlockItemRenderer renderer = new PokedollBlockItemRenderer(blockItemModelSupplier.get());
+	public void createGeoRenderer(Consumer<GeoRenderProvider> consumer) {
+		consumer.accept(new GeoRenderProvider() {
+			private GeoItemRenderer<PokedollBlockItem> renderer = null;
+
 			@Override
-			public BuiltinModelItemRenderer getCustomRenderer() {
+			@Nullable
+			public BuiltinModelItemRenderer getGeoItemRenderer() {
+				if (this.renderer == null)
+					this.renderer = new PokedollBlockItemRenderer(blockItemModelSupplier.get());
+
 				return this.renderer;
 			}
 		});
-	}
-
-	@Override
-	public Supplier<Object> getRenderProvider() {
-		return renderProvider;
 	}
 
 	@Override
@@ -94,10 +92,8 @@ public class PokedollBlockItem extends BlockItem implements GeoItem {
 	}
 
 	@Override
-	public void appendTooltip(ItemStack stack, @Nullable World world, List<Text> tooltip, TooltipContext context) {
-//		tooltip.clear();
+	public void appendTooltip(ItemStack stack, TooltipContext context, List<Text> tooltip, TooltipType type) {
 		if (rarity != DollRarity.NONE) {
-//			tooltip.add(0, getColoredItemName(stack, rarity)); // Add the colored item name first
 			tooltip.add(1, Text.empty());
 			tooltip.add(2, Text.literal(rarity.getDisplayName()).formatted(rarity.getColor()));
 		}

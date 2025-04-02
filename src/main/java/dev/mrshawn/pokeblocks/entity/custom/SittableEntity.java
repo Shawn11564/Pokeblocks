@@ -5,11 +5,12 @@ import dev.mrshawn.pokeblocks.entity.ModEntities;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityType;
 import net.minecraft.entity.MovementType;
+import net.minecraft.entity.data.DataTracker;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.nbt.NbtCompound;
 import net.minecraft.network.listener.ClientPlayPacketListener;
 import net.minecraft.network.packet.Packet;
-import net.minecraft.network.packet.s2c.play.EntitySpawnS2CPacket;
+import net.minecraft.server.network.EntityTrackerEntry;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.Vec3d;
 import net.minecraft.world.World;
@@ -28,8 +29,8 @@ public class SittableEntity extends Entity {
 	}
 
 	@Override
-	protected void initDataTracker() {
-		// No data to track
+	protected void initDataTracker(DataTracker.Builder builder) {
+		// No custom data to track
 	}
 
 	@Override
@@ -43,8 +44,8 @@ public class SittableEntity extends Entity {
 	}
 
 	@Override
-	public Packet<ClientPlayPacketListener> createSpawnPacket() {
-		return new EntitySpawnS2CPacket(this);
+	public Packet<ClientPlayPacketListener> createSpawnPacket(EntityTrackerEntry entityTrackerEntry) {
+		return super.createSpawnPacket(entityTrackerEntry);
 	}
 
 	@Override
@@ -75,11 +76,6 @@ public class SittableEntity extends Entity {
 					blockPos.getZ() + 0.5 + direction.z
 			);
 		}
-	}
-
-	@Override
-	public double getMountedHeightOffset() {
-		return 0.0; // Adjust based on visual needs
 	}
 
 	// This is crucial for preventing movement

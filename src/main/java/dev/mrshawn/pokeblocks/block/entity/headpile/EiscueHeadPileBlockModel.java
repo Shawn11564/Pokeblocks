@@ -14,17 +14,17 @@ public class EiscueHeadPileBlockModel extends PokedollBlockModel {
 	@Override
 	public Identifier getModelResource(PokedollBlockEntity animatable) {
 		if (animatable instanceof HeadPileBlockEntity eiscueEntity) {
-			return new Identifier(Pokeblocks.MOD_ID, "geo/" + eiscueEntity.getModelPath());
+			return Identifier.of(Pokeblocks.MOD_ID, "geo/" + eiscueEntity.getModelPath());
 		}
-		return new Identifier(Pokeblocks.MOD_ID, "geo/" + modelResourcePath);
+		return Identifier.of(Pokeblocks.MOD_ID, "geo/" + modelResourcePath);
 	}
 
 	@Override
 	public Identifier getTextureResource(PokedollBlockEntity animatable) {
 		if (animatable instanceof HeadPileBlockEntity eiscueEntity) {
-			return new Identifier(Pokeblocks.MOD_ID, "textures/block/" + eiscueEntity.getTexturePath());
+			return Identifier.of(Pokeblocks.MOD_ID, "textures/block/" + eiscueEntity.getTexturePath());
 		}
-		return new Identifier(Pokeblocks.MOD_ID, "textures/block/" + textureResourcePath);
+		return Identifier.of(Pokeblocks.MOD_ID, "textures/block/" + textureResourcePath);
 	}
 
 }

@@ -7,6 +7,7 @@ import net.minecraft.nbt.NbtCompound;
 import net.minecraft.network.listener.ClientPlayPacketListener;
 import net.minecraft.network.packet.Packet;
 import net.minecraft.network.packet.s2c.play.BlockEntityUpdateS2CPacket;
+import net.minecraft.registry.RegistryWrapper;
 import net.minecraft.util.math.BlockPos;
 import org.jetbrains.annotations.Nullable;
 
@@ -27,21 +28,21 @@ public abstract class HeadPileBlockEntity extends PokedollBlockEntity {
 
 	// This is crucial - it tells the game what data to sync
 	@Override
-	public NbtCompound toInitialChunkDataNbt() {
+	public NbtCompound toInitialChunkDataNbt(RegistryWrapper.WrapperLookup registryLookup) {
 		NbtCompound nbt = new NbtCompound();
-		this.writeNbt(nbt);
+		this.writeNbt(nbt, registryLookup);
 		return nbt;
 	}
 
 	@Override
-	public void writeNbt(NbtCompound nbt) {
-		super.writeNbt(nbt);
+	public void writeNbt(NbtCompound nbt, RegistryWrapper.WrapperLookup registryLookup) {
+		super.writeNbt(nbt, registryLookup);
 		nbt.putInt("TextureIndex", currentTextureIndex);
 	}
 
 	@Override
-	public void readNbt(NbtCompound nbt) {
-		super.readNbt(nbt);
+	public void readNbt(NbtCompound nbt, RegistryWrapper.WrapperLookup registryLookup) {
+		super.readNbt(nbt, registryLookup);
 		if (nbt.contains("TextureIndex")) {
 			currentTextureIndex = nbt.getInt("TextureIndex");
 			// Make sure index is in bounds
@@ -77,6 +78,10 @@ public abstract class HeadPileBlockEntity extends PokedollBlockEntity {
 
 	public String getTexturePath() {
 		return getTexturePaths()[currentTextureIndex]; // Get directly from array for safety
+	}
+
+	public int getTextureIndex() {
+		return this.currentTextureIndex;
 	}
 
 	abstract public String[] getModelPaths();

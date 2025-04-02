@@ -4,15 +4,16 @@ import dev.mrshawn.pokeblocks.block.ModBlocks;
 import net.fabricmc.fabric.api.datagen.v1.FabricDataOutput;
 import net.fabricmc.fabric.api.datagen.v1.provider.FabricRecipeProvider;
 import net.minecraft.block.Block;
-import net.minecraft.data.server.recipe.RecipeJsonProvider;
+import net.minecraft.data.server.recipe.RecipeExporter;
 import net.minecraft.data.server.recipe.ShapedRecipeJsonBuilder;
 import net.minecraft.item.Items;
 import net.minecraft.recipe.book.RecipeCategory;
+import net.minecraft.registry.RegistryWrapper;
 import net.minecraft.registry.tag.ItemTags;
 import net.minecraft.util.Identifier;
 
 import java.util.List;
-import java.util.function.Consumer;
+import java.util.concurrent.CompletableFuture;
 
 public class PokeblocksRecipeGenerator extends FabricRecipeProvider {
 
@@ -24,12 +25,12 @@ public class PokeblocksRecipeGenerator extends FabricRecipeProvider {
 			"CUSHION"
 	);
 
-	public PokeblocksRecipeGenerator(FabricDataOutput generator) {
-		super(generator);
+	public PokeblocksRecipeGenerator(FabricDataOutput output, CompletableFuture<RegistryWrapper.WrapperLookup> registriesFuture) {
+		super(output, registriesFuture);
 	}
 
 	@Override
-	public void generate(Consumer<RecipeJsonProvider> exporter) {
+	public void generate(RecipeExporter exporter) {
 		// Loop through all fields in ModBlocks
 		for (var field : ModBlocks.class.getDeclaredFields()) {
 			try {
@@ -54,7 +55,7 @@ public class PokeblocksRecipeGenerator extends FabricRecipeProvider {
 							.input('w', ItemTags.WOOL)
 							.criterion(FabricRecipeProvider.hasItem(block),
 									FabricRecipeProvider.conditionsFromItem(block))
-							.offerTo(exporter, new Identifier("pokeblocks", "gigantic_pokedoll_" + pokemonName));
+							.offerTo(exporter, Identifier.of("pokeblocks", "gigantic_pokedoll_" + pokemonName));
 				}
 			} catch (IllegalAccessException e) {
 				e.printStackTrace();
@@ -67,6 +68,6 @@ public class PokeblocksRecipeGenerator extends FabricRecipeProvider {
 				.input('p', Items.PINK_WOOL)
 				.criterion(FabricRecipeProvider.hasItem(ModBlocks.POKEDOLL_LUVDISC_CUSHION),
 						FabricRecipeProvider.conditionsFromItem(ModBlocks.POKEDOLL_LUVDISC_CUSHION))
-				.offerTo(exporter, new Identifier("pokeblocks", "luvdisc_cushion"));
+				.offerTo(exporter, Identifier.of("pokeblocks", "luvdisc_cushion"));
 	}
 }
