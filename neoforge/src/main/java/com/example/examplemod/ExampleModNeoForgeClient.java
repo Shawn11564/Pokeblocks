@@ -10,6 +10,6 @@ import net.neoforged.neoforge.client.event.EntityRenderersEvent;
 public final class ExampleModNeoForgeClient {
     @SubscribeEvent
     public static void registerRenderers(final EntityRenderersEvent.RegisterRenderers event) {
-        ExampleModClient.registerRenderers(event::registerEntityRenderer, event::registerBlockEntityRenderer);
+        ExampleModClient.registerRenderers(event::registerBlockEntityRenderer);
     }
 }
