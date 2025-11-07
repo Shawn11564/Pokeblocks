@@ -21,7 +21,7 @@ public final class ItemRegistry {
 	}
 
 	public static final Supplier<CreativeModeTab> EXAMPLEMOD_TAB = ExampleModCommon.COMMON_PLATFORM.registerCreativeModeTab("examplemod_items", () -> ExampleModCommon.COMMON_PLATFORM.newCreativeTabBuilder()
-			.title(Component.translatable("itemGroup." + ExampleModCommon.MODID + ".examplemod_items"))
+			.title(Component.translatable("itemGroup." + ExampleModCommon.MOD_ID + ".examplemod_items"))
 			.icon(() -> new ItemStack(ItemRegistry.POKEDOLL_ITEM.get()))
 			.displayItems((enabledFeatures, entries) -> {
 				entries.accept(PokedollItem.createPokedoll("charmander", false));

@@ -17,7 +17,7 @@ public class PokedollModel extends DefaultedBlockGeoModel<PokedollBlockEntity> {
     private static final Set<String> invalidPokemon = new HashSet<>();
 
     public PokedollModel() {
-        super(ResourceLocation.fromNamespaceAndPath(ExampleModCommon.MODID, "pokedoll_" + ModSettings.DEFAULT_POKEMON));
+        super(ResourceLocation.fromNamespaceAndPath(ExampleModCommon.MOD_ID, "pokedoll_" + ModSettings.DEFAULT_POKEMON));
         // Always mark default as valid
         validatedPokemon.add(ModSettings.DEFAULT_POKEMON);
     }
@@ -41,7 +41,7 @@ public class PokedollModel extends DefaultedBlockGeoModel<PokedollBlockEntity> {
 
         // Validate by checking if model resource exists
         ResourceLocation modelPath = ResourceLocation.fromNamespaceAndPath(
-                ExampleModCommon.MODID,
+                ExampleModCommon.MOD_ID,
                 "geo/block/pokedoll_" + pokemon + ".geo.json"
         );
 
@@ -92,7 +92,7 @@ public class PokedollModel extends DefaultedBlockGeoModel<PokedollBlockEntity> {
         if (suffixes.contains("|")) modelSuffix = suffixes.split("\\|", 2)[0];
 
         return ResourceLocation.fromNamespaceAndPath(
-                ExampleModCommon.MODID,
+                ExampleModCommon.MOD_ID,
                 "geo/block/pokedoll_" + pokemon + modelSuffix + ".geo.json"
         );
     }
@@ -105,7 +105,7 @@ public class PokedollModel extends DefaultedBlockGeoModel<PokedollBlockEntity> {
         if (suffixes.contains("|")) textureSuffix = suffixes.split("\\|", 2)[1];
 
         return ResourceLocation.fromNamespaceAndPath(
-                ExampleModCommon.MODID,
+                ExampleModCommon.MOD_ID,
                 "textures/block/pokedoll_" + pokemon + textureSuffix + ".png"
         );
     }
@@ -118,7 +118,7 @@ public class PokedollModel extends DefaultedBlockGeoModel<PokedollBlockEntity> {
 
         String pokemon = getValidatedPokemon(animatable.getPokemon());
         return ResourceLocation.fromNamespaceAndPath(
-                ExampleModCommon.MODID,
+                ExampleModCommon.MOD_ID,
                 "animations/block/pokedoll_" + pokemon + "_animated.animation.json"
         );
     }

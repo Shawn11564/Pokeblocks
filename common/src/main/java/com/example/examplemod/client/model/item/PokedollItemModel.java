@@ -44,7 +44,7 @@ public class PokedollItemModel extends GeoModel<PokedollItem> {
         }
 
         ResourceLocation modelPath = ResourceLocation.fromNamespaceAndPath(
-            ExampleModCommon.MODID,
+            ExampleModCommon.MOD_ID,
             "geo/block/pokedoll_" + pokemon + ".geo.json"
         );
 
@@ -94,7 +94,7 @@ public class PokedollItemModel extends GeoModel<PokedollItem> {
         String modelSuffix = "";
         if (suffixes.contains("|")) modelSuffix = suffixes.split("\\|", 2)[0];
         return ResourceLocation.fromNamespaceAndPath(
-            ExampleModCommon.MODID,
+            ExampleModCommon.MOD_ID,
             "geo/block/pokedoll_" + pokemon + modelSuffix + ".geo.json"
         );
     }
@@ -106,7 +106,7 @@ public class PokedollItemModel extends GeoModel<PokedollItem> {
         String textureSuffix = "";
         if (suffixes.contains("|")) textureSuffix = suffixes.split("\\|", 2)[1];
         return ResourceLocation.fromNamespaceAndPath(
-            ExampleModCommon.MODID,
+            ExampleModCommon.MOD_ID,
             "textures/block/pokedoll_" + pokemon + textureSuffix + ".png"
         );
     }
