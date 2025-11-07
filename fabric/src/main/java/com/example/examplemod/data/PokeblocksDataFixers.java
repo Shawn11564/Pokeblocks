@@ -8,7 +8,6 @@ import com.mojang.datafixers.DataFixerBuilder;
 import com.mojang.datafixers.schemas.Schema;
 import net.minecraft.util.datafix.schemas.NamespacedSchema;
 
-import java.util.concurrent.ExecutionException;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.function.BiFunction;
@@ -20,7 +19,7 @@ public class PokeblocksDataFixers {
 	private static final BiFunction<Integer, Schema, Schema> SAME = Schema::new;
 	private static final BiFunction<Integer, Schema, Schema> SAME_NAMESPACED = NamespacedSchema::new;
 
-	public static void register() throws ExecutionException, InterruptedException {
+	public static void register() {
 		ExampleModCommon.LOGGER.info("Registering data fixers");
 
 		DataFixesInternals api = DataFixesInternals.get();
