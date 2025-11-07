@@ -37,19 +37,10 @@ public class PokeblocksDataFixers {
 
 		// Register a schema, and then the fixes to get *to* that schema
 
-		// For v1, need to upgrade railways:mono_bogey_upside_down to railways:mono_bogey[upside_down=true]
+		// For v1, need to upgrade pokeblocks:<old_doll_ids> to pokeblocks:pokedoll[pokemon=<old_doll_id>]
 		Schema schemaV1 = builder.addSchema(1, SAME_NAMESPACED);
 		builder.addFixer(new OldPokedollIdFix(schemaV1, "Convert pokeblocks:<old_doll_ids> into pokeblocks:pokedoll[pokemon=\"<old_doll_id>\"]"));
 		ExampleModCommon.LOGGER.info("Added schema: {}", schemaV1);
-
-		// For v2,
-		// need to upgrade BOP & Blueskies cherry compat tracks to railways:track_cherry[_narrow||_wide]
-		// and need to change the streamlined smokestack's AXIS property to a HORIZONTAL_FACING property
-		// and need to change the locometal smokebox's AXIS property to a FACING property
-//		Schema schemaV2 = builder.addSchema(2, SAME_NAMESPACED);
-//		builder.addFixer(new CompatCherryTrackFix(schemaV2, "Convert Compat Cherry Tracks to Default Cherry Tracks"));
-//		builder.addFixer(new StreamlinedSmokeStackFacingFix(schemaV2, "Convert railways:smokestack_streamlined[axis=\"*\"] to railways:smokestack_streamlined[facing=\"*\"]"));
-//		builder.addFixer(new LocoMetalSmokeboxFacingFix(schemaV2, "Convert railways:${*}_locometal_smokebox[axis=\"*\"] to railways:${*}_locometal_smokebox[facing=\"*\"]"));
 	}
 
 }
