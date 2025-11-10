@@ -9,7 +9,10 @@ import net.minecraft.world.level.block.entity.BlockEntityType;
 import java.util.function.BiConsumer;
 
 public final class ExampleModClient {
+    private static final boolean DEBUG_SKIP_RENDERING = Boolean.getBoolean("pokedoll.debug.skip_rendering");
+
     public static void registerRenderers(BiConsumer<BlockEntityType<? extends BlockEntity>, BlockEntityRendererProvider> blockEntityRenderers) {
-		blockEntityRenderers.accept(BlockEntityRegistry.POKEDOLL_BLOCK_ENTITY.get(), context -> new PokedollBlockRenderer());
+        if (DEBUG_SKIP_RENDERING) return;
+        blockEntityRenderers.accept(BlockEntityRegistry.POKEDOLL_BLOCK_ENTITY.get(), context -> new PokedollBlockRenderer());
     }
 }
