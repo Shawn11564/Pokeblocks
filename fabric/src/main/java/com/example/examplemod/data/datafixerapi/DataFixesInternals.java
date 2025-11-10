@@ -1,14 +1,19 @@
 package com.example.examplemod.data.datafixerapi;
 
 import com.example.examplemod.ExampleModCommon;
+import com.mojang.datafixers.DSL;
 import com.mojang.datafixers.DataFixUtils;
 import com.mojang.datafixers.DataFixer;
 import com.mojang.datafixers.schemas.Schema;
+import com.mojang.serialization.Dynamic;
 import net.minecraft.SharedConstants;
 import net.minecraft.nbt.CompoundTag;
-import net.minecraft.util.datafix.DataFixTypes;
 import net.minecraft.util.datafix.DataFixers;
-import org.jetbrains.annotations.*;
+import org.jetbrains.annotations.ApiStatus;
+import org.jetbrains.annotations.Contract;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
+import org.jetbrains.annotations.Range;
 
 import java.util.function.BiFunction;
 
@@ -27,8 +32,8 @@ public abstract class DataFixesInternals {
 
     @Contract(pure = true)
     @Range(from = 0, to = Integer.MAX_VALUE)
-    public static int getModDataVersion(@NotNull CompoundTag compound) {
-        return compound.getInt(ExampleModCommon.MOD_ID + "_DataVersion");
+    public static <T> int getModDataVersion(@NotNull Dynamic<T> dynamic) {
+        return dynamic.get(ExampleModCommon.MOD_ID + "_DataVersion").asInt(1);
     }
 
     private static DataFixesInternals instance;
@@ -62,7 +67,7 @@ public abstract class DataFixesInternals {
     @Contract(value = "-> new", pure = true)
     public abstract @NotNull Schema createBaseSchema();
 
-    public abstract @NotNull CompoundTag updateWithAllFixers(@NotNull DataFixTypes dataFixTypes, @NotNull CompoundTag compound);
+    public abstract <T> @NotNull Dynamic<T> updateWithAllFixers(@NotNull DSL.TypeReference type, @NotNull Dynamic<T> input);
 
     public abstract @NotNull CompoundTag addModDataVersions(@NotNull CompoundTag compound);
 }

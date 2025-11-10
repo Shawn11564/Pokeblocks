@@ -1,12 +1,11 @@
 package com.example.examplemod.data.datafixerapi;
 
 import com.example.examplemod.ExampleModCommon;
+import com.mojang.datafixers.DSL;
 import com.mojang.datafixers.DataFixer;
 import com.mojang.datafixers.schemas.Schema;
 import com.mojang.serialization.Dynamic;
 import net.minecraft.nbt.CompoundTag;
-import net.minecraft.nbt.NbtOps;
-import net.minecraft.util.datafix.DataFixTypes;
 import org.jetbrains.annotations.ApiStatus;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -44,16 +43,13 @@ public final class DataFixesInternalsImpl extends DataFixesInternals {
         return new Schema(0, this.latestVanillaSchema);
     }
 
-    @Override
-    public @NotNull CompoundTag updateWithAllFixers(@NotNull DataFixTypes dataFixTypes, @NotNull CompoundTag compound) {
-        var current = new Dynamic<>(NbtOps.INSTANCE, compound);
-
+    public <T> @NotNull Dynamic<T> updateWithAllFixers(@NotNull DSL.TypeReference type, @NotNull Dynamic<T> input) {
         if (dataFixer != null) {
-            int modDataVersion = DataFixesInternals.getModDataVersion(compound);
-            current = dataFixTypes.update(dataFixer.dataFixer(), current, modDataVersion, dataFixer.currentVersion());
+            int modDataVersion = DataFixesInternals.getModDataVersion(input);
+            input = dataFixer.dataFixer().update(type, input, modDataVersion, dataFixer.currentVersion());
         }
 
-        return (CompoundTag) current.getValue();
+        return input;
     }
 
     @Override

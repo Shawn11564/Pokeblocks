@@ -17,7 +17,7 @@
         ]
     },
     "mixins": [
-        "examplemod.mixins.json"
+        "pokeblocks.mixins.json"
     ],
     "depends": {
         "fabricloader": ">=${fabric_loader_version}",
