@@ -1,0 +1,5 @@
+{
+  "variants": {
+    "": { "model": "pokeblocks:block/testblock" }
+  }
+}

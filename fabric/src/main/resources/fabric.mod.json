@@ -10,10 +10,10 @@
     "environment": "*",
     "entrypoints": {
         "main": [
-            "com.example.examplemod.ExampleModFabric"
+          "dev.mrshawn.pokeblocks.PokeblocksFabric"
         ],
         "client": [
-            "com.example.examplemod.ExampleModFabricClient"
+          "dev.mrshawn.pokeblocks.PokeblocksFabricClient"
         ]
     },
     "mixins": [
