@@ -14,7 +14,6 @@ public final class ItemRegistry {
 	public static void init() {}
 
 	public static final Supplier<BlockItem> POKEDOLL_ITEM = registerItem("pokedoll", () -> new PokedollItem(BlockRegistry.POKEDOLL_BLOCK.get(), new Item.Properties()));
-	public static final Supplier<BlockItem> TESTBLOCK_ITEM = registerItem("testblock", () -> new BlockItem(BlockRegistry.TESTBLOCK.get(), new Item.Properties()));
 
 	private static <T extends Item> Supplier<T> registerItem(String id, Supplier<T> item) {
 		return PokeblocksCommon.COMMON_PLATFORM.registerItem(id, item);
