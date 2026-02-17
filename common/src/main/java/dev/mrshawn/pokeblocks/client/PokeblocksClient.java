@@ -1,8 +1,10 @@
 package dev.mrshawn.pokeblocks.client;
 
+import dev.mrshawn.pokeblocks.client.renderer.block.FigurineBlockRenderer;
 import dev.mrshawn.pokeblocks.client.renderer.block.PokedollBlockRenderer;
-import dev.mrshawn.pokeblocks.pokemon.PokemonRegistry;
 import dev.mrshawn.pokeblocks.registry.BlockEntityRegistry;
+import dev.mrshawn.pokeblocks.registry.FigurineRegistry;
+import dev.mrshawn.pokeblocks.registry.PokemonRegistry;
 import net.minecraft.client.renderer.blockentity.BlockEntityRendererProvider;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.entity.BlockEntityType;
@@ -15,9 +17,11 @@ public final class PokeblocksClient {
 	public static void registerRenderers(BiConsumer<BlockEntityType<? extends BlockEntity>, BlockEntityRendererProvider> blockEntityRenderers) {
 		if (DEBUG_SKIP_RENDERING) return;
 		blockEntityRenderers.accept(BlockEntityRegistry.POKEDOLL_BLOCK_ENTITY.get(), context -> new PokedollBlockRenderer());
+		blockEntityRenderers.accept(BlockEntityRegistry.FIGURINE_BLOCK_ENTITY.get(), context -> new FigurineBlockRenderer());
 	}
 
 	public static void registerPokemon() {
 		PokemonRegistry.scanAndRegisterFromResources();
+		FigurineRegistry.scanAndRegisterFromResources();
 	}
 }

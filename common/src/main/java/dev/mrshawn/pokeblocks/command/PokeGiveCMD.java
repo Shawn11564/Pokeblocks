@@ -7,7 +7,7 @@ import com.mojang.brigadier.suggestion.SuggestionProvider;
 import dev.mrshawn.pokeblocks.item.PokedollItem;
 import dev.mrshawn.pokeblocks.pokemon.ModelFlag;
 import dev.mrshawn.pokeblocks.pokemon.PokemonData;
-import dev.mrshawn.pokeblocks.pokemon.PokemonRegistry;
+import dev.mrshawn.pokeblocks.registry.PokemonRegistry;
 import net.minecraft.commands.CommandSourceStack;
 import net.minecraft.commands.Commands;
 import net.minecraft.commands.arguments.EntityArgument;

@@ -1,10 +1,13 @@
 package dev.mrshawn.pokeblocks.resourcepack;
 
-import dev.mrshawn.pokeblocks.pokemon.PokemonRegistry;
+import dev.mrshawn.pokeblocks.registry.FigurineRegistry;
+import dev.mrshawn.pokeblocks.registry.PokemonRegistry;
 import net.minecraft.server.MinecraftServer;
 
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.util.Set;
+import java.util.TreeSet;
 
 public class CustomPackManager {
 	private static Path cachedPack = null;
@@ -18,7 +21,24 @@ public class CustomPackManager {
 				cachedPack = result.zipFile();
 				cachedSha = CustomPackBuilder.computeSHA1(cachedPack);
 				System.out.println("[Pokeblocks] Custom resource pack cached: " + cachedPack + " sha1=" + cachedSha);
-				PokemonRegistry.registerFromFileNames(result.modelFiles(), result.textureFiles(), "custom pack");
+
+				// Split files into pokedoll vs figurine
+				Set<String> pokedollModels = new TreeSet<>();
+				Set<String> pokedollTextures = new TreeSet<>();
+				Set<String> figurineModels = new TreeSet<>();
+				Set<String> figurineTextures = new TreeSet<>();
+
+				for (String f : result.modelFiles()) {
+					if (f.contains("_figurine")) figurineModels.add(f);
+					else pokedollModels.add(f);
+				}
+				for (String f : result.textureFiles()) {
+					if (f.contains("_figurine")) figurineTextures.add(f);
+					else pokedollTextures.add(f);
+				}
+
+				PokemonRegistry.registerFromFileNames(pokedollModels, pokedollTextures, "custom pack");
+				FigurineRegistry.registerFromFileNames(figurineModels, figurineTextures, "custom pack");
 			} else {
 				cachedPack = null;
 				cachedSha = null;

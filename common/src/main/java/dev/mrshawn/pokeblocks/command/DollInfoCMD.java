@@ -1,6 +1,6 @@
 package dev.mrshawn.pokeblocks.command;
 
-import dev.mrshawn.pokeblocks.pokemon.PokemonRegistry;
+import dev.mrshawn.pokeblocks.registry.PokemonRegistry;
 import com.mojang.brigadier.CommandDispatcher;
 import com.mojang.brigadier.arguments.StringArgumentType;
 import com.mojang.brigadier.context.CommandContext;

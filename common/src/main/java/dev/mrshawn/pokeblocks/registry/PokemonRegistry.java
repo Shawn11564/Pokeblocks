@@ -1,4 +1,7 @@
-package dev.mrshawn.pokeblocks.pokemon;
+package dev.mrshawn.pokeblocks.registry;
+
+import dev.mrshawn.pokeblocks.pokemon.ModelFlag;
+import dev.mrshawn.pokeblocks.pokemon.PokemonData;
 
 import java.net.URI;
 import java.net.URL;

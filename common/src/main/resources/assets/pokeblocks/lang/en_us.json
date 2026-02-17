@@ -1,5 +1,9 @@
 {
   "block.pokeblocks.pokedoll": "Pokedoll",
+  "block.pokeblocks.figurine": "Figurine",
+
   "item.pokeblocks.pokedoll": "Pokedoll",
+  "item.pokeblocks.figurine": "Figurine",
+
   "itemgroup.pokeblocks.items": "Pokeblocks Items"
 }

@@ -1,10 +1,7 @@
 package dev.mrshawn.pokeblocks;
 
 import dev.mrshawn.pokeblocks.platform.PokeblocksPlatform;
-import dev.mrshawn.pokeblocks.pokemon.PokemonRegistry;
-import dev.mrshawn.pokeblocks.registry.BlockEntityRegistry;
-import dev.mrshawn.pokeblocks.registry.BlockRegistry;
-import dev.mrshawn.pokeblocks.registry.ItemRegistry;
+import dev.mrshawn.pokeblocks.registry.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -22,6 +19,7 @@ public final class PokeblocksCommon {
 
     public static void doRegistrations() {
 		PokemonRegistry.init();
+		FigurineRegistry.init();
         BlockRegistry.init();
         BlockEntityRegistry.init();
         ItemRegistry.init();

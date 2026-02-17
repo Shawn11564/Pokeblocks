@@ -1,8 +1,11 @@
 package dev.mrshawn.pokeblocks.mixin;
 
 import com.mojang.blaze3d.platform.NativeImage;
+import dev.mrshawn.pokeblocks.block.FigurineBlock;
 import dev.mrshawn.pokeblocks.block.PokedollBlock;
+import dev.mrshawn.pokeblocks.block.entity.FigurineBlockEntity;
 import dev.mrshawn.pokeblocks.block.entity.PokedollBlockEntity;
+import dev.mrshawn.pokeblocks.client.model.block.FigurineModel;
 import dev.mrshawn.pokeblocks.client.model.block.PokedollModel;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.particle.ParticleEngine;
@@ -27,19 +30,30 @@ import java.util.Optional;
 public class PokedollParticleMixin {
 
     private static final Map<String, Vector3f> colorCache = new HashMap<>();
-    private static final PokedollModel particleModel = new PokedollModel();
+    private static final PokedollModel particlePokedollModel = new PokedollModel();
+    private static final FigurineModel particleFigurineModel = new FigurineModel();
 
     @Inject(method = "destroy", at = @At("HEAD"), cancellable = true)
     private void pokeblocks$customDestroyParticles(BlockPos pos, BlockState state, CallbackInfo ci) {
-        if (!(state.getBlock() instanceof PokedollBlock)) return;
+        ResourceLocation textureLoc = null;
 
         Level level = Minecraft.getInstance().level;
         if (level == null) return;
 
-        if (!(level.getBlockEntity(pos) instanceof PokedollBlockEntity be)) return;
+        if (state.getBlock() instanceof PokedollBlock) {
+            if (level.getBlockEntity(pos) instanceof PokedollBlockEntity be) {
+                textureLoc = particlePokedollModel.getTextureResource(be);
+            }
+        } else if (state.getBlock() instanceof FigurineBlock) {
+            if (level.getBlockEntity(pos) instanceof FigurineBlockEntity be) {
+                textureLoc = particleFigurineModel.getTextureResource(be);
+            }
+        }
 
-        ResourceLocation textureLoc = particleModel.getTextureResource(be);
-        Vector3f color = colorCache.computeIfAbsent(textureLoc.toString(), k -> sampleAverageColor(textureLoc));
+        if (textureLoc == null) return;
+
+        ResourceLocation finalTextureLoc = textureLoc;
+        Vector3f color = colorCache.computeIfAbsent(textureLoc.toString(), k -> sampleAverageColor(finalTextureLoc));
 
         for (int i = 0; i < 20; i++) {
             double px = pos.getX() + level.random.nextDouble();
@@ -69,7 +83,7 @@ public class PokedollParticleMixin {
                         for (int y = 0; y < image.getHeight(); y++) {
                             int pixel = image.getPixelRGBA(x, y);
                             int a = (pixel >> 24) & 0xFF;
-                            if (a < 128) continue; // skip transparent pixels
+                            if (a < 128) continue;
                             r += pixel & 0xFF;
                             g += (pixel >> 8) & 0xFF;
                             b += (pixel >> 16) & 0xFF;
@@ -85,9 +99,7 @@ public class PokedollParticleMixin {
                     }
                 }
             }
-        } catch (Exception e) {
-            // Fall through to default
-        }
+        } catch (Exception e) {}
         return new Vector3f(0.5f, 0.5f, 0.5f);
     }
 }
