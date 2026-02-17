@@ -1,5 +1,6 @@
 package dev.mrshawn.pokeblocks.item;
 
+import dev.mrshawn.pokeblocks.PokeblocksCommon;
 import dev.mrshawn.pokeblocks.client.renderer.item.PokedollItemRenderer;
 import dev.mrshawn.pokeblocks.constants.ModSettings;
 import dev.mrshawn.pokeblocks.pokemon.ModelFlag;
@@ -103,6 +104,7 @@ public class PokedollItem extends BlockItem implements GeoItem {
     public static ItemStack createPokedoll(String pokemon, boolean animated) {
         ItemStack stack = new ItemStack(ItemRegistry.POKEDOLL_ITEM.get());
         CompoundTag tag = new CompoundTag();
+        tag.putString("id", PokeblocksCommon.MOD_ID + ModSettings.DOLL_ID);
         tag.putString("pokemon", pokemon);
         tag.putBoolean("animated", animated);
         stack.set(DataComponents.BLOCK_ENTITY_DATA, CustomData.of(tag));
@@ -124,6 +126,7 @@ public class PokedollItem extends BlockItem implements GeoItem {
     public static ItemStack createPokedoll(String name, PokemonData pokemonData) {
         ItemStack stack = new ItemStack(ItemRegistry.POKEDOLL_ITEM.get());
         CompoundTag tag = new CompoundTag();
+        tag.putString("id", PokeblocksCommon.MOD_ID + ModSettings.DOLL_ID);
         tag.putString("pokemon", name == null || name.isEmpty() ? ModSettings.DEFAULT_POKEMON : name);
 
         if (pokemonData != null && pokemonData.modelFlags() != null) {

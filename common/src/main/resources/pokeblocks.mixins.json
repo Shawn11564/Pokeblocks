@@ -6,7 +6,9 @@
   "mixins": [
     "PlayerJoinMixin"
   ],
-  "client": [],
+  "client": [
+    "PokedollParticleMixin"
+  ],
   "injectors": {
     "defaultRequire": 1
   }
