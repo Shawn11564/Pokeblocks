@@ -76,7 +76,7 @@ public class PokedollModel extends DefaultedBlockGeoModel<PokedollBlockEntity> {
 			modelSuffix.append(f.getModelSuffix());
 		}
 
-		return modelSuffix.toString() + "|" + textureSuffix.toString();
+		return modelSuffix + "|" + textureSuffix;
 	}
 
 	@Override
@@ -118,7 +118,7 @@ public class PokedollModel extends DefaultedBlockGeoModel<PokedollBlockEntity> {
 		// Try with _texture suffix
 		ResourceLocation withTextureSuffix = ResourceLocation.fromNamespaceAndPath(
 				PokeblocksCommon.MOD_ID,
-				"textures/block/pokedoll_" + pokemon + "_texture" + textureSuffix + ".png"
+				"textures/block/pokedoll_" + pokemon + textureSuffix + "_texture.png"
 		);
 		try {
 			if (resourceManager.getResource(withTextureSuffix).isPresent()) {

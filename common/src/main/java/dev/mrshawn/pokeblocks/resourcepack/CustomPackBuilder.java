@@ -6,9 +6,7 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.StandardCopyOption;
 import java.security.MessageDigest;
-import java.util.List;
-import java.util.Map;
-import java.util.TreeMap;
+import java.util.*;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipOutputStream;
 
@@ -39,7 +37,7 @@ public class CustomPackBuilder {
 		return null;
 	}
 
-	public static Path buildResourcePack(Path gameDir) throws IOException {
+	public static PackBuildResult buildResourcePack(Path gameDir) throws IOException {
 		Path customDir = findCustomDir(gameDir);
 		if (customDir == null) return null;
 
@@ -47,8 +45,8 @@ public class CustomPackBuilder {
 		Path tempZip = gameDir.resolve(PACK_NAME + ".tmp");
 
 		Map<String, Path> entries = new TreeMap<>();
-		int modelCount = 0;
-		int textureCount = 0;
+		Set<String> modelFileNames = new TreeSet<>();
+		Set<String> textureFileNames = new TreeSet<>();
 
 		// Add textures
 		Path texturesDir = customDir.resolve("textures");
@@ -58,7 +56,7 @@ public class CustomPackBuilder {
 				for (Path path : files) {
 					String rel = texturesDir.relativize(path).toString().replace("\\", "/");
 					entries.put("assets/pokeblocks/textures/block/" + rel, path);
-					textureCount++;
+					textureFileNames.add(path.getFileName().toString());
 				}
 			}
 		}
@@ -71,12 +69,12 @@ public class CustomPackBuilder {
 				for (Path path : files) {
 					String rel = modelsDir.relativize(path).toString().replace("\\", "/");
 					entries.put("assets/pokeblocks/geo/block/" + rel, path);
-					modelCount++;
+					modelFileNames.add(path.getFileName().toString());
 				}
 			}
 		}
 
-		// Assets folder (raw asset paths)
+		// Assets folder
 		Path assetsDir = customDir.resolve("assets");
 		if (Files.exists(assetsDir)) {
 			try (var stream = Files.walk(assetsDir)) {
@@ -98,10 +96,10 @@ public class CustomPackBuilder {
 					String zipPath;
 					if (lower.endsWith(".png")) {
 						zipPath = "assets/pokeblocks/textures/block/" + name;
-						textureCount++;
+						textureFileNames.add(name);
 					} else if (lower.endsWith(".geo.json") || lower.endsWith(".json")) {
 						zipPath = "assets/pokeblocks/geo/block/" + name;
-						modelCount++;
+						modelFileNames.add(name);
 					} else {
 						zipPath = "assets/pokeblocks/extra/" + name;
 					}
@@ -112,9 +110,8 @@ public class CustomPackBuilder {
 
 		if (entries.isEmpty()) return null;
 
-		System.out.println("[Pokeblocks] Custom resource pack: " + modelCount + " model(s), " + textureCount + " texture(s)");
+		System.out.println("[Pokeblocks] Custom resource pack: " + modelFileNames.size() + " model(s), " + textureFileNames.size() + " texture(s)");
 
-		// Optional pack icon
 		Path packIcon = customDir.resolve("pack.png");
 		boolean hasPackIcon = Files.exists(packIcon);
 
@@ -126,13 +123,13 @@ public class CustomPackBuilder {
 			meta.setTime(0L);
 			zip.putNextEntry(meta);
 			zip.write("""
-			{
-			  "pack": {
-			    "pack_format": 26,
-			    "description": "Pokeblocks Custom Dolls"
-			  }
-			}
-			""".getBytes());
+        {
+          "pack": {
+            "pack_format": 26,
+            "description": "Pokeblocks Custom Dolls"
+          }
+        }
+        """.getBytes());
 			zip.closeEntry();
 
 			if (hasPackIcon) {
@@ -158,7 +155,7 @@ public class CustomPackBuilder {
 		}
 
 		Files.move(tempZip, finalZip, StandardCopyOption.REPLACE_EXISTING, StandardCopyOption.ATOMIC_MOVE);
-		return finalZip;
+		return new PackBuildResult(finalZip, modelFileNames, textureFileNames);
 	}
 
 	public static String computeSHA1(Path file) {

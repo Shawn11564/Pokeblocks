@@ -8,5 +8,6 @@ public final class PokeblocksFabricClient implements ClientModInitializer {
     @Override
     public void onInitializeClient() {
         PokeblocksClient.registerRenderers(BlockEntityRenderers::register);
+        PokeblocksClient.registerPokemon();
     }
 }

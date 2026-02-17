@@ -6,7 +6,7 @@ import java.util.Map;
 public record PokemonData(Map<ModelFlag, Boolean> modelFlags) {
 
 	private static final Map<ModelFlag, Boolean> DEFAULT_FLAGS = Map.of(
-			ModelFlag.SHINY, true,
+			ModelFlag.SHINY, false,
 			ModelFlag.GIGANTIC, true,
 			ModelFlag.ANIMATED, false,
 			ModelFlag.POSED, false

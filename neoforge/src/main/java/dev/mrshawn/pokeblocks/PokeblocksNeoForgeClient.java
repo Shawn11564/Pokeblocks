@@ -11,5 +11,6 @@ public final class PokeblocksNeoForgeClient {
     @SubscribeEvent
     public static void registerRenderers(final EntityRenderersEvent.RegisterRenderers event) {
         PokeblocksClient.registerRenderers(event::registerBlockEntityRenderer);
+        PokeblocksClient.registerPokemon();
     }
 }

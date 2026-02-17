@@ -28,16 +28,12 @@ public enum ModelFlag {
 	 * GIGANTIC does not affect resource names (only scale), so it returns an empty string.
 	 */
 	public String getTextureSuffix() {
-		switch (this) {
-			case SHINY:
-				return "_shiny";
-			case ANIMATED:
-				return "_animated";
-			case POSED:
-				return "_posed";
-			default:
-				return "";
-		}
+		return switch (this) {
+			case SHINY -> "_shiny";
+			case ANIMATED -> "_animated";
+			case POSED -> "_posed";
+			default -> "";
+		};
 	}
 
 	/**
@@ -45,13 +41,10 @@ public enum ModelFlag {
 	 * Only ANIMATED and POSED affect geo.json names per the specification.
 	 */
 	public String getModelSuffix() {
-		switch (this) {
-			case ANIMATED:
-				return "_animated";
-			case POSED:
-				return "_posed";
-			default:
-				return "";
-		}
+		return switch (this) {
+			case ANIMATED -> "_animated";
+			case POSED -> "_posed";
+			default -> "";
+		};
 	}
 }

@@ -115,7 +115,7 @@ public class PokedollItemModel extends GeoModel<PokedollItem> {
         // Try with _texture suffix
         ResourceLocation withTexture = ResourceLocation.fromNamespaceAndPath(
                 PokeblocksCommon.MOD_ID,
-                "textures/block/pokedoll_" + pokemon + "_texture" + textureSuffix + ".png"
+                "textures/block/pokedoll_" + pokemon + textureSuffix + "_texture.png"
         );
         try {
             if (resourceManager.getResource(withTexture).isPresent()) {

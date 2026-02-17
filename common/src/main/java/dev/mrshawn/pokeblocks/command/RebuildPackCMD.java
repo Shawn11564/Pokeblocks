@@ -2,7 +2,6 @@ package dev.mrshawn.pokeblocks.command;
 
 import com.mojang.brigadier.CommandDispatcher;
 import com.mojang.brigadier.context.CommandContext;
-import dev.mrshawn.pokeblocks.pokemon.PokemonRegistry;
 import dev.mrshawn.pokeblocks.resourcepack.CustomPackBuilder;
 import dev.mrshawn.pokeblocks.resourcepack.CustomPackManager;
 import dev.mrshawn.pokeblocks.resourcepack.ResourcePackServer;
@@ -53,9 +52,6 @@ public class RebuildPackCMD {
                 List<String> children = stream.map(Path::getFileName).map(Object::toString).collect(Collectors.toList());
                 src.sendSuccess(() -> Component.literal("Using custom dir: " + customDir + " (contains: " + String.join(", ", children) + ")"), false);
             }
-
-            // Reload custom dolls into the registry
-            PokemonRegistry.loadCustomFrom(gameDir);
 
             // Rebuild and cache the pack
             CustomPackManager.buildAndCache(server);
