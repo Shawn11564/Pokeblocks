@@ -4,6 +4,7 @@ import dev.mrshawn.pokeblocks.pokemon.PokemonRegistry;
 import com.mojang.brigadier.CommandDispatcher;
 import com.mojang.brigadier.arguments.StringArgumentType;
 import com.mojang.brigadier.context.CommandContext;
+import com.mojang.brigadier.suggestion.SuggestionProvider;
 import net.minecraft.commands.CommandSourceStack;
 import net.minecraft.commands.Commands;
 import net.minecraft.network.chat.Component;
@@ -11,12 +12,17 @@ import net.minecraft.network.chat.Component;
 import java.util.Map;
 
 public class DollInfoCMD {
+	private static final SuggestionProvider<CommandSourceStack> SUGGEST_POKEMON = (context, builder) -> {
+		for (String id : PokemonRegistry.ALL_POKEMON.keySet()) builder.suggest(id);
+		return builder.buildFuture();
+	};
+
 	public static void register(CommandDispatcher<CommandSourceStack> dispatcher) {
 		dispatcher.register(
 				Commands.literal("dollinfo")
-						.then(Commands.argument("pokemon", StringArgumentType.word())
+						.then(Commands.argument("pokemon", StringArgumentType.word()).suggests(SUGGEST_POKEMON)
 								.executes(DollInfoCMD::execute))
-		);
+			);
 	}
 
 	private static int execute(CommandContext<CommandSourceStack> context) {

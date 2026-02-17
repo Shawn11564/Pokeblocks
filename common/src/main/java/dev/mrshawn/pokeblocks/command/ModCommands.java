@@ -7,5 +7,6 @@ public class ModCommands {
     public static void registerCommands(CommandDispatcher<CommandSourceStack> dispatcher) {
         DollInfoCMD.register(dispatcher);
 		PokeGiveCMD.register(dispatcher);
+		RebuildPackCMD.register(dispatcher);
     }
 }

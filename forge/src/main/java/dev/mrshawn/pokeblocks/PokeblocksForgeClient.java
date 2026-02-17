@@ -10,6 +10,6 @@ import net.minecraftforge.fml.common.Mod;
 public final class PokeblocksForgeClient {
     @SubscribeEvent
     public static void registerRenderers(final EntityRenderersEvent.RegisterRenderers event) {
-        PokeblocksClient.registerRenderers(event::registerEntityRenderer, event::registerBlockEntityRenderer);
+        PokeblocksClient.registerRenderers(event::registerBlockEntityRenderer);
     }
 }

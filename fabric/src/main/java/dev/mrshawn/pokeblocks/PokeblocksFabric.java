@@ -4,18 +4,20 @@ import dev.mrshawn.pokeblocks.command.ModCommands;
 import dev.mrshawn.pokeblocks.data.PokeblocksDataFixers;
 import net.fabricmc.api.ModInitializer;
 import net.fabricmc.fabric.api.command.v2.CommandRegistrationCallback;
+import net.fabricmc.fabric.api.event.lifecycle.v1.ServerLifecycleEvents;
 
 public final class PokeblocksFabric implements ModInitializer {
 
 	@Override
-    public void onInitialize() {
-        PokeblocksCommon.doRegistrations();
+	public void onInitialize() {
+		PokeblocksCommon.doRegistrations();
 
 		PokeblocksDataFixers.register();
 
 		CommandRegistrationCallback.EVENT.register((dispatcher, registryAccess, environment) -> {
 			ModCommands.registerCommands(dispatcher);
 		});
-    }
 
+		ServerLifecycleEvents.SERVER_STARTED.register(PokeblocksServerLifecycle::onServerStarted);
+	}
 }
