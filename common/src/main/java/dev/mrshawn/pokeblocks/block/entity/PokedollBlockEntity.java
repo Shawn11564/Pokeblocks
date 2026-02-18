@@ -77,10 +77,9 @@ public class PokedollBlockEntity extends BlockEntity implements GeoBlockEntity {
 		return Boolean.TRUE.equals(flags.get(flag));
 	}
 
-	public boolean isAnimated() { return getFlag(ModelFlag.ANIMATED); }
-	public boolean isGigantic() { return getFlag(ModelFlag.GIGANTIC); }
-	public boolean isShiny() { return getFlag(ModelFlag.SHINY); }
-	public boolean isPosed() { return getFlag(ModelFlag.POSED); }
+	public boolean isGigantic() {
+		return getFlag(ModelFlag.GIGANTIC);
+	}
 
 	private void syncToClient() {
 		setChanged();

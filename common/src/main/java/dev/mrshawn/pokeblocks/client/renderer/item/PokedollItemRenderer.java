@@ -23,4 +23,5 @@ public class PokedollItemRenderer extends GeoItemRenderer<PokedollItem> {
         this.model.setCurrentItemStack(stack);
         super.renderByItem(stack, transformType, poseStack, bufferSource, packedLight, packedOverlay);
     }
+
 }

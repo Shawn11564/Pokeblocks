@@ -14,7 +14,8 @@ import java.util.regex.Pattern;
 import java.util.stream.Stream;
 
 public class PokemonRegistry {
-	public static void init() {}
+	public static void init() {
+	}
 
 	public static final Map<String, PokemonData> ALL_POKEMON = new ConcurrentHashMap<>();
 
@@ -96,10 +97,7 @@ public class PokemonRegistry {
 		// Parse models for base pokemon names and model-level flags
 		for (String filename : modelFiles) {
 			Matcher m = MODEL_PATTERN.matcher(filename);
-			if (!m.matches()) {
-				System.out.println("[Pokeblocks] Unrecognized model file: " + filename);
-				continue;
-			}
+			if (!m.matches()) continue; // silently skip non-pokedoll files
 
 			ParseResult result = parseSuffixes(m.group(1));
 			if (result.name().isEmpty()) continue;
@@ -109,13 +107,42 @@ public class PokemonRegistry {
 			pokemonFlags.get(name).addAll(result.flags());
 		}
 
+		// Detect required flag combinations from multi-flag models
+		// If pokedoll_snorunt_family_animated.geo.json exists but neither
+		// pokedoll_snorunt_family.geo.json nor pokedoll_snorunt_animated.geo.json exist,
+		// then family+animated is a required combination for snorunt.
+		Map<String, List<Set<ModelFlag>>> requiredCombos = new HashMap<>();
+
+		for (String filename : modelFiles) {
+			Matcher m = MODEL_PATTERN.matcher(filename);
+			if (!m.matches()) continue;
+
+			ParseResult result = parseSuffixes(m.group(1));
+			if (result.name().isEmpty() || result.flags().size() < 2) continue;
+
+			String name = result.name().toLowerCase();
+
+			// Check if any individual flag from this combo has its own standalone model
+			boolean anyStandaloneExists = false;
+			for (ModelFlag flag : result.flags()) {
+				String standaloneModel = "pokedoll_" + name + flag.getModelSuffix() + ".geo.json";
+				if (modelFiles.stream().anyMatch(f -> f.equalsIgnoreCase(standaloneModel))) {
+					anyStandaloneExists = true;
+					break;
+				}
+			}
+
+			if (!anyStandaloneExists) {
+				// No individual flag model exists — these flags are mutually dependent
+				Set<ModelFlag> combo = EnumSet.copyOf(result.flags());
+				requiredCombos.computeIfAbsent(name, k -> new ArrayList<>()).add(combo);
+			}
+		}
+
 		// Parse textures to detect flag variants
 		for (String filename : textureFiles) {
 			Matcher m = TEXTURE_PATTERN.matcher(filename);
-			if (!m.matches()) {
-				System.out.println("[Pokeblocks] Unrecognized texture file: " + filename);
-				continue;
-			}
+			if (!m.matches()) continue; // silently skip non-pokedoll files
 
 			ParseResult result = parseSuffixes(m.group(1));
 			if (result.name().isEmpty()) continue;
@@ -208,6 +235,9 @@ public class PokemonRegistry {
 			Map<ModelFlag, Boolean> variants = variantAnimations.getOrDefault(name, new EnumMap<>(ModelFlag.class));
 			AnimationProfile animProfile = new AnimationProfile(hasBase, variants);
 
+			// Build required combinations
+			List<Set<ModelFlag>> combos = requiredCombos.getOrDefault(name, List.of());
+
 			// Merge with existing
 			PokemonData existing = ALL_POKEMON.get(name);
 			if (existing != null) {
@@ -228,11 +258,18 @@ public class PokemonRegistry {
 					if (ev || nv) mergedVariants.put(flag, true);
 				}
 				animProfile = new AnimationProfile(mergedBase, mergedVariants);
+
+				// Merge combinations
+				List<Set<ModelFlag>> mergedCombos = new ArrayList<>(existing.requiredCombinations());
+				for (Set<ModelFlag> combo : combos) {
+					if (!mergedCombos.contains(combo)) mergedCombos.add(combo);
+				}
+				combos = mergedCombos;
 			} else {
 				newCount++;
 			}
 
-			ALL_POKEMON.put(name, new PokemonData(flagMap, animProfile));
+			ALL_POKEMON.put(name, new PokemonData(flagMap, animProfile, combos));
 		}
 
 		System.out.println("[Pokeblocks] " + source + " scan: " + pokemonFlags.size() + " pokemon (" + newCount + " new)");

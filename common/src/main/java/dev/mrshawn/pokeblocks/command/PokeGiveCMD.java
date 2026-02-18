@@ -126,6 +126,17 @@ public class PokeGiveCMD {
 				return 0;
 			}
 
+			PokemonData data = PokemonRegistry.getPokemonData(pokemon);
+
+			// Check required flag combinations
+			Set<ModelFlag> missing = data.getMissingRequiredFlags(activeFlags);
+			if (!missing.isEmpty()) {
+				List<String> missingNames = new ArrayList<>();
+				for (ModelFlag f : missing) missingNames.add(f.getTagName());
+				source.sendFailure(Component.literal("The flag combination for '" + pokemon + "' also requires: " + String.join(", ", missingNames)));
+				return 0;
+			}
+
 			Map<ModelFlag, Boolean> flagMap = new EnumMap<>(ModelFlag.class);
 			for (ModelFlag flag : ModelFlag.values()) {
 				flagMap.put(flag, activeFlags.contains(flag));
@@ -148,4 +159,5 @@ public class PokeGiveCMD {
 			return 0;
 		}
 	}
+
 }

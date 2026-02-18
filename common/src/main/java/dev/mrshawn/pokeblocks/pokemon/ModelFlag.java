@@ -1,19 +1,37 @@
 package dev.mrshawn.pokeblocks.pokemon;
 
+import dev.mrshawn.pokeblocks.item.DollRarity;
+
 public enum ModelFlag {
-	GIGANTIC("gigantic", -1),
-	SHINY("shiny", 0),
-	FAMILY("family", 1),
-	ANIMATED("animated", 2),
-	POSED("posed", 3),
-	NETHERITE("netherite", 4);
+
+	/**
+	 * tagName - the compound tag key to store this flag
+	 * textureSuffix - the suffix to append to texture names when this flag is present (needed due to uv mapping differences for some variants {i think?})
+	 * modelSuffix - the suffix to append to model (geo.json) names when this flag (used for model variants)
+	 * sortOrder - the order in which to sort flags when building display names (lower numbers come first)
+	 * rarity - the rarity this flag contributes to the doll (if any). This is used for automatic rarity calculation based on flags
+	 */
+	GIGANTIC("gigantic", "", "", -1, DollRarity.GIGANTIC),
+	SHINY("shiny", "_shiny", "", 0, DollRarity.SHINY),
+	FAMILY("family", "_family", "_family", 1, DollRarity.UNCLASSIFIED),
+	ANIMATED("animated", "_animated", "_animated", 2, DollRarity.UNCLASSIFIED),
+	POSED("posed", "_posed", "_posed", 3, DollRarity.UNCLASSIFIED),
+	NETHERITE("netherite", "_netherite", "", 4, DollRarity.UNCLASSIFIED),
+	ZENITH("zenith", "_zenith", "_zenith", 5, DollRarity.UNCLASSIFIED),
+	NOICE("noice", "_noice", "_noice", 6, DollRarity.UNCLASSIFIED);
 
 	private final String tagName;
+	private final String textureSuffix;
+	private final String modelSuffix;
 	private final int sortOrder;
+	private final DollRarity rarity;
 
-	ModelFlag(String tagName, int sortOrder) {
+	ModelFlag(String tagName, String textureSuffix, String modelSuffix, int sortOrder, DollRarity rarity) {
 		this.tagName = tagName;
+		this.textureSuffix = textureSuffix;
+		this.modelSuffix = modelSuffix;
 		this.sortOrder = sortOrder;
+		this.rarity = rarity;
 	}
 
 	public int getSortOrder() {
@@ -32,14 +50,7 @@ public enum ModelFlag {
 	 * GIGANTIC does not affect resource names (only scale), so it returns an empty string.
 	 */
 	public String getTextureSuffix() {
-		return switch (this) {
-			case SHINY -> "_shiny";
-			case FAMILY -> "_family";
-			case ANIMATED -> "_animated";
-			case POSED -> "_posed";
-			case NETHERITE -> "_netherite";
-			default -> "";
-		};
+		return textureSuffix;
 	}
 
 	/**
@@ -47,11 +58,11 @@ public enum ModelFlag {
 	 * Only ANIMATED and POSED affect geo.json names per the specification.
 	 */
 	public String getModelSuffix() {
-		return switch (this) {
-			case FAMILY -> "_family";
-			case ANIMATED -> "_animated";
-			case POSED -> "_posed";
-			default -> "";
-		};
+		return modelSuffix;
 	}
+
+	public DollRarity getRarity() {
+		return rarity;
+	}
+
 }
