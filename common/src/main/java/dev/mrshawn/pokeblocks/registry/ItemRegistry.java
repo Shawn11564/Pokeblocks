@@ -1,14 +1,19 @@
 package dev.mrshawn.pokeblocks.registry;
 
 import dev.mrshawn.pokeblocks.PokeblocksCommon;
-import dev.mrshawn.pokeblocks.item.FigurineItem;
-import dev.mrshawn.pokeblocks.item.PokedollItem;
+import dev.mrshawn.pokeblocks.block.custom.decorative.DecorativeDefinition;
+import dev.mrshawn.pokeblocks.item.custom.DecorativeItem;
+import dev.mrshawn.pokeblocks.item.custom.FigurineItem;
+import dev.mrshawn.pokeblocks.item.custom.PokedollItem;
+import dev.mrshawn.pokeblocks.pokemon.ModelFlag;
 import net.minecraft.network.chat.Component;
 import net.minecraft.world.item.BlockItem;
 import net.minecraft.world.item.CreativeModeTab;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 
+import java.util.EnumSet;
+import java.util.Map;
 import java.util.function.Supplier;
 
 public final class ItemRegistry {
@@ -25,13 +30,35 @@ public final class ItemRegistry {
 			.title(Component.translatable("itemgroup." + PokeblocksCommon.MOD_ID + ".items"))
 			.icon(() -> new ItemStack(ItemRegistry.POKEDOLL_ITEM.get()))
 			.displayItems((enabledFeatures, entries) -> {
-				// Add all registered pokedolls
+				// Pokedolls
 				for (String pokemon : PokemonRegistry.ALL_POKEMON.keySet()) {
 					entries.accept(PokedollItem.createPokedoll(pokemon, false));
 				}
-				// Add all registered figurines
+				// Figurines
 				for (String figurine : FigurineRegistry.ALL_FIGURINES.keySet()) {
 					entries.accept(FigurineItem.createFigurine(figurine));
+				}
+				// Decorative blocks
+				for (DecorativeRegistry.DecorativeEntry entry : DecorativeRegistry.ALL_ENTRIES) {
+					if (entry.definition().nbtVariants().isEmpty()) {
+						entries.accept(DecorativeItem.createStack(
+								entry.item().get(),
+								"pokeblocks:" + entry.definition().id(),
+								EnumSet.noneOf(ModelFlag.class)
+						));
+					} else {
+						// Add one item per NBT variant combination
+						for (DecorativeDefinition.NbtVariant variant : entry.definition().nbtVariants()) {
+							for (String value : variant.prefixMap().keySet()) {
+								entries.accept(DecorativeItem.createStack(
+										entry.item().get(),
+										"pokeblocks:" + entry.definition().id(),
+										EnumSet.noneOf(ModelFlag.class),
+										Map.of(variant.nbtKey(), value)
+								));
+							}
+						}
+					}
 				}
 			})
 			.build());

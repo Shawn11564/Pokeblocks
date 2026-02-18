@@ -1,8 +1,10 @@
 package dev.mrshawn.pokeblocks.client;
 
+import dev.mrshawn.pokeblocks.client.renderer.block.DecorativeBlockRenderer;
 import dev.mrshawn.pokeblocks.client.renderer.block.FigurineBlockRenderer;
 import dev.mrshawn.pokeblocks.client.renderer.block.PokedollBlockRenderer;
 import dev.mrshawn.pokeblocks.registry.BlockEntityRegistry;
+import dev.mrshawn.pokeblocks.registry.DecorativeRegistry;
 import dev.mrshawn.pokeblocks.registry.FigurineRegistry;
 import dev.mrshawn.pokeblocks.registry.PokemonRegistry;
 import net.minecraft.client.renderer.blockentity.BlockEntityRendererProvider;
@@ -18,6 +20,11 @@ public final class PokeblocksClient {
 		if (DEBUG_SKIP_RENDERING) return;
 		blockEntityRenderers.accept(BlockEntityRegistry.POKEDOLL_BLOCK_ENTITY.get(), context -> new PokedollBlockRenderer());
 		blockEntityRenderers.accept(BlockEntityRegistry.FIGURINE_BLOCK_ENTITY.get(), context -> new FigurineBlockRenderer());
+
+		for (DecorativeRegistry.DecorativeEntry entry : DecorativeRegistry.ALL_ENTRIES) {
+			blockEntityRenderers.accept(entry.blockEntityType().get(),
+					context -> new DecorativeBlockRenderer(entry.definition()));
+		}
 	}
 
 	public static void registerPokemon() {

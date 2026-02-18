@@ -21,6 +21,7 @@ public final class PokeblocksCommon {
 		PokemonRegistry.init();
 		FigurineRegistry.init();
         BlockRegistry.init();
+		DecorativeRegistry.init();
         BlockEntityRegistry.init();
         ItemRegistry.init();
 	}

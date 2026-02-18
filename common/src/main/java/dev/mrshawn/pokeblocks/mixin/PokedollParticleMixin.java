@@ -1,10 +1,13 @@
 package dev.mrshawn.pokeblocks.mixin;
 
 import com.mojang.blaze3d.platform.NativeImage;
-import dev.mrshawn.pokeblocks.block.FigurineBlock;
-import dev.mrshawn.pokeblocks.block.PokedollBlock;
-import dev.mrshawn.pokeblocks.block.entity.FigurineBlockEntity;
-import dev.mrshawn.pokeblocks.block.entity.PokedollBlockEntity;
+import dev.mrshawn.pokeblocks.block.custom.FigurineBlock;
+import dev.mrshawn.pokeblocks.block.custom.PokedollBlock;
+import dev.mrshawn.pokeblocks.block.custom.decorative.DecorativeBlock;
+import dev.mrshawn.pokeblocks.block.entity.custom.FigurineBlockEntity;
+import dev.mrshawn.pokeblocks.block.entity.custom.PokedollBlockEntity;
+import dev.mrshawn.pokeblocks.block.entity.custom.decorative.DecorativeBlockEntity;
+import dev.mrshawn.pokeblocks.client.model.block.DecorativeModel;
 import dev.mrshawn.pokeblocks.client.model.block.FigurineModel;
 import dev.mrshawn.pokeblocks.client.model.block.PokedollModel;
 import net.minecraft.client.Minecraft;
@@ -25,6 +28,7 @@ import java.io.InputStream;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Optional;
+import java.util.concurrent.ConcurrentHashMap;
 
 @Mixin(ParticleEngine.class)
 public class PokedollParticleMixin {
@@ -32,6 +36,7 @@ public class PokedollParticleMixin {
     private static final Map<String, Vector3f> colorCache = new HashMap<>();
     private static final PokedollModel particlePokedollModel = new PokedollModel();
     private static final FigurineModel particleFigurineModel = new FigurineModel();
+    private static final Map<String, DecorativeModel> decorativeModels = new ConcurrentHashMap<>();
 
     @Inject(method = "destroy", at = @At("HEAD"), cancellable = true)
     private void pokeblocks$customDestroyParticles(BlockPos pos, BlockState state, CallbackInfo ci) {
@@ -47,6 +52,14 @@ public class PokedollParticleMixin {
         } else if (state.getBlock() instanceof FigurineBlock) {
             if (level.getBlockEntity(pos) instanceof FigurineBlockEntity be) {
                 textureLoc = particleFigurineModel.getTextureResource(be);
+            }
+        } else if (state.getBlock() instanceof DecorativeBlock) {
+            if (level.getBlockEntity(pos) instanceof DecorativeBlockEntity be) {
+                DecorativeModel model = decorativeModels.computeIfAbsent(
+                        be.getDefinition().id(),
+                        id -> new DecorativeModel(be.getDefinition())
+                );
+                textureLoc = model.getTextureResource(be);
             }
         }
 

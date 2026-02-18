@@ -1,6 +1,6 @@
 package dev.mrshawn.pokeblocks.client.renderer.block;
 
-import dev.mrshawn.pokeblocks.block.entity.PokedollBlockEntity;
+import dev.mrshawn.pokeblocks.block.entity.custom.PokedollBlockEntity;
 import dev.mrshawn.pokeblocks.client.model.block.PokedollModel;
 import dev.mrshawn.pokeblocks.constants.ModSettings;
 import com.mojang.blaze3d.vertex.PoseStack;

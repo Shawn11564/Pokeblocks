@@ -1,8 +1,9 @@
-package dev.mrshawn.pokeblocks.item;
+package dev.mrshawn.pokeblocks.item.custom;
 
 import dev.mrshawn.pokeblocks.PokeblocksCommon;
 import dev.mrshawn.pokeblocks.client.renderer.item.PokedollItemRenderer;
 import dev.mrshawn.pokeblocks.constants.ModSettings;
+import dev.mrshawn.pokeblocks.item.DollRarity;
 import dev.mrshawn.pokeblocks.pokemon.ModelFlag;
 import dev.mrshawn.pokeblocks.pokemon.PokemonData;
 import dev.mrshawn.pokeblocks.registry.ItemRegistry;

@@ -1,8 +1,8 @@
 package dev.mrshawn.pokeblocks.registry;
 
 import dev.mrshawn.pokeblocks.PokeblocksCommon;
-import dev.mrshawn.pokeblocks.block.FigurineBlock;
-import dev.mrshawn.pokeblocks.block.PokedollBlock;
+import dev.mrshawn.pokeblocks.block.custom.FigurineBlock;
+import dev.mrshawn.pokeblocks.block.custom.PokedollBlock;
 import dev.mrshawn.pokeblocks.constants.ModSettings;
 import net.minecraft.world.level.block.Block;
 

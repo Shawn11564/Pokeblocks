@@ -2,7 +2,7 @@ package dev.mrshawn.pokeblocks.client.model.item;
 
 import dev.mrshawn.pokeblocks.PokeblocksCommon;
 import dev.mrshawn.pokeblocks.constants.ModSettings;
-import dev.mrshawn.pokeblocks.item.FigurineItem;
+import dev.mrshawn.pokeblocks.item.custom.FigurineItem;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.RenderType;
 import net.minecraft.resources.ResourceLocation;

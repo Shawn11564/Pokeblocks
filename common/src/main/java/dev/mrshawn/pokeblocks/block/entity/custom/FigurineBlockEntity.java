@@ -1,4 +1,4 @@
-package dev.mrshawn.pokeblocks.block.entity;
+package dev.mrshawn.pokeblocks.block.entity.custom;
 
 import dev.mrshawn.pokeblocks.constants.ModSettings;
 import dev.mrshawn.pokeblocks.registry.BlockEntityRegistry;

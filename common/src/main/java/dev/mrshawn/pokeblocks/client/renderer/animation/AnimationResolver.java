@@ -1,6 +1,6 @@
 package dev.mrshawn.pokeblocks.client.renderer.animation;
 
-import dev.mrshawn.pokeblocks.block.entity.PokedollBlockEntity;
+import dev.mrshawn.pokeblocks.block.entity.custom.PokedollBlockEntity;
 import dev.mrshawn.pokeblocks.pokemon.ModelFlag;
 
 import java.util.Map;

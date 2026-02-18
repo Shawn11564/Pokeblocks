@@ -1,7 +1,7 @@
 package dev.mrshawn.pokeblocks.client.model.block;
 
 import dev.mrshawn.pokeblocks.PokeblocksCommon;
-import dev.mrshawn.pokeblocks.block.entity.PokedollBlockEntity;
+import dev.mrshawn.pokeblocks.block.entity.custom.PokedollBlockEntity;
 import dev.mrshawn.pokeblocks.client.renderer.animation.AnimationResolver;
 import dev.mrshawn.pokeblocks.constants.ModSettings;
 import dev.mrshawn.pokeblocks.pokemon.ModelFlag;

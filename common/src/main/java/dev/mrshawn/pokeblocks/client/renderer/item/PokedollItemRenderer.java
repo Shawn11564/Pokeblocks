@@ -1,7 +1,7 @@
 package dev.mrshawn.pokeblocks.client.renderer.item;
 
 import dev.mrshawn.pokeblocks.client.model.item.PokedollItemModel;
-import dev.mrshawn.pokeblocks.item.PokedollItem;
+import dev.mrshawn.pokeblocks.item.custom.PokedollItem;
 import com.mojang.blaze3d.vertex.PoseStack;
 import net.minecraft.client.renderer.MultiBufferSource;
 import net.minecraft.world.item.ItemDisplayContext;

@@ -3,7 +3,7 @@ package dev.mrshawn.pokeblocks.client.model.item;
 import dev.mrshawn.pokeblocks.PokeblocksCommon;
 import dev.mrshawn.pokeblocks.client.renderer.animation.AnimationResolver;
 import dev.mrshawn.pokeblocks.constants.ModSettings;
-import dev.mrshawn.pokeblocks.item.PokedollItem;
+import dev.mrshawn.pokeblocks.item.custom.PokedollItem;
 import dev.mrshawn.pokeblocks.pokemon.ModelFlag;
 import dev.mrshawn.pokeblocks.pokemon.PokemonData;
 import dev.mrshawn.pokeblocks.registry.PokemonRegistry;

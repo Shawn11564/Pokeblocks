@@ -1,8 +1,8 @@
 package dev.mrshawn.pokeblocks.registry;
 
 import dev.mrshawn.pokeblocks.PokeblocksCommon;
-import dev.mrshawn.pokeblocks.block.entity.FigurineBlockEntity;
-import dev.mrshawn.pokeblocks.block.entity.PokedollBlockEntity;
+import dev.mrshawn.pokeblocks.block.entity.custom.FigurineBlockEntity;
+import dev.mrshawn.pokeblocks.block.entity.custom.PokedollBlockEntity;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.entity.BlockEntityType;
 

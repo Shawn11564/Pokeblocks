@@ -1,7 +1,7 @@
 package dev.mrshawn.pokeblocks.client.renderer.block;
 
 import com.mojang.blaze3d.vertex.PoseStack;
-import dev.mrshawn.pokeblocks.block.entity.FigurineBlockEntity;
+import dev.mrshawn.pokeblocks.block.entity.custom.FigurineBlockEntity;
 import dev.mrshawn.pokeblocks.client.model.block.FigurineModel;
 import dev.mrshawn.pokeblocks.constants.ModSettings;
 import software.bernie.geckolib.cache.object.BakedGeoModel;

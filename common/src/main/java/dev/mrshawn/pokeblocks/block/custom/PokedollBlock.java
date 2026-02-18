@@ -1,7 +1,7 @@
-package dev.mrshawn.pokeblocks.block;
+package dev.mrshawn.pokeblocks.block.custom;
 
-import com.mojang.serialization.MapCodec;
 import dev.mrshawn.pokeblocks.registry.BlockEntityRegistry;
+import com.mojang.serialization.MapCodec;
 import net.minecraft.core.BlockPos;
 import net.minecraft.world.item.context.BlockPlaceContext;
 import net.minecraft.world.level.BlockGetter;
@@ -17,11 +17,15 @@ import net.minecraft.world.level.block.state.properties.BlockStateProperties;
 import net.minecraft.world.level.block.state.properties.DirectionProperty;
 import net.minecraft.world.phys.shapes.CollisionContext;
 import net.minecraft.world.phys.shapes.VoxelShape;
+import org.jetbrains.annotations.Nullable;
 
-public class FigurineBlock extends BaseEntityBlock implements EntityBlock {
+/**
+ * Simple pokedoll block. Mostly a wrapper to provide a BlockEntity and render as an entity.
+ */
+public class PokedollBlock extends BaseEntityBlock implements EntityBlock {
 	public static final DirectionProperty FACING = BlockStateProperties.HORIZONTAL_FACING;
 
-	public FigurineBlock() {
+	public PokedollBlock() {
 		super(Properties.of().noOcclusion());
 	}
 
@@ -40,19 +44,26 @@ public class FigurineBlock extends BaseEntityBlock implements EntityBlock {
 		builder.add(FACING);
 	}
 
+	@Nullable
 	@Override
 	public BlockState getStateForPlacement(BlockPlaceContext context) {
 		return this.defaultBlockState().setValue(FACING, context.getHorizontalDirection().getOpposite());
 	}
 
+	@Nullable
 	@Override
 	public BlockEntity newBlockEntity(BlockPos blockPos, BlockState blockState) {
-		return BlockEntityRegistry.FIGURINE_BLOCK_ENTITY.get().create(blockPos, blockState);
+		return BlockEntityRegistry.POKEDOLL_BLOCK_ENTITY.get().create(blockPos, blockState);
 	}
 
 	@Override
 	public VoxelShape getShape(BlockState state, BlockGetter world, BlockPos pos, CollisionContext context) {
-		return Block.box(4, 0, 4, 12, 12, 12);
+		return switch (state.getValue(FACING)) {
+			case NORTH -> Block.box(4, 0, 4, 12, 12, 12);
+			case SOUTH -> Block.box(4, 0, 4, 12, 12, 12);
+			case WEST -> Block.box(4, 0, 4, 12, 12, 12);
+			default -> Block.box(4, 0, 4, 12, 12, 12);
+		};
 	}
 
 	@Override
@@ -60,3 +71,4 @@ public class FigurineBlock extends BaseEntityBlock implements EntityBlock {
 		return true;
 	}
 }
+

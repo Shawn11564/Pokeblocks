@@ -1,4 +1,4 @@
-package dev.mrshawn.pokeblocks.item;
+package dev.mrshawn.pokeblocks.item.custom;
 
 import dev.mrshawn.pokeblocks.client.renderer.item.FigurineItemRenderer;
 import dev.mrshawn.pokeblocks.constants.ModSettings;

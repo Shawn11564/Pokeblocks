@@ -1,7 +1,7 @@
-package dev.mrshawn.pokeblocks.block;
+package dev.mrshawn.pokeblocks.block.custom.decorative;
 
-import dev.mrshawn.pokeblocks.registry.BlockEntityRegistry;
 import com.mojang.serialization.MapCodec;
+import dev.mrshawn.pokeblocks.block.entity.custom.decorative.DecorativeBlockEntity;
 import net.minecraft.core.BlockPos;
 import net.minecraft.world.item.context.BlockPlaceContext;
 import net.minecraft.world.level.BlockGetter;
@@ -11,22 +11,24 @@ import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.EntityBlock;
 import net.minecraft.world.level.block.RenderShape;
 import net.minecraft.world.level.block.entity.BlockEntity;
+import net.minecraft.world.level.block.entity.BlockEntityType;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.block.state.StateDefinition;
 import net.minecraft.world.level.block.state.properties.BlockStateProperties;
 import net.minecraft.world.level.block.state.properties.DirectionProperty;
 import net.minecraft.world.phys.shapes.CollisionContext;
 import net.minecraft.world.phys.shapes.VoxelShape;
-import org.jetbrains.annotations.Nullable;
 
-/**
- * Simple pokedoll block. Mostly a wrapper to provide a BlockEntity and render as an entity.
- */
-public class PokedollBlock extends BaseEntityBlock implements EntityBlock {
+import java.util.function.Supplier;
+
+public class DecorativeBlock extends BaseEntityBlock implements EntityBlock {
 	public static final DirectionProperty FACING = BlockStateProperties.HORIZONTAL_FACING;
 
-	public PokedollBlock() {
+	private final Supplier<BlockEntityType<? extends DecorativeBlockEntity>> blockEntityType;
+
+	public DecorativeBlock(Supplier<BlockEntityType<? extends DecorativeBlockEntity>> blockEntityType) {
 		super(Properties.of().noOcclusion());
+		this.blockEntityType = blockEntityType;
 	}
 
 	@Override
@@ -44,26 +46,19 @@ public class PokedollBlock extends BaseEntityBlock implements EntityBlock {
 		builder.add(FACING);
 	}
 
-	@Nullable
 	@Override
 	public BlockState getStateForPlacement(BlockPlaceContext context) {
 		return this.defaultBlockState().setValue(FACING, context.getHorizontalDirection().getOpposite());
 	}
 
-	@Nullable
 	@Override
-	public BlockEntity newBlockEntity(BlockPos blockPos, BlockState blockState) {
-		return BlockEntityRegistry.POKEDOLL_BLOCK_ENTITY.get().create(blockPos, blockState);
+	public BlockEntity newBlockEntity(BlockPos pos, BlockState state) {
+		return blockEntityType.get().create(pos, state);
 	}
 
 	@Override
 	public VoxelShape getShape(BlockState state, BlockGetter world, BlockPos pos, CollisionContext context) {
-		return switch (state.getValue(FACING)) {
-			case NORTH -> Block.box(4, 0, 4, 12, 12, 12);
-			case SOUTH -> Block.box(4, 0, 4, 12, 12, 12);
-			case WEST -> Block.box(4, 0, 4, 12, 12, 12);
-			default -> Block.box(4, 0, 4, 12, 12, 12);
-		};
+		return Block.box(4, 0, 4, 12, 12, 12);
 	}
 
 	@Override
@@ -71,4 +66,3 @@ public class PokedollBlock extends BaseEntityBlock implements EntityBlock {
 		return true;
 	}
 }
-

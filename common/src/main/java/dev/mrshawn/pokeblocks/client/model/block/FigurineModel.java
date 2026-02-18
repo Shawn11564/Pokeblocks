@@ -1,7 +1,7 @@
 package dev.mrshawn.pokeblocks.client.model.block;
 
 import dev.mrshawn.pokeblocks.PokeblocksCommon;
-import dev.mrshawn.pokeblocks.block.entity.FigurineBlockEntity;
+import dev.mrshawn.pokeblocks.block.entity.custom.FigurineBlockEntity;
 import dev.mrshawn.pokeblocks.constants.ModSettings;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.RenderType;

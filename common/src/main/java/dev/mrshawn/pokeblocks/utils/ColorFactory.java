@@ -2,7 +2,7 @@ package dev.mrshawn.pokeblocks.utils;
 
 import dev.mrshawn.pokeblocks.item.DollRarity;
 import dev.mrshawn.pokeblocks.item.DollRarityOverrides;
-import dev.mrshawn.pokeblocks.item.PokedollItem;
+import dev.mrshawn.pokeblocks.item.custom.PokedollItem;
 import dev.mrshawn.pokeblocks.pokemon.ModelFlag;
 import net.minecraft.ChatFormatting;
 import net.minecraft.world.item.ItemStack;
