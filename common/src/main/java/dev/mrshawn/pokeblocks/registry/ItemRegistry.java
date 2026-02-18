@@ -1,7 +1,6 @@
 package dev.mrshawn.pokeblocks.registry;
 
 import dev.mrshawn.pokeblocks.PokeblocksCommon;
-import dev.mrshawn.pokeblocks.block.custom.decorative.DecorativeDefinition;
 import dev.mrshawn.pokeblocks.item.custom.DecorativeItem;
 import dev.mrshawn.pokeblocks.item.custom.FigurineItem;
 import dev.mrshawn.pokeblocks.item.custom.PokedollItem;
@@ -13,7 +12,6 @@ import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 
 import java.util.EnumSet;
-import java.util.Map;
 import java.util.function.Supplier;
 
 public final class ItemRegistry {
@@ -40,26 +38,13 @@ public final class ItemRegistry {
 				}
 				// Decorative blocks
 				for (DecorativeRegistry.DecorativeEntry entry : DecorativeRegistry.ALL_ENTRIES) {
-					if (entry.definition().nbtVariants().isEmpty()) {
-						entries.accept(DecorativeItem.createStack(
-								entry.item().get(),
-								"pokeblocks:" + entry.definition().id(),
-								EnumSet.noneOf(ModelFlag.class)
-						));
-					} else {
-						// Add one item per NBT variant combination
-						for (DecorativeDefinition.NbtVariant variant : entry.definition().nbtVariants()) {
-							for (String value : variant.prefixMap().keySet()) {
-								entries.accept(DecorativeItem.createStack(
-										entry.item().get(),
-										"pokeblocks:" + entry.definition().id(),
-										EnumSet.noneOf(ModelFlag.class),
-										Map.of(variant.nbtKey(), value)
-								));
-							}
-						}
-					}
+					entries.accept(DecorativeItem.createStack(
+							entry.item().get(),
+							"pokeblocks:" + entry.definition().id(),
+							EnumSet.noneOf(ModelFlag.class)
+					));
 				}
+
 			})
 			.build());
 }

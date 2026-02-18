@@ -36,7 +36,8 @@ public class DecorativeRegistry {
 							"2", "eiscue_head_pile_2",
 							"3", "eiscue_head_pile_3"
 					),
-					"1"
+					"1",
+					true
 			))
 	);
 	public static final DecorativeEntry LUVDISC_CUSHION = register("luvdisc_cushion", "Luvdisc Cushion", SHINY_ONLY, false);

@@ -8,6 +8,7 @@ public class ModCommands {
         DollInfoCMD.register(dispatcher);
 		PokeGiveCMD.register(dispatcher);
 		FigurineGiveCMD.register(dispatcher);
+		DecorativeGiveCMD.register(dispatcher);
 		RebuildPackCMD.register(dispatcher);
 		ReloadRarityCMD.register(dispatcher);
     }

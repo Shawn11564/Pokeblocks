@@ -5,6 +5,7 @@ import dev.mrshawn.pokeblocks.pokemon.ModelFlag;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.function.Function;
 
 public record DecorativeDefinition(
 		String id,
@@ -20,15 +21,19 @@ public record DecorativeDefinition(
 	}
 
 	/**
-	 * Defines an NBT key that modifies the model prefix.
-	 * For example: key="headCount", values={1: "eiscue_head_pile_1", 2: "eiscue_head_pile_2", 3: "eiscue_head_pile_3"}
+	 * @param nbtKey       The NBT key name
+	 * @param type         The value type (e.g. "string")
+	 * @param prefixMap    Maps values to model prefixes
+	 * @param defaultValue The default value
+	 * @param stackable    If true, right-clicking with the same block increments the value
 	 */
-	public record NbtVariant(String nbtKey, String type, Map<String, String> prefixMap, String defaultValue) {}
+	public record NbtVariant(String nbtKey, String type, Map<String, String> prefixMap, String defaultValue, boolean stackable) {
+		public NbtVariant(String nbtKey, String type, Map<String, String> prefixMap, String defaultValue) {
+			this(nbtKey, type, prefixMap, defaultValue, false);
+		}
+	}
 
-	/**
-	 * Resolves the effective model prefix based on active NBT values.
-	 */
-	public String resolvePrefix(java.util.function.Function<String, String> nbtLookup) {
+	public String resolvePrefix(Function<String, String> nbtLookup) {
 		String prefix = modelPrefix;
 		for (NbtVariant variant : nbtVariants) {
 			String value = nbtLookup.apply(variant.nbtKey());
@@ -39,19 +44,18 @@ public record DecorativeDefinition(
 		return prefix;
 	}
 
-	public String modelPath(Set<ModelFlag> activeFlags, java.util.function.Function<String, String> nbtLookup) {
+	public String modelPath(Set<ModelFlag> activeFlags, Function<String, String> nbtLookup) {
 		return "geo/block/" + resolvePrefix(nbtLookup) + modelSuffix(activeFlags) + ".geo.json";
 	}
 
-	public String texturePath(Set<ModelFlag> activeFlags, java.util.function.Function<String, String> nbtLookup) {
+	public String texturePath(Set<ModelFlag> activeFlags, Function<String, String> nbtLookup) {
 		return "textures/block/" + resolvePrefix(nbtLookup) + textureSuffix(activeFlags);
 	}
 
-	public String animationPath(java.util.function.Function<String, String> nbtLookup) {
+	public String animationPath(Function<String, String> nbtLookup) {
 		return "animations/block/" + resolvePrefix(nbtLookup) + ".animation.json";
 	}
 
-	// Keep simple overloads for blocks without NBT variants
 	public String modelPath(Set<ModelFlag> activeFlags) {
 		return modelPath(activeFlags, k -> null);
 	}
