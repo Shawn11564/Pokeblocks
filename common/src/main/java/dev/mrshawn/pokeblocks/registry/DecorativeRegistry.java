@@ -40,16 +40,20 @@ public class DecorativeRegistry {
 					true
 			))
 	);
-	public static final DecorativeEntry LUVDISC_CUSHION = register("luvdisc_cushion", "Luvdisc Cushion", SHINY_ONLY, false);
+	public static final DecorativeEntry LUVDISC_CUSHION = register("luvdisc_cushion", "Luvdisc Cushion", NOTHING, false, List.of(), true, 0.5);
 	public static final DecorativeEntry MAGIKARP_FISHBOWL = register("magikarp_fishbowl", "Magikarp Fishbowl", SHINY_ONLY, true);
 	public static final DecorativeEntry POKEMON_TROPHY = register("pokemon_trophy", "Pokemon Trophy", NOTHING, false);
 
 	private static DecorativeEntry register(String id, String displayName, Set<ModelFlag> supportedFlags, boolean hasAnimation) {
-		return register(id, displayName, supportedFlags, hasAnimation, List.of());
+		return register(id, displayName, supportedFlags, hasAnimation, List.of(), false, 0.0);
 	}
 
 	private static DecorativeEntry register(String id, String displayName, Set<ModelFlag> supportedFlags, boolean hasAnimation, List<DecorativeDefinition.NbtVariant> nbtVariants) {
-		DecorativeDefinition definition = new DecorativeDefinition(id, displayName, id, supportedFlags, hasAnimation, nbtVariants);
+		return register(id, displayName, supportedFlags, hasAnimation, nbtVariants, false, 0.0);
+	}
+
+	private static DecorativeEntry register(String id, String displayName, Set<ModelFlag> supportedFlags, boolean hasAnimation, List<DecorativeDefinition.NbtVariant> nbtVariants, boolean sittable, double seatHeight) {
+		DecorativeDefinition definition = new DecorativeDefinition(id, displayName, id, supportedFlags, hasAnimation, nbtVariants, sittable, seatHeight);
 
 		final Supplier<BlockEntityType<DecorativeBlockEntity>>[] beTypeHolder = new Supplier[1];
 

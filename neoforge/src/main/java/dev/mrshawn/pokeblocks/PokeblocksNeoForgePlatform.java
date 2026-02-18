@@ -1,6 +1,8 @@
 package dev.mrshawn.pokeblocks;
 
 import dev.mrshawn.pokeblocks.platform.PokeblocksPlatform;
+import net.minecraft.world.entity.Entity;
+import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.item.CreativeModeTab;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.level.block.Block;
@@ -13,6 +15,11 @@ public class PokeblocksNeoForgePlatform implements PokeblocksPlatform {
     @Override
     public <T extends BlockEntity> Supplier<BlockEntityType<T>> registerBlockEntity(String id, Supplier<BlockEntityType<T>> blockEntityType) {
         return PokeblocksNeoForge.BLOCK_ENTITIES.register(id, blockEntityType);
+    }
+
+    @Override
+    public <T extends Entity> Supplier<EntityType<T>> registerEntity(String id, Supplier<EntityType<T>> entity) {
+        return PokeblocksNeoForge.ENTITIES.register(id, entity);
     }
 
     @Override

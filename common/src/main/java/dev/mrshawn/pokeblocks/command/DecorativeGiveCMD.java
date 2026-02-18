@@ -2,7 +2,6 @@ package dev.mrshawn.pokeblocks.command;
 
 import com.mojang.brigadier.CommandDispatcher;
 import com.mojang.brigadier.arguments.StringArgumentType;
-import com.mojang.brigadier.builder.LiteralArgumentBuilder;
 import com.mojang.brigadier.context.CommandContext;
 import com.mojang.brigadier.suggestion.SuggestionProvider;
 import dev.mrshawn.pokeblocks.block.custom.decorative.DecorativeDefinition;
@@ -27,79 +26,116 @@ public class DecorativeGiveCMD {
         return builder.buildFuture();
     };
 
+    private static DecorativeRegistry.DecorativeEntry findEntry(CommandContext<CommandSourceStack> context) {
+        try {
+            String id = StringArgumentType.getString(context, "decorative").toLowerCase();
+            for (DecorativeRegistry.DecorativeEntry e : DecorativeRegistry.ALL_ENTRIES) {
+                if (e.definition().id().equals(id)) return e;
+            }
+        } catch (Exception ignored) {}
+        return null;
+    }
+
+    private static SuggestionProvider<CommandSourceStack> suggestFlags(String... previousArgs) {
+        return (context, builder) -> {
+            DecorativeRegistry.DecorativeEntry entry = findEntry(context);
+            if (entry == null) return builder.buildFuture();
+
+            Set<String> used = new HashSet<>();
+            for (String name : previousArgs) {
+                try {
+                    used.add(StringArgumentType.getString(context, name).toLowerCase());
+                } catch (Exception ignored) {}
+            }
+
+            for (ModelFlag flag : entry.definition().supportedFlags()) {
+                if (!used.contains(flag.getTagName())) {
+                    builder.suggest(flag.getTagName());
+                }
+            }
+
+            // Suggest non-stackable NBT variants
+            for (DecorativeDefinition.NbtVariant variant : entry.definition().nbtVariants()) {
+                if (variant.stackable()) continue;
+                for (String value : variant.prefixMap().keySet()) {
+                    String literal = variant.nbtKey() + "=" + value;
+                    if (!used.contains(literal)) {
+                        builder.suggest(literal);
+                    }
+                }
+            }
+
+            return builder.buildFuture();
+        };
+    }
+
     public static void register(CommandDispatcher<CommandSourceStack> dispatcher) {
-        var decorativeArg = Commands.argument("decorative", StringArgumentType.word())
-                .suggests(SUGGEST_DECORATIVES)
-                .executes(DecorativeGiveCMD::execute);
-
-        // Attach flag literals dynamically based on each decorative's supported flags
-        attachFlagLiterals(decorativeArg);
-
         dispatcher.register(
                 Commands.literal("decorativegive")
                         .requires(src -> src.hasPermission(2))
                         .then(Commands.argument("player", EntityArgument.player())
-                                .then(decorativeArg)
+                                .then(Commands.argument("decorative", StringArgumentType.word())
+                                        .suggests(SUGGEST_DECORATIVES)
+                                        .executes(DecorativeGiveCMD::execute)
+                                        .then(Commands.argument("flag1", StringArgumentType.word())
+                                                .suggests(suggestFlags())
+                                                .executes(ctx -> executeWithArgs(ctx, "flag1"))
+                                                .then(Commands.argument("flag2", StringArgumentType.word())
+                                                        .suggests(suggestFlags("flag1"))
+                                                        .executes(ctx -> executeWithArgs(ctx, "flag1", "flag2"))
+                                                        .then(Commands.argument("flag3", StringArgumentType.word())
+                                                                .suggests(suggestFlags("flag1", "flag2"))
+                                                                .executes(ctx -> executeWithArgs(ctx, "flag1", "flag2", "flag3"))
+                                                                .then(Commands.argument("flag4", StringArgumentType.word())
+                                                                        .suggests(suggestFlags("flag1", "flag2", "flag3"))
+                                                                        .executes(ctx -> executeWithArgs(ctx, "flag1", "flag2", "flag3", "flag4"))
+                                                                )
+                                                        )
+                                                )
+                                        )
+                                )
                         )
         );
-    }
-
-    private static void attachFlagLiterals(com.mojang.brigadier.builder.ArgumentBuilder<CommandSourceStack, ?> parent) {
-        // Build up to 4 levels of flag nesting
-        attachFlagLevel(parent, new HashSet<>(), 0);
-    }
-
-    private static void attachFlagLevel(com.mojang.brigadier.builder.ArgumentBuilder<CommandSourceStack, ?> parent, Set<ModelFlag> usedFlags, int depth) {
-        if (depth >= 4) return;
-
-        for (ModelFlag flag : ModelFlag.values()) {
-            if (usedFlags.contains(flag)) continue;
-
-            Set<ModelFlag> nextUsed = EnumSet.copyOf(usedFlags.isEmpty() ? EnumSet.noneOf(ModelFlag.class) : usedFlags);
-            nextUsed.add(flag);
-
-            LiteralArgumentBuilder<CommandSourceStack> flagLiteral = Commands.literal(flag.getTagName())
-                    .executes(ctx -> executeWithFlags(ctx, nextUsed));
-
-            attachFlagLevel(flagLiteral, nextUsed, depth + 1);
-            parent.then(flagLiteral);
-        }
-
-        // Attach NBT variant arguments after flags
-        attachNbtVariants(parent, usedFlags);
-    }
-
-    private static void attachNbtVariants(com.mojang.brigadier.builder.ArgumentBuilder<CommandSourceStack, ?> parent, Set<ModelFlag> flags) {
-        Set<String> addedLiterals = new HashSet<>();
-
-        for (DecorativeRegistry.DecorativeEntry entry : DecorativeRegistry.ALL_ENTRIES) {
-            for (DecorativeDefinition.NbtVariant variant : entry.definition().nbtVariants()) {
-                // Skip stackable variants — they are controlled by right-click, not commands
-                if (variant.stackable()) continue;
-
-                for (String value : variant.prefixMap().keySet()) {
-                    String literal = variant.nbtKey() + "=" + value;
-                    if (addedLiterals.contains(literal)) continue;
-                    addedLiterals.add(literal);
-
-                    Set<ModelFlag> flagsCopy = flags.isEmpty() ? EnumSet.noneOf(ModelFlag.class) : EnumSet.copyOf(flags);
-                    parent.then(Commands.literal(literal)
-                            .executes(ctx -> executeWithFlagsAndNbt(ctx, flagsCopy, Map.of(variant.nbtKey(), value))));
-                }
-            }
-        }
     }
 
     private static int execute(CommandContext<CommandSourceStack> context) {
         return giveDecorative(context, Collections.emptySet(), Collections.emptyMap());
     }
 
-    private static int executeWithFlags(CommandContext<CommandSourceStack> context, Set<ModelFlag> flags) {
-        return giveDecorative(context, flags, Collections.emptyMap());
-    }
+    private static int executeWithArgs(CommandContext<CommandSourceStack> context, String... argNames) {
+        Set<ModelFlag> flags = EnumSet.noneOf(ModelFlag.class);
+        Map<String, String> customNbt = new HashMap<>();
 
-    private static int executeWithFlagsAndNbt(CommandContext<CommandSourceStack> context, Set<ModelFlag> flags, Map<String, String> nbt) {
-        return giveDecorative(context, flags, nbt);
+        for (String argName : argNames) {
+            try {
+                String value = StringArgumentType.getString(context, argName);
+
+                // Check if it's a key=value NBT pair
+                if (value.contains("=")) {
+                    String[] parts = value.split("=", 2);
+                    customNbt.put(parts[0], parts[1]);
+                    continue;
+                }
+
+                // Otherwise treat as a flag
+                String lower = value.toLowerCase();
+                boolean found = false;
+                for (ModelFlag flag : ModelFlag.values()) {
+                    if (flag.getTagName().equals(lower)) {
+                        flags.add(flag);
+                        found = true;
+                        break;
+                    }
+                }
+
+                if (!found) {
+                    context.getSource().sendFailure(Component.literal("Unknown flag or variant: '" + value + "'"));
+                    return 0;
+                }
+            } catch (Exception ignored) {}
+        }
+
+        return giveDecorative(context, flags, customNbt);
     }
 
     private static int giveDecorative(CommandContext<CommandSourceStack> context, Set<ModelFlag> activeFlags, Map<String, String> customNbt) {
@@ -140,16 +176,16 @@ public class DecorativeGiveCMD {
                 player.drop(stack, false);
             }
 
-            List<String> flagNames = new ArrayList<>();
-            for (ModelFlag f : activeFlags) flagNames.add(f.getTagName());
+            List<String> details = new ArrayList<>();
+            for (ModelFlag f : activeFlags) details.add(f.getTagName());
             for (Map.Entry<String, String> nbtEntry : customNbt.entrySet()) {
-                flagNames.add(nbtEntry.getKey() + "=" + nbtEntry.getValue());
+                details.add(nbtEntry.getKey() + "=" + nbtEntry.getValue());
             }
 
             DecorativeRegistry.DecorativeEntry finalEntry = entry;
             source.sendSuccess(() -> Component.literal("Gave " + finalEntry.definition().displayName()
                     + " to " + player.getName().getString()
-                    + (flagNames.isEmpty() ? "" : " with: " + String.join(", ", flagNames))), true);
+                    + (details.isEmpty() ? "" : " with: " + String.join(", ", details))), true);
             return 1;
         } catch (Exception e) {
             context.getSource().sendFailure(Component.literal("Failed to give decorative: " + e.getMessage()));

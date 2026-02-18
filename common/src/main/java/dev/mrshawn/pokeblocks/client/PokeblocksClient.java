@@ -3,11 +3,13 @@ package dev.mrshawn.pokeblocks.client;
 import dev.mrshawn.pokeblocks.client.renderer.block.DecorativeBlockRenderer;
 import dev.mrshawn.pokeblocks.client.renderer.block.FigurineBlockRenderer;
 import dev.mrshawn.pokeblocks.client.renderer.block.PokedollBlockRenderer;
-import dev.mrshawn.pokeblocks.registry.BlockEntityRegistry;
-import dev.mrshawn.pokeblocks.registry.DecorativeRegistry;
-import dev.mrshawn.pokeblocks.registry.FigurineRegistry;
-import dev.mrshawn.pokeblocks.registry.PokemonRegistry;
+import dev.mrshawn.pokeblocks.registry.*;
 import net.minecraft.client.renderer.blockentity.BlockEntityRendererProvider;
+import net.minecraft.client.renderer.entity.EntityRenderer;
+import net.minecraft.client.renderer.entity.EntityRendererProvider;
+import net.minecraft.resources.ResourceLocation;
+import net.minecraft.world.entity.Entity;
+import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.entity.BlockEntityType;
 
@@ -25,6 +27,15 @@ public final class PokeblocksClient {
 			blockEntityRenderers.accept(entry.blockEntityType().get(),
 					context -> new DecorativeBlockRenderer(entry.definition()));
 		}
+	}
+
+	public static void registerEntityRenderers(BiConsumer<EntityType<?>, EntityRendererProvider> entityRenderers) {
+		entityRenderers.accept(EntityRegistry.SEAT_ENTITY.get(), ctx -> new EntityRenderer<>(ctx) {
+			@Override
+			public ResourceLocation getTextureLocation(Entity entity) {
+				return null;
+			}
+		});
 	}
 
 	public static void registerPokemon() {

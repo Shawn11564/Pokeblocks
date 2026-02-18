@@ -2,8 +2,11 @@ package dev.mrshawn.pokeblocks.block.custom.decorative;
 
 import com.mojang.serialization.MapCodec;
 import dev.mrshawn.pokeblocks.block.entity.custom.decorative.DecorativeBlockEntity;
+import dev.mrshawn.pokeblocks.entity.custom.SeatEntity;
+import dev.mrshawn.pokeblocks.registry.EntityRegistry;
 import net.minecraft.core.BlockPos;
 import net.minecraft.world.InteractionHand;
+import net.minecraft.world.InteractionResult;
 import net.minecraft.world.ItemInteractionResult;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.BlockItem;
@@ -22,10 +25,12 @@ import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.block.state.StateDefinition;
 import net.minecraft.world.level.block.state.properties.BlockStateProperties;
 import net.minecraft.world.level.block.state.properties.DirectionProperty;
+import net.minecraft.world.phys.AABB;
 import net.minecraft.world.phys.BlockHitResult;
 import net.minecraft.world.phys.shapes.CollisionContext;
 import net.minecraft.world.phys.shapes.VoxelShape;
 
+import java.util.List;
 import java.util.function.Supplier;
 
 public class DecorativeBlock extends BaseEntityBlock implements EntityBlock {
@@ -80,10 +85,10 @@ public class DecorativeBlock extends BaseEntityBlock implements EntityBlock {
 		if (level.getBlockEntity(pos) instanceof DecorativeBlockEntity be) {
 			DecorativeDefinition def = be.getDefinition();
 
+			// Handle stackable NBT variants
 			for (DecorativeDefinition.NbtVariant variant : def.nbtVariants()) {
 				if (!variant.stackable()) continue;
 
-				// Check if held item is the same decorative block
 				if (!(stack.getItem() instanceof BlockItem blockItem)) continue;
 				if (blockItem.getBlock() != state.getBlock()) continue;
 
@@ -122,5 +127,63 @@ public class DecorativeBlock extends BaseEntityBlock implements EntityBlock {
 		}
 
 		return ItemInteractionResult.PASS_TO_DEFAULT_BLOCK_INTERACTION;
+	}
+
+	@Override
+	protected InteractionResult useWithoutItem(BlockState state, Level level, BlockPos pos, Player player, BlockHitResult hit) {
+		if (level.isClientSide()) return InteractionResult.SUCCESS;
+
+		if (level.getBlockEntity(pos) instanceof DecorativeBlockEntity be) {
+			DecorativeDefinition def = be.getDefinition();
+
+			if (def.sittable()) {
+				// Check if someone is already sitting
+				List<SeatEntity> existing = level.getEntitiesOfClass(
+						SeatEntity.class,
+						new AABB(pos).inflate(0.5)
+				);
+
+				if (!existing.isEmpty()) {
+					return InteractionResult.PASS;
+				}
+
+				// Check player isn't already riding something
+				if (player.isPassenger()) {
+					return InteractionResult.PASS;
+				}
+
+				SeatEntity seat = EntityRegistry.SEAT_ENTITY.get().create(level);
+				if (seat == null) return InteractionResult.FAIL;
+
+				seat.setPos(
+						pos.getX() + 0.5,
+						pos.getY() + def.seatHeight(),
+						pos.getZ() + 0.5
+				);
+
+				level.addFreshEntity(seat);
+				player.startRiding(seat);
+
+				return InteractionResult.SUCCESS;
+			}
+		}
+
+		return InteractionResult.PASS;
+	}
+
+	@Override
+	public void onRemove(BlockState state, Level level, BlockPos pos, BlockState newState, boolean movedByPiston) {
+		if (!state.is(newState.getBlock())) {
+			// Remove any seat entities when block is broken
+			List<SeatEntity> seats = level.getEntitiesOfClass(
+					SeatEntity.class,
+					new AABB(pos).inflate(0.5)
+			);
+			for (SeatEntity seat : seats) {
+				seat.ejectPassengers();
+				seat.discard();
+			}
+		}
+		super.onRemove(state, level, pos, newState, movedByPiston);
 	}
 }

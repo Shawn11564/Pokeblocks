@@ -20,9 +20,10 @@ public final class PokeblocksCommon {
     public static void doRegistrations() {
 		PokemonRegistry.init();
 		FigurineRegistry.init();
-        BlockRegistry.init();
+		BlockRegistry.init();
 		DecorativeRegistry.init();
-        BlockEntityRegistry.init();
+		EntityRegistry.init();
+		BlockEntityRegistry.init();
         ItemRegistry.init();
 	}
 }

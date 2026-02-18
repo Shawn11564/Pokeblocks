@@ -13,20 +13,19 @@ public record DecorativeDefinition(
 		String modelPrefix,
 		Set<ModelFlag> supportedFlags,
 		boolean hasAnimation,
-		List<NbtVariant> nbtVariants
+		List<NbtVariant> nbtVariants,
+		boolean sittable,
+		double seatHeight
 ) {
 
 	public DecorativeDefinition(String id, String displayName, String modelPrefix, Set<ModelFlag> supportedFlags, boolean hasAnimation) {
-		this(id, displayName, modelPrefix, supportedFlags, hasAnimation, List.of());
+		this(id, displayName, modelPrefix, supportedFlags, hasAnimation, List.of(), false, 0.0);
 	}
 
-	/**
-	 * @param nbtKey       The NBT key name
-	 * @param type         The value type (e.g. "string")
-	 * @param prefixMap    Maps values to model prefixes
-	 * @param defaultValue The default value
-	 * @param stackable    If true, right-clicking with the same block increments the value
-	 */
+	public DecorativeDefinition(String id, String displayName, String modelPrefix, Set<ModelFlag> supportedFlags, boolean hasAnimation, List<NbtVariant> nbtVariants) {
+		this(id, displayName, modelPrefix, supportedFlags, hasAnimation, nbtVariants, false, 0.0);
+	}
+
 	public record NbtVariant(String nbtKey, String type, Map<String, String> prefixMap, String defaultValue, boolean stackable) {
 		public NbtVariant(String nbtKey, String type, Map<String, String> prefixMap, String defaultValue) {
 			this(nbtKey, type, prefixMap, defaultValue, false);
