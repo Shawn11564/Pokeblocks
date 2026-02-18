@@ -1,5 +1,6 @@
 package dev.mrshawn.pokeblocks.registry;
 
+import dev.mrshawn.pokeblocks.client.renderer.animation.AnimationProfile;
 import dev.mrshawn.pokeblocks.pokemon.ModelFlag;
 import dev.mrshawn.pokeblocks.pokemon.PokemonData;
 
@@ -23,24 +24,25 @@ public class PokemonRegistry {
 	static final Pattern TEXTURE_PATTERN = Pattern.compile(
 			"^pokedoll_(.+)\\.png$", Pattern.CASE_INSENSITIVE
 	);
+	static final Pattern ANIMATION_PATTERN = Pattern.compile(
+			"^pokedoll_(.+)\\.animation\\.json$", Pattern.CASE_INSENSITIVE
+	);
 
 	static {
 		scanBuiltInAssets();
 	}
 
-	/**
-	 * Scans the mod jar's assets for built-in pokedoll models and textures.
-	 * Works on both client and server since it uses classpath scanning.
-	 */
 	private static void scanBuiltInAssets() {
 		Set<String> modelFiles = new TreeSet<>();
 		Set<String> textureFiles = new TreeSet<>();
+		Set<String> animationFiles = new TreeSet<>();
 
 		scanClasspathDirectory("assets/pokeblocks/geo/block", modelFiles, ".geo.json");
 		scanClasspathDirectory("assets/pokeblocks/textures/block", textureFiles, ".png");
+		scanClasspathDirectory("assets/pokeblocks/animations/block", animationFiles, ".animation.json");
 
 		if (!modelFiles.isEmpty() || !textureFiles.isEmpty()) {
-			registerFromFileNames(modelFiles, textureFiles, "built-in");
+			registerFromFileNames(modelFiles, textureFiles, animationFiles, "built-in");
 		}
 	}
 
@@ -53,7 +55,6 @@ public class PokemonRegistry {
 			Path dirPath;
 
 			if (uri.getScheme().equals("jar")) {
-				// Running from a jar file
 				FileSystem fs;
 				try {
 					fs = FileSystems.getFileSystem(uri);
@@ -62,7 +63,6 @@ public class PokemonRegistry {
 				}
 				dirPath = fs.getPath(resourceDir);
 			} else {
-				// Running from IDE / filesystem
 				dirPath = Paths.get(uri);
 			}
 
@@ -90,12 +90,7 @@ public class PokemonRegistry {
 		ALL_POKEMON.put(id.toLowerCase(), data == null ? new PokemonData() : data);
 	}
 
-	/**
-	 * Registers pokemon from model and texture filenames.
-	 * Parses suffixes to detect available flags per pokemon.
-	 * Merges with existing registry entries.
-	 */
-	public static void registerFromFileNames(Set<String> modelFiles, Set<String> textureFiles, String source) {
+	public static void registerFromFileNames(Set<String> modelFiles, Set<String> textureFiles, Set<String> animationFiles, String source) {
 		Map<String, Set<ModelFlag>> pokemonFlags = new LinkedHashMap<>();
 
 		// Parse models for base pokemon names and model-level flags
@@ -130,38 +125,45 @@ public class PokemonRegistry {
 			if (pokemonFlags.containsKey(name)) {
 				pokemonFlags.get(name).addAll(result.flags());
 			} else {
-				System.err.println("[Pokeblocks] Texture '" + filename + "' has no matching model for pokemon: " + result.name());
+				System.out.println("[Pokeblocks] Texture '" + filename + "' has no matching model for pokemon: " + result.name());
 			}
 		}
 
-		// Warn about models without textures
-		for (String name : pokemonFlags.keySet()) {
-			boolean hasBaseTexture = textureFiles.stream().anyMatch(f -> {
-				Matcher m = TEXTURE_PATTERN.matcher(f);
-				if (!m.matches()) return false;
-				ParseResult r = parseSuffixes(m.group(1));
-				return r.name().equalsIgnoreCase(name) && r.flags().isEmpty();
-			});
-			if (!hasBaseTexture) {
-				boolean hasTextureVariant = textureFiles.stream().anyMatch(f -> {
-					Matcher m = TEXTURE_PATTERN.matcher(f);
-					if (!m.matches()) return false;
-					return m.group(1).equalsIgnoreCase(name + "_texture");
-				});
-				if (!hasTextureVariant) {
-					System.err.println("[Pokeblocks] Model for pokemon '" + name + "' has no matching base texture");
+		// Parse animation files to build AnimationProfiles
+		// Animation naming: pokedoll_<name>.animation.json = base animation
+		//                   pokedoll_<name>_<flag>.animation.json = variant animation
+		Map<String, Boolean> baseAnimations = new HashMap<>();
+		Map<String, Map<ModelFlag, Boolean>> variantAnimations = new HashMap<>();
+
+		for (String filename : animationFiles) {
+			Matcher m = ANIMATION_PATTERN.matcher(filename);
+			if (!m.matches()) continue;
+
+			String body = m.group(1);
+			ParseResult result = parseSuffixes(body);
+			if (result.name().isEmpty()) continue;
+
+			String name = result.name().toLowerCase();
+
+			if (result.flags().isEmpty()) {
+				// Base animation (e.g. pokedoll_froslass.animation.json)
+				baseAnimations.put(name, true);
+			} else {
+				// Variant animation (e.g. pokedoll_calyrex_animated.animation.json)
+				variantAnimations.computeIfAbsent(name, k -> new EnumMap<>(ModelFlag.class));
+				for (ModelFlag flag : result.flags()) {
+					variantAnimations.get(name).put(flag, true);
 				}
 			}
 		}
 
-		// Register or merge with existing entries
-		// Register or merge with existing entries
+		// Register pokemon
 		int newCount = 0;
 		for (var entry : pokemonFlags.entrySet()) {
 			String name = entry.getKey();
 			Set<ModelFlag> detectedFlags = entry.getValue();
 
-			// Check that this pokemon has at least a base texture
+			// Validate base texture exists
 			boolean hasBaseTexture = textureFiles.stream().anyMatch(f -> {
 				Matcher m = TEXTURE_PATTERN.matcher(f);
 				if (!m.matches()) return false;
@@ -179,7 +181,7 @@ public class PokemonRegistry {
 				continue;
 			}
 
-			// Also verify the base model (no flags) exists
+			// Validate base model exists
 			boolean hasBaseModel = modelFiles.stream().anyMatch(f -> {
 				Matcher m = MODEL_PATTERN.matcher(f);
 				if (!m.matches()) return false;
@@ -192,15 +194,21 @@ public class PokemonRegistry {
 				continue;
 			}
 
-			// GIGANTIC is always available (scale change only, no file needed)
+			// GIGANTIC is always available
 			detectedFlags.add(ModelFlag.GIGANTIC);
 
+			// Build flag map
 			Map<ModelFlag, Boolean> flagMap = new EnumMap<>(ModelFlag.class);
 			for (ModelFlag flag : ModelFlag.values()) {
 				flagMap.put(flag, detectedFlags.contains(flag));
 			}
 
-			// Merge: OR flags with any existing registration
+			// Build animation profile
+			boolean hasBase = Boolean.TRUE.equals(baseAnimations.get(name));
+			Map<ModelFlag, Boolean> variants = variantAnimations.getOrDefault(name, new EnumMap<>(ModelFlag.class));
+			AnimationProfile animProfile = new AnimationProfile(hasBase, variants);
+
+			// Merge with existing
 			PokemonData existing = ALL_POKEMON.get(name);
 			if (existing != null) {
 				Map<ModelFlag, Boolean> merged = new EnumMap<>(ModelFlag.class);
@@ -210,25 +218,33 @@ public class PokemonRegistry {
 					merged.put(flag, existingVal || newVal);
 				}
 				flagMap = merged;
+
+				// Merge animation profiles
+				boolean mergedBase = existing.animationProfile().hasBaseAnimation() || hasBase;
+				Map<ModelFlag, Boolean> mergedVariants = new EnumMap<>(ModelFlag.class);
+				for (ModelFlag flag : ModelFlag.values()) {
+					boolean ev = existing.animationProfile().hasVariant(flag);
+					boolean nv = Boolean.TRUE.equals(variants.get(flag));
+					if (ev || nv) mergedVariants.put(flag, true);
+				}
+				animProfile = new AnimationProfile(mergedBase, mergedVariants);
 			} else {
 				newCount++;
 			}
 
-			ALL_POKEMON.put(name, new PokemonData(flagMap));
+			ALL_POKEMON.put(name, new PokemonData(flagMap, animProfile));
 		}
 
 		System.out.println("[Pokeblocks] " + source + " scan: " + pokemonFlags.size() + " pokemon (" + newCount + " new)");
 	}
 
-	/**
-	 * Client-side scan of all loaded resources (mod assets + resource packs).
-	 */
 	public static void scanAndRegisterFromResources() {
 		net.minecraft.server.packs.resources.ResourceManager resourceManager =
 				net.minecraft.client.Minecraft.getInstance().getResourceManager();
 
 		Set<String> modelFileNames = new TreeSet<>();
 		Set<String> textureFileNames = new TreeSet<>();
+		Set<String> animationFileNames = new TreeSet<>();
 
 		resourceManager.listResources("geo/block", loc -> loc.getPath().endsWith(".geo.json"))
 				.keySet().stream()
@@ -246,19 +262,25 @@ public class PokemonRegistry {
 					textureFileNames.add(filename);
 				});
 
-		registerFromFileNames(modelFileNames, textureFileNames, "resource");
+		resourceManager.listResources("animations/block", loc -> loc.getPath().endsWith(".animation.json"))
+				.keySet().stream()
+				.filter(loc -> loc.getNamespace().equals("pokeblocks"))
+				.forEach(loc -> {
+					String filename = loc.getPath().substring(loc.getPath().lastIndexOf('/') + 1);
+					animationFileNames.add(filename);
+				});
+
+		registerFromFileNames(modelFileNames, textureFileNames, animationFileNames, "resource");
 	}
 
 	static ParseResult parseSuffixes(String body) {
 		Set<ModelFlag> flags = EnumSet.noneOf(ModelFlag.class);
 		String remaining = body;
 
-		// Strip _texture suffix first (naming convention, not a flag)
 		if (remaining.toLowerCase().endsWith("_texture")) {
 			remaining = remaining.substring(0, remaining.length() - "_texture".length());
 		}
 
-		// Extract known flag suffixes from the end, repeatedly
 		boolean found = true;
 		while (found) {
 			found = false;

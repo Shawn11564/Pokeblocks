@@ -1,0 +1,61 @@
+{
+	"format_version": "1.12.0",
+	"minecraft:geometry": [
+		{
+			"description": {
+				"identifier": "geometry.damorgo_figurine",
+				"texture_width": 128,
+				"texture_height": 128,
+				"visible_bounds_width": 2,
+				"visible_bounds_height": 2.5,
+				"visible_bounds_offset": [0, 0.75, 0]
+			},
+			"bones": [
+				{
+					"name": "damorgo_figurine",
+					"pivot": [0, 0, 0]
+				},
+				{
+					"name": "damorgo",
+					"parent": "damorgo_figurine",
+					"pivot": [3, 5.25, -1],
+					"cubes": [
+						{"origin": [-3.5, 7, -4], "size": [7, 7, 7], "uv": [46, 6]},
+						{"origin": [-0.5, 7.5, -4], "size": [2, 1, 0.01], "inflate": 0.01, "uv": [5, 10]},
+						{"origin": [-3.5, 5.5, -0.75], "size": [7, 2, 4], "inflate": 0.01, "pivot": [0, 7.5, 0.7505], "rotation": [-7.5, 0, 0], "uv": [13, 26]},
+						{"origin": [-1, 6.25, -2.5], "size": [2, 1, 0.01], "inflate": 0.015, "uv": [0, 10]},
+						{"origin": [-0.5, 5.75, -2.5], "size": [1, 1, 0.01], "inflate": 0.01, "uv": [9, 5]},
+						{"origin": [-0.75, 2.5, -2.5], "size": [2, 1, 0.01], "inflate": 0.015, "uv": [7, 0]},
+						{"origin": [-1, 1, -2.5], "size": [1, 2, 0.01], "inflate": 0.01, "uv": [9, 2]},
+						{"origin": [0.75, 2, -2.5], "size": [1, 1, 0.01], "inflate": 0.01, "uv": [7, 13]},
+						{"origin": [-2, 13.5, -4.25], "size": [4, 1, 1], "inflate": 0.001, "uv": [0, 7]},
+						{"origin": [3, 12.25, -4.25], "size": [1, 1, 1], "inflate": 0.001, "pivot": [3.5, 13.04778, -3.88807], "rotation": [0, -45, 0], "uv": [13, 33]},
+						{"origin": [3, 12.37115, -4.44437], "size": [1, 2, 1], "pivot": [3.5, 13.04778, -3.88807], "rotation": [15, -45, 0], "uv": [0, 20]},
+						{"origin": [-4, 12.37115, -4.44437], "size": [1, 2, 1], "pivot": [-3.5, 13.04778, -3.88807], "rotation": [15, 45, 0], "uv": [5, 20]},
+						{"origin": [-4, 12.25, -4.25], "size": [1, 1, 1], "inflate": 0.001, "pivot": [-3.5, 13.04778, -3.88807], "rotation": [0, 45, 0], "uv": [32, 26]},
+						{"origin": [0.5, 0, -1.5], "size": [2, 3, 2], "uv": [0, 32]},
+						{"origin": [-2.5, 3, -2.5], "size": [5, 4, 4], "uv": [0, 54]},
+						{"origin": [-2.5, 0, -1.5], "size": [2, 3, 2], "uv": [0, 26]},
+						{"origin": [2, 3.25, -1.5], "size": [2, 4, 2], "pivot": [3, 5.25, -1], "rotation": [0, 0, -20], "uv": [0, 13]},
+						{"origin": [-4, 3.25, -1.5], "size": [2, 4, 2], "pivot": [-3, 5.25, -1], "rotation": [0, 0, 20], "uv": [0, 0]}
+					]
+				},
+				{
+					"name": "box",
+					"parent": "damorgo_figurine",
+					"pivot": [0, 0, 0],
+					"cubes": [
+						{"origin": [-7, 0, -6], "size": [14, 0.01, 12], "inflate": 0.001, "uv": [0, 0]},
+						{"origin": [-7, 0, 6], "size": [14, 15, 0.01], "uv": [50, 42]},
+						{"origin": [-7.01, 0, -6], "size": [0.01, 15, 12], "uv": [0, 26]},
+						{"origin": [-7, 15, -6], "size": [14, 0.01, 12], "uv": [0, 13]},
+						{"origin": [-7, 0, -6], "size": [14, 15, 0.01], "uv": [50, 26]},
+						{"origin": [-0.5, 4.5, -6], "size": [1, 2, 0.01], "inflate": 0.01, "uv": [43, 1]},
+						{"origin": [-5.5, 4.5, -6], "size": [1, 2, 0.01], "inflate": 0.01, "uv": [43, 1]},
+						{"origin": [6.991, 0, -6], "size": [0.01, 15, 12], "uv": [25, 26]}
+					]
+				}
+			]
+		}
+	]
+}

@@ -1,9 +1,12 @@
 package dev.mrshawn.pokeblocks.client.model.item;
 
 import dev.mrshawn.pokeblocks.PokeblocksCommon;
+import dev.mrshawn.pokeblocks.client.renderer.animation.AnimationResolver;
 import dev.mrshawn.pokeblocks.constants.ModSettings;
 import dev.mrshawn.pokeblocks.item.PokedollItem;
 import dev.mrshawn.pokeblocks.pokemon.ModelFlag;
+import dev.mrshawn.pokeblocks.pokemon.PokemonData;
+import dev.mrshawn.pokeblocks.registry.PokemonRegistry;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.RenderType;
 import net.minecraft.resources.ResourceLocation;
@@ -47,9 +50,7 @@ public class PokedollItemModel extends GeoModel<PokedollItem> {
                 validatedPokemon.add(pokemon);
                 return pokemon;
             }
-        } catch (Exception e) {
-            // Resource doesn't exist
-        }
+        } catch (Exception e) {}
 
         return ModSettings.DEFAULT_POKEMON;
     }
@@ -57,15 +58,22 @@ public class PokedollItemModel extends GeoModel<PokedollItem> {
     private String computeSuffixes() {
         if (this.currentStack == null || this.currentStack.isEmpty()) return "";
         Set<ModelFlag> flags = PokedollItem.getFlagsFromStack(this.currentStack);
-        List<ModelFlag> list = new ArrayList<>(flags);
-        list.remove(ModelFlag.GIGANTIC);
-        list.sort(Comparator.comparingInt(ModelFlag::getSortOrder));
 
-        StringBuilder textureSuffix = new StringBuilder();
+        List<ModelFlag> activeFlags = new ArrayList<>();
+        for (ModelFlag flag : flags) {
+            if (!flag.getModelSuffix().isEmpty() || !flag.getTextureSuffix().isEmpty()) {
+                activeFlags.add(flag);
+            }
+        }
+
+        activeFlags.sort(Comparator.comparingInt(ModelFlag::getSortOrder));
+
         StringBuilder modelSuffix = new StringBuilder();
-        for (ModelFlag f : list) {
-            textureSuffix.append(f.getTextureSuffix());
-            modelSuffix.append(f.getModelSuffix());
+        StringBuilder textureSuffix = new StringBuilder();
+
+        for (ModelFlag flag : activeFlags) {
+            modelSuffix.append(flag.getModelSuffix());
+            textureSuffix.append(flag.getTextureSuffix());
         }
 
         return modelSuffix + "|" + textureSuffix;
@@ -97,9 +105,22 @@ public class PokedollItemModel extends GeoModel<PokedollItem> {
         String suffixes = computeSuffixes();
         String modelSuffix = "";
         if (suffixes.contains("|")) modelSuffix = suffixes.split("\\|", 2)[0];
-        return ResourceLocation.fromNamespaceAndPath(
+
+        ResourceManager rm = Minecraft.getInstance().getResourceManager();
+
+        // Try with full suffix
+        ResourceLocation full = ResourceLocation.fromNamespaceAndPath(
                 PokeblocksCommon.MOD_ID,
                 "geo/block/pokedoll_" + pokemon + modelSuffix + ".geo.json"
+        );
+        try {
+            if (rm.getResource(full).isPresent()) return full;
+        } catch (Exception e) {}
+
+        // Fall back to base model
+        return ResourceLocation.fromNamespaceAndPath(
+                PokeblocksCommon.MOD_ID,
+                "geo/block/pokedoll_" + pokemon + ".geo.json"
         );
     }
 
@@ -110,44 +131,110 @@ public class PokedollItemModel extends GeoModel<PokedollItem> {
         String textureSuffix = "";
         if (suffixes.contains("|")) textureSuffix = suffixes.split("\\|", 2)[1];
 
-        ResourceManager resourceManager = Minecraft.getInstance().getResourceManager();
+        ResourceManager rm = Minecraft.getInstance().getResourceManager();
 
-        // Try with _texture suffix
-        ResourceLocation withTexture = ResourceLocation.fromNamespaceAndPath(
+        // Try: pokedoll_<name><suffix>_texture.png
+        ResourceLocation suffixThenTexture = ResourceLocation.fromNamespaceAndPath(
                 PokeblocksCommon.MOD_ID,
                 "textures/block/pokedoll_" + pokemon + textureSuffix + "_texture.png"
         );
         try {
-            if (resourceManager.getResource(withTexture).isPresent()) {
-                return withTexture;
-            }
-        } catch (Exception e) {
-            // Fall through
-        }
+            if (rm.getResource(suffixThenTexture).isPresent()) return suffixThenTexture;
+        } catch (Exception e) {}
 
-        // Try without _texture suffix
-        ResourceLocation withoutTexture = ResourceLocation.fromNamespaceAndPath(
+        // Try: pokedoll_<name>_texture<suffix>.png
+        ResourceLocation textureThenSuffix = ResourceLocation.fromNamespaceAndPath(
+                PokeblocksCommon.MOD_ID,
+                "textures/block/pokedoll_" + pokemon + "_texture" + textureSuffix + ".png"
+        );
+        try {
+            if (rm.getResource(textureThenSuffix).isPresent()) return textureThenSuffix;
+        } catch (Exception e) {}
+
+        // Try: pokedoll_<name><suffix>.png
+        ResourceLocation withSuffix = ResourceLocation.fromNamespaceAndPath(
                 PokeblocksCommon.MOD_ID,
                 "textures/block/pokedoll_" + pokemon + textureSuffix + ".png"
         );
         try {
-            if (resourceManager.getResource(withoutTexture).isPresent()) {
-                return withoutTexture;
-            }
-        } catch (Exception e) {
-            // Fall through
-        }
+            if (rm.getResource(withSuffix).isPresent()) return withSuffix;
+        } catch (Exception e) {}
 
-        // Fall back to default pokemon texture
+        // Try: pokedoll_<name>_texture.png
+        ResourceLocation baseTexture = ResourceLocation.fromNamespaceAndPath(
+                PokeblocksCommon.MOD_ID,
+                "textures/block/pokedoll_" + pokemon + "_texture.png"
+        );
+        try {
+            if (rm.getResource(baseTexture).isPresent()) return baseTexture;
+        } catch (Exception e) {}
+
+        // Try: pokedoll_<name>.png
+        ResourceLocation plain = ResourceLocation.fromNamespaceAndPath(
+                PokeblocksCommon.MOD_ID,
+                "textures/block/pokedoll_" + pokemon + ".png"
+        );
+        try {
+            if (rm.getResource(plain).isPresent()) return plain;
+        } catch (Exception e) {}
+
+        // Fall back to default
         return ResourceLocation.fromNamespaceAndPath(
                 PokeblocksCommon.MOD_ID,
-                "textures/block/pokedoll_" + ModSettings.DEFAULT_POKEMON + ".png"
+                "textures/block/pokedoll_" + ModSettings.DEFAULT_POKEMON + "_texture.png"
         );
     }
 
     @Override
     public ResourceLocation getAnimationResource(PokedollItem animatable) {
-        return null;
+        String pokemon = getPokemonFromCurrent();
+        ResourceManager rm = Minecraft.getInstance().getResourceManager();
+
+        PokemonData data = PokemonRegistry.getPokemonData(pokemon);
+        if (data == null) {
+            return ResourceLocation.fromNamespaceAndPath(
+                    PokeblocksCommon.MOD_ID,
+                    "animations/block/empty.animation.json"
+            );
+        }
+
+        // Build flags map from item stack
+        Set<ModelFlag> stackFlags = PokedollItem.getFlagsFromStack(currentStack);
+        Map<ModelFlag, Boolean> flagMap = new EnumMap<>(ModelFlag.class);
+        for (ModelFlag flag : ModelFlag.values()) {
+            flagMap.put(flag, stackFlags.contains(flag));
+        }
+
+        AnimationResolver.AnimationType type = AnimationResolver.resolve(pokemon, flagMap, data.animationProfile());
+
+        if (type == AnimationResolver.AnimationType.VARIANT) {
+            String suffixes = computeSuffixes();
+            String modelSuffix = "";
+            if (suffixes.contains("|")) modelSuffix = suffixes.split("\\|", 2)[0];
+
+            ResourceLocation variantAnim = ResourceLocation.fromNamespaceAndPath(
+                    PokeblocksCommon.MOD_ID,
+                    "animations/block/pokedoll_" + pokemon + modelSuffix + ".animation.json"
+            );
+            try {
+                if (rm.getResource(variantAnim).isPresent()) return variantAnim;
+            } catch (Exception ignored) {}
+        }
+
+        if (type == AnimationResolver.AnimationType.BASE || type == AnimationResolver.AnimationType.VARIANT) {
+            ResourceLocation baseAnim = ResourceLocation.fromNamespaceAndPath(
+                    PokeblocksCommon.MOD_ID,
+                    "animations/block/pokedoll_" + pokemon + ".animation.json"
+            );
+            try {
+                if (rm.getResource(baseAnim).isPresent()) return baseAnim;
+            } catch (Exception ignored) {}
+        }
+
+        return ResourceLocation.fromNamespaceAndPath(
+                PokeblocksCommon.MOD_ID,
+                "animations/block/empty.animation.json"
+        );
     }
 
     @Override

@@ -1,14 +1,18 @@
 package dev.mrshawn.pokeblocks.pokemon;
 
 public enum ModelFlag {
-	GIGANTIC(-1),
-	SHINY(0),
-	ANIMATED(1),
-	POSED(2);
+	GIGANTIC("gigantic", -1),
+	SHINY("shiny", 0),
+	FAMILY("family", 1),
+	ANIMATED("animated", 2),
+	POSED("posed", 3),
+	NETHERITE("netherite", 4);
 
+	private final String tagName;
 	private final int sortOrder;
 
-	ModelFlag(int sortOrder) {
+	ModelFlag(String tagName, int sortOrder) {
+		this.tagName = tagName;
 		this.sortOrder = sortOrder;
 	}
 
@@ -20,7 +24,7 @@ public enum ModelFlag {
 	 * The NBT tag key used to store this flag on CompoundTag objects.
 	 */
 	public String getTagName() {
-		return this.name().toLowerCase();
+		return tagName;
 	}
 
 	/**
@@ -30,8 +34,10 @@ public enum ModelFlag {
 	public String getTextureSuffix() {
 		return switch (this) {
 			case SHINY -> "_shiny";
+			case FAMILY -> "_family";
 			case ANIMATED -> "_animated";
 			case POSED -> "_posed";
+			case NETHERITE -> "_netherite";
 			default -> "";
 		};
 	}
@@ -42,6 +48,7 @@ public enum ModelFlag {
 	 */
 	public String getModelSuffix() {
 		return switch (this) {
+			case FAMILY -> "_family";
 			case ANIMATED -> "_animated";
 			case POSED -> "_posed";
 			default -> "";

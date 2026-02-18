@@ -1,7 +1,11 @@
 package dev.mrshawn.pokeblocks.block.entity;
 
+import dev.mrshawn.pokeblocks.client.renderer.animation.AnimationResolver;
 import dev.mrshawn.pokeblocks.constants.ModSettings;
+import dev.mrshawn.pokeblocks.pokemon.ModelFlag;
+import dev.mrshawn.pokeblocks.pokemon.PokemonData;
 import dev.mrshawn.pokeblocks.registry.BlockEntityRegistry;
+import dev.mrshawn.pokeblocks.registry.PokemonRegistry;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.HolderLookup;
 import net.minecraft.nbt.CompoundTag;
@@ -10,152 +14,118 @@ import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.state.BlockState;
 import software.bernie.geckolib.animatable.GeoBlockEntity;
 import software.bernie.geckolib.animatable.instance.AnimatableInstanceCache;
-import software.bernie.geckolib.animation.AnimatableManager;
-import software.bernie.geckolib.animation.AnimationController;
-import software.bernie.geckolib.animation.PlayState;
-import software.bernie.geckolib.constant.DefaultAnimations;
+import software.bernie.geckolib.animation.*;
 import software.bernie.geckolib.util.GeckoLibUtil;
 
+import java.util.EnumMap;
+import java.util.Map;
+
 public class PokedollBlockEntity extends BlockEntity implements GeoBlockEntity {
-    private final AnimatableInstanceCache cache = GeckoLibUtil.createInstanceCache(this);
-    private String pokemon = ModSettings.DEFAULT_POKEMON; // default
-    private boolean animated = false; // default
-    private boolean gigantic = false; // default: not gigantic
-    private boolean shiny = false;
-    private boolean posed = false;
+	private final AnimatableInstanceCache cache = GeckoLibUtil.createInstanceCache(this);
+	private String pokemon = ModSettings.DEFAULT_POKEMON;
+	private final Map<ModelFlag, Boolean> flags = new EnumMap<>(ModelFlag.class);
 
-    public PokedollBlockEntity(BlockPos pos, BlockState state) {
-        super(BlockEntityRegistry.POKEDOLL_BLOCK_ENTITY.get(), pos, state);
-    }
+	public PokedollBlockEntity(BlockPos pos, BlockState state) {
+		super(BlockEntityRegistry.POKEDOLL_BLOCK_ENTITY.get(), pos, state);
+		for (ModelFlag flag : ModelFlag.values()) {
+			flags.put(flag, false);
+		}
+	}
 
-    @Override
-    public void registerControllers(AnimatableManager.ControllerRegistrar controllers) {
-        controllers.add(new AnimationController<>(this, state -> {
-            if (this.animated) {
-                return state.setAndContinue(DefaultAnimations.IDLE);
-            }
-            return PlayState.STOP;
-        }));
-    }
+	@Override
+	public void registerControllers(AnimatableManager.ControllerRegistrar controllers) {
+		controllers.add(new AnimationController<>(this, "pokedoll_controller", 0, state -> {
+			PokemonData data = PokemonRegistry.getPokemonData(pokemon);
+			if (data == null) return PlayState.STOP;
 
-    @Override
-    public AnimatableInstanceCache getAnimatableInstanceCache() {
-        return this.cache;
-    }
+			AnimationResolver.AnimationType type = AnimationResolver.resolve(pokemon, this, data.animationProfile());
 
-    public void setPokemon(String pokemon) {
-        this.pokemon = pokemon == null || pokemon.isEmpty() ? ModSettings.DEFAULT_POKEMON : pokemon;
-        // mark dirty and sync to client so renderer can pick up changes
-        setChanged();
-        if (this.level != null && !this.level.isClientSide()) {
-            this.level.sendBlockUpdated(this.worldPosition, this.getBlockState(), this.getBlockState(), 3);
-        }
-    }
+			switch (type) {
+				case VARIANT, BASE -> {
+					state.getController().setAnimation(
+							RawAnimation.begin().then("animation.idle", Animation.LoopType.LOOP)
+					);
+					return PlayState.CONTINUE;
+				}
+				default -> {
+					return PlayState.STOP;
+				}
+			}
+		}));
+	}
 
-    public String getPokemon() {
-        return this.pokemon;
-    }
+	@Override
+	public AnimatableInstanceCache getAnimatableInstanceCache() {
+		return this.cache;
+	}
 
-    public void setAnimated(boolean animated) {
-        this.animated = animated;
-        // mark dirty and sync to client so renderer can pick up changes
-        setChanged();
-        if (this.level != null && !this.level.isClientSide()) {
-            this.level.sendBlockUpdated(this.worldPosition, this.getBlockState(), this.getBlockState(), 3);
-        }
-    }
+	public void setPokemon(String pokemon) {
+		this.pokemon = pokemon == null || pokemon.isEmpty() ? ModSettings.DEFAULT_POKEMON : pokemon;
+		syncToClient();
+	}
 
-    public boolean isAnimated() {
-        return this.animated;
-    }
+	public String getPokemon() {
+		return this.pokemon;
+	}
 
-    // New getter/setter for the gigantic flag
-    public void setGigantic(boolean gigantic) {
-        this.gigantic = gigantic;
-        // mark dirty and sync to client so renderer can pick up changes
-        setChanged();
-        if (this.level != null && !this.level.isClientSide()) {
-            this.level.sendBlockUpdated(this.worldPosition, this.getBlockState(), this.getBlockState(), 3);
-        }
-    }
+	public void setFlag(ModelFlag flag, boolean value) {
+		flags.put(flag, value);
+		syncToClient();
+	}
 
-    public boolean isGigantic() {
-        return this.gigantic;
-    }
+	public boolean getFlag(ModelFlag flag) {
+		return Boolean.TRUE.equals(flags.get(flag));
+	}
 
-    // Getter/setter for shiny
-    public void setShiny(boolean shiny) {
-        this.shiny = shiny;
-        setChanged();
-        if (this.level != null && !this.level.isClientSide()) {
-            this.level.sendBlockUpdated(this.worldPosition, this.getBlockState(), this.getBlockState(), 3);
-        }
-    }
+	public boolean isAnimated() { return getFlag(ModelFlag.ANIMATED); }
+	public boolean isGigantic() { return getFlag(ModelFlag.GIGANTIC); }
+	public boolean isShiny() { return getFlag(ModelFlag.SHINY); }
+	public boolean isPosed() { return getFlag(ModelFlag.POSED); }
 
-    public boolean isShiny() {
-        return this.shiny;
-    }
+	private void syncToClient() {
+		setChanged();
+		if (this.level != null && !this.level.isClientSide()) {
+			this.level.sendBlockUpdated(this.worldPosition, this.getBlockState(), this.getBlockState(), 3);
+		}
+	}
 
-    // Getter/setter for posed
-    public void setPosed(boolean posed) {
-        this.posed = posed;
-        setChanged();
-        if (this.level != null && !this.level.isClientSide()) {
-            this.level.sendBlockUpdated(this.worldPosition, this.getBlockState(), this.getBlockState(), 3);
-        }
-    }
+	@Override
+	protected void saveAdditional(CompoundTag tag, HolderLookup.Provider registries) {
+		super.saveAdditional(tag, registries);
+		tag.putString("pokemon", this.pokemon);
+		for (ModelFlag flag : ModelFlag.values()) {
+			tag.putBoolean(flag.getTagName(), getFlag(flag));
+		}
+	}
 
-    public boolean isPosed() {
-        return this.posed;
-    }
+	@Override
+	protected void loadAdditional(CompoundTag tag, HolderLookup.Provider registries) {
+		super.loadAdditional(tag, registries);
+		if (tag.contains("pokemon")) {
+			this.pokemon = tag.getString("pokemon");
+			if (this.pokemon.isEmpty()) {
+				this.pokemon = ModSettings.DEFAULT_POKEMON;
+			}
+		}
+		for (ModelFlag flag : ModelFlag.values()) {
+			if (tag.contains(flag.getTagName())) {
+				flags.put(flag, tag.getBoolean(flag.getTagName()));
+			}
+		}
+	}
 
-    @Override
-    protected void saveAdditional(CompoundTag tag, HolderLookup.Provider registries) {
-        super.saveAdditional(tag, registries);
-        tag.putString("pokemon", this.pokemon);
-        tag.putBoolean("animated", this.animated);
-        tag.putBoolean("gigantic", this.gigantic);
-        tag.putBoolean("shiny", this.shiny);
-        tag.putBoolean("posed", this.posed);
-    }
+	@Override
+	public CompoundTag getUpdateTag(HolderLookup.Provider registries) {
+		CompoundTag tag = super.getUpdateTag(registries);
+		tag.putString("pokemon", this.pokemon);
+		for (ModelFlag flag : ModelFlag.values()) {
+			tag.putBoolean(flag.getTagName(), getFlag(flag));
+		}
+		return tag;
+	}
 
-    @Override
-    protected void loadAdditional(CompoundTag tag, HolderLookup.Provider registries) {
-        super.loadAdditional(tag, registries);
-        if (tag.contains("pokemon")) {
-            this.pokemon = tag.getString("pokemon");
-            if (this.pokemon.isEmpty()) {
-                this.pokemon = ModSettings.DEFAULT_POKEMON;
-            }
-        }
-        if (tag.contains("animated")) {
-            this.animated = tag.getBoolean("animated");
-        }
-        if (tag.contains("gigantic")) {
-            this.gigantic = tag.getBoolean("gigantic");
-        }
-        if (tag.contains("shiny")) {
-            this.shiny = tag.getBoolean("shiny");
-        }
-        if (tag.contains("posed")) {
-            this.posed = tag.getBoolean("posed");
-        }
-    }
-
-    @Override
-    public CompoundTag getUpdateTag(HolderLookup.Provider registries) {
-        CompoundTag tag = super.getUpdateTag(registries);
-        tag.putString("pokemon", this.pokemon);
-        tag.putBoolean("animated", this.animated);
-        tag.putBoolean("gigantic", this.gigantic);
-        tag.putBoolean("shiny", this.shiny);
-        tag.putBoolean("posed", this.posed);
-        return tag;
-    }
-
-    @Override
-    public ClientboundBlockEntityDataPacket getUpdatePacket() {
-        return ClientboundBlockEntityDataPacket.create(this);
-    }
+	@Override
+	public ClientboundBlockEntityDataPacket getUpdatePacket() {
+		return ClientboundBlockEntityDataPacket.create(this);
+	}
 }
-

@@ -25,6 +25,7 @@ public class CustomPackManager {
 				// Split files into pokedoll vs figurine
 				Set<String> pokedollModels = new TreeSet<>();
 				Set<String> pokedollTextures = new TreeSet<>();
+				Set<String> pokedollAnimations = new TreeSet<>();
 				Set<String> figurineModels = new TreeSet<>();
 				Set<String> figurineTextures = new TreeSet<>();
 
@@ -36,8 +37,10 @@ public class CustomPackManager {
 					if (f.contains("_figurine")) figurineTextures.add(f);
 					else pokedollTextures.add(f);
 				}
+				// animations are only for pokedolls
+				pokedollAnimations.addAll(result.animationFiles());
 
-				PokemonRegistry.registerFromFileNames(pokedollModels, pokedollTextures, "custom pack");
+				PokemonRegistry.registerFromFileNames(pokedollModels, pokedollTextures, pokedollAnimations, "custom pack");
 				FigurineRegistry.registerFromFileNames(figurineModels, figurineTextures, "custom pack");
 			} else {
 				cachedPack = null;
