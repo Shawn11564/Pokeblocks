@@ -66,7 +66,7 @@ public class PokedollItem extends BlockItem implements GeoItem {
 	@Override
 	public void appendHoverText(ItemStack stack, TooltipContext tooltipContext, List<Component> tooltip, TooltipFlag flag) {
 		DollRarity rarity = ColorFactory.getRarity(stack);
-		if (rarity != DollRarity.NONE && rarity != DollRarity.COMMON) {
+		if (rarity != DollRarity.NONE && rarity != DollRarity.UNCLASSIFIED) {
 			tooltip.add(Component.empty());
 			tooltip.add(Component.literal(rarity.getDisplayName()).withStyle(rarity.getFormatting()));
 		}

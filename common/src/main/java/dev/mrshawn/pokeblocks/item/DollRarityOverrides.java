@@ -2,43 +2,61 @@ package dev.mrshawn.pokeblocks.item;
 
 import dev.mrshawn.pokeblocks.pokemon.ModelFlag;
 
-import java.io.BufferedReader;
 import java.io.InputStream;
-import java.io.InputStreamReader;
+import java.nio.file.Files;
+import java.nio.file.Path;
 import java.util.*;
 
 public class DollRarityOverrides {
 
     private static final Map<String, DollRarity> overrides = new HashMap<>();
+    private static Path configPath = null;
 
-    static {
-        loadOverrides();
-    }
+    /**
+     * Copies the default doll_rarity.json from assets to config if it doesn't exist,
+     * then loads from config. Call during server startup.
+     */
+    public static void initialize(Path serverDir) {
+        configPath = serverDir.resolve("config").resolve("Pokeblocks").resolve("doll_rarity.json");
 
-    private static void loadOverrides() {
-        try (InputStream is = DollRarityOverrides.class.getResourceAsStream("/assets/pokeblocks/doll_rarity.json")) {
-            if (is == null) return;
+        try {
+            Files.createDirectories(configPath.getParent());
 
-            StringBuilder sb = new StringBuilder();
-            try (BufferedReader reader = new BufferedReader(new InputStreamReader(is))) {
-                String line;
-                while ((line = reader.readLine()) != null) {
-                    sb.append(line.trim());
+            if (!Files.exists(configPath)) {
+                try (InputStream is = DollRarityOverrides.class.getResourceAsStream("/assets/pokeblocks/doll_rarity.json")) {
+                    if (is != null) {
+                        Files.copy(is, configPath);
+                        System.out.println("[Pokeblocks] Copied default doll_rarity.json to " + configPath);
+                    }
                 }
             }
+        } catch (Exception e) {
+            System.err.println("[Pokeblocks] Failed to copy doll_rarity.json to config: " + e);
+        }
 
-            // Simple manual parse since format is [ "line", "line" ]
-            String content = sb.toString();
-            // Strip brackets
-            content = content.trim();
+        reload();
+    }
+
+    /**
+     * Reloads overrides from the config file.
+     */
+    public static void reload() {
+        overrides.clear();
+
+        if (configPath == null || !Files.exists(configPath)) {
+            System.out.println("[Pokeblocks] No doll_rarity.json found, skipping rarity overrides");
+            return;
+        }
+
+        try {
+            String content = Files.readString(configPath).trim();
+
             if (content.startsWith("[")) content = content.substring(1);
             if (content.endsWith("]")) content = content.substring(0, content.length() - 1);
 
-            // Split by comma
             String[] entries = content.split(",");
             for (String entry : entries) {
                 String trimmed = entry.trim();
-                // Strip quotes if present
                 if (trimmed.startsWith("\"")) trimmed = trimmed.substring(1);
                 if (trimmed.endsWith("\"")) trimmed = trimmed.substring(0, trimmed.length() - 1);
                 trimmed = trimmed.trim();
@@ -61,7 +79,6 @@ public class DollRarityOverrides {
                     continue;
                 }
 
-                // Middle parts are flags
                 Set<ModelFlag> flags = EnumSet.noneOf(ModelFlag.class);
                 for (int i = 1; i < parts.length - 1; i++) {
                     String flagName = parts[i].toLowerCase();
@@ -82,17 +99,12 @@ public class DollRarityOverrides {
                 overrides.put(key, rarity);
             }
 
-            if (!overrides.isEmpty()) {
-                System.out.println("[Pokeblocks] Loaded " + overrides.size() + " rarity override(s)");
-            }
+            System.out.println("[Pokeblocks] Loaded " + overrides.size() + " rarity override(s)");
         } catch (Exception e) {
             System.err.println("[Pokeblocks] Failed to load doll_rarity.json: " + e);
         }
     }
 
-    /**
-     * Builds a lookup key from pokemon name and active flags.
-     */
     private static String buildKey(String pokemon, Set<ModelFlag> flags) {
         StringBuilder sb = new StringBuilder(pokemon.toLowerCase());
         List<ModelFlag> sorted = new ArrayList<>(flags);
@@ -103,9 +115,6 @@ public class DollRarityOverrides {
         return sb.toString();
     }
 
-    /**
-     * Gets the rarity override for a pokemon with specific flags, or null if no override exists.
-     */
     public static DollRarity getOverride(String pokemon, Set<ModelFlag> activeFlags) {
         String key = buildKey(pokemon, activeFlags);
         return overrides.get(key);
