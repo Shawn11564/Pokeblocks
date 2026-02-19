@@ -1,4 +1,4 @@
-package dev.mrshawn.pokeblocks.block.entity.custom.decorative;
+package dev.mrshawn.pokeblocks.block.entity.custom;
 
 import dev.mrshawn.pokeblocks.block.custom.decorative.DecorativeDefinition;
 import dev.mrshawn.pokeblocks.pokemon.ModelFlag;
@@ -11,10 +11,7 @@ import net.minecraft.world.level.block.entity.BlockEntityType;
 import net.minecraft.world.level.block.state.BlockState;
 import software.bernie.geckolib.animatable.GeoBlockEntity;
 import software.bernie.geckolib.animatable.instance.AnimatableInstanceCache;
-import software.bernie.geckolib.animation.AnimatableManager;
-import software.bernie.geckolib.animation.AnimationController;
-import software.bernie.geckolib.animation.PlayState;
-import software.bernie.geckolib.constant.DefaultAnimations;
+import software.bernie.geckolib.animation.*;
 import software.bernie.geckolib.util.GeckoLibUtil;
 
 import java.util.*;
@@ -42,7 +39,10 @@ public class DecorativeBlockEntity extends BlockEntity implements GeoBlockEntity
     public void registerControllers(AnimatableManager.ControllerRegistrar controllers) {
         controllers.add(new AnimationController<>(this, "decorative_controller", 0, state -> {
             if (definition.hasAnimation()) {
-                return state.setAndContinue(DefaultAnimations.IDLE);
+                state.getController().setAnimation(
+                        RawAnimation.begin().then("animation.idle", Animation.LoopType.LOOP)
+                );
+                return PlayState.CONTINUE;
             }
             return PlayState.STOP;
         }));

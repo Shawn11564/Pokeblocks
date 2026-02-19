@@ -2,7 +2,7 @@ package dev.mrshawn.pokeblocks.client.model.block;
 
 import dev.mrshawn.pokeblocks.PokeblocksCommon;
 import dev.mrshawn.pokeblocks.block.custom.decorative.DecorativeDefinition;
-import dev.mrshawn.pokeblocks.block.entity.custom.decorative.DecorativeBlockEntity;
+import dev.mrshawn.pokeblocks.block.entity.custom.DecorativeBlockEntity;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.RenderType;
 import net.minecraft.resources.ResourceLocation;

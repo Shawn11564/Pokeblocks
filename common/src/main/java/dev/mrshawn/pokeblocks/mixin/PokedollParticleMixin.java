@@ -6,7 +6,7 @@ import dev.mrshawn.pokeblocks.block.custom.PokedollBlock;
 import dev.mrshawn.pokeblocks.block.custom.decorative.DecorativeBlock;
 import dev.mrshawn.pokeblocks.block.entity.custom.FigurineBlockEntity;
 import dev.mrshawn.pokeblocks.block.entity.custom.PokedollBlockEntity;
-import dev.mrshawn.pokeblocks.block.entity.custom.decorative.DecorativeBlockEntity;
+import dev.mrshawn.pokeblocks.block.entity.custom.DecorativeBlockEntity;
 import dev.mrshawn.pokeblocks.client.model.block.DecorativeModel;
 import dev.mrshawn.pokeblocks.client.model.block.FigurineModel;
 import dev.mrshawn.pokeblocks.client.model.block.PokedollModel;

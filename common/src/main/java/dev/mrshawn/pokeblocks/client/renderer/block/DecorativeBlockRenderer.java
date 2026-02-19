@@ -2,7 +2,7 @@ package dev.mrshawn.pokeblocks.client.renderer.block;
 
 import com.mojang.blaze3d.vertex.PoseStack;
 import dev.mrshawn.pokeblocks.block.custom.decorative.DecorativeDefinition;
-import dev.mrshawn.pokeblocks.block.entity.custom.decorative.DecorativeBlockEntity;
+import dev.mrshawn.pokeblocks.block.entity.custom.DecorativeBlockEntity;
 import dev.mrshawn.pokeblocks.client.model.block.DecorativeModel;
 import dev.mrshawn.pokeblocks.constants.ModSettings;
 import software.bernie.geckolib.cache.object.BakedGeoModel;

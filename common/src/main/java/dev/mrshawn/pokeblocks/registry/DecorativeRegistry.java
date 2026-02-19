@@ -3,7 +3,7 @@ package dev.mrshawn.pokeblocks.registry;
 import dev.mrshawn.pokeblocks.PokeblocksCommon;
 import dev.mrshawn.pokeblocks.block.custom.decorative.DecorativeBlock;
 import dev.mrshawn.pokeblocks.block.custom.decorative.DecorativeDefinition;
-import dev.mrshawn.pokeblocks.block.entity.custom.decorative.DecorativeBlockEntity;
+import dev.mrshawn.pokeblocks.block.entity.custom.DecorativeBlockEntity;
 import dev.mrshawn.pokeblocks.item.custom.DecorativeItem;
 import dev.mrshawn.pokeblocks.pokemon.ModelFlag;
 import net.minecraft.world.item.Item;

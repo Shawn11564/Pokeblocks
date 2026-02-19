@@ -36,18 +36,19 @@ public class PokedollBlockEntity extends BlockEntity implements GeoBlockEntity {
 	public void registerControllers(AnimatableManager.ControllerRegistrar controllers) {
 		controllers.add(new AnimationController<>(this, "pokedoll_controller", 0, state -> {
 			PokemonData data = PokemonRegistry.getPokemonData(pokemon);
-			if (data == null) return PlayState.STOP;
+			if (data == null) {
+				state.getController().forceAnimationReset();
+				return PlayState.STOP;
+			}
 
 			AnimationResolver.AnimationType type = AnimationResolver.resolve(pokemon, this, data.animationProfile());
 
 			switch (type) {
 				case VARIANT, BASE -> {
-					state.getController().setAnimation(
-							RawAnimation.begin().then("animation.idle", Animation.LoopType.LOOP)
-					);
-					return PlayState.CONTINUE;
+					return state.setAndContinue(RawAnimation.begin().thenLoop("animation.idle"));
 				}
 				default -> {
+					state.getController().forceAnimationReset();
 					return PlayState.STOP;
 				}
 			}

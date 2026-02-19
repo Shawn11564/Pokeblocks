@@ -1,7 +1,7 @@
 package dev.mrshawn.pokeblocks.block.custom.decorative;
 
 import com.mojang.serialization.MapCodec;
-import dev.mrshawn.pokeblocks.block.entity.custom.decorative.DecorativeBlockEntity;
+import dev.mrshawn.pokeblocks.block.entity.custom.DecorativeBlockEntity;
 import dev.mrshawn.pokeblocks.entity.custom.SeatEntity;
 import dev.mrshawn.pokeblocks.registry.EntityRegistry;
 import net.minecraft.core.BlockPos;
