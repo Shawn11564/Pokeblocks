@@ -4,6 +4,8 @@ import dev.mrshawn.pokeblocks.block.entity.custom.PokedollBlockEntity;
 import dev.mrshawn.pokeblocks.pokemon.ModelFlag;
 
 import java.util.Map;
+import java.util.Set;
+import java.util.stream.Collectors;
 
 public class AnimationResolver {
 
@@ -56,4 +58,9 @@ public class AnimationResolver {
 
 		return AnimationType.NONE;
 	}
+
+	public static AnimationType resolve(String pokemon, Set<ModelFlag> flags, AnimationProfile profile) {
+		return resolve(pokemon, flags.stream().collect(Collectors.toMap(f -> f, f -> true)), profile);
+	}
+
 }

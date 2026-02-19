@@ -114,14 +114,17 @@ public class PokedollItemModel extends GeoModel<PokedollItem> {
                 "geo/block/pokedoll_" + pokemon + modelSuffix + ".geo.json"
         );
         try {
-            if (rm.getResource(full).isPresent()) return full;
+            if (rm.getResource(full).isPresent()) {
+                return full;
+            }
         } catch (Exception e) {}
 
         // Fall back to base model
-        return ResourceLocation.fromNamespaceAndPath(
+        ResourceLocation fallback = ResourceLocation.fromNamespaceAndPath(
                 PokeblocksCommon.MOD_ID,
                 "geo/block/pokedoll_" + pokemon + ".geo.json"
         );
+        return fallback;
     }
 
     @Override
@@ -139,7 +142,9 @@ public class PokedollItemModel extends GeoModel<PokedollItem> {
                 "textures/block/pokedoll_" + pokemon + textureSuffix + "_texture.png"
         );
         try {
-            if (rm.getResource(suffixThenTexture).isPresent()) return suffixThenTexture;
+            if (rm.getResource(suffixThenTexture).isPresent()) {
+                return suffixThenTexture;
+            }
         } catch (Exception e) {}
 
         // Try: pokedoll_<name>_texture<suffix>.png
@@ -148,7 +153,9 @@ public class PokedollItemModel extends GeoModel<PokedollItem> {
                 "textures/block/pokedoll_" + pokemon + "_texture" + textureSuffix + ".png"
         );
         try {
-            if (rm.getResource(textureThenSuffix).isPresent()) return textureThenSuffix;
+            if (rm.getResource(textureThenSuffix).isPresent()) {
+                return textureThenSuffix;
+            }
         } catch (Exception e) {}
 
         // Try: pokedoll_<name><suffix>.png
@@ -157,7 +164,9 @@ public class PokedollItemModel extends GeoModel<PokedollItem> {
                 "textures/block/pokedoll_" + pokemon + textureSuffix + ".png"
         );
         try {
-            if (rm.getResource(withSuffix).isPresent()) return withSuffix;
+            if (rm.getResource(withSuffix).isPresent()) {
+                return withSuffix;
+            }
         } catch (Exception e) {}
 
         // Try: pokedoll_<name>_texture.png
@@ -166,7 +175,9 @@ public class PokedollItemModel extends GeoModel<PokedollItem> {
                 "textures/block/pokedoll_" + pokemon + "_texture.png"
         );
         try {
-            if (rm.getResource(baseTexture).isPresent()) return baseTexture;
+            if (rm.getResource(baseTexture).isPresent()) {
+                return baseTexture;
+            }
         } catch (Exception e) {}
 
         // Try: pokedoll_<name>.png
@@ -175,14 +186,17 @@ public class PokedollItemModel extends GeoModel<PokedollItem> {
                 "textures/block/pokedoll_" + pokemon + ".png"
         );
         try {
-            if (rm.getResource(plain).isPresent()) return plain;
+            if (rm.getResource(plain).isPresent()) {
+                return plain;
+            }
         } catch (Exception e) {}
 
         // Fall back to default
-        return ResourceLocation.fromNamespaceAndPath(
+        ResourceLocation fallback = ResourceLocation.fromNamespaceAndPath(
                 PokeblocksCommon.MOD_ID,
                 "textures/block/pokedoll_" + ModSettings.DEFAULT_POKEMON + "_texture.png"
         );
+        return fallback;
     }
 
     @Override
@@ -192,10 +206,11 @@ public class PokedollItemModel extends GeoModel<PokedollItem> {
 
         PokemonData data = PokemonRegistry.getPokemonData(pokemon);
         if (data == null) {
-            return ResourceLocation.fromNamespaceAndPath(
+            ResourceLocation fallback = ResourceLocation.fromNamespaceAndPath(
                     PokeblocksCommon.MOD_ID,
                     "animations/block/empty.animation.json"
             );
+            return fallback;
         }
 
         // Build flags map from item stack
@@ -217,7 +232,9 @@ public class PokedollItemModel extends GeoModel<PokedollItem> {
                     "animations/block/pokedoll_" + pokemon + modelSuffix + ".animation.json"
             );
             try {
-                if (rm.getResource(variantAnim).isPresent()) return variantAnim;
+                if (rm.getResource(variantAnim).isPresent()) {
+                    return variantAnim;
+                }
             } catch (Exception ignored) {}
         }
 
@@ -227,14 +244,17 @@ public class PokedollItemModel extends GeoModel<PokedollItem> {
                     "animations/block/pokedoll_" + pokemon + ".animation.json"
             );
             try {
-                if (rm.getResource(baseAnim).isPresent()) return baseAnim;
+                if (rm.getResource(baseAnim).isPresent()) {
+                    return baseAnim;
+                }
             } catch (Exception ignored) {}
         }
 
-        return ResourceLocation.fromNamespaceAndPath(
+        ResourceLocation empty = ResourceLocation.fromNamespaceAndPath(
                 PokeblocksCommon.MOD_ID,
                 "animations/block/empty.animation.json"
         );
+        return empty;
     }
 
     @Override

@@ -1,12 +1,14 @@
 package dev.mrshawn.pokeblocks.item.custom;
 
 import dev.mrshawn.pokeblocks.PokeblocksCommon;
+import dev.mrshawn.pokeblocks.client.renderer.animation.AnimationResolver;
 import dev.mrshawn.pokeblocks.client.renderer.item.PokedollItemRenderer;
 import dev.mrshawn.pokeblocks.constants.ModSettings;
 import dev.mrshawn.pokeblocks.item.DollRarity;
 import dev.mrshawn.pokeblocks.pokemon.ModelFlag;
 import dev.mrshawn.pokeblocks.pokemon.PokemonData;
 import dev.mrshawn.pokeblocks.registry.ItemRegistry;
+import dev.mrshawn.pokeblocks.registry.PokemonRegistry;
 import dev.mrshawn.pokeblocks.utils.ColorFactory;
 import net.minecraft.ChatFormatting;
 import net.minecraft.client.renderer.BlockEntityWithoutLevelRenderer;
@@ -22,12 +24,18 @@ import software.bernie.geckolib.animatable.GeoItem;
 import software.bernie.geckolib.animatable.client.GeoRenderProvider;
 import software.bernie.geckolib.animatable.instance.AnimatableInstanceCache;
 import software.bernie.geckolib.animation.AnimatableManager;
+import software.bernie.geckolib.animation.AnimationController;
+import software.bernie.geckolib.animation.PlayState;
+import software.bernie.geckolib.animation.RawAnimation;
+import software.bernie.geckolib.constant.DataTickets;
 import software.bernie.geckolib.util.GeckoLibUtil;
 
 import java.util.*;
 import java.util.function.Consumer;
+import java.util.stream.Collectors;
 
 public class PokedollItem extends BlockItem implements GeoItem {
+
 	private final AnimatableInstanceCache cache = GeckoLibUtil.createInstanceCache(this);
 
 	public PokedollItem(Block block, Properties properties) {
@@ -49,7 +57,29 @@ public class PokedollItem extends BlockItem implements GeoItem {
 	}
 
 	@Override
-	public void registerControllers(AnimatableManager.ControllerRegistrar controllers) {}
+	public void registerControllers(AnimatableManager.ControllerRegistrar controllers) {
+		controllers.add(new AnimationController<>(this, "pokedoll_item_controller", 0, state -> {
+			ItemStack stack = state.getData(DataTickets.ITEMSTACK);
+			if (stack == null || stack.isEmpty()) return PlayState.STOP;
+
+			String pokemon = getPokemonFromStack(stack);
+			PokemonData data = PokemonRegistry.getPokemonData(pokemon);
+
+			if (data == null) return PlayState.STOP;
+			Set<ModelFlag> flags = getFlagsFromStack(stack);
+
+			AnimationResolver.AnimationType type = AnimationResolver.resolve(pokemon, flags, data.animationProfile());
+
+			switch (type) {
+				case VARIANT, BASE -> {
+					return state.setAndContinue(RawAnimation.begin().thenLoop("animation.idle"));
+				}
+				default -> {
+					return PlayState.STOP;
+				}
+			}
+		}));
+	}
 
 	@Override
 	public AnimatableInstanceCache getAnimatableInstanceCache() {
@@ -129,15 +159,25 @@ public class PokedollItem extends BlockItem implements GeoItem {
 
 	/**
 	 * Reads all ModelFlag values from the item's BLOCK_ENTITY_DATA CompoundTag.
+	 * returns a set containing all ModelFlags that were present and true
 	 */
 	public static Set<ModelFlag> getFlagsFromStack(ItemStack stack) {
-		EnumSet<ModelFlag> flags = EnumSet.noneOf(ModelFlag.class);
+		return getFlagsMapFromStack(stack)
+				.entrySet()
+				.stream()
+				.filter(entry -> entry.getValue() == true)
+				.map(Map.Entry::getKey)
+				.collect(Collectors.toSet());
+	}
+
+	public static Map<ModelFlag, Boolean> getFlagsMapFromStack(ItemStack stack) {
+		Map<ModelFlag, Boolean> flags = new EnumMap<>(ModelFlag.class);
 		CustomData blockEntityData = stack.get(DataComponents.BLOCK_ENTITY_DATA);
 		if (blockEntityData != null) {
 			CompoundTag tag = blockEntityData.copyTag();
 			for (ModelFlag flag : ModelFlag.values()) {
-				if (tag.contains(flag.getTagName()) && tag.getBoolean(flag.getTagName())) {
-					flags.add(flag);
+				if (tag.contains(flag.getTagName())) {
+					flags.put(flag, tag.getBoolean(flag.getTagName()));
 				}
 			}
 		}
@@ -186,4 +226,5 @@ public class PokedollItem extends BlockItem implements GeoItem {
 		stack.set(DataComponents.BLOCK_ENTITY_DATA, CustomData.of(tag));
 		return stack;
 	}
+
 }
