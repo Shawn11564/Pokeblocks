@@ -185,46 +185,62 @@ public class PokedollItem extends BlockItem implements GeoItem {
 	}
 
 	/**
-	 * Helper method to create a pokedoll item with specific pokemon and flags
-	 */
-	public static ItemStack createPokedoll(String pokemon, boolean animated) {
-		ItemStack stack = new ItemStack(ItemRegistry.POKEDOLL_ITEM.get());
-		CompoundTag tag = new CompoundTag();
-		tag.putString("id", PokeblocksCommon.MOD_ID + ModSettings.DOLL_ID);
-		tag.putString("pokemon", pokemon);
-		tag.putBoolean("animated", animated);
-		stack.set(DataComponents.BLOCK_ENTITY_DATA, CustomData.of(tag));
-		return stack;
-	}
-
-	/**
 	 * Create a pokedoll with PokemonData and optional flags written to NBT.
 	 */
 	public static ItemStack createPokedoll(PokemonData pokemonData) {
-		String name = ModSettings.DEFAULT_POKEMON;
-		if (pokemonData != null) {
-			// pokemonData is just flags map; use default name unless registry has single entry
-			name = ModSettings.DEFAULT_POKEMON;
-		}
-		return createPokedoll(name, pokemonData);
+		return createPokedoll(ModSettings.DEFAULT_POKEMON, pokemonData);
 	}
 
 	public static ItemStack createPokedoll(String name, PokemonData pokemonData) {
+		return createPokedoll(name, pokemonData.modelFlags());
+	}
+
+	public static ItemStack createPokedoll(String name, Map<ModelFlag, Boolean> flags) {
 		ItemStack stack = new ItemStack(ItemRegistry.POKEDOLL_ITEM.get());
 		CompoundTag tag = new CompoundTag();
 		tag.putString("id", PokeblocksCommon.MOD_ID + ModSettings.DOLL_ID);
 		tag.putString("pokemon", name == null || name.isEmpty() ? ModSettings.DEFAULT_POKEMON : name);
 
-		if (pokemonData != null && pokemonData.modelFlags() != null) {
-			for (var entry : pokemonData.modelFlags().entrySet()) {
-				if (Boolean.TRUE.equals(entry.getValue())) {
-					tag.putBoolean(entry.getKey().getTagName(), true);
-				}
-			}
-		}
+		// only put true flags to save storage space
+		flags.entrySet()
+				.stream()
+				.filter(Map.Entry::getValue)
+				.forEach(entry -> tag.putBoolean(entry.getKey().getTagName(), true));
 
 		stack.set(DataComponents.BLOCK_ENTITY_DATA, CustomData.of(tag));
 		return stack;
 	}
+
+	public static List<ItemStack> getAllMutations(String name, PokemonData pokemonData) {
+		List<ItemStack> mutations = new ArrayList<>();
+
+		if (pokemonData == null) {
+			// If no data, return base doll with no flags
+			mutations.add(createPokedoll(name, new EnumMap<>(ModelFlag.class)));
+			return mutations;
+		}
+
+		// Generate all possible combinations (power set) of available flags
+		List<Set<ModelFlag>> allCombinations = pokemonData.generatePowerSet();
+
+		// Filter out invalid combinations based on required combinations
+		for (Set<ModelFlag> combination : allCombinations) {
+			if (pokemonData.isValidCombination(combination)) {
+				Map<ModelFlag, Boolean> flagMap = new EnumMap<>(ModelFlag.class);
+				// Initialize all flags to false
+				for (ModelFlag flag : ModelFlag.values()) {
+					flagMap.put(flag, false);
+				}
+				// Set active flags to true
+				for (ModelFlag flag : combination) {
+					flagMap.put(flag, true);
+				}
+				mutations.add(createPokedoll(name, flagMap));
+			}
+		}
+
+		return mutations;
+	}
+
 
 }

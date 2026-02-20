@@ -5,6 +5,7 @@ import dev.mrshawn.pokeblocks.item.custom.DecorativeItem;
 import dev.mrshawn.pokeblocks.item.custom.FigurineItem;
 import dev.mrshawn.pokeblocks.item.custom.PokedollItem;
 import dev.mrshawn.pokeblocks.pokemon.ModelFlag;
+import dev.mrshawn.pokeblocks.pokemon.PokemonData;
 import net.minecraft.network.chat.Component;
 import net.minecraft.world.item.BlockItem;
 import net.minecraft.world.item.CreativeModeTab;
@@ -12,6 +13,7 @@ import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 
 import java.util.EnumSet;
+import java.util.Map;
 import java.util.function.Supplier;
 
 public final class ItemRegistry {
@@ -29,8 +31,8 @@ public final class ItemRegistry {
 			.icon(() -> new ItemStack(ItemRegistry.POKEDOLL_ITEM.get()))
 			.displayItems((enabledFeatures, entries) -> {
 				// Pokedolls
-				for (String pokemon : PokemonRegistry.ALL_POKEMON.keySet()) {
-					entries.accept(PokedollItem.createPokedoll(pokemon, false));
+				for (Map.Entry<String, PokemonData> pokemon : PokemonRegistry.ALL_POKEMON.entrySet()) {
+					PokedollItem.getAllMutations(pokemon.getKey(), pokemon.getValue()).forEach(entries::accept);
 				}
 				// Figurines
 				for (String figurine : FigurineRegistry.ALL_FIGURINES.keySet()) {
@@ -40,7 +42,7 @@ public final class ItemRegistry {
 				for (DecorativeRegistry.DecorativeEntry entry : DecorativeRegistry.ALL_ENTRIES) {
 					entries.accept(DecorativeItem.createStack(
 							entry.item().get(),
-							"pokeblocks:" + entry.definition().id(),
+							PokeblocksCommon.MOD_ID + ":" + entry.definition().id(),
 							EnumSet.noneOf(ModelFlag.class)
 					));
 				}

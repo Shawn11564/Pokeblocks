@@ -69,4 +69,56 @@ public record PokemonData(
 		}
 		return Collections.emptySet();
 	}
+
+	/**
+	 * Checks if a combination of flags is valid according to required combinations.
+	 * A combination is invalid if it has some but not all flags from a required combination.
+	 */
+	public boolean isValidCombination(Set<ModelFlag> combination) {
+		for (Set<ModelFlag> requiredCombo : requiredCombinations) {
+			// Check if any flag in this required combo is present in our combination
+			Set<ModelFlag> activeInCombo = EnumSet.noneOf(ModelFlag.class);
+			for (ModelFlag flag : requiredCombo) {
+				if (combination.contains(flag)) {
+					activeInCombo.add(flag);
+				}
+			}
+
+			// If some but not all flags from a required combo are present, it's invalid
+			if (!activeInCombo.isEmpty() && activeInCombo.size() < requiredCombo.size()) {
+				return false;
+			}
+		}
+		return true;
+	}
+
+	public List<Set<ModelFlag>> generatePowerSet() {
+		return generatePowerSet(modelFlags.entrySet().stream()
+				.filter(Map.Entry::getValue)
+				.map(Map.Entry::getKey)
+				.toList());
+	}
+
+	/**
+	 * Generates the power set (all possible subsets) of the given list of flags
+	 */
+	public static List<Set<ModelFlag>> generatePowerSet(List<ModelFlag> flags) {
+		List<Set<ModelFlag>> powerSet = new ArrayList<>();
+		int n = flags.size();
+		int powerSetSize = (int) Math.pow(2, n);
+
+		for (int i = 0; i < powerSetSize; i++) {
+			Set<ModelFlag> subset = EnumSet.noneOf(ModelFlag.class);
+			for (int j = 0; j < n; j++) {
+				// Check if jth bit in i is set
+				if ((i & (1 << j)) > 0) {
+					subset.add(flags.get(j));
+				}
+			}
+			powerSet.add(subset);
+		}
+
+		return powerSet;
+	}
+
 }

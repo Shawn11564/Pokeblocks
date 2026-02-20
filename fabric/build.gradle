@@ -53,38 +53,7 @@ tasks.named("sourcesJar", Jar) {
 }
 
 processResources {
-    from project(":common").sourceSets.main.resources
+    from(project(":common").sourceSets.main.resources.srcDirs) {
+        exclude "pokeblocks.mixins.json"
+    }
 }
-
-// Don't copy this for your mod, this is for GeckoLib internal handling only
-//publishing {
-//    publications {
-//        mavenJava(MavenPublication) {
-//            from components.java
-//            groupId "software.bernie.geckolib"
-//            artifactId base.archivesName.get()
-//
-//            pom.withXml {
-//                asNode().dependencies.'*'.findAll() {
-//                    it.artifactId.text() == "geckolib-fabric-${minecraft_version}"
-//                }.each() {
-//                    it.parent().remove(it)
-//                }
-//            }
-//        }
-//    }
-//
-//    repositories {
-//        if (System.getenv("cloudUsername") == null && System.getenv("cloudPassword") == null) {
-//            mavenLocal()
-//        }
-//        else maven {
-//            name = "cloudsmith"
-//            url = "https://maven.cloudsmith.io/geckolib3/geckolib/"
-//            credentials {
-//                username = System.getenv("cloudUsername")
-//                password = System.getenv("cloudPassword")
-//            }
-//        }
-//    }
-//}

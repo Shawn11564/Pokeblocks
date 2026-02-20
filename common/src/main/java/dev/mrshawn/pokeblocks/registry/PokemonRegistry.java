@@ -3,6 +3,8 @@ package dev.mrshawn.pokeblocks.registry;
 import dev.mrshawn.pokeblocks.client.renderer.animation.AnimationProfile;
 import dev.mrshawn.pokeblocks.pokemon.ModelFlag;
 import dev.mrshawn.pokeblocks.pokemon.PokemonData;
+import net.minecraft.client.Minecraft;
+import net.minecraft.server.packs.resources.ResourceManager;
 
 import java.net.URI;
 import java.net.URL;
@@ -276,8 +278,8 @@ public class PokemonRegistry {
 	}
 
 	public static void scanAndRegisterFromResources() {
-		net.minecraft.server.packs.resources.ResourceManager resourceManager =
-				net.minecraft.client.Minecraft.getInstance().getResourceManager();
+		ResourceManager resourceManager =
+				Minecraft.getInstance().getResourceManager();
 
 		Set<String> modelFileNames = new TreeSet<>();
 		Set<String> textureFileNames = new TreeSet<>();
