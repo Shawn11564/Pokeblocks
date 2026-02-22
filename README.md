@@ -1,25 +1,43 @@
-# Pokeblocks Multiloader - Unofficial Fork
+# Pokeblocks
 
-This is a 1.21.1 Neoforge focused port of the original Pokeblocks mod by MrShawn to NeoForge (Cause friend wanted it for our modpack).
+A 1.21.1 Minecraft mod that introduces animated 3D Pokemon collectibles. 
 
-Good amount of work is already present in the multiloader branch so mostly fixing some issues for parity agaisnt the 1.20.1 fabric version.
+## Features
 
-## Original Mod
-- **Author**: Shawn11564 (MrShawn)
-- **Original Repository**: [Original Pokeblocks Fabric Mod](https://github.com/MrShawn/pokeblocks)
-- **License**: CC BY-NC-SA 4.0
+* **3D Animated Models**: Over 67 models.
+* **Variants**: Includes Shiny, posed, animated, and gigantic versions.
+* **Multiloader Support**: Compatible with NeoForge, Fabric (WIP), and Forge (WIP).
 
-## Fork Information
-- **Ported by**: Yurgsy
-- **Port Date**: February 2026
-- **Changes Made**: 
-  - Fixed placement audio
+## Configuration
 
-## License
-See `LICENSE`
+Rarities and weights are managed via `config/Pokeblocks`.
 
-All credit for the original concept, models, textures, and core functionality goes to **Shawn11564**, **KaptainWutax**, and any artists involved.
+### Commands
 
-## Support
-For issues specific to this NeoForge port, please report them in this repository's issues.
-For general mod questions or suggestions, consider checking the original mod's repository.
+* `/pokeblocks reload_rarity`: Reloads Pokemon rarity assignments.
+* `/pokeblocks reload_weights`: Reloads rarity weight configurations.
+
+## Included Pokemon
+
+* **Common**: Bulbasaur, Charmander, Squirtle, Smoliv, Rellor, Swinub, Happiny.
+* **Uncommon**: Lickitung, Mareep, Dolliv, Arboliva, Wooper, Gastly, Shellder.
+* **Rare**: Flaaffy, Snorlax, Sentret, Furret, Munchlax, Wartortle, Eevee.
+* **Epic**: Calyrex, Ampharos, Sableye, Absol, Ivysaur, Riolu, Froslass.
+* **Legendary**: Venusaur, Blastoise, Gengar, Corviknight, Kyogre.
+
+## Documentation
+
+* **[Adding Models Guide](ADDING_MODELS.md)**: Instructions for importing new 3D assets.
+
+## Extensions and Ports
+
+For users seeking additional features, a NeoForge 1.21.1 port is available which adds:
+* Native audio cues for models.
+* Dungeon loot table integration.
+* Configurable loot weights and hot-reloading.
+
+## Credits and License
+
+* **Original Author**: Shawn11564 (MrShawn)
+* **Contributors**: KaptainWutax, Yurgsy
+* **License**: CC BY-NC-SA 4.0
