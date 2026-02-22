@@ -1,4 +1,6 @@
-# Adding New Pokemon Models to Pokeblocks
+# Adding New Pokemon Models to Pokeblocks (notes to self)
+
+todo: make version for models added via config
 
 ## Quick Start
 
@@ -12,11 +14,11 @@
 ### Required Files
 
 - **Model**: `pokedoll_<pokemon_name>.geo.json` - The 3D model file
-- **Base Texture**: `pokedoll_<pokemon_name>.png` - Default texture
+- **Base Texture**: `pokedoll_<pokemon_name>.png` OR `pokedoll_<pokemon_name>_texture.png` - Default texture
 
 ### Optional Files
 
-- **Shiny Texture**: `pokedoll_<pokemon_name>_shiny.png` - Shiny variant texture
+- **Shiny Texture**: `pokedoll_<pokemon_name>_shiny.png` OR `pokedoll_<pokemon_name>_shiny_texture.png` - Shiny variant texture
 - **Posed Model**: `pokedoll_<pokemon_name>_posed.geo.json` - Special pose model
 - **Animated Model**: `pokedoll_<pokemon_name>_animated.geo.json` - Animated model
 - **Animation**: `pokedoll_<pokemon_name>.animation.json` - Animation data
@@ -46,7 +48,9 @@ For a Pokemon named "pikachu":
 ```
 # Required
 pokedoll_pikachu.geo.json         # Base model
-pokedoll_pikachu.png              # Base texture
+pokedoll_pikachu.png              # Base texture (preferred)
+# OR
+pokedoll_pikachu_texture.png      # Base texture (alternative)
 
 # Optional variants
 pokedoll_pikachu_shiny.png        # Shiny texture
@@ -123,6 +127,18 @@ pokedoll_calyrex_animated.animation.json # Animated variant animation
 2. **Check file locations** - must be in correct asset folders
 3. **Check console** - look for error messages about missing files
 4. **Verify base files** - model and texture are required
+
+### Texture Not Showing on Placed Block
+
+**Problem**: Model appears correctly in inventory but uses default texture when placed as a block.
+
+**Cause**: The block renderer has stricter texture naming requirements than the item renderer.
+
+**Solutions**:
+1. **Rename texture file** (recommended): Change `pokedoll_<name>.png` to `pokedoll_<name>_texture.png`
+2. **Use either naming convention**: The system now supports both `pokedoll_<name>.png` and `pokedoll_<name>_texture.png`
+
+**Example**: If you have `pokedoll_callie.png` and it works in inventory but not when placed, the system will now automatically find it. Both naming conventions are supported.
 
 ### Common Issues
 
