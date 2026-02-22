@@ -1,19 +1,25 @@
-# Information
-## GeckoLib Example Mod - Multiloader - 1.21.1
+# Pokeblocks Multiloader - Unofficial Fork
 
-This is an example of a mod using <a href="https://github.com/bernie-g/geckolib">GeckoLib</a> for <a href="https://github.com/jaredlll08/MultiLoader-Template">Multiloader</a> 1.21.1
+This is a 1.21.1 Neoforge focused port of the original Pokeblocks mod by MrShawn to NeoForge (Cause friend wanted it for our modpack).
 
-This template is created on the following basis:
-1. Start with a clean Multiloader MDK
-2. Update platform versions to be the current latest
-3. Trim the template down to the bare minimum required to run (for ease of use)
-4. Implement GeckoLib example objects
+Good amount of work is already present in the multiloader branch so mostly fixing some issues for parity agaisnt the 1.20.1 fabric version.
 
-The ideology behind this is that it should be as close as practical to a default mod for best real-world conditions, but still be cleaned up enough for educational use
+## Original Mod
+- **Author**: Shawn11564 (MrShawn)
+- **Original Repository**: [Original Pokeblocks Fabric Mod](https://github.com/MrShawn/pokeblocks)
+- **License**: CC BY-NC-SA 4.0
 
-### NOTE
-This mod is <u>NOT</u> intended for real-world use. This mod is only for testing and exemplifying GeckoLib use cases
+## Fork Information
+- **Ported by**: Yurgsy
+- **Port Date**: February 2026
+- **Changes Made**: 
+  - Fixed placement audio
 
-Questions?
+## License
+See `LICENSE`
 
-<a href="https://discord.gg/pPEqBgJtZW"><img src="https://img.shields.io/discord/730912704776110121?color=green&label=Discord&logo=Discord&logoColor=green&style=for-the-badge" alt="Discord"/></a>
+All credit for the original concept, models, textures, and core functionality goes to **Shawn11564**, **KaptainWutax**, and any artists involved.
+
+## Support
+For issues specific to this NeoForge port, please report them in this repository's issues.
+For general mod questions or suggestions, consider checking the original mod's repository.
