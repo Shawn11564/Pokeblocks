@@ -43,6 +43,17 @@ public enum DollRarity {
 	}
 
 	public int getWeight() {
+		// Use configurable weight if available, otherwise fall back to hardcoded default
+		if (RarityWeightConfig.isInitialized()) {
+			return RarityWeightConfig.getWeight(this);
+		}
+		return weight;
+	}
+
+	/**
+	 * Gets the hardcoded default weight (for reference/fallback)
+	 */
+	public int getDefaultWeight() {
 		return weight;
 	}
 

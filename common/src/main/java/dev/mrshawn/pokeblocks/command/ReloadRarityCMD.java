@@ -10,9 +10,11 @@ import net.minecraft.network.chat.Component;
 public class ReloadRarityCMD {
     public static void register(CommandDispatcher<CommandSourceStack> dispatcher) {
         dispatcher.register(
-            Commands.literal("pokeblocks-reload-rarity")
-                .requires(src -> src.hasPermission(2))
-                .executes(ReloadRarityCMD::run)
+            Commands.literal("pokeblocks")
+                    .then(Commands.literal("reload_rarity")
+                            .requires(src -> src.hasPermission(2))
+                            .executes(ReloadRarityCMD::run)
+                    )
         );
     }
 

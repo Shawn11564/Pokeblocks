@@ -13,12 +13,12 @@ public enum ModelFlag {
 	 */
 	GIGANTIC("gigantic", "", "", -1, DollRarity.GIGANTIC),
 	SHINY("shiny", "_shiny", "", 0, DollRarity.SHINY),
-	FAMILY("family", "_family", "_family", 1, DollRarity.UNCLASSIFIED),
-	ANIMATED("animated", "_animated", "_animated", 2, DollRarity.UNCLASSIFIED),
-	POSED("posed", "_posed", "_posed", 3, DollRarity.UNCLASSIFIED),
-	NETHERITE("netherite", "_netherite", "", 4, DollRarity.UNCLASSIFIED),
-	ZENITH("zenith", "_zenith", "_zenith", 5, DollRarity.UNCLASSIFIED),
-	NOICE("noice", "_noice", "_noice", 6, DollRarity.UNCLASSIFIED);
+	FAMILY("family", "_family", "_family", 1, DollRarity.NONE),
+	ANIMATED("animated", "_animated", "_animated", 2, DollRarity.NONE),
+	POSED("posed", "_posed", "_posed", 3, DollRarity.NONE),
+	NETHERITE("netherite", "_netherite", "", 4, DollRarity.NONE),
+	ZENITH("zenith", "_zenith", "_zenith", 5, DollRarity.NONE),
+	NOICE("noice", "_noice", "_noice", 6, DollRarity.NONE);
 
 	private final String tagName;
 	private final String textureSuffix;

@@ -37,7 +37,7 @@ public class ColorFactory {
 			}
 		}
 
-		if (highest != DollRarity.NONE && highest != DollRarity.UNCLASSIFIED) {
+		if (highest != DollRarity.NONE) {
 			return highest;
 		}
 

@@ -1,0 +1,12 @@
+{
+  "_comment": "Rarity weights for loot table generation. Higher values = more common in loot. Set to 0 to exclude from loot tables.",
+  "none": 5,
+  "common": 500,
+  "uncommon": 300,
+  "rare": 150,
+  "epic": 70,
+  "legendary": 30,
+  "shiny": 5,
+  "gigantic": 0
+}
+
