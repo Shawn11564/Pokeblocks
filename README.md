@@ -1,19 +1,43 @@
-# Information
-## GeckoLib Example Mod - Multiloader - 1.21.1
+# Pokeblocks
 
-This is an example of a mod using <a href="https://github.com/bernie-g/geckolib">GeckoLib</a> for <a href="https://github.com/jaredlll08/MultiLoader-Template">Multiloader</a> 1.21.1
+A 1.21.1 Minecraft mod that introduces animated 3D Pokemon collectibles. 
 
-This template is created on the following basis:
-1. Start with a clean Multiloader MDK
-2. Update platform versions to be the current latest
-3. Trim the template down to the bare minimum required to run (for ease of use)
-4. Implement GeckoLib example objects
+## Features
 
-The ideology behind this is that it should be as close as practical to a default mod for best real-world conditions, but still be cleaned up enough for educational use
+* **3D Animated Models**: Over 67 models.
+* **Variants**: Includes Shiny, posed, animated, and gigantic versions.
+* **Multiloader Support**: Compatible with NeoForge, Fabric (WIP), and Forge (WIP).
 
-### NOTE
-This mod is <u>NOT</u> intended for real-world use. This mod is only for testing and exemplifying GeckoLib use cases
+## Configuration
 
-Questions?
+Rarities and weights are managed via `config/Pokeblocks`.
 
-<a href="https://discord.gg/pPEqBgJtZW"><img src="https://img.shields.io/discord/730912704776110121?color=green&label=Discord&logo=Discord&logoColor=green&style=for-the-badge" alt="Discord"/></a>
+### Commands
+
+* `/pokeblocks reload_rarity`: Reloads Pokemon rarity assignments.
+* `/pokeblocks reload_weights`: Reloads rarity weight configurations.
+
+## Included Pokemon
+
+* **Common**: Bulbasaur, Charmander, Squirtle, Smoliv, Rellor, Swinub, Happiny.
+* **Uncommon**: Lickitung, Mareep, Dolliv, Arboliva, Wooper, Gastly, Shellder.
+* **Rare**: Flaaffy, Snorlax, Sentret, Furret, Munchlax, Wartortle, Eevee.
+* **Epic**: Calyrex, Ampharos, Sableye, Absol, Ivysaur, Riolu, Froslass.
+* **Legendary**: Venusaur, Blastoise, Gengar, Corviknight, Kyogre.
+
+## Documentation
+
+* **[Adding Models Guide](ADDING_MODELS.md)**: Instructions for importing new 3D assets.
+
+## Extensions and Ports
+
+For users seeking additional features, a NeoForge 1.21.1 port is available which adds:
+* Native audio cues for models.
+* Dungeon loot table integration.
+* Configurable loot weights and hot-reloading.
+
+## Credits and License
+
+* **Original Author**: Shawn11564 (MrShawn)
+* **Contributors**: KaptainWutax, Yurgsy
+* **License**: CC BY-NC-SA 4.0

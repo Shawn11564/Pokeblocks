@@ -226,6 +226,8 @@ public class PokemonRegistry {
 			// GIGANTIC is always available
 			detectedFlags.add(ModelFlag.GIGANTIC);
 
+			// Note: Probably should flag models with animations? Riolu, Froslass, and Treecko bugged out when I tried to create animated variants for them.
+			
 			// Build flag map
 			Map<ModelFlag, Boolean> flagMap = new EnumMap<>(ModelFlag.class);
 			for (ModelFlag flag : ModelFlag.values()) {

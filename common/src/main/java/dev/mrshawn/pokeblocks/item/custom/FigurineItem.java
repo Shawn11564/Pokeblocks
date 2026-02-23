@@ -3,9 +3,11 @@ package dev.mrshawn.pokeblocks.item.custom;
 import dev.mrshawn.pokeblocks.client.renderer.item.FigurineItemRenderer;
 import dev.mrshawn.pokeblocks.constants.ModSettings;
 import dev.mrshawn.pokeblocks.registry.ItemRegistry;
+import net.minecraft.ChatFormatting;
 import net.minecraft.client.renderer.BlockEntityWithoutLevelRenderer;
 import net.minecraft.core.component.DataComponents;
 import net.minecraft.nbt.CompoundTag;
+import net.minecraft.network.chat.Component;
 import net.minecraft.world.item.BlockItem;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.component.CustomData;
@@ -45,6 +47,23 @@ public class FigurineItem extends BlockItem implements GeoItem {
 	@Override
 	public AnimatableInstanceCache getAnimatableInstanceCache() {
 		return this.cache;
+	}
+
+	@Override
+	@SuppressWarnings({"override.param.invalid", "override.return.invalid"})
+	public Component getName(ItemStack stack) {
+		String figurine = getFigurineFromStack(stack);
+		return Component.literal(buildDisplayName(figurine)).withStyle(ChatFormatting.WHITE);
+	}
+
+	/**
+	 * Builds display name in format: [Figurine Name] Figurine
+	 */
+	private static String buildDisplayName(String figurine) {
+		String displayName = figurine == null || figurine.isEmpty() ? ModSettings.DEFAULT_FIGURINE : figurine;
+		// Capitalize first letter and replace underscores with spaces
+		String formattedName = displayName.substring(0, 1).toUpperCase() + displayName.substring(1).replace("_", " ");
+		return formattedName + " Figurine";
 	}
 
 	public static String getFigurineFromStack(ItemStack stack) {

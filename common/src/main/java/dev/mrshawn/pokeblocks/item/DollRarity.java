@@ -8,24 +8,26 @@ import java.util.Comparator;
 
 public enum DollRarity {
 
-	NONE("", ChatFormatting.RESET, 0),
-	UNCLASSIFIED("Unclassified", ChatFormatting.GRAY, 1),
-	COMMON("Common", ChatFormatting.WHITE, 2),
-	UNCOMMON("Uncommon", ChatFormatting.GREEN, 3),
-	RARE("Rare", ChatFormatting.AQUA, 4),
-	EPIC("Epic", ChatFormatting.DARK_PURPLE, 5),
-	LEGENDARY("Legendary", ChatFormatting.RED, 6),
-	SHINY("Shiny", ChatFormatting.GOLD, 7),
-	GIGANTIC("Gigantic", ChatFormatting.LIGHT_PURPLE, 8);
+	NONE("", ChatFormatting.RESET, 0, 5),
+	UNCLASSIFIED("Unclassified", ChatFormatting.GRAY, 1, 0),
+	COMMON("Common", ChatFormatting.WHITE, 2, 500),
+	UNCOMMON("Uncommon", ChatFormatting.GREEN, 3, 300),
+	RARE("Rare", ChatFormatting.AQUA, 4, 150),
+	EPIC("Epic", ChatFormatting.DARK_PURPLE, 5, 70),
+	LEGENDARY("Legendary", ChatFormatting.RED, 6, 30),
+	SHINY("Shiny", ChatFormatting.GOLD, 7, 5),
+	GIGANTIC("Gigantic", ChatFormatting.LIGHT_PURPLE, 8, 0);
 
 	private final String displayName;
 	private final ChatFormatting formatting;
 	private final int sortOrder;
+	private final int weight;
 
-	DollRarity(String displayName, ChatFormatting formatting, int sortOrder) {
+	DollRarity(String displayName, ChatFormatting formatting, int sortOrder, int weight) {
 		this.displayName = displayName;
 		this.formatting = formatting;
 		this.sortOrder = sortOrder;
+		this.weight = weight;
 	}
 
 	public String getDisplayName() {
@@ -38,6 +40,21 @@ public enum DollRarity {
 
 	public int getSortOrder() {
 		return sortOrder;
+	}
+
+	public int getWeight() {
+		// Use configurable weight if available, otherwise fall back to hardcoded default
+		if (RarityWeightConfig.isInitialized()) {
+			return RarityWeightConfig.getWeight(this);
+		}
+		return weight;
+	}
+
+	/**
+	 * Gets the hardcoded default weight (for reference/fallback)
+	 */
+	public int getDefaultWeight() {
+		return weight;
 	}
 
 	public static DollRarity getHighestRarity(Collection<ModelFlag> flags) {
