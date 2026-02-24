@@ -1,0 +1,39 @@
+{
+	"format_version": "1.8.0",
+	"animations": {
+		"animation.idle": {
+			"loop": true,
+			"bones": {
+				"left_hand": {
+					"position": [0, -0.25, 0]
+				},
+				"right_hand": {
+					"position": [0.25, -0.25, 0]
+				},
+				"left_foot": {
+					"rotation": [0, -22.5, 0],
+					"position": [-0.5, 0, 0]
+				},
+				"right_foot": {
+					"rotation": [0, 22.5, 0],
+					"position": [0.5, 0, 0]
+				},
+				"left_antenna": {
+					"rotation": [-1.55898, -8.42106, 20.94102]
+				},
+				"left_antenna_seg2": {
+					"rotation": [22.5, 0, 0]
+				},
+				"left_antenna_tip": {
+					"rotation": [0, 0, 0]
+				},
+				"right_antenna": {
+					"rotation": [-1.55898, 8.42106, -20.94102]
+				},
+				"right_antenna_seg2": {
+					"rotation": [22.5, 0, 0]
+				}
+			}
+		}
+	}
+}

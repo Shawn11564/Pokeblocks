@@ -1,0 +1,24 @@
+{
+	"format_version": "1.8.0",
+	"animations": {
+		"animation.idle": {
+			"loop": true,
+			"bones": {
+				"left_eye": {
+					"rotation": [-7.5, -12.5, 15]
+				},
+				"right_eye": {
+					"rotation": [-7.5, 12.5, -15]
+				},
+				"left_tail_hair": {
+					"rotation": [-12.5, 0, 22.5],
+					"position": [-0.05, 0, 0]
+				},
+				"right_tail_hair": {
+					"rotation": [-12.5, 0, -22.5],
+					"position": [0.05, 0, 0]
+				}
+			}
+		}
+	}
+}
