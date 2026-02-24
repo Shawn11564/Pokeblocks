@@ -124,13 +124,21 @@ public class PokedollModel extends DefaultedBlockGeoModel<PokedollBlockEntity> {
 			textureSuffix = suffixes.split("\\|", 2)[1];
 
 		List<String> attempts = List.of(
-				// Preferred format
+				// Preferred format with suffix
 				"textures/block/pokedoll_" + pokemon + textureSuffix + "_texture.png",
 				"textures/block/" + pokemon + textureSuffix + "_texture.png",
 
-				// Without suffix
+				// Without suffix but with _texture
 				"textures/block/pokedoll_" + pokemon + "_texture.png",
 				"textures/block/" + pokemon + "_texture.png",
+
+				// Plain format with suffix (matches item renderer)
+				"textures/block/pokedoll_" + pokemon + textureSuffix + ".png",
+				"textures/block/" + pokemon + textureSuffix + ".png",
+
+				// Plain format without suffix (matches item renderer)
+				"textures/block/pokedoll_" + pokemon + ".png",
+				"textures/block/" + pokemon + ".png",
 
 				// Default fallback
 				"textures/block/pokedoll_" + ModSettings.DEFAULT_POKEMON + "_texture.png"

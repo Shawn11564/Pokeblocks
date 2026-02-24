@@ -9,7 +9,6 @@ import java.util.Comparator;
 public enum DollRarity {
 
 	NONE("", ChatFormatting.RESET, 0, 5),
-	UNCLASSIFIED("Unclassified", ChatFormatting.GRAY, 1, 0),
 	COMMON("Common", ChatFormatting.WHITE, 2, 500),
 	UNCOMMON("Uncommon", ChatFormatting.GREEN, 3, 300),
 	RARE("Rare", ChatFormatting.AQUA, 4, 150),
