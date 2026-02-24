@@ -9,9 +9,7 @@ import net.minecraft.server.MinecraftServer;
 
 import java.io.IOException;
 import java.io.OutputStream;
-import java.net.InetAddress;
-import java.net.InetSocketAddress;
-import java.net.URI;
+import java.net.*;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Path;
@@ -88,12 +86,13 @@ public final class ResourcePackServer {
 		}
 
 		url = URI.create("http://" + hostForUrl + ":" + port + path).toString();
+		System.out.println("[Pokeblocks] Resource pack server started at: " + url);
 		return url;
 	}
 
 	private static String getUsableAddress() {
 		try {
-			var interfaces = java.net.NetworkInterface.getNetworkInterfaces();
+			var interfaces = NetworkInterface.getNetworkInterfaces();
 			while (interfaces.hasMoreElements()) {
 				var ni = interfaces.nextElement();
 				if (ni.isLoopback() || !ni.isUp()) continue;
@@ -101,7 +100,7 @@ public final class ResourcePackServer {
 				while (addrs.hasMoreElements()) {
 					var addr = addrs.nextElement();
 					// Prefer IPv4 site-local addresses (192.168.x.x, 10.x.x.x, etc.)
-					if (addr instanceof java.net.Inet4Address && addr.isSiteLocalAddress()) {
+					if (addr instanceof Inet4Address && addr.isSiteLocalAddress()) {
 						return addr.getHostAddress();
 					}
 				}

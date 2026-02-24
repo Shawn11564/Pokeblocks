@@ -31,10 +31,7 @@ public class RebuildPackCMD {
         Path gameDir = server.getServerDirectory();
 
         List<Path> candidates = List.of(
-                gameDir.resolve("config").resolve("Pokeblocks").resolve("pokeblocks").resolve("custom"),
-                gameDir.resolve("config").resolve("pokeblocks").resolve("custom"),
-                gameDir.resolve("pokeblocks").resolve("custom"),
-                gameDir.resolve("config").resolve("Pokeblocks").resolve("custom")
+                gameDir.resolve("config").resolve("Pokeblocks").resolve("resourcepack").resolve("custom")
         );
 
         try {

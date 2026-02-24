@@ -13,10 +13,15 @@ public final class PokeblocksServerLifecycle {
     public static void onServerStarted(MinecraftServer server) {
         try {
             Path serverDir = server.getServerDirectory();
-            Path customDir = serverDir.resolve("config").resolve("Pokeblocks").resolve("custom");
+            Path customDir = serverDir.resolve("config")
+                    .resolve("Pokeblocks")
+                    .resolve("resourcepack")
+                    .resolve("custom")
+                    .resolve("assets");
 
             Files.createDirectories(customDir.resolve("models"));
             Files.createDirectories(customDir.resolve("textures"));
+            Files.createDirectories(customDir.resolve("animations"));
 
             DollRarityOverrides.initialize(serverDir);
             RarityWeightConfig.initialize(serverDir);
