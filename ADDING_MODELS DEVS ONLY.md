@@ -1,22 +1,13 @@
-# Adding New Pokemon Models to Pokeblocks
-
-## Quick Start
-
-1. **Navigate to your config folder**: `config/Pokeblocks/custom/`
-2. **Add your files** to the appropriate subfolders
-3. **Configure rarity** (optional)
-4. **Launch/restart the game**
+# Adding New Models to Pokeblocks Source Code
 
 ## File Structure Overview
 
-### Config Folder Structure 
+### Developer Asset Structure 
 ```
-config/Pokeblocks/custom/
-├── models/                       # Model files (.geo.json)
-├── textures/                     # Texture files (.png)
-├── animations/                   # Animation files (.animation.json)
-├── assets/                       # Raw assets (advanced)
-└── pack.png                      # Custom pack icon (optional)
+common/src/main/resources/assets/pokeblocks/
+├── geo/block/                    # Model files (.geo.json)
+├── textures/block/               # Texture files (.png)
+└── animations/block/             # Animation files (.animation.json)
 ```
 
 ## File Requirements
@@ -80,41 +71,12 @@ pokedoll_pikachu_posed.animation.json    # Posed animation
 pokedoll_pikachu_animated.animation.json # Animated animation
 ```
 
-## 📖 Step-by-Step Guide
+## Step-by-Step Guide
 
-#### Step 1: Locate Config Folder
-Navigate to your Minecraft instance's config folder:
-- **Windows**: `%APPDATA%/.minecraft/config/Pokeblocks/custom/`
-- **Linux/Mac**: `~/.minecraft/config/Pokeblocks/custom/`
-- **Modded Launchers**: `<instance_folder>/config/Pokeblocks/custom/`
+For mod developers working on the source code:
 
-#### Step 2: Prepare Folder Structure
-Create these folders if they don't exist:
-```
-config/Pokeblocks/custom/
-├── models/
-├── textures/
-└── animations/    (optional)
-```
-
-#### Step 3: Add Your Files
-1. **Models**: Place `.geo.json` files in `models/`
-2. **Textures**: Place `.png` files in `textures/`
-3. **Animations**: Place `.animation.json` files in `animations/`
-
-#### Step 4: Configure Rarity (Optional)
-Edit `config/Pokeblocks/doll_rarity.json`:
-```json
-[
-  "pikachu uncommon",
-  "pikachu posed rare",
-  "pikachu animated epic"
-]
-```
-
-#### Step 5: Launch Game
-The mod will automatically detect and load your custom models!
-
+1. Place files in `common/src/main/resources/assets/pokeblocks/`
+3. Rebuild the mod
 
 ## Advanced Features
 
@@ -123,8 +85,6 @@ The mod will automatically detect and load your custom models!
 If you create a model like `pokedoll_snorunt_family_animated.geo.json` without individual `pokedoll_snorunt_family.geo.json` or `pokedoll_snorunt_animated.geo.json` files, the system treats `family + animated` as a required combination (both flags must be present together).
 
 ### Animation System
-
-The mod supports sophisticated animation handling:
 
 - **Base Animation**: `pokedoll_<name>.animation.json`
 - **Variant Animations**: `pokedoll_<name>_<flag>.animation.json`
@@ -144,7 +104,6 @@ pokedoll_pokemon.png              # Base texture
 pokedoll_pokemon_shiny.png        # Shiny variant
 pokedoll_pokemon_posed.png        # Posed variant
 pokedoll_pokemon_animated.png     # Animated variant
-pokedoll_pokemon_family.png       # Family variant
 ```
 
 ### Custom Pack Icon
@@ -278,20 +237,3 @@ Rarity config:
 - **Rarity changes**: Use `/pokeblocks reload_rarity` command
 - **Weight changes**: Use `/pokeblocks reload_weights` command  
 - **New models/textures**: Restart the game (resource pack regeneration required)
-
-## Tips
-
-- **Start simple** - add basic model + texture first, then add variants
-- **Use existing Pokemon** as reference for file structure
-- **Test frequently** - catch issues early in development
-- **Keep backups** - especially when working with complex setups
-- **Check logs** - the mod provides detailed debug information
-- **Organize files** - use consistent naming and folder structure
-
-## Getting Help
-
-- **Check console logs** for specific error messages
-- **Compare with existing Pokemon** in the mod files
-- **Verify file permissions** and locations
-- **Test with minimal setup** first (just model + texture)
-- **Use the debug logs** to understand what the mod is detecting
