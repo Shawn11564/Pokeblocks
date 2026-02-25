@@ -2,6 +2,7 @@ package dev.mrshawn.pokeblocks.item.custom;
 
 import dev.mrshawn.pokeblocks.client.renderer.item.FigurineItemRenderer;
 import dev.mrshawn.pokeblocks.constants.ModSettings;
+import dev.mrshawn.pokeblocks.item.FigurineNameOverrides;
 import dev.mrshawn.pokeblocks.registry.ItemRegistry;
 import net.minecraft.ChatFormatting;
 import net.minecraft.client.renderer.BlockEntityWithoutLevelRenderer;
@@ -58,11 +59,18 @@ public class FigurineItem extends BlockItem implements GeoItem {
 
 	/**
 	 * Builds display name in format: [Figurine Name] Figurine
+	 * Uses name override if one exists, otherwise capitalizes and formats the id.
 	 */
 	private static String buildDisplayName(String figurine) {
-		String displayName = figurine == null || figurine.isEmpty() ? ModSettings.DEFAULT_FIGURINE : figurine;
-		// Capitalize first letter and replace underscores with spaces
-		String formattedName = displayName.substring(0, 1).toUpperCase() + displayName.substring(1).replace("_", " ");
+		String id = figurine == null || figurine.isEmpty() ? ModSettings.DEFAULT_FIGURINE : figurine;
+
+		String override = FigurineNameOverrides.getOverride(id);
+		if (override != null) {
+			return override + " Figurine";
+		}
+
+		// Default: capitalize first letter and replace underscores with spaces
+		String formattedName = id.substring(0, 1).toUpperCase() + id.substring(1).replace("_", " ");
 		return formattedName + " Figurine";
 	}
 

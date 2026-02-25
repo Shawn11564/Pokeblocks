@@ -120,6 +120,7 @@ public class PokedollItem extends BlockItem implements GeoItem {
 		}
 
 		// Pokemon name
+		pokemon = pokemon.replace("_", " ");
 		sb.append(capitalize(pokemon)).append(" ");
 
 		// Trailing flags: everything else in sort order
@@ -138,8 +139,13 @@ public class PokedollItem extends BlockItem implements GeoItem {
 	}
 
 	private static String capitalize(String s) {
-		if (s == null || s.isEmpty()) return s;
-		return s.substring(0, 1).toUpperCase() + s.substring(1).toLowerCase();
+		String[] words = s.split(" ");
+		for (int i = 0; i < words.length; i++) {
+			if (!words[i].isEmpty()) {
+				words[i] = words[i].substring(0, 1).toUpperCase() + words[i].substring(1);
+			}
+		}
+		return String.join(" ", words);
 	}
 
 	/**

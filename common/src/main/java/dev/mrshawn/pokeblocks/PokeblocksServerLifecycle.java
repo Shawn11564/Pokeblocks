@@ -1,6 +1,7 @@
 package dev.mrshawn.pokeblocks;
 
 import dev.mrshawn.pokeblocks.item.DollRarityOverrides;
+import dev.mrshawn.pokeblocks.item.FigurineNameOverrides;
 import dev.mrshawn.pokeblocks.item.RarityWeightConfig;
 import dev.mrshawn.pokeblocks.resourcepack.CustomPackManager;
 import net.minecraft.server.MinecraftServer;
@@ -24,6 +25,7 @@ public final class PokeblocksServerLifecycle {
             Files.createDirectories(customDir.resolve("animations"));
 
             DollRarityOverrides.initialize(serverDir);
+            FigurineNameOverrides.initialize(serverDir);
             RarityWeightConfig.initialize(serverDir);
             CustomPackManager.buildAndCache(server);
         } catch (Exception e) {
