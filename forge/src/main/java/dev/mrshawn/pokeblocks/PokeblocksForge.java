@@ -2,6 +2,7 @@ package dev.mrshawn.pokeblocks;
 
 import dev.mrshawn.pokeblocks.command.ModCommands;
 import net.minecraft.core.registries.Registries;
+import net.minecraft.sounds.SoundEvent;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.item.CreativeModeTab;
 import net.minecraft.world.item.Item;
@@ -23,6 +24,7 @@ public final class PokeblocksForge {
 	public static final DeferredRegister<BlockEntityType<?>> BLOCK_ENTITIES = DeferredRegister.create(Registries.BLOCK_ENTITY_TYPE, PokeblocksCommon.MOD_ID);
 	public static final DeferredRegister<CreativeModeTab> CREATIVE_TABS = DeferredRegister.create(Registries.CREATIVE_MODE_TAB, PokeblocksCommon.MOD_ID);
 	public static final DeferredRegister<Item> ITEMS = DeferredRegister.create(Registries.ITEM, PokeblocksCommon.MOD_ID);
+	public static final DeferredRegister<SoundEvent> SOUND_EVENTS = DeferredRegister.create(Registries.SOUND_EVENT, PokeblocksCommon.MOD_ID);
 
 	public PokeblocksForge() {
 		IEventBus modEventBus = FMLJavaModLoadingContext.get().getModEventBus();
@@ -32,6 +34,7 @@ public final class PokeblocksForge {
 		BLOCK_ENTITIES.register(modEventBus);
 		CREATIVE_TABS.register(modEventBus);
 		ITEMS.register(modEventBus);
+		SOUND_EVENTS.register(modEventBus);
 
 		PokeblocksCommon.doRegistrations();
 

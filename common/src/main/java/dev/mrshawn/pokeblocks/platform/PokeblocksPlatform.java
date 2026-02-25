@@ -23,18 +23,15 @@ public interface PokeblocksPlatform {
     <T extends Entity> Supplier<EntityType<T>> registerEntity(String id, Supplier<EntityType<T>> entity);
     <T extends Block> Supplier<T> registerBlock(String id, Supplier<T> block);
     <T extends Item> Supplier<T> registerItem(String id, Supplier<T> item);
-
     <T extends CreativeModeTab> Supplier<T> registerCreativeModeTab(String id, Supplier<T> tab);
+    <T extends SoundEvent> Supplier<T> registerSound(String id, Supplier<T> sound);
 
     CreativeModeTab.Builder newCreativeTabBuilder();
+
     // Optional registration helpers used by some platform implementations (default to throwing so platforms that don't implement them will fail fast if used)
 
     default <T extends ArmorMaterial> Holder<T> registerArmorMaterial(String id, Supplier<T> armorMaterial) {
         throw new UnsupportedOperationException("registerArmorMaterial not supported on this platform");
-    }
-
-    default <T extends SoundEvent> Supplier<T> registerSound(String id, Supplier<T> sound) {
-        throw new UnsupportedOperationException("registerSound not supported on this platform");
     }
 
     default <E extends Mob> Supplier<SpawnEggItem> makeSpawnEggFor(Supplier<EntityType<E>> entityType, int primaryEggColour, int secondaryEggColour, Item.Properties itemProperties) {

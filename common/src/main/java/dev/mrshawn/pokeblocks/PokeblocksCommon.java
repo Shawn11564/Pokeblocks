@@ -25,5 +25,6 @@ public final class PokeblocksCommon {
 		EntityRegistry.init();
 		BlockEntityRegistry.init();
         ItemRegistry.init();
+		SoundRegistry.init();
 	}
 }

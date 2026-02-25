@@ -1,6 +1,7 @@
 package dev.mrshawn.pokeblocks;
 
 import dev.mrshawn.pokeblocks.platform.PokeblocksPlatform;
+import net.minecraft.sounds.SoundEvent;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.item.CreativeModeTab;
@@ -35,6 +36,11 @@ public class PokeblocksForgePlatform implements PokeblocksPlatform {
     @Override
     public <T extends CreativeModeTab> Supplier<T> registerCreativeModeTab(String id, Supplier<T> tab) {
         return PokeblocksForge.CREATIVE_TABS.register(id, tab);
+    }
+
+    @Override
+    public <T extends SoundEvent> Supplier<T> registerSound(String id, Supplier<T> sound) {
+        return PokeblocksForge.SOUND_EVENTS.register(id, sound);
     }
 
     @Override

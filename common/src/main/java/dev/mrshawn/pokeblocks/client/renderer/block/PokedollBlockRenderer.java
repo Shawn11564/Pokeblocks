@@ -14,9 +14,18 @@ public class PokedollBlockRenderer extends GeoBlockRenderer<PokedollBlockEntity>
 
 	@Override
 	public void scaleModelForRender(float widthScale, float heightScale, PoseStack poseStack, PokedollBlockEntity animatable, BakedGeoModel model, boolean isReRender, float partialTick, int packedLight, int packedOverlay) {
-		// If the block entity is set to gigantic, scale the model by an extra 2x
-		if (animatable != null && animatable.isGigantic()) {
-			poseStack.scale(ModSettings.GIGANTIC_SCALE, ModSettings.GIGANTIC_SCALE, ModSettings.GIGANTIC_SCALE);
+		if (animatable != null) {
+			// Apply gigantic scale
+			if (animatable.isGigantic()) {
+				poseStack.scale(ModSettings.GIGANTIC_SCALE, ModSettings.GIGANTIC_SCALE, ModSettings.GIGANTIC_SCALE);
+			}
+
+			// Apply squish animation
+			float xzScale = animatable.getSquishScale(partialTick);
+			float yScale = animatable.getSquishScaleY(partialTick);
+			if (xzScale != 1.0f || yScale != 1.0f) {
+				poseStack.scale(xzScale, yScale, xzScale);
+			}
 		}
 
 		super.scaleModelForRender(widthScale, heightScale, poseStack, animatable, model, isReRender, partialTick, packedLight, packedOverlay);

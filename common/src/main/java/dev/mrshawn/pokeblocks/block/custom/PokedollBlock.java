@@ -1,11 +1,17 @@
 package dev.mrshawn.pokeblocks.block.custom;
 
 import com.mojang.serialization.MapCodec;
+import dev.mrshawn.pokeblocks.block.entity.custom.PokedollBlockEntity;
 import dev.mrshawn.pokeblocks.registry.BlockEntityRegistry;
+import dev.mrshawn.pokeblocks.registry.SoundRegistry;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
+import net.minecraft.sounds.SoundSource;
+import net.minecraft.world.InteractionResult;
+import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.context.BlockPlaceContext;
 import net.minecraft.world.level.BlockGetter;
+import net.minecraft.world.level.Level;
 import net.minecraft.world.level.LevelAccessor;
 import net.minecraft.world.level.LevelReader;
 import net.minecraft.world.level.block.*;
@@ -17,6 +23,7 @@ import net.minecraft.world.level.block.state.properties.BooleanProperty;
 import net.minecraft.world.level.block.state.properties.DirectionProperty;
 import net.minecraft.world.level.material.FluidState;
 import net.minecraft.world.level.material.Fluids;
+import net.minecraft.world.phys.BlockHitResult;
 import net.minecraft.world.phys.shapes.CollisionContext;
 import net.minecraft.world.phys.shapes.VoxelShape;
 import org.jetbrains.annotations.Nullable;
@@ -80,6 +87,27 @@ public class PokedollBlock extends BaseEntityBlock implements EntityBlock, Simpl
 	}
 
 	@Override
+	protected InteractionResult useWithoutItem(BlockState state, Level level, BlockPos pos, Player player, BlockHitResult hit) {
+		if (level.isClientSide()) return InteractionResult.SUCCESS;
+
+		BlockEntity be = level.getBlockEntity(pos);
+		if (be instanceof PokedollBlockEntity pokedoll) {
+			pokedoll.triggerSquish();
+
+			level.playSound(
+					null, // null = all nearby players hear it
+					pos,
+					SoundRegistry.POKEDOLL_SQUEAK.get(),  // Supplier set by platform module
+					SoundSource.BLOCKS,
+					0.8f, // volume
+					0.9f + level.getRandom().nextFloat() * 0.2f // slight pitch variation
+			);
+		}
+
+		return InteractionResult.SUCCESS;
+	}
+
+	@Override
 	public VoxelShape getShape(BlockState state, BlockGetter world, BlockPos pos, CollisionContext context) {
 		return switch (state.getValue(FACING)) {
 			case NORTH -> Block.box(4, 0, 4, 12, 12, 12);
@@ -94,4 +122,3 @@ public class PokedollBlock extends BaseEntityBlock implements EntityBlock, Simpl
 		return true;
 	}
 }
-

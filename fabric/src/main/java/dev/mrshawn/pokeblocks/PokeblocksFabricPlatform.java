@@ -6,6 +6,7 @@ import net.minecraft.core.Holder;
 import net.minecraft.core.Registry;
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.resources.ResourceLocation;
+import net.minecraft.sounds.SoundEvent;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.item.CreativeModeTab;
@@ -40,6 +41,11 @@ public class PokeblocksFabricPlatform implements PokeblocksPlatform {
     @Override
     public <T extends CreativeModeTab> Supplier<T> registerCreativeModeTab(String id, Supplier<T> tab) {
         return registerSupplier(BuiltInRegistries.CREATIVE_MODE_TAB, id, tab);
+    }
+
+    @Override
+    public <T extends SoundEvent> Supplier<T> registerSound(String id, Supplier<T> sound) {
+        return registerSupplier(BuiltInRegistries.SOUND_EVENT, id, sound);
     }
 
     @Override

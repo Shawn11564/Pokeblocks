@@ -25,6 +25,12 @@ public class PokedollBlockEntity extends BlockEntity implements GeoBlockEntity {
 	private String pokemon = ModSettings.DEFAULT_POKEMON;
 	private final Map<ModelFlag, Boolean> flags = new EnumMap<>(ModelFlag.class);
 
+	/** Game time (in ticks) when the last squish was triggered. -1 means no squish active. */
+	private long squishStartTick = -1;
+
+	/** Duration of the squish animation in ticks. */
+	public static final int SQUISH_DURATION_TICKS = 8;
+
 	public PokedollBlockEntity(BlockPos pos, BlockState state) {
 		super(BlockEntityRegistry.POKEDOLL_BLOCK_ENTITY.get(), pos, state);
 		for (ModelFlag flag : ModelFlag.values()) {
@@ -82,6 +88,64 @@ public class PokedollBlockEntity extends BlockEntity implements GeoBlockEntity {
 		return getFlag(ModelFlag.GIGANTIC);
 	}
 
+	// --- Squish animation ---
+
+	/**
+	 * Triggers a squish animation. Call from the server side.
+	 */
+	public void triggerSquish() {
+		if (this.level != null) {
+			this.squishStartTick = this.level.getGameTime();
+			syncToClient();
+		}
+	}
+
+	/**
+	 * Returns the squish scale factor for rendering.
+	 * 1.0 = normal size, dips below 1.0 during squish, overshoots slightly, then returns to 1.0.
+	 */
+	public float getSquishScale(float partialTick) {
+		if (squishStartTick < 0 || level == null) return 1.0f;
+
+		float elapsed = (level.getGameTime() - squishStartTick) + partialTick;
+		if (elapsed < 0 || elapsed > SQUISH_DURATION_TICKS) return 1.0f;
+
+		float progress = elapsed / SQUISH_DURATION_TICKS;
+
+		// Squeeze toy curve: quick squish down, then overshoot back up, settle to 1.0
+		// Using a sin-based bounce: sin(progress * PI) gives a 0->1->0 bump
+		// We subtract that for a squish then add a smaller overshoot
+		float squishAmount;
+		if (progress < 0.35f) {
+			// Squish down phase (0.0 -> 0.35)
+			float t = progress / 0.35f;
+			squishAmount = 1.0f - 0.2f * (float) Math.sin(t * Math.PI * 0.5);
+		} else if (progress < 0.65f) {
+			// Bounce back overshoot phase (0.35 -> 0.65)
+			float t = (progress - 0.35f) / 0.3f;
+			squishAmount = 0.8f + 0.25f * (float) Math.sin(t * Math.PI * 0.5);
+		} else {
+			// Settle phase (0.65 -> 1.0)
+			float t = (progress - 0.65f) / 0.35f;
+			squishAmount = 1.05f - 0.05f * (float) Math.sin(t * Math.PI * 0.5 + Math.PI * 0.5);
+		}
+
+		return squishAmount;
+	}
+
+	/**
+	 * Returns the inverse Y scale to create a cartoony squash effect.
+	 * When the doll squishes horizontally, it stretches vertically, and vice versa.
+	 */
+	public float getSquishScaleY(float partialTick) {
+		float xzScale = getSquishScale(partialTick);
+		if (xzScale <= 0.01f) return 1.0f;
+		// Inverse relationship: volume preservation approximation
+		return 1.0f / xzScale;
+	}
+
+	// --- Sync & persistence ---
+
 	private void syncToClient() {
 		setChanged();
 		if (this.level != null && !this.level.isClientSide()) {
@@ -96,6 +160,7 @@ public class PokedollBlockEntity extends BlockEntity implements GeoBlockEntity {
 		for (ModelFlag flag : ModelFlag.values()) {
 			tag.putBoolean(flag.getTagName(), getFlag(flag));
 		}
+		tag.putLong("squishStartTick", this.squishStartTick);
 	}
 
 	@Override
@@ -112,6 +177,9 @@ public class PokedollBlockEntity extends BlockEntity implements GeoBlockEntity {
 				flags.put(flag, tag.getBoolean(flag.getTagName()));
 			}
 		}
+		if (tag.contains("squishStartTick")) {
+			this.squishStartTick = tag.getLong("squishStartTick");
+		}
 	}
 
 	@Override
@@ -121,6 +189,7 @@ public class PokedollBlockEntity extends BlockEntity implements GeoBlockEntity {
 		for (ModelFlag flag : ModelFlag.values()) {
 			tag.putBoolean(flag.getTagName(), getFlag(flag));
 		}
+		tag.putLong("squishStartTick", this.squishStartTick);
 		return tag;
 	}
 

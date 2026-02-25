@@ -1,0 +1,11 @@
+{
+  "pokedoll_squeak": {
+    "subtitle": "subtitles.pokeblocks.pokedoll_squeak",
+    "sounds": [
+      {
+        "name": "pokeblocks:pokedoll_squeak",
+        "stream": false
+      }
+    ]
+  }
+}

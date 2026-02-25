@@ -4,6 +4,7 @@ import com.mojang.serialization.MapCodec;
 import dev.mrshawn.pokeblocks.command.ModCommands;
 import dev.mrshawn.pokeblocks.loot.PokemonLootModifier;
 import net.minecraft.core.registries.Registries;
+import net.minecraft.sounds.SoundEvent;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.item.CreativeModeTab;
 import net.minecraft.world.item.Item;
@@ -28,6 +29,7 @@ public final class PokeblocksNeoForge {
 	public static final DeferredRegister<BlockEntityType<?>> BLOCK_ENTITIES = DeferredRegister.create(Registries.BLOCK_ENTITY_TYPE, PokeblocksCommon.MOD_ID);
 	public static final DeferredRegister<CreativeModeTab> CREATIVE_TABS = DeferredRegister.create(Registries.CREATIVE_MODE_TAB, PokeblocksCommon.MOD_ID);
 	public static final DeferredRegister<Item> ITEMS = DeferredRegister.create(Registries.ITEM, PokeblocksCommon.MOD_ID);
+	public static final DeferredRegister<SoundEvent> SOUND_EVENTS = DeferredRegister.create(Registries.SOUND_EVENT, PokeblocksCommon.MOD_ID);
 	
 	// Global Loot Modifier registry
 	public static final DeferredRegister<MapCodec<? extends IGlobalLootModifier>> GLOBAL_LOOT_MODIFIER_SERIALIZERS =
@@ -42,6 +44,7 @@ public final class PokeblocksNeoForge {
 		BLOCK_ENTITIES.register(modEventBus);
 		CREATIVE_TABS.register(modEventBus);
 		ITEMS.register(modEventBus);
+		SOUND_EVENTS.register(modEventBus);
 		GLOBAL_LOOT_MODIFIER_SERIALIZERS.register(modEventBus);
 
 		PokeblocksCommon.doRegistrations();
