@@ -186,6 +186,19 @@ public class PokemonRegistry {
 			}
 		}
 
+		// Register animation-only variant flags
+		// If a variant animation exists (e.g. pokedoll_chikorita_posed.animation.json)
+		// but there's no matching geo model, the variant should still be registered
+		// as an available flag — it will use the base geo model at render time.
+		for (var animEntry : variantAnimations.entrySet()) {
+			String name = animEntry.getKey();
+			if (!pokemonFlags.containsKey(name)) continue; // no base model exists at all
+
+			for (ModelFlag flag : animEntry.getValue().keySet()) {
+				pokemonFlags.get(name).add(flag);
+			}
+		}
+
 		// Register pokemon
 		int newCount = 0;
 		for (var entry : pokemonFlags.entrySet()) {
@@ -227,7 +240,7 @@ public class PokemonRegistry {
 			detectedFlags.add(ModelFlag.GIGANTIC);
 
 			// Note: Probably should flag models with animations? Riolu, Froslass, and Treecko bugged out when I tried to create animated variants for them.
-			
+
 			// Build flag map
 			Map<ModelFlag, Boolean> flagMap = new EnumMap<>(ModelFlag.class);
 			for (ModelFlag flag : ModelFlag.values()) {
