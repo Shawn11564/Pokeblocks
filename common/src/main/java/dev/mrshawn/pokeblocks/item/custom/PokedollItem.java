@@ -5,6 +5,7 @@ import dev.mrshawn.pokeblocks.client.renderer.animation.AnimationResolver;
 import dev.mrshawn.pokeblocks.client.renderer.item.PokedollItemRenderer;
 import dev.mrshawn.pokeblocks.constants.ModSettings;
 import dev.mrshawn.pokeblocks.item.DollRarity;
+import dev.mrshawn.pokeblocks.item.RarityScoreCalculator;
 import dev.mrshawn.pokeblocks.pokemon.ModelFlag;
 import dev.mrshawn.pokeblocks.pokemon.PokemonData;
 import dev.mrshawn.pokeblocks.registry.ItemRegistry;
@@ -15,6 +16,9 @@ import net.minecraft.client.renderer.BlockEntityWithoutLevelRenderer;
 import net.minecraft.core.component.DataComponents;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.chat.Component;
+import net.minecraft.network.chat.MutableComponent;
+import net.minecraft.network.chat.Style;
+import net.minecraft.network.chat.TextColor;
 import net.minecraft.world.item.BlockItem;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.TooltipFlag;
@@ -96,11 +100,86 @@ public class PokedollItem extends BlockItem implements GeoItem {
 
 	@Override
 	public void appendHoverText(ItemStack stack, TooltipContext tooltipContext, List<Component> tooltip, TooltipFlag flag) {
+		String pokemon = getPokemonFromStack(stack);
+		Set<ModelFlag> activeFlags = getFlagsFromStack(stack);
+
 		DollRarity rarity = ColorFactory.getRarity(stack);
-		if (rarity != DollRarity.NONE && rarity != null) {
+		if (rarity != null && rarity != DollRarity.NONE) {
 			tooltip.add(Component.empty());
 			tooltip.add(Component.literal(rarity.getDisplayName()).withStyle(rarity.getFormatting()));
 		}
+
+		// Rarity score with rainbow gradient
+		double chance = RarityScoreCalculator.computeChance(pokemon, activeFlags);
+		String scoreDisplay = RarityScoreCalculator.getDisplayString(pokemon, activeFlags);
+		tooltip.add(buildRarityComponent(scoreDisplay, chance));
+	}
+
+	/**
+	 * Builds the rarity tooltip line with a per-character gradient from white to rainbow.
+	 * <p>
+	 * The saturation of the rainbow is driven by rarity on a log scale:
+	 *   - Common dolls (~50% chance) → saturation ≈ 0 → appears white
+	 *   - Rare dolls (~0.001% chance) → saturation ≈ 1 → full vivid rainbow
+	 * <p>
+	 * Each character in the percentage value cycles through rainbow hues,
+	 * with a time-based offset so the colors shimmer on rare dolls.
+	 */
+	private static MutableComponent buildRarityComponent(String scoreDisplay, double chance) {
+		MutableComponent result = Component.literal("Rarity: ").withStyle(ChatFormatting.GRAY);
+
+		// Map chance to saturation using log scale.
+		// High chance (common) = low saturation (white).
+		// Low chance (rare) = high saturation (rainbow).
+		double clamped = Math.max(chance, 0.0001);
+		double logMin = Math.log10(0.0001); // -4
+		double logMax = Math.log10(100.0);  //  2
+		double logVal = Math.log10(clamped);
+
+		// 0 = rarest, 1 = most common
+		double normalized = (logVal - logMin) / (logMax - logMin);
+		normalized = Math.max(0.0, Math.min(1.0, normalized));
+
+		// Invert so rare = high saturation
+		float saturation = (float) (1.0 - normalized);
+
+		// Time-based hue offset for shimmer animation
+		long tick = System.currentTimeMillis() / 50;
+
+		for (int i = 0; i < scoreDisplay.length(); i++) {
+			float hue = ((tick + i * 12) % 360) / 360.0f;
+			int rgb = hsbToRgb(hue, saturation, 1.0f);
+			result.append(Component.literal(String.valueOf(scoreDisplay.charAt(i)))
+					.withStyle(Style.EMPTY.withColor(TextColor.fromRgb(rgb))));
+		}
+
+		return result;
+	}
+
+	/**
+	 * Converts HSB (hue 0-1, saturation 0-1, brightness 0-1) to packed RGB int.
+	 */
+	private static int hsbToRgb(float hue, float saturation, float brightness) {
+		int r, g, b;
+		if (saturation == 0) {
+			r = g = b = (int) (brightness * 255.0f + 0.5f);
+		} else {
+			float h = (hue - (float) Math.floor(hue)) * 6.0f;
+			float f = h - (float) Math.floor(h);
+			float p = brightness * (1.0f - saturation);
+			float q = brightness * (1.0f - saturation * f);
+			float t = brightness * (1.0f - (saturation * (1.0f - f)));
+
+			switch ((int) h) {
+				case 0 -> { r = (int) (brightness * 255.0f + 0.5f); g = (int) (t * 255.0f + 0.5f); b = (int) (p * 255.0f + 0.5f); }
+				case 1 -> { r = (int) (q * 255.0f + 0.5f); g = (int) (brightness * 255.0f + 0.5f); b = (int) (p * 255.0f + 0.5f); }
+				case 2 -> { r = (int) (p * 255.0f + 0.5f); g = (int) (brightness * 255.0f + 0.5f); b = (int) (t * 255.0f + 0.5f); }
+				case 3 -> { r = (int) (p * 255.0f + 0.5f); g = (int) (q * 255.0f + 0.5f); b = (int) (brightness * 255.0f + 0.5f); }
+				case 4 -> { r = (int) (t * 255.0f + 0.5f); g = (int) (p * 255.0f + 0.5f); b = (int) (brightness * 255.0f + 0.5f); }
+				default -> { r = (int) (brightness * 255.0f + 0.5f); g = (int) (p * 255.0f + 0.5f); b = (int) (q * 255.0f + 0.5f); }
+			}
+		}
+		return (r << 16) | (g << 8) | b;
 	}
 
 	/**
@@ -247,6 +326,5 @@ public class PokedollItem extends BlockItem implements GeoItem {
 
 		return mutations;
 	}
-
-
+	
 }
