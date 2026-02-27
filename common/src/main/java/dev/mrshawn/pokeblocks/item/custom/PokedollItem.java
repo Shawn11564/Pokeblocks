@@ -10,7 +10,6 @@ import dev.mrshawn.pokeblocks.pokemon.ModelFlag;
 import dev.mrshawn.pokeblocks.pokemon.PokemonData;
 import dev.mrshawn.pokeblocks.registry.ItemRegistry;
 import dev.mrshawn.pokeblocks.registry.PokemonRegistry;
-import dev.mrshawn.pokeblocks.utils.ColorFactory;
 import net.minecraft.ChatFormatting;
 import net.minecraft.client.renderer.BlockEntityWithoutLevelRenderer;
 import net.minecraft.core.component.DataComponents;
@@ -103,7 +102,7 @@ public class PokedollItem extends BlockItem implements GeoItem {
 		String pokemon = getPokemonFromStack(stack);
 		Set<ModelFlag> activeFlags = getFlagsFromStack(stack);
 
-		DollRarity rarity = ColorFactory.getRarity(stack);
+		DollRarity rarity = DollRarity.getRarity(stack);
 		if (rarity != null && rarity != DollRarity.NONE) {
 			tooltip.add(Component.empty());
 			tooltip.add(Component.literal(rarity.getDisplayName()).withStyle(rarity.getFormatting()));
@@ -326,5 +325,5 @@ public class PokedollItem extends BlockItem implements GeoItem {
 
 		return mutations;
 	}
-	
+
 }

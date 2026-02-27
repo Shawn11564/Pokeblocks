@@ -1,48 +1,55 @@
 package dev.mrshawn.pokeblocks.utils;
 
+import com.mojang.blaze3d.platform.NativeImage;
 import dev.mrshawn.pokeblocks.item.DollRarity;
-import dev.mrshawn.pokeblocks.item.DollRarityOverrides;
-import dev.mrshawn.pokeblocks.item.custom.PokedollItem;
-import dev.mrshawn.pokeblocks.pokemon.ModelFlag;
 import net.minecraft.ChatFormatting;
+import net.minecraft.client.Minecraft;
+import net.minecraft.resources.ResourceLocation;
+import net.minecraft.server.packs.resources.Resource;
 import net.minecraft.world.item.ItemStack;
+import org.joml.Vector3f;
 
-import java.util.Set;
+import java.io.InputStream;
+import java.util.Optional;
 
 public class ColorFactory {
 
 	private ColorFactory() {}
 
 	public static ChatFormatting getFormattingFor(ItemStack stack) {
-		return getRarity(stack).getFormatting();
+		return DollRarity.getRarity(stack).getFormatting();
 	}
 
-	public static DollRarity getRarity(ItemStack stack) {
-		String pokemon = PokedollItem.getPokemonFromStack(stack);
-		Set<ModelFlag> flags = PokedollItem.getFlagsFromStack(stack);
-
-		// 1. Check for override
-		DollRarity override = DollRarityOverrides.getOverride(pokemon, flags);
-		if (override != null) {
-			return override;
-		}
-
-		// 2. Check flags for automatic rarity (highest wins)
-		// Only SHINY and GIGANTIC contribute automatic rarity
-		DollRarity highest = DollRarity.NONE;
-		for (ModelFlag flag : flags) {
-			DollRarity flagRarity = flag.getRarity();
-			if (flagRarity.getSortOrder() > highest.getSortOrder()) {
-				highest = flagRarity;
+	public static Vector3f sampleAverageColor(ResourceLocation textureLoc, Vector3f fallBack) {
+		try {
+			Optional<Resource> resource = Minecraft.getInstance().getResourceManager().getResource(textureLoc);
+			if (resource.isPresent()) {
+				try (InputStream is = resource.get().open();
+					 NativeImage image = NativeImage.read(is)) {
+					long r = 0, g = 0, b = 0;
+					int count = 0;
+					for (int x = 0; x < image.getWidth(); x++) {
+						for (int y = 0; y < image.getHeight(); y++) {
+							int pixel = image.getPixelRGBA(x, y);
+							int a = (pixel >> 24) & 0xFF;
+							if (a < 128) continue;
+							r += pixel & 0xFF;
+							g += (pixel >> 8) & 0xFF;
+							b += (pixel >> 16) & 0xFF;
+							count++;
+						}
+					}
+					if (count > 0) {
+						return new Vector3f(
+								(r / (float) count) / 255f,
+								(g / (float) count) / 255f,
+								(b / (float) count) / 255f
+						);
+					}
+				}
 			}
-		}
-
-		if (highest != DollRarity.NONE) {
-			return highest;
-		}
-
-		// 3. Default white
-		return DollRarity.COMMON;
+		} catch (Exception e) {}
+		return fallBack;
 	}
 
 }

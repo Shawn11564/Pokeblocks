@@ -31,6 +31,21 @@ public class PokedollBlockEntity extends BlockEntity implements GeoBlockEntity {
 	/** Duration of the squish animation in ticks. */
 	public static final int SQUISH_DURATION_TICKS = 8;
 
+	/** Number of rapid clicks required to break the doll. */
+	public static final int BREAK_CLICK_THRESHOLD = 8;
+
+	/** Time window in ticks within which clicks count as "rapid" (1.5 seconds). */
+	public static final long RAPID_CLICK_WINDOW_TICKS = 30;
+
+	/** Tracks rapid click count (server-side only, not persisted). */
+	private int rapidClickCount = 0;
+
+	/** Game time of the first click in the current rapid-click window. */
+	private long rapidClickWindowStart = -1;
+
+	/** Whether this doll has been waxed with honeycomb. */
+	private boolean waxed = false;
+
 	public PokedollBlockEntity(BlockPos pos, BlockState state) {
 		super(BlockEntityRegistry.POKEDOLL_BLOCK_ENTITY.get(), pos, state);
 		for (ModelFlag flag : ModelFlag.values()) {
@@ -88,11 +103,19 @@ public class PokedollBlockEntity extends BlockEntity implements GeoBlockEntity {
 		return getFlag(ModelFlag.GIGANTIC);
 	}
 
+	// --- Wax ---
+
+	public boolean isWaxed() {
+		return waxed;
+	}
+
+	public void setWaxed(boolean waxed) {
+		this.waxed = waxed;
+		syncToClient();
+	}
+
 	// --- Squish animation ---
 
-	/**
-	 * Triggers a squish animation. Call from the server side.
-	 */
 	public void triggerSquish() {
 		if (this.level != null) {
 			this.squishStartTick = this.level.getGameTime();
@@ -100,10 +123,6 @@ public class PokedollBlockEntity extends BlockEntity implements GeoBlockEntity {
 		}
 	}
 
-	/**
-	 * Returns the squish scale factor for rendering.
-	 * 1.0 = normal size, dips below 1.0 during squish, overshoots slightly, then returns to 1.0.
-	 */
 	public float getSquishScale(float partialTick) {
 		if (squishStartTick < 0 || level == null) return 1.0f;
 
@@ -112,20 +131,14 @@ public class PokedollBlockEntity extends BlockEntity implements GeoBlockEntity {
 
 		float progress = elapsed / SQUISH_DURATION_TICKS;
 
-		// Squeeze toy curve: quick squish down, then overshoot back up, settle to 1.0
-		// Using a sin-based bounce: sin(progress * PI) gives a 0->1->0 bump
-		// We subtract that for a squish then add a smaller overshoot
 		float squishAmount;
 		if (progress < 0.35f) {
-			// Squish down phase (0.0 -> 0.35)
 			float t = progress / 0.35f;
 			squishAmount = 1.0f - 0.2f * (float) Math.sin(t * Math.PI * 0.5);
 		} else if (progress < 0.65f) {
-			// Bounce back overshoot phase (0.35 -> 0.65)
 			float t = (progress - 0.35f) / 0.3f;
 			squishAmount = 0.8f + 0.25f * (float) Math.sin(t * Math.PI * 0.5);
 		} else {
-			// Settle phase (0.65 -> 1.0)
 			float t = (progress - 0.65f) / 0.35f;
 			squishAmount = 1.05f - 0.05f * (float) Math.sin(t * Math.PI * 0.5 + Math.PI * 0.5);
 		}
@@ -133,15 +146,57 @@ public class PokedollBlockEntity extends BlockEntity implements GeoBlockEntity {
 		return squishAmount;
 	}
 
-	/**
-	 * Returns the inverse Y scale to create a cartoony squash effect.
-	 * When the doll squishes horizontally, it stretches vertically, and vice versa.
-	 */
 	public float getSquishScaleY(float partialTick) {
 		float xzScale = getSquishScale(partialTick);
 		if (xzScale <= 0.01f) return 1.0f;
-		// Inverse relationship: volume preservation approximation
 		return 1.0f / xzScale;
+	}
+
+	// --- Rapid click tracking ---
+
+	/**
+	 * Records a click and returns true if the doll should break.
+	 * Waxed dolls never break from clicking.
+	 */
+	public boolean recordClick() {
+		if (waxed || level == null) return false;
+
+		long now = level.getGameTime();
+
+		if (rapidClickWindowStart < 0 || (now - rapidClickWindowStart) > RAPID_CLICK_WINDOW_TICKS) {
+			rapidClickCount = 0;
+			rapidClickWindowStart = now;
+		}
+
+		rapidClickCount++;
+
+		return rapidClickCount >= BREAK_CLICK_THRESHOLD;
+	}
+
+	/**
+	 * Returns the current rapid click count (for particle effects on waxed dolls).
+	 */
+	public int getRapidClickCount() {
+		if (level == null) return 0;
+		long now = level.getGameTime();
+		if (rapidClickWindowStart < 0 || (now - rapidClickWindowStart) > RAPID_CLICK_WINDOW_TICKS) {
+			return 0;
+		}
+		return rapidClickCount;
+	}
+
+	/**
+	 * Increments the click counter without checking break threshold.
+	 * Used for waxed dolls to track spam clicking for particle effects.
+	 */
+	public void recordClickForParticles() {
+		if (level == null) return;
+		long now = level.getGameTime();
+		if (rapidClickWindowStart < 0 || (now - rapidClickWindowStart) > RAPID_CLICK_WINDOW_TICKS) {
+			rapidClickCount = 0;
+			rapidClickWindowStart = now;
+		}
+		rapidClickCount++;
 	}
 
 	// --- Sync & persistence ---
@@ -161,6 +216,7 @@ public class PokedollBlockEntity extends BlockEntity implements GeoBlockEntity {
 			tag.putBoolean(flag.getTagName(), getFlag(flag));
 		}
 		tag.putLong("squishStartTick", this.squishStartTick);
+		tag.putBoolean("waxed", this.waxed);
 	}
 
 	@Override
@@ -180,6 +236,9 @@ public class PokedollBlockEntity extends BlockEntity implements GeoBlockEntity {
 		if (tag.contains("squishStartTick")) {
 			this.squishStartTick = tag.getLong("squishStartTick");
 		}
+		if (tag.contains("waxed")) {
+			this.waxed = tag.getBoolean("waxed");
+		}
 	}
 
 	@Override
@@ -190,6 +249,7 @@ public class PokedollBlockEntity extends BlockEntity implements GeoBlockEntity {
 			tag.putBoolean(flag.getTagName(), getFlag(flag));
 		}
 		tag.putLong("squishStartTick", this.squishStartTick);
+		tag.putBoolean("waxed", this.waxed);
 		return tag;
 	}
 
