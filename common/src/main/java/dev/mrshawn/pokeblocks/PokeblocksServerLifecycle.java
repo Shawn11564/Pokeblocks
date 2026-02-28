@@ -1,5 +1,6 @@
 package dev.mrshawn.pokeblocks;
 
+import dev.mrshawn.pokeblocks.config.PokeblocksConfig;
 import dev.mrshawn.pokeblocks.item.DollRarityOverrides;
 import dev.mrshawn.pokeblocks.item.FigurineNameOverrides;
 import dev.mrshawn.pokeblocks.item.RarityWeightConfig;
@@ -14,6 +15,8 @@ public final class PokeblocksServerLifecycle {
     public static void onServerStarted(MinecraftServer server) {
         try {
             Path serverDir = server.getServerDirectory();
+            PokeblocksConfig.initialize(serverDir);
+
             Path customDir = serverDir.resolve("config")
                     .resolve("Pokeblocks")
                     .resolve("resourcepack")

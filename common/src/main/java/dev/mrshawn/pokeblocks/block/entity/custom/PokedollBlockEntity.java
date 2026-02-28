@@ -1,6 +1,7 @@
 package dev.mrshawn.pokeblocks.block.entity.custom;
 
 import dev.mrshawn.pokeblocks.client.renderer.animation.AnimationResolver;
+import dev.mrshawn.pokeblocks.config.PokeblocksConfig;
 import dev.mrshawn.pokeblocks.constants.ModSettings;
 import dev.mrshawn.pokeblocks.pokemon.ModelFlag;
 import dev.mrshawn.pokeblocks.pokemon.PokemonData;
@@ -156,10 +157,11 @@ public class PokedollBlockEntity extends BlockEntity implements GeoBlockEntity {
 
 	/**
 	 * Records a click and returns true if the doll should break.
-	 * Waxed dolls never break from clicking.
+	 * Waxed dolls and dolls with popping disabled never break from clicking.
 	 */
 	public boolean recordClick() {
 		if (waxed || level == null) return false;
+		if (!PokeblocksConfig.isDollPoppingEnabled()) return false;
 
 		long now = level.getGameTime();
 
