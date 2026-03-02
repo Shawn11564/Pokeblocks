@@ -1,8 +1,10 @@
 package dev.mrshawn.pokeblocks.mixin;
 
+import dev.mrshawn.pokeblocks.config.PokeblocksConfig;
 import dev.mrshawn.pokeblocks.resourcepack.CustomPackManager;
 import dev.mrshawn.pokeblocks.resourcepack.ResourcePackServer;
 import net.minecraft.network.Connection;
+import net.minecraft.network.chat.Component;
 import net.minecraft.network.protocol.common.ClientboundResourcePackPushPacket;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.server.network.CommonListenerCookie;
@@ -33,8 +35,14 @@ public abstract class PlayerJoinMixin {
 			String url = ResourcePackServer.start(server, CustomPackManager.getCachedPack());
 			UUID uuid = UUID.nameUUIDFromBytes(url.getBytes(StandardCharsets.UTF_8));
 
+			boolean required = PokeblocksConfig.isKickOnDecline();
+
+			Optional<Component> prompt = required
+					? Optional.of(Component.literal("This server requires the Pokeblocks resource pack to play."))
+					: Optional.empty();
+
 			ClientboundResourcePackPushPacket pkt = new ClientboundResourcePackPushPacket(
-					uuid, url, CustomPackManager.getCachedSha(), false, Optional.empty()
+					uuid, url, CustomPackManager.getCachedSha(), required, prompt
 			);
 			player.connection.send(pkt);
 		} catch (Exception e) {

@@ -2,6 +2,7 @@ package dev.mrshawn.pokeblocks.command;
 
 import com.mojang.brigadier.CommandDispatcher;
 import com.mojang.brigadier.context.CommandContext;
+import dev.mrshawn.pokeblocks.config.PokeblocksConfig;
 import dev.mrshawn.pokeblocks.resourcepack.CustomPackBuilder;
 import dev.mrshawn.pokeblocks.resourcepack.CustomPackManager;
 import dev.mrshawn.pokeblocks.resourcepack.ResourcePackServer;
@@ -67,7 +68,7 @@ public class RebuildPackCMD {
             src.sendSuccess(() -> Component.literal("Serving resource pack at: " + url), false);
 
             UUID uuid = UUID.nameUUIDFromBytes(url.getBytes(StandardCharsets.UTF_8));
-            ClientboundResourcePackPushPacket pkt = new ClientboundResourcePackPushPacket(uuid, url, sha, true, Optional.empty());
+            ClientboundResourcePackPushPacket pkt = new ClientboundResourcePackPushPacket(uuid, url, sha, PokeblocksConfig.isKickOnDecline(), Optional.empty());
             server.getConnection().getConnections().forEach(conn -> conn.send(pkt));
 
             return 1;
