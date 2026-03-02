@@ -26,22 +26,17 @@ public class PokedollBlockEntity extends BlockEntity implements GeoBlockEntity {
 	private String pokemon = ModSettings.DEFAULT_POKEMON;
 	private final Map<ModelFlag, Boolean> flags = new EnumMap<>(ModelFlag.class);
 
-	/** Game time (in ticks) when the last squish was triggered. -1 means no squish active. */
+	// Game time (in ticks) when the last squish was triggered. -1 means no squish active.
 	private long squishStartTick = -1;
-
-	/** Duration of the squish animation in ticks. */
+	// Duration of the squish animation in ticks.
 	public static final int SQUISH_DURATION_TICKS = 8;
-
-	/** Number of rapid clicks required to break the doll. */
-	public static final int BREAK_CLICK_THRESHOLD = 8;
-
-	/** Time window in ticks within which clicks count as "rapid" (1.5 seconds). */
+	// Number of rapid clicks required to break the doll.
+	public static final int BREAK_CLICK_THRESHOLD = 9;
+	// Time window in ticks within which clicks count as "rapid" (1.5 seconds).
 	public static final long RAPID_CLICK_WINDOW_TICKS = 30;
-
-	/** Tracks rapid click count (server-side only, not persisted). */
+	// Tracks rapid click count (server-side only, not persisted).
 	private int rapidClickCount = 0;
-
-	/** Game time of the first click in the current rapid-click window. */
+	// Game time of the first click in the current rapid-click window.
 	private long rapidClickWindowStart = -1;
 
 	/** Whether this doll has been waxed with honeycomb. */
