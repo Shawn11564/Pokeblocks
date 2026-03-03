@@ -59,7 +59,8 @@ public class PokeGiveCMD {
 		for (String name : argNames) {
 			try {
 				used.add(StringArgumentType.getString(context, name).toLowerCase());
-			} catch (Exception ignored) {}
+			} catch (Exception ignored) {
+			}
 		}
 		return used;
 	}
@@ -79,43 +80,44 @@ public class PokeGiveCMD {
 
 	public static void register(CommandDispatcher<CommandSourceStack> dispatcher) {
 		dispatcher.register(
-				Commands.literal("pokegive")
-						.requires(src -> src.hasPermission(2))
-						.then(Commands.argument("player", EntityArgument.player())
-								// Subcommand: /pokegive <player> random
-								.then(Commands.literal("random")
-										.executes(PokeGiveCMD::executeRandom)
-								)
-								// Subcommand: /pokegive <player> rarity <rarity>
-								.then(Commands.literal("rarity")
-										.then(Commands.argument("rarity", StringArgumentType.word())
-												.suggests(SUGGEST_RARITY)
-												.executes(PokeGiveCMD::executeRarity)
+				Commands.literal("pokeblocks").then(
+						Commands.literal("pokegive")
+								.requires(src -> src.hasPermission(2))
+								.then(Commands.argument("player", EntityArgument.player())
+										// Subcommand: /pokegive <player> random
+										.then(Commands.literal("random")
+												.executes(PokeGiveCMD::executeRandom)
 										)
-								)
-								// Existing: /pokegive <player> <pokemon> [flags...]
-								.then(Commands.argument("pokemon", StringArgumentType.word())
-										.suggests(SUGGEST_POKEMON)
-										.executes(PokeGiveCMD::execute)
-										.then(Commands.argument("flag1", StringArgumentType.word())
-												.suggests(suggestFlags())
-												.executes(ctx -> executeWithFlags(ctx, "flag1"))
-												.then(Commands.argument("flag2", StringArgumentType.word())
-														.suggests(suggestFlags("flag1"))
-														.executes(ctx -> executeWithFlags(ctx, "flag1", "flag2"))
-														.then(Commands.argument("flag3", StringArgumentType.word())
-																.suggests(suggestFlags("flag1", "flag2"))
-																.executes(ctx -> executeWithFlags(ctx, "flag1", "flag2", "flag3"))
-																.then(Commands.argument("flag4", StringArgumentType.word())
-																		.suggests(suggestFlags("flag1", "flag2", "flag3"))
-																		.executes(ctx -> executeWithFlags(ctx, "flag1", "flag2", "flag3", "flag4"))
+										// Subcommand: /pokegive <player> rarity <rarity>
+										.then(Commands.literal("rarity")
+												.then(Commands.argument("rarity", StringArgumentType.word())
+														.suggests(SUGGEST_RARITY)
+														.executes(PokeGiveCMD::executeRarity)
+												)
+										)
+										// Existing: /pokegive <player> <pokemon> [flags...]
+										.then(Commands.argument("pokemon", StringArgumentType.word())
+												.suggests(SUGGEST_POKEMON)
+												.executes(PokeGiveCMD::execute)
+												.then(Commands.argument("flag1", StringArgumentType.word())
+														.suggests(suggestFlags())
+														.executes(ctx -> executeWithFlags(ctx, "flag1"))
+														.then(Commands.argument("flag2", StringArgumentType.word())
+																.suggests(suggestFlags("flag1"))
+																.executes(ctx -> executeWithFlags(ctx, "flag1", "flag2"))
+																.then(Commands.argument("flag3", StringArgumentType.word())
+																		.suggests(suggestFlags("flag1", "flag2"))
+																		.executes(ctx -> executeWithFlags(ctx, "flag1", "flag2", "flag3"))
+																		.then(Commands.argument("flag4", StringArgumentType.word())
+																				.suggests(suggestFlags("flag1", "flag2", "flag3"))
+																				.executes(ctx -> executeWithFlags(ctx, "flag1", "flag2", "flag3", "flag4"))
+																		)
 																)
 														)
 												)
 										)
 								)
-						)
-		);
+				));
 	}
 
 	private static int executeRandom(CommandContext<CommandSourceStack> context) {
@@ -295,7 +297,8 @@ public class PokeGiveCMD {
 		return result;
 	}
 
-	private record RarityEntry(String pokemon, Set<ModelFlag> flags) {}
+	private record RarityEntry(String pokemon, Set<ModelFlag> flags) {
+	}
 
 	private static int execute(CommandContext<CommandSourceStack> context) {
 		return givePokedoll(context, Collections.emptySet());
@@ -312,7 +315,8 @@ public class PokeGiveCMD {
 						break;
 					}
 				}
-			} catch (Exception ignored) {}
+			} catch (Exception ignored) {
+			}
 		}
 		return givePokedoll(context, flags);
 	}

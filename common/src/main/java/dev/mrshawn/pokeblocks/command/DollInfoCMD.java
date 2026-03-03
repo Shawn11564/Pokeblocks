@@ -12,6 +12,7 @@ import net.minecraft.network.chat.Component;
 import java.util.Map;
 
 public class DollInfoCMD {
+
 	private static final SuggestionProvider<CommandSourceStack> SUGGEST_POKEMON = (context, builder) -> {
 		for (String id : PokemonRegistry.ALL_POKEMON.keySet()) builder.suggest(id);
 		return builder.buildFuture();
@@ -19,10 +20,12 @@ public class DollInfoCMD {
 
 	public static void register(CommandDispatcher<CommandSourceStack> dispatcher) {
 		dispatcher.register(
-				Commands.literal("dollinfo")
-						.then(Commands.argument("pokemon", StringArgumentType.word()).suggests(SUGGEST_POKEMON)
-								.executes(DollInfoCMD::execute))
-			);
+				Commands.literal("pokeblocks")
+						.then(
+								Commands.literal("dollinfo")
+										.then(Commands.argument("pokemon", StringArgumentType.word()).suggests(SUGGEST_POKEMON)
+												.executes(DollInfoCMD::execute))
+						));
 	}
 
 	private static int execute(CommandContext<CommandSourceStack> context) {
