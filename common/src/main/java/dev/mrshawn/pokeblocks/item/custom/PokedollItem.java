@@ -18,7 +18,9 @@ import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.MutableComponent;
 import net.minecraft.network.chat.Style;
 import net.minecraft.network.chat.TextColor;
+import net.minecraft.world.entity.EquipmentSlot;
 import net.minecraft.world.item.BlockItem;
+import net.minecraft.world.item.Equipable;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.TooltipFlag;
 import net.minecraft.world.item.component.CustomData;
@@ -37,7 +39,7 @@ import java.util.*;
 import java.util.function.Consumer;
 import java.util.stream.Collectors;
 
-public class PokedollItem extends BlockItem implements GeoItem {
+public class PokedollItem extends BlockItem implements GeoItem, Equipable {
 
 	private final AnimatableInstanceCache cache = GeckoLibUtil.createInstanceCache(this);
 
@@ -112,6 +114,11 @@ public class PokedollItem extends BlockItem implements GeoItem {
 		double chance = RarityScoreCalculator.computeChance(pokemon, activeFlags);
 		String scoreDisplay = RarityScoreCalculator.getDisplayString(pokemon, activeFlags);
 		tooltip.add(buildRarityComponent(scoreDisplay, chance));
+	}
+
+	@Override
+	public EquipmentSlot getEquipmentSlot() {
+		return EquipmentSlot.HEAD;
 	}
 
 	/**
