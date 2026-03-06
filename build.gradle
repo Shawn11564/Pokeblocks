@@ -57,6 +57,7 @@ subprojects {
                 "forge_version_range": forge_version_range,
                 "minecraft_version_range": minecraft_version_range,
                 "geckolib_version_range": geckolib_version_range,
+                "geckolib_version": geckolib_version,
                 "fabric_version": fabric_version,
                 "fabric_loader_version": fabric_loader_version,
                 "mod_name": mod_name,
@@ -68,7 +69,7 @@ subprojects {
                 "neoforge_loader_version_range": neoforge_loader_version_range
         ]
 
-        filesMatching(['pack.mcmeta', 'fabric.mod.json', 'META-INF/neoforge.mods.toml', '*.mixins.json']) {
+        filesMatching(['pack.mcmeta', 'fabric.mod.json', 'META-INF/mods.toml', 'META-INF/neoforge.mods.toml', '*.mixins.json']) {
             expand expandProps
         }
 		

@@ -9,6 +9,12 @@ base {
     archivesName = "geckolib-examples-ml-fabric-${minecraft_version}"
 }
 
+jar {
+    manifest {
+        attributes["MixinConfigs"] = "${mod_id}.mixins.json,${mod_id}.fabric.mixins.json"
+    }
+}
+
 dependencies {
     minecraft "com.mojang:minecraft:${minecraft_version}"
 	mappings loom.layered() {
@@ -54,7 +60,5 @@ tasks.named("sourcesJar", Jar) {
 }
 
 processResources {
-    from(project(":common").sourceSets.main.resources.srcDirs) {
-        exclude "pokeblocks.mixins.json"
-    }
+    from(project(":common").sourceSets.main.resources.srcDirs)
 }

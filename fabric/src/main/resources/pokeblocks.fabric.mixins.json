@@ -6,13 +6,9 @@
   "mixins": [
     "MixinChunkStorage",
     "MixinDataFixTypes",
-    "NbtUtilsMixin",
-    "PlayerJoinMixin"
+    "NbtUtilsMixin"
   ],
-  "client": [
-    "PokedollParticleMixin",
-    "PackRepositoryMixin"
-  ],
+  "client": [],
   "injectors": {
     "defaultRequire": 1
   }

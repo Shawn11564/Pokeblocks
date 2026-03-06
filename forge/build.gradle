@@ -9,12 +9,25 @@ plugins {
 base {
     archivesName = "geckolib-examples-ml-forge-${minecraft_version}"
 }
+mixin {
+    config("${mod_id}.mixins.json")
+}
+jar {
+    manifest {
+        attributes["MixinConfigs"] = "${mod_id}.mixins.json"
+    }
+}
 
 minecraft {
     mappings("parchment", "${parchment_mc_version}-${parchment_version}-${minecraft_version}")
 
     copyIdeResources = true
     reobf = false
+
+    def at = file('src/main/resources/META-INF/accesstransformer.cfg')
+    if (at.exists()) {
+        accessTransformer = at
+    }
 
     runs {
         client {
