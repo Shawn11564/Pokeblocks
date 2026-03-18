@@ -1,0 +1,51 @@
+{
+	"format_version": "1.8.0",
+	"animations": {
+		"animation.idle": {
+			"loop": true,
+			"bones": {
+				"left_wing": {
+					"rotation": {
+						"vector": [0, -22.5, -17.5]
+					}
+				},
+				"right_wing": {
+					"rotation": {
+						"vector": [0, 22.5, 17.5]
+					}
+				},
+				"left_antenna": {
+					"rotation": {
+						"vector": [32.01816, -4.75113, 11.57518]
+					}
+				},
+				"left_antenna_seg2": {
+					"rotation": {
+						"vector": [-22.5, 0, 0]
+					}
+				},
+				"left_antenna_bulb": {
+					"rotation": {
+						"vector": [-22.5, 0, 0]
+					}
+				},
+				"right_antenna": {
+					"rotation": {
+						"vector": [32.01816, 4.75113, -11.57518]
+					}
+				},
+				"right_antenna_seg2": {
+					"rotation": {
+						"vector": [-22.5, 0, 0]
+					}
+				},
+				"right_antenna_bulb": {
+					"rotation": {
+						"vector": [-22.5, 0, 0]
+					}
+				}
+			}
+		}
+	},
+	"geckolib_format_version": 2
+}

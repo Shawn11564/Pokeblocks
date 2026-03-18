@@ -1,0 +1,60 @@
+{
+	"format_version": "1.8.0",
+	"animations": {
+		"animation.idle": {
+			"loop": true,
+			"bones": {
+				"head": {
+					"rotation": {
+						"vector": [-7.5, 0, 0]
+					}
+				},
+				"left_ear": {
+					"rotation": {
+						"vector": [-5.07673, 9.96156, 29.11955]
+					}
+				},
+				"right_ear": {
+					"rotation": {
+						"vector": [-5.07673, -9.96156, -29.11955]
+					}
+				},
+				"left_foot": {
+					"rotation": {
+						"vector": [0, -22.5, 0]
+					}
+				},
+				"right_foot": {
+					"rotation": {
+						"vector": [0, 22.5, 0]
+					}
+				},
+				"left_arm": {
+					"rotation": {
+						"vector": [0, 0, 27.5]
+					}
+				},
+				"right_arm": {
+					"rotation": {
+						"vector": [0, 0, -27.5]
+					}
+				},
+				"tail": {
+					"rotation": {
+						"vector": [25, 0, 0]
+					}
+				},
+				"left_ear_tip": {
+					"rotation": {
+						"vector": [10, 0, 0]
+					}
+				},
+				"right_ear_tip": {
+					"rotation": {
+						"vector": [10, 0, 0]
+					}
+				}
+			}
+		}
+	}
+}

@@ -219,8 +219,7 @@ public class PokemonRegistry {
 			});
 
 			if (!hasBaseTexture && !hasTextureVariant) {
-				System.err.println("[Pokeblocks] Skipping pokemon '" + name + "': missing base texture (expected pokedoll_" + name + ".png or pokedoll_" + name + "_texture.png)");
-				continue;
+				System.out.println("[Pokeblocks] Pokemon '" + name + "' has no base texture (expected pokedoll_" + name + ".png or pokedoll_" + name + "_texture.png). Variant textures will be used.");
 			}
 
 			// Validate base model exists

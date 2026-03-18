@@ -1,0 +1,127 @@
+{
+	"format_version": "1.8.0",
+	"animations": {
+		"animation.idle": {
+			"loop": true,
+			"bones": {
+				"body": {
+					"position": {
+						"vector": [0, 0, -2.25]
+					}
+				},
+				"torso": {
+					"rotation": {
+						"vector": [-45, 0, 0]
+					},
+					"position": {
+						"vector": [0, -0.25, 0]
+					}
+				},
+				"waist": {
+					"rotation": {
+						"vector": [22.5, 0, 0]
+					}
+				},
+				"chest": {
+					"rotation": {
+						"vector": [22.5, 0, 0]
+					}
+				},
+				"head": {
+					"rotation": {
+						"vector": [-5, 0, 0]
+					}
+				},
+				"hair_seg2": {
+					"rotation": {
+						"vector": [-25, 0, 0]
+					}
+				},
+				"hair_tip": {
+					"rotation": {
+						"vector": [45, 0, 0]
+					}
+				},
+				"chin_fluff": {
+					"rotation": {
+						"vector": [7.5, 0, 0]
+					}
+				},
+				"tongue": {
+					"rotation": {
+						"vector": [67.80843, -3.81024, -9.25249]
+					}
+				},
+				"left_front_leg": {
+					"rotation": {
+						"vector": [0, -22.5, 0]
+					},
+					"position": {
+						"vector": [-0.25, -0.25, 0]
+					}
+				},
+				"right_front_leg": {
+					"rotation": {
+						"vector": [0, 22.5, 0]
+					},
+					"position": {
+						"vector": [0.25, -0.25, 0]
+					}
+				},
+				"left_back_leg": {
+					"rotation": {
+						"vector": [-65.23421, -15.69986, -16.32495]
+					},
+					"position": {
+						"vector": [0.03661, 0.83484, 1.86859]
+					}
+				},
+				"left_back_knee": {
+					"rotation": {
+						"vector": [90, 0, 0]
+					},
+					"position": {
+						"vector": [0, 0.15307, 0.36955]
+					}
+				},
+				"left_back_paw": {
+					"rotation": {
+						"vector": [22.5, 0, 0]
+					},
+					"position": {
+						"vector": [0, 0.48194, -0.19134]
+					}
+				},
+				"right_back_leg": {
+					"rotation": {
+						"vector": [-65.23421, 15.69986, 16.32495]
+					},
+					"position": {
+						"vector": [-0.03661, 0.83484, 1.86859]
+					}
+				},
+				"right_back_knee": {
+					"rotation": {
+						"vector": [90, 0, 0]
+					},
+					"position": {
+						"vector": [0, 0.15307, 0.36955]
+					}
+				},
+				"right_back_paw": {
+					"rotation": {
+						"vector": [22.5, 0, 0]
+					},
+					"position": {
+						"vector": [0, 0.48194, -0.19134]
+					}
+				},
+				"tail": {
+					"rotation": {
+						"vector": [22.5, 0, 0]
+					}
+				}
+			}
+		}
+	}
+}

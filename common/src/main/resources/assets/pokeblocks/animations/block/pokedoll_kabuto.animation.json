@@ -1,0 +1,56 @@
+{
+	"format_version": "1.8.0",
+	"animations": {
+		"animation.idle": {
+			"loop": true,
+			"bones": {
+				"pokedoll_kabuto": {
+					"position": {
+						"vector": [0, 1, 0]
+					}
+				},
+				"front_left_leg": {
+					"rotation": {
+						"vector": [9.00717, 20.70481, 24.14867]
+					}
+				},
+				"front_left_claw": {
+					"rotation": {
+						"vector": [0, 0, 45]
+					}
+				},
+				"front_right_leg": {
+					"rotation": {
+						"vector": [9.00717, -20.70481, -24.14867]
+					}
+				},
+				"front_right_claw": {
+					"rotation": {
+						"vector": [0, 0, -45]
+					}
+				},
+				"back_left_leg": {
+					"rotation": {
+						"vector": [-9.00717, -20.70481, 24.14867]
+					}
+				},
+				"back_left_claw": {
+					"rotation": {
+						"vector": [0, 0, 45]
+					}
+				},
+				"back_right_leg": {
+					"rotation": {
+						"vector": [-9.00717, 20.70481, -24.14867]
+					}
+				},
+				"back_right_claw": {
+					"rotation": {
+						"vector": [0, 0, -45]
+					}
+				}
+			}
+		}
+	},
+	"geckolib_format_version": 2
+}

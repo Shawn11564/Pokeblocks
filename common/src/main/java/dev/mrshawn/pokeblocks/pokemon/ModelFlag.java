@@ -18,7 +18,11 @@ public enum ModelFlag {
 	POSED("posed", "_posed", "_posed", 3, DollRarity.NONE),
 	NETHERITE("netherite", "_netherite", "", 4, DollRarity.NONE),
 	ZENITH("zenith", "_zenith", "_zenith", 5, DollRarity.NONE),
-	NOICE("noice", "_noice", "_noice", 6, DollRarity.NONE);
+	NOICE("noice", "_noice", "_noice", 6, DollRarity.NONE),
+	SPIKY("spiky", "_spiky", "_spiky", 7, DollRarity.NONE),
+	EARED("eared",  "_eared", "_eared", 8, DollRarity.NONE),
+	MALE("male", "_male", "", 9, DollRarity.NONE),
+	FEMALE("female",  "_female", "", 10, DollRarity.NONE);
 
 	private final String tagName;
 	private final String textureSuffix;
