@@ -7,7 +7,8 @@ import java.util.*;
 public record PokemonData(
 		Map<ModelFlag, Boolean> modelFlags,
 		AnimationProfile animationProfile,
-		List<Set<ModelFlag>> requiredCombinations
+		List<Set<ModelFlag>> requiredCombinations,
+		boolean hasBaseVariant
 ) {
 
 	private static final Map<ModelFlag, Boolean> DEFAULT_FLAGS;
@@ -21,23 +22,28 @@ public record PokemonData(
 	}
 
 	public PokemonData() {
-		this(DEFAULT_FLAGS, new AnimationProfile(false, new EnumMap<>(ModelFlag.class)), List.of());
+		this(DEFAULT_FLAGS, new AnimationProfile(false, new EnumMap<>(ModelFlag.class)), List.of(), true);
 	}
 
 	public PokemonData(Map<ModelFlag, Boolean> modelFlags) {
-		this(modelFlags, new AnimationProfile(false, new EnumMap<>(ModelFlag.class)), List.of());
+		this(modelFlags, new AnimationProfile(false, new EnumMap<>(ModelFlag.class)), List.of(), true);
 	}
 
 	public PokemonData(Map<ModelFlag, Boolean> modelFlags, AnimationProfile animationProfile) {
-		this(modelFlags, animationProfile, List.of());
+		this(modelFlags, animationProfile, List.of(), true);
 	}
 
 	public PokemonData(Map<ModelFlag, Boolean> modelFlags, AnimationProfile animationProfile, List<Set<ModelFlag>> requiredCombinations) {
+		this(modelFlags, animationProfile, requiredCombinations, true);
+	}
+
+	public PokemonData(Map<ModelFlag, Boolean> modelFlags, AnimationProfile animationProfile, List<Set<ModelFlag>> requiredCombinations, boolean hasBaseVariant) {
 		this.modelFlags = addMissingFlags(modelFlags);
 		this.animationProfile = animationProfile == null
 				? new AnimationProfile(false, new EnumMap<>(ModelFlag.class))
 				: animationProfile;
 		this.requiredCombinations = requiredCombinations == null ? List.of() : requiredCombinations;
+		this.hasBaseVariant = hasBaseVariant;
 	}
 
 	private Map<ModelFlag, Boolean> addMissingFlags(Map<ModelFlag, Boolean> flags) {
@@ -72,9 +78,16 @@ public record PokemonData(
 
 	/**
 	 * Checks if a combination of flags is valid according to required combinations.
-	 * A combination is invalid if it has some but not all flags from a required combination.
+	 * A combination is invalid if:
+	 * - It is the empty set and this pokemon has no base variant (only variant textures exist)
+	 * - It has some but not all flags from a required combination
 	 */
 	public boolean isValidCombination(Set<ModelFlag> combination) {
+		// If no base variant exists, the empty set (base with no flags) is invalid
+		if (!hasBaseVariant && combination.isEmpty()) {
+			return false;
+		}
+
 		for (Set<ModelFlag> requiredCombo : requiredCombinations) {
 			// Check if any flag in this required combo is present in our combination
 			Set<ModelFlag> activeInCombo = EnumSet.noneOf(ModelFlag.class);
@@ -93,10 +106,17 @@ public record PokemonData(
 	}
 
 	public List<Set<ModelFlag>> generatePowerSet() {
-		return generatePowerSet(modelFlags.entrySet().stream()
+		List<Set<ModelFlag>> powerSet = generatePowerSet(modelFlags.entrySet().stream()
 				.filter(Map.Entry::getValue)
 				.map(Map.Entry::getKey)
 				.toList());
+
+		// Filter out the empty set if no base variant exists
+		if (!hasBaseVariant) {
+			powerSet.removeIf(Set::isEmpty);
+		}
+
+		return powerSet;
 	}
 
 	/**

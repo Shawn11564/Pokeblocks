@@ -218,7 +218,9 @@ public class PokemonRegistry {
 				return m.group(1).equalsIgnoreCase(name + "_texture");
 			});
 
-			if (!hasBaseTexture && !hasTextureVariant) {
+			boolean hasBaseVariant = hasBaseTexture || hasTextureVariant;
+
+			if (!hasBaseVariant) {
 				System.out.println("[Pokeblocks] Pokemon '" + name + "' has no base texture (expected pokedoll_" + name + ".png or pokedoll_" + name + "_texture.png). Variant textures will be used.");
 			}
 
@@ -237,8 +239,6 @@ public class PokemonRegistry {
 
 			// GIGANTIC is always available
 			detectedFlags.add(ModelFlag.GIGANTIC);
-
-			// Note: Probably should flag models with animations? Riolu, Froslass, and Treecko bugged out when I tried to create animated variants for them.
 
 			// Build flag map
 			Map<ModelFlag, Boolean> flagMap = new EnumMap<>(ModelFlag.class);
@@ -281,11 +281,14 @@ public class PokemonRegistry {
 					if (!mergedCombos.contains(combo)) mergedCombos.add(combo);
 				}
 				combos = mergedCombos;
+
+				// If either scan found a base texture, the base variant is valid
+				hasBaseVariant = existing.hasBaseVariant() || hasBaseVariant;
 			} else {
 				newCount++;
 			}
 
-			ALL_POKEMON.put(name, new PokemonData(flagMap, animProfile, combos));
+			ALL_POKEMON.put(name, new PokemonData(flagMap, animProfile, combos, hasBaseVariant));
 		}
 
 		System.out.println("[Pokeblocks] " + source + " scan: " + pokemonFlags.size() + " pokemon (" + newCount + " new)");
