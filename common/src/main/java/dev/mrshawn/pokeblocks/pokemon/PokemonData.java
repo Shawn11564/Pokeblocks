@@ -88,6 +88,11 @@ public record PokemonData(
 			return false;
 		}
 
+		// Reject combinations containing mutually exclusive flags (e.g. MALE + FEMALE)
+		if (ModelFlag.hasExclusionConflict(combination)) {
+			return false;
+		}
+
 		for (Set<ModelFlag> requiredCombo : requiredCombinations) {
 			// Check if any flag in this required combo is present in our combination
 			Set<ModelFlag> activeInCombo = EnumSet.noneOf(ModelFlag.class);
@@ -111,10 +116,13 @@ public record PokemonData(
 				.map(Map.Entry::getKey)
 				.toList());
 
-		// Filter out the empty set if no base variant exists
-		if (!hasBaseVariant) {
-			powerSet.removeIf(Set::isEmpty);
-		}
+		// Filter out invalid combinations
+		powerSet.removeIf(set -> {
+			// Remove the empty set if no base variant exists
+			if (!hasBaseVariant && set.isEmpty()) return true;
+			// Remove sets with mutually exclusive flags (e.g. MALE + FEMALE)
+			return ModelFlag.hasExclusionConflict(set);
+		});
 
 		return powerSet;
 	}
