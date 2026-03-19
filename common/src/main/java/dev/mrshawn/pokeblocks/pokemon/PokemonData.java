@@ -8,7 +8,7 @@ public record PokemonData(
 		Map<ModelFlag, Boolean> modelFlags,
 		AnimationProfile animationProfile,
 		List<Set<ModelFlag>> requiredCombinations,
-		boolean hasBaseVariant
+		Set<Set<ModelFlag>> validTextureCombinations
 ) {
 
 	private static final Map<ModelFlag, Boolean> DEFAULT_FLAGS;
@@ -21,29 +21,34 @@ public record PokemonData(
 		DEFAULT_FLAGS = Collections.unmodifiableMap(map);
 	}
 
+	/**
+	 * The set containing only the empty set — indicates a base (no-flag) texture exists.
+	 */
+	private static final Set<Set<ModelFlag>> BASE_TEXTURE_ONLY = Set.of(Collections.emptySet());
+
 	public PokemonData() {
-		this(DEFAULT_FLAGS, new AnimationProfile(false, new EnumMap<>(ModelFlag.class)), List.of(), true);
+		this(DEFAULT_FLAGS, new AnimationProfile(false, new EnumMap<>(ModelFlag.class)), List.of(), BASE_TEXTURE_ONLY);
 	}
 
 	public PokemonData(Map<ModelFlag, Boolean> modelFlags) {
-		this(modelFlags, new AnimationProfile(false, new EnumMap<>(ModelFlag.class)), List.of(), true);
+		this(modelFlags, new AnimationProfile(false, new EnumMap<>(ModelFlag.class)), List.of(), BASE_TEXTURE_ONLY);
 	}
 
 	public PokemonData(Map<ModelFlag, Boolean> modelFlags, AnimationProfile animationProfile) {
-		this(modelFlags, animationProfile, List.of(), true);
+		this(modelFlags, animationProfile, List.of(), BASE_TEXTURE_ONLY);
 	}
 
 	public PokemonData(Map<ModelFlag, Boolean> modelFlags, AnimationProfile animationProfile, List<Set<ModelFlag>> requiredCombinations) {
-		this(modelFlags, animationProfile, requiredCombinations, true);
+		this(modelFlags, animationProfile, requiredCombinations, BASE_TEXTURE_ONLY);
 	}
 
-	public PokemonData(Map<ModelFlag, Boolean> modelFlags, AnimationProfile animationProfile, List<Set<ModelFlag>> requiredCombinations, boolean hasBaseVariant) {
+	public PokemonData(Map<ModelFlag, Boolean> modelFlags, AnimationProfile animationProfile, List<Set<ModelFlag>> requiredCombinations, Set<Set<ModelFlag>> validTextureCombinations) {
 		this.modelFlags = addMissingFlags(modelFlags);
 		this.animationProfile = animationProfile == null
 				? new AnimationProfile(false, new EnumMap<>(ModelFlag.class))
 				: animationProfile;
 		this.requiredCombinations = requiredCombinations == null ? List.of() : requiredCombinations;
-		this.hasBaseVariant = hasBaseVariant;
+		this.validTextureCombinations = validTextureCombinations == null ? BASE_TEXTURE_ONLY : validTextureCombinations;
 	}
 
 	private Map<ModelFlag, Boolean> addMissingFlags(Map<ModelFlag, Boolean> flags) {
@@ -77,19 +82,30 @@ public record PokemonData(
 	}
 
 	/**
-	 * Checks if a combination of flags is valid according to required combinations.
-	 * A combination is invalid if:
-	 * - It is the empty set and this pokemon has no base variant (only variant textures exist)
-	 * - It has some but not all flags from a required combination
+	 * Checks if a combination of flags is valid according to all constraints:
+	 * - Must have a matching texture (the texture-relevant flags must match a known texture file)
+	 * - Must not contain mutually exclusive flags (e.g. MALE + FEMALE)
+	 * - Must not partially satisfy a required combination
+	 *
+	 * Texture matching: flags that don't affect texture lookup (empty textureSuffix, e.g. GIGANTIC)
+	 * are stripped before checking against validTextureCombinations. This means {MALE, GIGANTIC}
+	 * is valid if {MALE} has a texture, since GIGANTIC doesn't change the texture file.
 	 */
 	public boolean isValidCombination(Set<ModelFlag> combination) {
-		// If no base variant exists, the empty set (base with no flags) is invalid
-		if (!hasBaseVariant && combination.isEmpty()) {
+		// Reject combinations containing mutually exclusive flags (e.g. MALE + FEMALE)
+		if (ModelFlag.hasExclusionConflict(combination)) {
 			return false;
 		}
 
-		// Reject combinations containing mutually exclusive flags (e.g. MALE + FEMALE)
-		if (ModelFlag.hasExclusionConflict(combination)) {
+		// Check texture validity: strip flags that don't affect texture lookup,
+		// then verify the remaining flags match a known texture file
+		Set<ModelFlag> textureRelevant = EnumSet.noneOf(ModelFlag.class);
+		for (ModelFlag flag : combination) {
+			if (!flag.getTextureSuffix().isEmpty()) {
+				textureRelevant.add(flag);
+			}
+		}
+		if (!validTextureCombinations.contains(textureRelevant)) {
 			return false;
 		}
 
@@ -116,13 +132,8 @@ public record PokemonData(
 				.map(Map.Entry::getKey)
 				.toList());
 
-		// Filter out invalid combinations
-		powerSet.removeIf(set -> {
-			// Remove the empty set if no base variant exists
-			if (!hasBaseVariant && set.isEmpty()) return true;
-			// Remove sets with mutually exclusive flags (e.g. MALE + FEMALE)
-			return ModelFlag.hasExclusionConflict(set);
-		});
+		// Filter out all invalid combinations
+		powerSet.removeIf(set -> !isValidCombination(set));
 
 		return powerSet;
 	}

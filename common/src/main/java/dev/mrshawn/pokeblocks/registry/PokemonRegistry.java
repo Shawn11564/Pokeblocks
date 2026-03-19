@@ -141,7 +141,9 @@ public class PokemonRegistry {
 			}
 		}
 
-		// Parse textures to detect flag variants
+		// Parse textures to detect flag variants and track valid texture combinations
+		Map<String, Set<Set<ModelFlag>>> validTexCombos = new HashMap<>();
+
 		for (String filename : textureFiles) {
 			Matcher m = TEXTURE_PATTERN.matcher(filename);
 			if (!m.matches()) continue; // silently skip non-pokedoll files
@@ -153,6 +155,11 @@ public class PokemonRegistry {
 
 			if (pokemonFlags.containsKey(name)) {
 				pokemonFlags.get(name).addAll(result.flags());
+				// Record this flag combination as having a valid texture
+				Set<ModelFlag> texCombo = result.flags().isEmpty()
+						? Collections.emptySet()
+						: EnumSet.copyOf(result.flags());
+				validTexCombos.computeIfAbsent(name, k -> new HashSet<>()).add(texCombo);
 			} else {
 				System.out.println("[Pokeblocks] Texture '" + filename + "' has no matching model for pokemon: " + result.name());
 			}
@@ -205,22 +212,10 @@ public class PokemonRegistry {
 			String name = entry.getKey();
 			Set<ModelFlag> detectedFlags = entry.getValue();
 
-			// Validate base texture exists
-			boolean hasBaseTexture = textureFiles.stream().anyMatch(f -> {
-				Matcher m = TEXTURE_PATTERN.matcher(f);
-				if (!m.matches()) return false;
-				ParseResult r = parseSuffixes(m.group(1));
-				return r.name().equalsIgnoreCase(name) && r.flags().isEmpty();
-			});
-			boolean hasTextureVariant = textureFiles.stream().anyMatch(f -> {
-				Matcher m = TEXTURE_PATTERN.matcher(f);
-				if (!m.matches()) return false;
-				return m.group(1).equalsIgnoreCase(name + "_texture");
-			});
+			// Get valid texture combinations for this pokemon
+			Set<Set<ModelFlag>> texCombos = validTexCombos.getOrDefault(name, Collections.emptySet());
 
-			boolean hasBaseVariant = hasBaseTexture || hasTextureVariant;
-
-			if (!hasBaseVariant) {
+			if (texCombos.isEmpty() || !texCombos.contains(Collections.emptySet())) {
 				System.out.println("[Pokeblocks] Pokemon '" + name + "' has no base texture (expected pokedoll_" + name + ".png or pokedoll_" + name + "_texture.png). Variant textures will be used.");
 			}
 
@@ -239,6 +234,8 @@ public class PokemonRegistry {
 
 			// GIGANTIC is always available
 			detectedFlags.add(ModelFlag.GIGANTIC);
+
+			// Note: Probably should flag models with animations? Riolu, Froslass, and Treecko bugged out when I tried to create animated variants for them.
 
 			// Build flag map
 			Map<ModelFlag, Boolean> flagMap = new EnumMap<>(ModelFlag.class);
@@ -282,13 +279,15 @@ public class PokemonRegistry {
 				}
 				combos = mergedCombos;
 
-				// If either scan found a base texture, the base variant is valid
-				hasBaseVariant = existing.hasBaseVariant() || hasBaseVariant;
+				// Merge valid texture combinations from both scans
+				Set<Set<ModelFlag>> mergedTexCombos = new HashSet<>(existing.validTextureCombinations());
+				mergedTexCombos.addAll(texCombos);
+				texCombos = mergedTexCombos;
 			} else {
 				newCount++;
 			}
 
-			ALL_POKEMON.put(name, new PokemonData(flagMap, animProfile, combos, hasBaseVariant));
+			ALL_POKEMON.put(name, new PokemonData(flagMap, animProfile, combos, texCombos));
 		}
 
 		System.out.println("[Pokeblocks] " + source + " scan: " + pokemonFlags.size() + " pokemon (" + newCount + " new)");
