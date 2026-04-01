@@ -1,6 +1,8 @@
 package dev.mrshawn.pokeblocks;
 
 import dev.mrshawn.pokeblocks.command.ModCommands;
+import dev.mrshawn.pokeblocks.config.PokeblocksConfig;
+import dev.mrshawn.pokeblocks.item.loot.LootInjector;
 import net.minecraft.core.registries.Registries;
 import net.minecraft.sounds.SoundEvent;
 import net.minecraft.world.entity.EntityType;
@@ -8,13 +10,17 @@ import net.minecraft.world.item.CreativeModeTab;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.entity.BlockEntityType;
+import net.minecraft.world.level.storage.loot.LootPool;
 import net.minecraftforge.common.MinecraftForge;
+import net.minecraftforge.event.LootTableLoadEvent;
 import net.minecraftforge.event.RegisterCommandsEvent;
+import net.minecraftforge.event.server.ServerAboutToStartEvent;
 import net.minecraftforge.event.server.ServerStartedEvent;
 import net.minecraftforge.eventbus.api.IEventBus;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.javafmlmod.FMLJavaModLoadingContext;
+import net.minecraftforge.fml.loading.FMLPaths;
 import net.minecraftforge.registries.DeferredRegister;
 
 @Mod(PokeblocksCommon.MOD_ID)
@@ -38,7 +44,19 @@ public final class PokeblocksForge {
 
 		PokeblocksCommon.doRegistrations();
 
+		PokeblocksConfig.initialize(FMLPaths.GAMEDIR.get());
+
 		MinecraftForge.EVENT_BUS.register(this);
+	}
+
+	@SubscribeEvent
+	public void onServerAboutToStart(ServerAboutToStartEvent event) {
+		PokeblocksServerLifecycle.onServerAboutToStart(event.getServer());
+	}
+
+	@SubscribeEvent
+	public void onServerStarted(ServerStartedEvent event) {
+		PokeblocksServerLifecycle.onServerStarted(event.getServer());
 	}
 
 	@SubscribeEvent
@@ -47,7 +65,13 @@ public final class PokeblocksForge {
 	}
 
 	@SubscribeEvent
-	public void onServerStarted(ServerStartedEvent event) {
-		PokeblocksServerLifecycle.onServerStarted(event.getServer());
+	public void onLootTableLoad(LootTableLoadEvent event) {
+		if (LootInjector.shouldInject(event.getName())) {
+			LootPool pool = PokeblocksCommon.getLootPool();
+			if (pool != null) {
+				event.getTable().addPool(pool);
+			}
+		}
 	}
+
 }

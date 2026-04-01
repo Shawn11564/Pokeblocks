@@ -19,6 +19,11 @@ minecraft {
 dependencies {
     compileOnly group:'org.spongepowered', name:'mixin', version:'0.8.5'
     implementation "software.bernie.geckolib:geckolib-common-${minecraft_version}:${geckolib_version}"
+    testImplementation 'org.junit.jupiter:junit-jupiter:5.10.5'
+}
+
+test {
+    useJUnitPlatform()
 }
 
 repositories {

@@ -12,6 +12,11 @@ import java.nio.file.Path;
 
 public final class PokeblocksServerLifecycle {
 
+    public static void onServerAboutToStart(MinecraftServer server) {
+//        PokeblocksConfig.initialize(server.getServerDirectory());
+//        PokeblocksCommon.invalidateLootMap();
+    }
+
     public static void onServerStarted(MinecraftServer server) {
         try {
             Path serverDir = server.getServerDirectory();

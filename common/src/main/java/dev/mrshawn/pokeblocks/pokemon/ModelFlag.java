@@ -2,8 +2,10 @@ package dev.mrshawn.pokeblocks.pokemon;
 
 import dev.mrshawn.pokeblocks.item.DollRarity;
 
+import java.util.Arrays;
 import java.util.HashSet;
 import java.util.Set;
+import java.util.stream.Collectors;
 
 public enum ModelFlag {
 
@@ -98,6 +100,26 @@ public enum ModelFlag {
 			}
 		}
 		return false;
+	}
+
+	/**
+	 * Looks up a ModelFlag by its tag name (case-insensitive).
+	 * Returns null if no match.
+	 */
+	public static ModelFlag fromTagName(String tagName) {
+		return Arrays.stream(ModelFlag.values())
+				.filter(flag -> flag.getTagName().equalsIgnoreCase(tagName))
+				.findFirst()
+				.orElse(null);
+	}
+
+	/**
+	 * Returns a comma-separated string of all valid tag names, for error messages.
+	 */
+	public static String allTagNames() {
+		return Arrays.stream(values())
+				.map(ModelFlag::getTagName)
+				.collect(Collectors.joining(", "));
 	}
 
 }

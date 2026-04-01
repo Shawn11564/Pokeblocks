@@ -19,8 +19,10 @@ import java.util.Set;
 public class RarityScoreCalculator {
 
     /**
-     * Resolves the effective rarity for a pokemon + flags combination.
+     * Represents a single valid doll variant with its computed weight.
      */
+    public record DollVariant(String pokemon, Set<ModelFlag> flags, DollRarity rarity, double weight) {}
+
     private static DollRarity resolveRarity(String pokemon, Set<ModelFlag> flags) {
         DollRarity override = DollRarityOverrides.getOverride(pokemon, flags);
         if (override != null) return override;
@@ -30,24 +32,12 @@ public class RarityScoreCalculator {
         return highest == DollRarity.NONE ? DollRarity.COMMON : highest;
     }
 
-    /**
-     * Multiplier applied per additional flag beyond the one that determines base rarity.
-     * Each extra flag makes the doll harder to obtain, so it divides the weight.
-     */
     private static final double FLAG_RARITY_DIVISOR = 4.0;
 
-    /**
-     * Computes the effective weight for a doll variant.
-     * <p>
-     * - Gigantic dolls use their non-gigantic counterpart's weight / 4 (crafting cost).
-     * - Each additional flag beyond the base rarity further divides the weight,
-     *   reflecting that multi-flag dolls are rarer.
-     */
     private static double getEffectiveWeight(String pokemon, Set<ModelFlag> flags, DollRarity rarity) {
         double weight;
 
         if (flags.contains(ModelFlag.GIGANTIC)) {
-            // Resolve what this doll's rarity would be without the gigantic flag
             Set<ModelFlag> nonGiganticFlags = EnumSet.copyOf(flags);
             nonGiganticFlags.remove(ModelFlag.GIGANTIC);
             DollRarity baseRarity = resolveRarity(pokemon, nonGiganticFlags);
@@ -57,22 +47,14 @@ public class RarityScoreCalculator {
             weight = Math.max(rarity.getWeight(), 1);
         }
 
-        // Count flags that don't determine the base rarity tier but still add rarity.
-        // The flag that sets the rarity tier is already reflected in the weight,
-        // so additional flags should make the doll rarer (lower weight).
         int extraFlags = countExtraFlags(flags, rarity);
         for (int i = 0; i < extraFlags; i++) {
             weight /= FLAG_RARITY_DIVISOR;
         }
 
-        return Math.max(weight, 0.001); // floor to avoid zero
+        return Math.max(weight, 0.001);
     }
 
-    /**
-     * Counts flags that contribute additional rarity beyond the base tier.
-     * The "primary" flag (the one that determines the rarity tier) is not counted.
-     * Flags with DollRarity.NONE still count as extra rarity contributors.
-     */
     private static int countExtraFlags(Set<ModelFlag> flags, DollRarity rarity) {
         if (flags.isEmpty()) return 0;
 
@@ -81,13 +63,10 @@ public class RarityScoreCalculator {
 
         for (ModelFlag flag : flags) {
             if (!primaryCounted && flag.getRarity() == rarity && rarity != DollRarity.NONE) {
-                // This is the flag that determined the rarity tier — skip it once
                 primaryCounted = true;
                 continue;
             }
-            // GIGANTIC is handled separately via the /4 crafting cost, don't double-count
             if (flag == ModelFlag.GIGANTIC) continue;
-
             count++;
         }
 
@@ -95,26 +74,14 @@ public class RarityScoreCalculator {
     }
 
     /**
-     * Computes the percentage chance of rolling this specific doll variant
-     * out of all possible doll variants, weighted by rarity.
+     * Computes all valid doll variants across all registered pokemon,
+     * optionally filtering out variants that contain any of the excluded flags.
      *
-     * @return probability as a percentage (e.g. 2.5 means 2.5%)
+     * @param excludedFlags flags that disqualify a variant (pass empty set for no filtering)
+     * @return list of all valid variants with their weights
      */
-    public static double computeChance(String pokemon, Set<ModelFlag> activeFlags) {
-        DollRarity targetRarity = resolveRarity(pokemon, activeFlags);
-        double targetWeight = getEffectiveWeight(pokemon, activeFlags, targetRarity);
-
-        double totalWeight = computeTotalWeight();
-        if (totalWeight <= 0) return 0.0;
-
-        return ((double) targetWeight / totalWeight) * 100.0;
-    }
-
-    /**
-     * Sums the effective weights of every valid doll variant across all registered pokemon.
-     */
-    private static double computeTotalWeight() {
-        double total = 0;
+    public static List<DollVariant> computeAllVariants(Set<ModelFlag> excludedFlags) {
+        List<DollVariant> variants = new ArrayList<>();
 
         for (var entry : PokemonRegistry.ALL_POKEMON.entrySet()) {
             String name = entry.getKey();
@@ -123,7 +90,9 @@ public class RarityScoreCalculator {
             List<ModelFlag> availableFlags = new ArrayList<>();
             for (var flagEntry : data.modelFlags().entrySet()) {
                 if (Boolean.TRUE.equals(flagEntry.getValue())) {
-                    availableFlags.add(flagEntry.getKey());
+                    if (!excludedFlags.contains(flagEntry.getKey())) {
+                        availableFlags.add(flagEntry.getKey());
+                    }
                 }
             }
 
@@ -140,30 +109,40 @@ public class RarityScoreCalculator {
                 if (!missing.isEmpty()) continue;
 
                 DollRarity rarity = resolveRarity(name, combo);
-                total += getEffectiveWeight(name, combo, rarity);
+                double weight = getEffectiveWeight(name, combo, rarity);
+
+                variants.add(new DollVariant(name, combo, rarity, weight));
             }
         }
 
-        return total;
+        return variants;
     }
 
     /**
-     * Returns a display string for the tooltip.
-     * Rounds to the first significant digit after the decimal point.
-     * e.g. 0.0000047382 -> "0.000005%", 2.345 -> "2%", 0.37 -> "0.4%"
+     * Computes the percentage chance of rolling a specific variant
+     * out of all possible variants (no flag exclusions).
      */
+    public static double computeChance(String pokemon, Set<ModelFlag> activeFlags) {
+        DollRarity targetRarity = resolveRarity(pokemon, activeFlags);
+        double targetWeight = getEffectiveWeight(pokemon, activeFlags, targetRarity);
+
+        // For tooltip display, use all variants (no exclusions)
+        List<DollVariant> allVariants = computeAllVariants(EnumSet.noneOf(ModelFlag.class));
+        double totalWeight = allVariants.stream().mapToDouble(DollVariant::weight).sum();
+
+        if (totalWeight <= 0) return 0.0;
+        return (targetWeight / totalWeight) * 100.0;
+    }
+
     public static String getDisplayString(String pokemon, Set<ModelFlag> activeFlags) {
         double chance = computeChance(pokemon, activeFlags);
 
         if (chance <= 0) return "0%";
 
-        // For values >= 1, round to nearest integer
         if (chance >= 1.0) {
             return Math.round(chance) + "%";
         }
 
-        // Find how many decimal places until the first non-zero digit
-        // e.g. 0.0000047 -> we need 6 decimal places to see the "5" (after rounding)
         int decimalPlaces = 0;
         double temp = chance;
         while (temp < 1.0 && decimalPlaces < 20) {
@@ -171,7 +150,6 @@ public class RarityScoreCalculator {
             decimalPlaces++;
         }
 
-        // Round to that many decimal places
         double factor = Math.pow(10, decimalPlaces);
         double rounded = Math.round(chance * factor) / factor;
 
