@@ -23,6 +23,132 @@ public class PokeblocksClient implements ClientModInitializer {
 	public void onInitializeClient() {
 		EntityRendererRegistry.register(ModEntities.SITTABLE, SittableRenderer::new);
 		ServerHandler.register();
+		registerScaledBlockEntityRenderer(
+			ModBlockEntities.GIGANTIC_POKEDOLL_VENONAT_BLOCK_ENTITY,
+			ResourceConstants.POKEDOLL_VENONAT_MODEL,
+			ResourceConstants.POKEDOLL_VENONAT_TEXTURE,
+				ResourceConstants.POKEDOLL_VENONAT_ANIMATION,
+			SCALE
+		);
+
+		registerScaledBlockEntityRenderer(
+			ModBlockEntities.GIGANTIC_POKEDOLL_SHINY_VENONAT_BLOCK_ENTITY,
+			ResourceConstants.POKEDOLL_VENONAT_MODEL,
+			ResourceConstants.POKEDOLL_SHINY_VENONAT_TEXTURE,
+				ResourceConstants.POKEDOLL_VENONAT_ANIMATION,
+			SCALE
+		);
+
+		registerScaledBlockEntityRenderer(
+			ModBlockEntities.GIGANTIC_POKEDOLL_SHUCKLE_BLOCK_ENTITY,
+			ResourceConstants.POKEDOLL_SHUCKLE_MODEL,
+			ResourceConstants.POKEDOLL_SHUCKLE_TEXTURE,
+				ResourceConstants.POKEDOLL_SHUCKLE_ANIMATION,
+			SCALE
+		);
+
+		registerScaledBlockEntityRenderer(
+			ModBlockEntities.GIGANTIC_POKEDOLL_SHINY_SHUCKLE_BLOCK_ENTITY,
+			ResourceConstants.POKEDOLL_SHUCKLE_MODEL,
+			ResourceConstants.POKEDOLL_SHINY_SHUCKLE_TEXTURE,
+				ResourceConstants.POKEDOLL_SHUCKLE_ANIMATION,
+			SCALE
+		);
+
+		registerScaledBlockEntityRenderer(
+			ModBlockEntities.GIGANTIC_POKEDOLL_LECHONK_BLOCK_ENTITY,
+			ResourceConstants.POKEDOLL_LECHONK_MODEL,
+			ResourceConstants.POKEDOLL_LECHONK_TEXTURE,
+				ResourceConstants.POKEDOLL_LECHONK_ANIMATION,
+			SCALE
+		);
+
+		registerScaledBlockEntityRenderer(
+			ModBlockEntities.GIGANTIC_POKEDOLL_SHINY_LECHONK_BLOCK_ENTITY,
+			ResourceConstants.POKEDOLL_LECHONK_MODEL,
+			ResourceConstants.POKEDOLL_SHINY_LECHONK_TEXTURE,
+				ResourceConstants.POKEDOLL_LECHONK_ANIMATION,
+			SCALE
+		);
+
+		registerScaledBlockEntityRenderer(
+			ModBlockEntities.GIGANTIC_POKEDOLL_JIGGLYPUFF_BLOCK_ENTITY,
+			ResourceConstants.POKEDOLL_JIGGLYPUFF_MODEL,
+			ResourceConstants.POKEDOLL_JIGGLYPUFF_TEXTURE,
+				ResourceConstants.POKEDOLL_JIGGLYPUFF_ANIMATION,
+			SCALE
+		);
+
+		registerScaledBlockEntityRenderer(
+			ModBlockEntities.GIGANTIC_POKEDOLL_SHINY_JIGGLYPUFF_BLOCK_ENTITY,
+			ResourceConstants.POKEDOLL_JIGGLYPUFF_MODEL,
+			ResourceConstants.POKEDOLL_SHINY_JIGGLYPUFF_TEXTURE,
+				ResourceConstants.POKEDOLL_JIGGLYPUFF_ANIMATION,
+			SCALE
+		);
+
+		registerScaledBlockEntityRenderer(
+			ModBlockEntities.GIGANTIC_POKEDOLL_IGGLYBUFF_BLOCK_ENTITY,
+			ResourceConstants.POKEDOLL_IGGLYBUFF_MODEL,
+			ResourceConstants.POKEDOLL_IGGLYBUFF_TEXTURE,
+				ResourceConstants.POKEDOLL_IGGLYBUFF_ANIMATION,
+			SCALE
+		);
+
+		registerScaledBlockEntityRenderer(
+			ModBlockEntities.GIGANTIC_POKEDOLL_SHINY_IGGLYBUFF_BLOCK_ENTITY,
+			ResourceConstants.POKEDOLL_IGGLYBUFF_MODEL,
+			ResourceConstants.POKEDOLL_SHINY_IGGLYBUFF_TEXTURE,
+				ResourceConstants.POKEDOLL_IGGLYBUFF_ANIMATION,
+			SCALE
+		);
+
+		registerScaledBlockEntityRenderer(
+			ModBlockEntities.GIGANTIC_POKEDOLL_CYNDAQUIL_BLOCK_ENTITY,
+			ResourceConstants.POKEDOLL_CYNDAQUIL_MODEL,
+			ResourceConstants.POKEDOLL_CYNDAQUIL_TEXTURE,
+				ResourceConstants.POKEDOLL_CYNDAQUIL_ANIMATION,
+			SCALE
+		);
+
+		registerScaledBlockEntityRenderer(
+			ModBlockEntities.GIGANTIC_POKEDOLL_SHINY_CYNDAQUIL_BLOCK_ENTITY,
+			ResourceConstants.POKEDOLL_CYNDAQUIL_MODEL,
+			ResourceConstants.POKEDOLL_SHINY_CYNDAQUIL_TEXTURE,
+				ResourceConstants.POKEDOLL_CYNDAQUIL_ANIMATION,
+			SCALE
+		);
+
+		registerScaledBlockEntityRenderer(
+			ModBlockEntities.GIGANTIC_POKEDOLL_CLEFAIRY_BLOCK_ENTITY,
+			ResourceConstants.POKEDOLL_CLEFAIRY_MODEL,
+			ResourceConstants.POKEDOLL_CLEFAIRY_TEXTURE,
+			SCALE
+		);
+
+		registerScaledBlockEntityRenderer(
+			ModBlockEntities.GIGANTIC_POKEDOLL_SHINY_CLEFAIRY_BLOCK_ENTITY,
+			ResourceConstants.POKEDOLL_CLEFAIRY_MODEL,
+			ResourceConstants.POKEDOLL_SHINY_CLEFAIRY_TEXTURE,
+			SCALE
+		);
+
+		registerScaledBlockEntityRenderer(
+			ModBlockEntities.GIGANTIC_POKEDOLL_CHARMELEON_BLOCK_ENTITY,
+			ResourceConstants.POKEDOLL_CHARMELEON_MODEL,
+			ResourceConstants.POKEDOLL_CHARMELEON_TEXTURE,
+				ResourceConstants.POKEDOLL_CHARMELEON_ANIMATION,
+			SCALE
+		);
+
+		registerScaledBlockEntityRenderer(
+			ModBlockEntities.GIGANTIC_POKEDOLL_SHINY_CHARMELEON_BLOCK_ENTITY,
+			ResourceConstants.POKEDOLL_CHARMELEON_MODEL,
+			ResourceConstants.POKEDOLL_SHINY_CHARMELEON_TEXTURE,
+				ResourceConstants.POKEDOLL_CHARMELEON_ANIMATION,
+			SCALE
+		);
+
 		registerBlockEntityRenderer(
 			ModBlockEntities.POKEDOLL_LECHONK_BLOCK_ENTITY,
 			ResourceConstants.POKEDOLL_LECHONK_MODEL,

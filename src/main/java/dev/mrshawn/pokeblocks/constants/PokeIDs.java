@@ -339,4 +339,20 @@ public class PokeIDs {
 	public static final String POKEDOLL_SHINY_SHUCKLE = "pokedoll_shiny_shuckle";
 	public static final String POKEDOLL_LECHONK = "pokedoll_lechonk";
 	public static final String POKEDOLL_SHINY_LECHONK = "pokedoll_shiny_lechonk";
+	public static final String GIGANTIC_POKEDOLL_CHARMELEON = "gigantic_pokedoll_charmeleon";
+	public static final String GIGANTIC_POKEDOLL_SHINY_CHARMELEON = "gigantic_pokedoll_shiny_charmeleon";
+	public static final String GIGANTIC_POKEDOLL_CLEFAIRY = "gigantic_pokedoll_clefairy";
+	public static final String GIGANTIC_POKEDOLL_SHINY_CLEFAIRY = "gigantic_pokedoll_shiny_clefairy";
+	public static final String GIGANTIC_POKEDOLL_CYNDAQUIL = "gigantic_pokedoll_cyndaquil";
+	public static final String GIGANTIC_POKEDOLL_SHINY_CYNDAQUIL = "gigantic_pokedoll_shiny_cyndaquil";
+	public static final String GIGANTIC_POKEDOLL_IGGLYBUFF = "gigantic_pokedoll_igglybuff";
+	public static final String GIGANTIC_POKEDOLL_SHINY_IGGLYBUFF = "gigantic_pokedoll_shiny_igglybuff";
+	public static final String GIGANTIC_POKEDOLL_JIGGLYPUFF = "gigantic_pokedoll_jigglypuff";
+	public static final String GIGANTIC_POKEDOLL_SHINY_JIGGLYPUFF = "gigantic_pokedoll_shiny_jigglypuff";
+	public static final String GIGANTIC_POKEDOLL_LECHONK = "gigantic_pokedoll_lechonk";
+	public static final String GIGANTIC_POKEDOLL_SHINY_LECHONK = "gigantic_pokedoll_shiny_lechonk";
+	public static final String GIGANTIC_POKEDOLL_SHUCKLE = "gigantic_pokedoll_shuckle";
+	public static final String GIGANTIC_POKEDOLL_SHINY_SHUCKLE = "gigantic_pokedoll_shiny_shuckle";
+	public static final String GIGANTIC_POKEDOLL_VENONAT = "gigantic_pokedoll_venonat";
+	public static final String GIGANTIC_POKEDOLL_SHINY_VENONAT = "gigantic_pokedoll_shiny_venonat";
 }
