@@ -1,0 +1,7 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(powershell.exe -Command \"Add-Type -AssemblyName System.Drawing; $img = [System.Drawing.Image]::FromFile\\(''C:\\\\Users\\\\thund\\\\Documents\\\\IdeaProjects\\\\Pokeblocks\\\\src\\\\main\\\\resources\\\\assets\\\\pokeblocks\\\\textures\\\\block\\\\pokeblock_bulbasaur_texture.png''\\); echo \\($img.Width.ToString\\(\\) + ''x'' + $img.Height.ToString\\(\\)\\); $img.Dispose\\(\\)\")"
+    ]
+  }
+}

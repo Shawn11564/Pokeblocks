@@ -355,4 +355,10 @@ public class PokeIDs {
 	public static final String GIGANTIC_POKEDOLL_SHINY_SHUCKLE = "gigantic_pokedoll_shiny_shuckle";
 	public static final String GIGANTIC_POKEDOLL_VENONAT = "gigantic_pokedoll_venonat";
 	public static final String GIGANTIC_POKEDOLL_SHINY_VENONAT = "gigantic_pokedoll_shiny_venonat";
+	public static final String POKEBLOCK_BULBASAUR = "pokeblock_bulbasaur";
+	public static final String POKEBLOCK_SHINY_BULBASAUR = "pokeblock_shiny_bulbasaur";
+	public static final String POKEBLOCK_CHARMANDER = "pokeblock_charmander";
+	public static final String POKEBLOCK_SHINY_CHARMANDER = "pokeblock_shiny_charmander";
+	public static final String POKEBLOCK_SQUIRTLE = "pokeblock_squirtle";
+	public static final String POKEBLOCK_SHINY_SQUIRTLE = "pokeblock_shiny_squirtle";
 }

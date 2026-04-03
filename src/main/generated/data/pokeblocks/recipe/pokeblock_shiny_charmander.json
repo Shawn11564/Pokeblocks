@@ -1,0 +1,21 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "category": "misc",
+  "key": {
+    "p": {
+      "item": "pokeblocks:pokeblock_shiny_charmander"
+    },
+    "w": {
+      "tag": "minecraft:wool"
+    }
+  },
+  "pattern": [
+    "www",
+    "wpw",
+    "www"
+  ],
+  "result": {
+    "count": 8,
+    "id": "pokeblocks:pokeblock_shiny_charmander"
+  }
+}

@@ -61,6 +61,28 @@ public class PokeblocksRecipeGenerator extends FabricRecipeProvider {
 				e.printStackTrace();
 			}
 		}
+		List<Block> aprilFoolsBlocks = List.of(
+				ModBlocks.POKEBLOCK_BULBASAUR,
+				ModBlocks.POKEBLOCK_SHINY_BULBASAUR,
+				ModBlocks.POKEBLOCK_CHARMANDER,
+				ModBlocks.POKEBLOCK_SHINY_CHARMANDER,
+				ModBlocks.POKEBLOCK_SQUIRTLE,
+				ModBlocks.POKEBLOCK_SHINY_SQUIRTLE
+		);
+		for (Block block : aprilFoolsBlocks) {
+			String blockName = block.getRegistryEntry().getKey().get().getValue().getPath();
+
+			ShapedRecipeJsonBuilder.create(RecipeCategory.DECORATIONS, block, 8)
+					.pattern("www")
+					.pattern("wpw")
+					.pattern("www")
+					.input('w', ItemTags.WOOL)
+					.input('p', block)
+					.criterion(FabricRecipeProvider.hasItem(block),
+							FabricRecipeProvider.conditionsFromItem(block))
+					.offerTo(exporter, Identifier.of("pokeblocks", blockName));
+		}
+
 		ShapedRecipeJsonBuilder.create(RecipeCategory.DECORATIONS, ModBlocks.POKEDOLL_LUVDISC_CUSHION)
 				.pattern("p p")
 				.pattern("ppp")

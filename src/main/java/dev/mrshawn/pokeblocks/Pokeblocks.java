@@ -87,6 +87,11 @@ public class Pokeblocks implements ModInitializer {
 								ItemEntry.builder(doll.getBlock())
 										.weight(doll.getRarity().getWeight())
 				));
+				ModItems.getAllPokeBlockItems().forEach(item ->
+						poolBuilder.with(
+								ItemEntry.builder(item)
+										.weight(item.getRarity().getWeight())
+				));
 				poolBuilder.with(ItemEntry.builder(Items.AIR).weight(newValue));
 
 				tableBuilder.pool(poolBuilder);

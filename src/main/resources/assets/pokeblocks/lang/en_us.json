@@ -704,5 +704,17 @@
     "item.pokeblocks.gigantic_pokedoll_venonat": "Gigantic Venonat Pokedoll",
     "block.pokeblocks.gigantic_pokedoll_venonat": "Gigantic Venonat Pokedoll",
     "item.pokeblocks.gigantic_pokedoll_shiny_venonat": "Gigantic Shiny Venonat Pokedoll",
-    "block.pokeblocks.gigantic_pokedoll_shiny_venonat": "Gigantic Shiny Venonat Pokedoll"
+    "block.pokeblocks.gigantic_pokedoll_shiny_venonat": "Gigantic Shiny Venonat Pokedoll",
+    "item.pokeblocks.pokeblock_bulbasaur": "Bulbasaur Block",
+    "block.pokeblocks.pokeblock_bulbasaur": "Bulbasaur Block",
+    "item.pokeblocks.pokeblock_shiny_bulbasaur": "Shiny Bulbasaur Block",
+    "block.pokeblocks.pokeblock_shiny_bulbasaur": "Shiny Bulbasaur Block",
+    "item.pokeblocks.pokeblock_charmander": "Charmander Block",
+    "block.pokeblocks.pokeblock_charmander": "Charmander Block",
+    "item.pokeblocks.pokeblock_shiny_charmander": "Shiny Charmander Block",
+    "block.pokeblocks.pokeblock_shiny_charmander": "Shiny Charmander Block",
+    "item.pokeblocks.pokeblock_squirtle": "Squirtle Block",
+    "block.pokeblocks.pokeblock_squirtle": "Squirtle Block",
+    "item.pokeblocks.pokeblock_shiny_squirtle": "Shiny Squirtle Block",
+    "block.pokeblocks.pokeblock_shiny_squirtle": "Shiny Squirtle Block"
 }

@@ -317,9 +317,11 @@ import dev.mrshawn.pokeblocks.constants.PokeIDs;
 import dev.mrshawn.pokeblocks.constants.Shapes;
 import dev.mrshawn.pokeblocks.item.ModItems;
 import dev.mrshawn.pokeblocks.utils.ServerHandler;
+import net.minecraft.block.AbstractBlock;
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockState;
 import net.minecraft.block.Blocks;
+import dev.mrshawn.pokeblocks.block.custom.PokeBlock;
 import net.minecraft.block.entity.BlockEntity;
 import net.minecraft.entity.EquipmentSlot;
 import net.minecraft.entity.ItemEntity;
@@ -1600,6 +1602,19 @@ public class ModBlocks {
 			new PokedollBlock<>(Shapes.FIGURINE_SHAPE, () -> RedCommunismFigurineBlockEntity.class));
 	public static final Block TROPSIC0_FIGURINE = Registry.register(Registries.BLOCK, Identifier.of(Pokeblocks.MOD_ID, PokeIDs.TROPSIC0_FIGURINE),
 			new PokedollBlock<>(Shapes.FIGURINE_SHAPE, () -> Tropsic0FigurineBlockEntity.class));
+
+	public static final Block POKEBLOCK_BULBASAUR = Registry.register(Registries.BLOCK, Identifier.of(Pokeblocks.MOD_ID, PokeIDs.POKEBLOCK_BULBASAUR),
+			new PokeBlock(AbstractBlock.Settings.create().strength(2.0f)));
+	public static final Block POKEBLOCK_SHINY_BULBASAUR = Registry.register(Registries.BLOCK, Identifier.of(Pokeblocks.MOD_ID, PokeIDs.POKEBLOCK_SHINY_BULBASAUR),
+			new PokeBlock(AbstractBlock.Settings.create().strength(2.0f)));
+	public static final Block POKEBLOCK_CHARMANDER = Registry.register(Registries.BLOCK, Identifier.of(Pokeblocks.MOD_ID, PokeIDs.POKEBLOCK_CHARMANDER),
+			new PokeBlock(AbstractBlock.Settings.create().strength(2.0f)));
+	public static final Block POKEBLOCK_SHINY_CHARMANDER = Registry.register(Registries.BLOCK, Identifier.of(Pokeblocks.MOD_ID, PokeIDs.POKEBLOCK_SHINY_CHARMANDER),
+			new PokeBlock(AbstractBlock.Settings.create().strength(2.0f)));
+	public static final Block POKEBLOCK_SQUIRTLE = Registry.register(Registries.BLOCK, Identifier.of(Pokeblocks.MOD_ID, PokeIDs.POKEBLOCK_SQUIRTLE),
+			new PokeBlock(AbstractBlock.Settings.create().strength(2.0f)));
+	public static final Block POKEBLOCK_SHINY_SQUIRTLE = Registry.register(Registries.BLOCK, Identifier.of(Pokeblocks.MOD_ID, PokeIDs.POKEBLOCK_SHINY_SQUIRTLE),
+			new PokeBlock(AbstractBlock.Settings.create().strength(2.0f)));
 
 	private static Block registerBlock(String name, Block block) {
 		registerBlockItem(name, block);

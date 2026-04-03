@@ -5,6 +5,7 @@ import dev.mrshawn.pokeblocks.block.ModBlocks;
 import dev.mrshawn.pokeblocks.constants.PokeIDs;
 import dev.mrshawn.pokeblocks.constants.ResourceConstants;
 import dev.mrshawn.pokeblocks.item.client.PokedollBlockItemModel;
+import dev.mrshawn.pokeblocks.item.custom.PokeBlockItem;
 import dev.mrshawn.pokeblocks.item.custom.PokedollBlockItem;
 import dev.mrshawn.pokeblocks.item.custom.WearablePokedollBlockItem;
 import net.minecraft.block.Block;
@@ -3206,6 +3207,36 @@ public class ModItems {
 		return dolls;
 	}
 
+	public static final PokeBlockItem POKEBLOCK_BULBASAUR_ITEM = Registry.register(Registries.ITEM,
+			Identifier.of(Pokeblocks.MOD_ID, PokeIDs.POKEBLOCK_BULBASAUR),
+			new PokeBlockItem(ModBlocks.POKEBLOCK_BULBASAUR, DollRarity.LEGENDARY));
+	public static final PokeBlockItem POKEBLOCK_SHINY_BULBASAUR_ITEM = Registry.register(Registries.ITEM,
+			Identifier.of(Pokeblocks.MOD_ID, PokeIDs.POKEBLOCK_SHINY_BULBASAUR),
+			new PokeBlockItem(ModBlocks.POKEBLOCK_SHINY_BULBASAUR, DollRarity.LEGENDARY));
+	public static final PokeBlockItem POKEBLOCK_CHARMANDER_ITEM = Registry.register(Registries.ITEM,
+			Identifier.of(Pokeblocks.MOD_ID, PokeIDs.POKEBLOCK_CHARMANDER),
+			new PokeBlockItem(ModBlocks.POKEBLOCK_CHARMANDER, DollRarity.LEGENDARY));
+	public static final PokeBlockItem POKEBLOCK_SHINY_CHARMANDER_ITEM = Registry.register(Registries.ITEM,
+			Identifier.of(Pokeblocks.MOD_ID, PokeIDs.POKEBLOCK_SHINY_CHARMANDER),
+			new PokeBlockItem(ModBlocks.POKEBLOCK_SHINY_CHARMANDER, DollRarity.LEGENDARY));
+	public static final PokeBlockItem POKEBLOCK_SQUIRTLE_ITEM = Registry.register(Registries.ITEM,
+			Identifier.of(Pokeblocks.MOD_ID, PokeIDs.POKEBLOCK_SQUIRTLE),
+			new PokeBlockItem(ModBlocks.POKEBLOCK_SQUIRTLE, DollRarity.LEGENDARY));
+	public static final PokeBlockItem POKEBLOCK_SHINY_SQUIRTLE_ITEM = Registry.register(Registries.ITEM,
+			Identifier.of(Pokeblocks.MOD_ID, PokeIDs.POKEBLOCK_SHINY_SQUIRTLE),
+			new PokeBlockItem(ModBlocks.POKEBLOCK_SHINY_SQUIRTLE, DollRarity.LEGENDARY));
+
+	public static List<PokeBlockItem> getAllPokeBlockItems() {
+		return List.of(
+				POKEBLOCK_BULBASAUR_ITEM,
+				POKEBLOCK_SHINY_BULBASAUR_ITEM,
+				POKEBLOCK_CHARMANDER_ITEM,
+				POKEBLOCK_SHINY_CHARMANDER_ITEM,
+				POKEBLOCK_SQUIRTLE_ITEM,
+				POKEBLOCK_SHINY_SQUIRTLE_ITEM
+		);
+	}
+
 	public static List<ItemConvertible> getAllMiscItems() {
 		return MISC_ITEMS;
 	}
@@ -3228,6 +3259,9 @@ public class ModItems {
 		int rarity = 0;
 		for (PokedollBlockItem doll : getAllDolls(false)) {
 			rarity += doll.getRarity().getWeight();
+		}
+		for (PokeBlockItem item : getAllPokeBlockItems()) {
+			rarity += item.getRarity().getWeight();
 		}
 		return rarity;
 	}
@@ -3266,7 +3300,13 @@ public class ModItems {
 				ModItems.SUMMER_RAID_SOUL,
 				ModItems.SUMMER_TOKEN,
 				ModItems.NICKEL,
-				ModItems.DIME
+				ModItems.DIME,
+				ModItems.POKEBLOCK_BULBASAUR_ITEM,
+				ModItems.POKEBLOCK_SHINY_BULBASAUR_ITEM,
+				ModItems.POKEBLOCK_CHARMANDER_ITEM,
+				ModItems.POKEBLOCK_SHINY_CHARMANDER_ITEM,
+				ModItems.POKEBLOCK_SQUIRTLE_ITEM,
+				ModItems.POKEBLOCK_SHINY_SQUIRTLE_ITEM
 	);
 
 }

@@ -1,0 +1,9 @@
+{
+  "parent": "pokeblocks:block/pokeblock_charmander",
+  "display": {
+    "gui": {
+      "rotation": [0, 45, 0],
+      "scale": [0.625, 0.625, 0.625]
+    }
+  }
+}
