@@ -1,0 +1,12 @@
+package dev.mrshawn.pokeblocks.block.entity.clefairy;
+
+import dev.mrshawn.pokeblocks.block.entity.BlockEntityTypeRegistry;
+import dev.mrshawn.pokeblocks.block.entity.PokedollBlockEntity;
+import net.minecraft.block.BlockState;
+import net.minecraft.util.math.BlockPos;
+
+public class PokedollClefairyBlockEntity extends PokedollBlockEntity {
+	public PokedollClefairyBlockEntity(BlockPos pos, BlockState state) {
+		super(BlockEntityTypeRegistry.get(PokedollClefairyBlockEntity.class), pos, state);
+	}
+}

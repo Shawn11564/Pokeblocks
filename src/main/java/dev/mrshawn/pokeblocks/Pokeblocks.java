@@ -79,7 +79,7 @@ public class Pokeblocks implements ModInitializer {
 		int newValue = (int)(totalWeight / 0.3) - totalWeight;
 
 		LootTableEvents.MODIFY.register((key, tableBuilder, source) -> {
-			if (LOOT_TABLES.contains(key) && source.isBuiltin()) {
+			if (LOOT_TABLES.contains(key)) {
 				LootPool.Builder poolBuilder = LootPool.builder();
 
 				ModItems.getAllLootTableItems().forEach(doll ->

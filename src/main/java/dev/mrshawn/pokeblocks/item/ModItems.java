@@ -1937,6 +1937,170 @@ public class ModItems {
 		0
 	);
 
+	public static final Item POKEDOLL_CHARMELEON_BLOCK_ITEM = registerItem(
+			PokeIDs.POKEDOLL_CHARMELEON,
+			ModBlocks.POKEDOLL_CHARMELEON,
+			ResourceConstants.POKEDOLL_CHARMELEON_MODEL,
+			ResourceConstants.POKEDOLL_CHARMELEON_TEXTURE,
+			ResourceConstants.POKEDOLL_CHARMELEON_ANIMATION,
+			ResourceConstants.POKEDOLL_IDLE_ANIMATION_NAME,
+			DollRarity.EPIC,
+			8
+	);
+	public static final Item POKEDOLL_SHINY_CHARMELEON_BLOCK_ITEM = registerItem(
+			PokeIDs.POKEDOLL_SHINY_CHARMELEON,
+			ModBlocks.POKEDOLL_SHINY_CHARMELEON,
+			ResourceConstants.POKEDOLL_CHARMELEON_MODEL,
+			ResourceConstants.POKEDOLL_SHINY_CHARMELEON_TEXTURE,
+			ResourceConstants.POKEDOLL_CHARMELEON_ANIMATION,
+			ResourceConstants.POKEDOLL_IDLE_ANIMATION_NAME,
+			DollRarity.SHINY,
+			8
+	);
+
+	public static final Item POKEDOLL_CLEFAIRY_BLOCK_ITEM = registerItem(
+			PokeIDs.POKEDOLL_CLEFAIRY,
+			ModBlocks.POKEDOLL_CLEFAIRY,
+			ResourceConstants.POKEDOLL_CLEFAIRY_MODEL,
+			ResourceConstants.POKEDOLL_CLEFAIRY_TEXTURE,
+			DollRarity.UNCOMMON,
+			35
+	);
+	public static final Item POKEDOLL_SHINY_CLEFAIRY_BLOCK_ITEM = registerItem(
+			PokeIDs.POKEDOLL_SHINY_CLEFAIRY,
+			ModBlocks.POKEDOLL_SHINY_CLEFAIRY,
+			ResourceConstants.POKEDOLL_CLEFAIRY_MODEL,
+			ResourceConstants.POKEDOLL_SHINY_CLEFAIRY_TEXTURE,
+			DollRarity.SHINY,
+			35
+	);
+
+	public static final Item POKEDOLL_JIGGLYPUFF_BLOCK_ITEM = registerItem(
+			PokeIDs.POKEDOLL_JIGGLYPUFF,
+			ModBlocks.POKEDOLL_JIGGLYPUFF,
+			ResourceConstants.POKEDOLL_JIGGLYPUFF_MODEL,
+			ResourceConstants.POKEDOLL_JIGGLYPUFF_TEXTURE,
+			ResourceConstants.POKEDOLL_JIGGLYPUFF_ANIMATION,
+			ResourceConstants.POKEDOLL_IDLE_ANIMATION_NAME,
+			DollRarity.UNCOMMON,
+			39
+	);
+	public static final Item POKEDOLL_SHINY_JIGGLYPUFF_BLOCK_ITEM = registerItem(
+			PokeIDs.POKEDOLL_SHINY_JIGGLYPUFF,
+			ModBlocks.POKEDOLL_SHINY_JIGGLYPUFF,
+			ResourceConstants.POKEDOLL_JIGGLYPUFF_MODEL,
+			ResourceConstants.POKEDOLL_SHINY_JIGGLYPUFF_TEXTURE,
+			ResourceConstants.POKEDOLL_JIGGLYPUFF_ANIMATION,
+			ResourceConstants.POKEDOLL_IDLE_ANIMATION_NAME,
+			DollRarity.SHINY,
+			39
+	);
+
+	public static final Item POKEDOLL_VENONAT_BLOCK_ITEM = registerItem(
+			PokeIDs.POKEDOLL_VENONAT,
+			ModBlocks.POKEDOLL_VENONAT,
+			ResourceConstants.POKEDOLL_VENONAT_MODEL,
+			ResourceConstants.POKEDOLL_VENONAT_TEXTURE,
+			ResourceConstants.POKEDOLL_VENONAT_ANIMATION,
+			ResourceConstants.POKEDOLL_IDLE_ANIMATION_NAME,
+			DollRarity.COMMON,
+			48
+	);
+	public static final Item POKEDOLL_SHINY_VENONAT_BLOCK_ITEM = registerItem(
+			PokeIDs.POKEDOLL_SHINY_VENONAT,
+			ModBlocks.POKEDOLL_SHINY_VENONAT,
+			ResourceConstants.POKEDOLL_VENONAT_MODEL,
+			ResourceConstants.POKEDOLL_SHINY_VENONAT_TEXTURE,
+			ResourceConstants.POKEDOLL_VENONAT_ANIMATION,
+			ResourceConstants.POKEDOLL_IDLE_ANIMATION_NAME,
+			DollRarity.SHINY,
+			48
+	);
+
+	public static final Item POKEDOLL_CYNDAQUIL_BLOCK_ITEM = registerItem(
+			PokeIDs.POKEDOLL_CYNDAQUIL,
+			ModBlocks.POKEDOLL_CYNDAQUIL,
+			ResourceConstants.POKEDOLL_CYNDAQUIL_MODEL,
+			ResourceConstants.POKEDOLL_CYNDAQUIL_TEXTURE,
+			ResourceConstants.POKEDOLL_CYNDAQUIL_ANIMATION,
+			ResourceConstants.POKEDOLL_IDLE_ANIMATION_NAME,
+			DollRarity.COMMON,
+			155
+	);
+	public static final Item POKEDOLL_SHINY_CYNDAQUIL_BLOCK_ITEM = registerItem(
+			PokeIDs.POKEDOLL_SHINY_CYNDAQUIL,
+			ModBlocks.POKEDOLL_SHINY_CYNDAQUIL,
+			ResourceConstants.POKEDOLL_CYNDAQUIL_MODEL,
+			ResourceConstants.POKEDOLL_SHINY_CYNDAQUIL_TEXTURE,
+			ResourceConstants.POKEDOLL_CYNDAQUIL_ANIMATION,
+			ResourceConstants.POKEDOLL_IDLE_ANIMATION_NAME,
+			DollRarity.SHINY,
+			155
+	);
+
+	public static final Item POKEDOLL_IGGLYBUFF_BLOCK_ITEM = registerItem(
+			PokeIDs.POKEDOLL_IGGLYBUFF,
+			ModBlocks.POKEDOLL_IGGLYBUFF,
+			ResourceConstants.POKEDOLL_IGGLYBUFF_MODEL,
+			ResourceConstants.POKEDOLL_IGGLYBUFF_TEXTURE,
+			ResourceConstants.POKEDOLL_IGGLYBUFF_ANIMATION,
+			ResourceConstants.POKEDOLL_IDLE_ANIMATION_NAME,
+			DollRarity.RARE,
+			174
+	);
+	public static final Item POKEDOLL_SHINY_IGGLYBUFF_BLOCK_ITEM = registerItem(
+			PokeIDs.POKEDOLL_SHINY_IGGLYBUFF,
+			ModBlocks.POKEDOLL_SHINY_IGGLYBUFF,
+			ResourceConstants.POKEDOLL_IGGLYBUFF_MODEL,
+			ResourceConstants.POKEDOLL_SHINY_IGGLYBUFF_TEXTURE,
+			ResourceConstants.POKEDOLL_IGGLYBUFF_ANIMATION,
+			ResourceConstants.POKEDOLL_IDLE_ANIMATION_NAME,
+			DollRarity.SHINY,
+			174
+	);
+
+	public static final Item POKEDOLL_SHUCKLE_BLOCK_ITEM = registerItem(
+			PokeIDs.POKEDOLL_SHUCKLE,
+			ModBlocks.POKEDOLL_SHUCKLE,
+			ResourceConstants.POKEDOLL_SHUCKLE_MODEL,
+			ResourceConstants.POKEDOLL_SHUCKLE_TEXTURE,
+			ResourceConstants.POKEDOLL_SHUCKLE_ANIMATION,
+			ResourceConstants.POKEDOLL_IDLE_ANIMATION_NAME,
+			DollRarity.RARE,
+			213
+	);
+	public static final Item POKEDOLL_SHINY_SHUCKLE_BLOCK_ITEM = registerItem(
+			PokeIDs.POKEDOLL_SHINY_SHUCKLE,
+			ModBlocks.POKEDOLL_SHINY_SHUCKLE,
+			ResourceConstants.POKEDOLL_SHUCKLE_MODEL,
+			ResourceConstants.POKEDOLL_SHINY_SHUCKLE_TEXTURE,
+			ResourceConstants.POKEDOLL_SHUCKLE_ANIMATION,
+			ResourceConstants.POKEDOLL_IDLE_ANIMATION_NAME,
+			DollRarity.SHINY,
+			213
+	);
+
+	public static final Item POKEDOLL_LECHONK_BLOCK_ITEM = registerItem(
+			PokeIDs.POKEDOLL_LECHONK,
+			ModBlocks.POKEDOLL_LECHONK,
+			ResourceConstants.POKEDOLL_LECHONK_MODEL,
+			ResourceConstants.POKEDOLL_LECHONK_TEXTURE,
+			ResourceConstants.POKEDOLL_LECHONK_ANIMATION,
+			ResourceConstants.POKEDOLL_IDLE_ANIMATION_NAME,
+			DollRarity.UNCOMMON,
+			915
+	);
+	public static final Item POKEDOLL_SHINY_LECHONK_BLOCK_ITEM = registerItem(
+			PokeIDs.POKEDOLL_SHINY_LECHONK,
+			ModBlocks.POKEDOLL_SHINY_LECHONK,
+			ResourceConstants.POKEDOLL_LECHONK_MODEL,
+			ResourceConstants.POKEDOLL_SHINY_LECHONK_TEXTURE,
+			ResourceConstants.POKEDOLL_LECHONK_ANIMATION,
+			ResourceConstants.POKEDOLL_IDLE_ANIMATION_NAME,
+			DollRarity.SHINY,
+			915
+	);
+
     public static final Item GIGANTIC_POKEDOLL_SKIBIDI_MEWLET_BLOCK_ITEM = registerItem(
         PokeIDs.GIGANTIC_POKEDOLL_SKIBIDI_MEWLET,
         ModBlocks.GIGANTIC_POKEDOLL_SKIBIDI_MEWLET,

@@ -54,6 +54,10 @@ import dev.mrshawn.pokeblocks.block.entity.charmander.PokedollCharmanderBlockEnt
 import dev.mrshawn.pokeblocks.block.entity.charmander.PokedollGiganticCharmanderBlockEntity;
 import dev.mrshawn.pokeblocks.block.entity.charmander.PokedollGiganticShinyCharmanderBlockEntity;
 import dev.mrshawn.pokeblocks.block.entity.charmander.PokedollShinyCharmanderBlockEntity;
+import dev.mrshawn.pokeblocks.block.entity.charmeleon.PokedollCharmeleonBlockEntity;
+import dev.mrshawn.pokeblocks.block.entity.charmeleon.PokedollShinyCharmeleonBlockEntity;
+import dev.mrshawn.pokeblocks.block.entity.clefairy.PokedollClefairyBlockEntity;
+import dev.mrshawn.pokeblocks.block.entity.clefairy.PokedollShinyClefairyBlockEntity;
 import dev.mrshawn.pokeblocks.block.entity.cloyster.PokedollCloysterBlockEntity;
 import dev.mrshawn.pokeblocks.block.entity.cloyster.PokedollGiganticCloysterBlockEntity;
 import dev.mrshawn.pokeblocks.block.entity.cloyster.PokedollGiganticShinyCloysterBlockEntity;
@@ -67,6 +71,8 @@ import dev.mrshawn.pokeblocks.block.entity.corvisquire.PokedollGiganticCorvisqui
 import dev.mrshawn.pokeblocks.block.entity.corvisquire.PokedollGiganticShinyCorvisquireBlockEntity;
 import dev.mrshawn.pokeblocks.block.entity.corvisquire.PokedollShinyCorvisquireBlockEntity;
 import dev.mrshawn.pokeblocks.block.entity.cubchoo.*;
+import dev.mrshawn.pokeblocks.block.entity.cyndaquil.PokedollCyndaquilBlockEntity;
+import dev.mrshawn.pokeblocks.block.entity.cyndaquil.PokedollShinyCyndaquilBlockEntity;
 import dev.mrshawn.pokeblocks.block.entity.delibird.PokedollDelibirdBlockEntity;
 import dev.mrshawn.pokeblocks.block.entity.delibird.PokedollGiganticDelibirdBlockEntity;
 import dev.mrshawn.pokeblocks.block.entity.delibird.PokedollGiganticShinyDelibirdBlockEntity;
@@ -125,14 +131,20 @@ import dev.mrshawn.pokeblocks.block.entity.headpile.EiscueHeadpileBlockEntity;
 import dev.mrshawn.pokeblocks.block.entity.headpile.EiscueShinyHeadpileBlockEntity;
 import dev.mrshawn.pokeblocks.block.entity.headpile.PokedollGiganticHeadpileBlockEntity;
 import dev.mrshawn.pokeblocks.block.entity.headpile.PokedollGiganticShinyHeadpileBlockEntity;
+import dev.mrshawn.pokeblocks.block.entity.igglybuff.PokedollIgglybuffBlockEntity;
+import dev.mrshawn.pokeblocks.block.entity.igglybuff.PokedollShinyIgglybuffBlockEntity;
 import dev.mrshawn.pokeblocks.block.entity.ivysaur.PokedollGiganticIvysaurBlockEntity;
 import dev.mrshawn.pokeblocks.block.entity.ivysaur.PokedollGiganticShinyIvysaurBlockEntity;
 import dev.mrshawn.pokeblocks.block.entity.ivysaur.PokedollIvysaurBlockEntity;
 import dev.mrshawn.pokeblocks.block.entity.ivysaur.PokedollShinyIvysaurBlockEntity;
+import dev.mrshawn.pokeblocks.block.entity.jigglypuff.PokedollJigglypuffBlockEntity;
+import dev.mrshawn.pokeblocks.block.entity.jigglypuff.PokedollShinyJigglypuffBlockEntity;
 import dev.mrshawn.pokeblocks.block.entity.kyogre.PokedollGiganticKyogreBlockEntity;
 import dev.mrshawn.pokeblocks.block.entity.kyogre.PokedollGiganticShinyKyogreBlockEntity;
 import dev.mrshawn.pokeblocks.block.entity.kyogre.PokedollKyogreBlockEntity;
 import dev.mrshawn.pokeblocks.block.entity.kyogre.PokedollShinyKyogreBlockEntity;
+import dev.mrshawn.pokeblocks.block.entity.lechonk.PokedollLechonkBlockEntity;
+import dev.mrshawn.pokeblocks.block.entity.lechonk.PokedollShinyLechonkBlockEntity;
 import dev.mrshawn.pokeblocks.block.entity.lickitung.PokedollGiganticLickitungBlockEntity;
 import dev.mrshawn.pokeblocks.block.entity.lickitung.PokedollGiganticShinyLickitungBlockEntity;
 import dev.mrshawn.pokeblocks.block.entity.lickitung.PokedollLickitungBlockEntity;
@@ -214,6 +226,8 @@ import dev.mrshawn.pokeblocks.block.entity.shellder.PokedollGiganticShellderBloc
 import dev.mrshawn.pokeblocks.block.entity.shellder.PokedollGiganticShinyShellderBlockEntity;
 import dev.mrshawn.pokeblocks.block.entity.shellder.PokedollShellderBlockEntity;
 import dev.mrshawn.pokeblocks.block.entity.shellder.PokedollShinyShellderBlockEntity;
+import dev.mrshawn.pokeblocks.block.entity.shuckle.PokedollShinyShuckleBlockEntity;
+import dev.mrshawn.pokeblocks.block.entity.shuckle.PokedollShuckleBlockEntity;
 import dev.mrshawn.pokeblocks.block.entity.smoliv.PokedollGiganticShinySmolivBlockEntity;
 import dev.mrshawn.pokeblocks.block.entity.smoliv.PokedollGiganticSmolivBlockEntity;
 import dev.mrshawn.pokeblocks.block.entity.smoliv.PokedollShinySmolivBlockEntity;
@@ -258,6 +272,8 @@ import dev.mrshawn.pokeblocks.block.entity.tropius.PokedollGiganticShinyTropiusB
 import dev.mrshawn.pokeblocks.block.entity.tropius.PokedollGiganticTropiusBlockEntity;
 import dev.mrshawn.pokeblocks.block.entity.tropius.PokedollShinyTropiusBlockEntity;
 import dev.mrshawn.pokeblocks.block.entity.tropius.PokedollTropiusBlockEntity;
+import dev.mrshawn.pokeblocks.block.entity.venonat.PokedollShinyVenonatBlockEntity;
+import dev.mrshawn.pokeblocks.block.entity.venonat.PokedollVenonatBlockEntity;
 import dev.mrshawn.pokeblocks.block.entity.venusaur.PokedollGiganticShinyVenusaurBlockEntity;
 import dev.mrshawn.pokeblocks.block.entity.venusaur.PokedollGiganticVenusaurBlockEntity;
 import dev.mrshawn.pokeblocks.block.entity.venusaur.PokedollShinyVenusaurBlockEntity;
@@ -709,6 +725,30 @@ public class ModBlockEntities {
     public static BlockEntityType<PokedollSkibidiMewletBlockEntity> POKEDOLL_SKIBIDI_MEWLET_BLOCK_ENTITY;
 
     public static BlockEntityType<PokedollGiganticSkibidiMewletBlockEntity> GIGANTIC_POKEDOLL_SKIBIDI_MEWLET_BLOCK_ENTITY;
+
+    public static BlockEntityType<PokedollCharmeleonBlockEntity> POKEDOLL_CHARMELEON_BLOCK_ENTITY;
+    public static BlockEntityType<PokedollShinyCharmeleonBlockEntity> POKEDOLL_SHINY_CHARMELEON_BLOCK_ENTITY;
+
+    public static BlockEntityType<PokedollClefairyBlockEntity> POKEDOLL_CLEFAIRY_BLOCK_ENTITY;
+    public static BlockEntityType<PokedollShinyClefairyBlockEntity> POKEDOLL_SHINY_CLEFAIRY_BLOCK_ENTITY;
+
+    public static BlockEntityType<PokedollJigglypuffBlockEntity> POKEDOLL_JIGGLYPUFF_BLOCK_ENTITY;
+    public static BlockEntityType<PokedollShinyJigglypuffBlockEntity> POKEDOLL_SHINY_JIGGLYPUFF_BLOCK_ENTITY;
+
+    public static BlockEntityType<PokedollVenonatBlockEntity> POKEDOLL_VENONAT_BLOCK_ENTITY;
+    public static BlockEntityType<PokedollShinyVenonatBlockEntity> POKEDOLL_SHINY_VENONAT_BLOCK_ENTITY;
+
+    public static BlockEntityType<PokedollCyndaquilBlockEntity> POKEDOLL_CYNDAQUIL_BLOCK_ENTITY;
+    public static BlockEntityType<PokedollShinyCyndaquilBlockEntity> POKEDOLL_SHINY_CYNDAQUIL_BLOCK_ENTITY;
+
+    public static BlockEntityType<PokedollIgglybuffBlockEntity> POKEDOLL_IGGLYBUFF_BLOCK_ENTITY;
+    public static BlockEntityType<PokedollShinyIgglybuffBlockEntity> POKEDOLL_SHINY_IGGLYBUFF_BLOCK_ENTITY;
+
+    public static BlockEntityType<PokedollShuckleBlockEntity> POKEDOLL_SHUCKLE_BLOCK_ENTITY;
+    public static BlockEntityType<PokedollShinyShuckleBlockEntity> POKEDOLL_SHINY_SHUCKLE_BLOCK_ENTITY;
+
+    public static BlockEntityType<PokedollLechonkBlockEntity> POKEDOLL_LECHONK_BLOCK_ENTITY;
+    public static BlockEntityType<PokedollShinyLechonkBlockEntity> POKEDOLL_SHINY_LECHONK_BLOCK_ENTITY;
 
     public static BlockEntityType<EiscueHeadpileBlockEntity> EISCUE_HEAD_PILE_BLOCK_ENTITY;
     public static BlockEntityType<EiscueShinyHeadpileBlockEntity> EISCUE_SHINY_HEAD_PILE_BLOCK_ENTITY;
@@ -2398,9 +2438,97 @@ public class ModBlockEntities {
         );
 
         POKEDOLL_SKIBIDI_MEWLET_BLOCK_ENTITY = registerBlockEntity(
-                Identifier.of(Pokeblocks.MOD_ID, PokeIDs.POKEDOLL_SKIBIDI_MEWLET),
+				Identifier.of(Pokeblocks.MOD_ID, PokeIDs.POKEDOLL_SKIBIDI_MEWLET),
                 FabricBlockEntityTypeBuilder.create(PokedollSkibidiMewletBlockEntity::new, ModBlocks.POKEDOLL_SKIBIDI_MEWLET),
                 PokedollSkibidiMewletBlockEntity.class
+        );
+
+        POKEDOLL_CHARMELEON_BLOCK_ENTITY = registerBlockEntity(
+                Identifier.of(Pokeblocks.MOD_ID, PokeIDs.POKEDOLL_CHARMELEON),
+                FabricBlockEntityTypeBuilder.create(PokedollCharmeleonBlockEntity::new, ModBlocks.POKEDOLL_CHARMELEON),
+                PokedollCharmeleonBlockEntity.class
+        );
+        POKEDOLL_SHINY_CHARMELEON_BLOCK_ENTITY = registerBlockEntity(
+                Identifier.of(Pokeblocks.MOD_ID, PokeIDs.POKEDOLL_SHINY_CHARMELEON),
+                FabricBlockEntityTypeBuilder.create(PokedollShinyCharmeleonBlockEntity::new, ModBlocks.POKEDOLL_SHINY_CHARMELEON),
+                PokedollShinyCharmeleonBlockEntity.class
+        );
+
+        POKEDOLL_CLEFAIRY_BLOCK_ENTITY = registerBlockEntity(
+                Identifier.of(Pokeblocks.MOD_ID, PokeIDs.POKEDOLL_CLEFAIRY),
+                FabricBlockEntityTypeBuilder.create(PokedollClefairyBlockEntity::new, ModBlocks.POKEDOLL_CLEFAIRY),
+                PokedollClefairyBlockEntity.class
+        );
+        POKEDOLL_SHINY_CLEFAIRY_BLOCK_ENTITY = registerBlockEntity(
+                Identifier.of(Pokeblocks.MOD_ID, PokeIDs.POKEDOLL_SHINY_CLEFAIRY),
+                FabricBlockEntityTypeBuilder.create(PokedollShinyClefairyBlockEntity::new, ModBlocks.POKEDOLL_SHINY_CLEFAIRY),
+                PokedollShinyClefairyBlockEntity.class
+        );
+
+        POKEDOLL_JIGGLYPUFF_BLOCK_ENTITY = registerBlockEntity(
+                Identifier.of(Pokeblocks.MOD_ID, PokeIDs.POKEDOLL_JIGGLYPUFF),
+                FabricBlockEntityTypeBuilder.create(PokedollJigglypuffBlockEntity::new, ModBlocks.POKEDOLL_JIGGLYPUFF),
+                PokedollJigglypuffBlockEntity.class
+        );
+        POKEDOLL_SHINY_JIGGLYPUFF_BLOCK_ENTITY = registerBlockEntity(
+                Identifier.of(Pokeblocks.MOD_ID, PokeIDs.POKEDOLL_SHINY_JIGGLYPUFF),
+                FabricBlockEntityTypeBuilder.create(PokedollShinyJigglypuffBlockEntity::new, ModBlocks.POKEDOLL_SHINY_JIGGLYPUFF),
+                PokedollShinyJigglypuffBlockEntity.class
+        );
+
+        POKEDOLL_VENONAT_BLOCK_ENTITY = registerBlockEntity(
+                Identifier.of(Pokeblocks.MOD_ID, PokeIDs.POKEDOLL_VENONAT),
+                FabricBlockEntityTypeBuilder.create(PokedollVenonatBlockEntity::new, ModBlocks.POKEDOLL_VENONAT),
+                PokedollVenonatBlockEntity.class
+        );
+        POKEDOLL_SHINY_VENONAT_BLOCK_ENTITY = registerBlockEntity(
+                Identifier.of(Pokeblocks.MOD_ID, PokeIDs.POKEDOLL_SHINY_VENONAT),
+                FabricBlockEntityTypeBuilder.create(PokedollShinyVenonatBlockEntity::new, ModBlocks.POKEDOLL_SHINY_VENONAT),
+                PokedollShinyVenonatBlockEntity.class
+        );
+
+        POKEDOLL_CYNDAQUIL_BLOCK_ENTITY = registerBlockEntity(
+                Identifier.of(Pokeblocks.MOD_ID, PokeIDs.POKEDOLL_CYNDAQUIL),
+                FabricBlockEntityTypeBuilder.create(PokedollCyndaquilBlockEntity::new, ModBlocks.POKEDOLL_CYNDAQUIL),
+                PokedollCyndaquilBlockEntity.class
+        );
+        POKEDOLL_SHINY_CYNDAQUIL_BLOCK_ENTITY = registerBlockEntity(
+                Identifier.of(Pokeblocks.MOD_ID, PokeIDs.POKEDOLL_SHINY_CYNDAQUIL),
+                FabricBlockEntityTypeBuilder.create(PokedollShinyCyndaquilBlockEntity::new, ModBlocks.POKEDOLL_SHINY_CYNDAQUIL),
+                PokedollShinyCyndaquilBlockEntity.class
+        );
+
+        POKEDOLL_IGGLYBUFF_BLOCK_ENTITY = registerBlockEntity(
+                Identifier.of(Pokeblocks.MOD_ID, PokeIDs.POKEDOLL_IGGLYBUFF),
+                FabricBlockEntityTypeBuilder.create(PokedollIgglybuffBlockEntity::new, ModBlocks.POKEDOLL_IGGLYBUFF),
+                PokedollIgglybuffBlockEntity.class
+        );
+        POKEDOLL_SHINY_IGGLYBUFF_BLOCK_ENTITY = registerBlockEntity(
+                Identifier.of(Pokeblocks.MOD_ID, PokeIDs.POKEDOLL_SHINY_IGGLYBUFF),
+                FabricBlockEntityTypeBuilder.create(PokedollShinyIgglybuffBlockEntity::new, ModBlocks.POKEDOLL_SHINY_IGGLYBUFF),
+                PokedollShinyIgglybuffBlockEntity.class
+        );
+
+        POKEDOLL_SHUCKLE_BLOCK_ENTITY = registerBlockEntity(
+                Identifier.of(Pokeblocks.MOD_ID, PokeIDs.POKEDOLL_SHUCKLE),
+                FabricBlockEntityTypeBuilder.create(PokedollShuckleBlockEntity::new, ModBlocks.POKEDOLL_SHUCKLE),
+                PokedollShuckleBlockEntity.class
+        );
+        POKEDOLL_SHINY_SHUCKLE_BLOCK_ENTITY = registerBlockEntity(
+                Identifier.of(Pokeblocks.MOD_ID, PokeIDs.POKEDOLL_SHINY_SHUCKLE),
+                FabricBlockEntityTypeBuilder.create(PokedollShinyShuckleBlockEntity::new, ModBlocks.POKEDOLL_SHINY_SHUCKLE),
+                PokedollShinyShuckleBlockEntity.class
+        );
+
+        POKEDOLL_LECHONK_BLOCK_ENTITY = registerBlockEntity(
+                Identifier.of(Pokeblocks.MOD_ID, PokeIDs.POKEDOLL_LECHONK),
+                FabricBlockEntityTypeBuilder.create(PokedollLechonkBlockEntity::new, ModBlocks.POKEDOLL_LECHONK),
+                PokedollLechonkBlockEntity.class
+        );
+        POKEDOLL_SHINY_LECHONK_BLOCK_ENTITY = registerBlockEntity(
+                Identifier.of(Pokeblocks.MOD_ID, PokeIDs.POKEDOLL_SHINY_LECHONK),
+                FabricBlockEntityTypeBuilder.create(PokedollShinyLechonkBlockEntity::new, ModBlocks.POKEDOLL_SHINY_LECHONK),
+                PokedollShinyLechonkBlockEntity.class
         );
         EISCUE_SHINY_HEAD_PILE_BLOCK_ENTITY = registerBlockEntity(
                 Identifier.of(Pokeblocks.MOD_ID, PokeIDs.EISCUE_SHINY_HEAD_PILE),
