@@ -33,6 +33,9 @@ public class RarityScoreCalculator {
     }
 
     private static final double FLAG_RARITY_DIVISOR = 4.0;
+    private static final double MIN_WEIGHT_INPUT = 1.0;
+    private static final double MIN_PERCENTAGE_FOR_INTEGER_DISPLAY = 1.0;
+    private static final int MAX_DISPLAY_DECIMAL_PLACES = 20;
 
     private static double getEffectiveWeight(String pokemon, Set<ModelFlag> flags, DollRarity rarity) {
         double weight;
@@ -41,10 +44,10 @@ public class RarityScoreCalculator {
             Set<ModelFlag> nonGiganticFlags = EnumSet.copyOf(flags);
             nonGiganticFlags.remove(ModelFlag.GIGANTIC);
             DollRarity baseRarity = resolveRarity(pokemon, nonGiganticFlags);
-            double baseWeight = Math.max(baseRarity.getWeight(), 1);
-            weight = baseWeight / 4.0;
+            double baseWeight = Math.max(baseRarity.getWeight(), MIN_WEIGHT_INPUT);
+            weight = baseWeight / FLAG_RARITY_DIVISOR;
         } else {
-            weight = Math.max(rarity.getWeight(), 1);
+            weight = Math.max(rarity.getWeight(), MIN_WEIGHT_INPUT);
         }
 
         int extraFlags = countExtraFlags(flags, rarity);
@@ -52,7 +55,7 @@ public class RarityScoreCalculator {
             weight /= FLAG_RARITY_DIVISOR;
         }
 
-        return Math.max(weight, 0.001);
+        return weight;
     }
 
     private static int countExtraFlags(Set<ModelFlag> flags, DollRarity rarity) {
@@ -139,13 +142,13 @@ public class RarityScoreCalculator {
 
         if (chance <= 0) return "0%";
 
-        if (chance >= 1.0) {
+        if (chance >= MIN_PERCENTAGE_FOR_INTEGER_DISPLAY) {
             return Math.round(chance) + "%";
         }
 
         int decimalPlaces = 0;
         double temp = chance;
-        while (temp < 1.0 && decimalPlaces < 20) {
+        while (temp < MIN_PERCENTAGE_FOR_INTEGER_DISPLAY && decimalPlaces < MAX_DISPLAY_DECIMAL_PLACES) {
             temp *= 10;
             decimalPlaces++;
         }

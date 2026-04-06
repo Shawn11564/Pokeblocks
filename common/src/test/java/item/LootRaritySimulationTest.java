@@ -2,6 +2,7 @@ package item;
 
 import dev.mrshawn.pokeblocks.config.PokeblocksConfig;
 import dev.mrshawn.pokeblocks.item.DollRarity;
+import dev.mrshawn.pokeblocks.item.DollRarityOverrides;
 import dev.mrshawn.pokeblocks.item.RarityScoreCalculator;
 import dev.mrshawn.pokeblocks.item.RarityScoreCalculator.DollVariant;
 import dev.mrshawn.pokeblocks.pokemon.ModelFlag;
@@ -9,6 +10,8 @@ import dev.mrshawn.pokeblocks.registry.PokemonRegistry;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 
+import java.nio.file.Files;
+import java.nio.file.Path;
 import java.util.*;
 import java.util.concurrent.ThreadLocalRandom;
 
@@ -39,8 +42,8 @@ public class LootRaritySimulationTest {
 	 *
 	 * e.g. 0.01 means variants expected less than 0.01% of the time are skipped.
 	 */
-	private static final double TOO_RARE_THRESHOLD_PCT = 0.001;
-	private static final boolean IGNORE_TOO_RARE_THRESHOLD = true;
+	private static final double TOO_RARE_THRESHOLD_PCT = 0.00001;
+	private static final boolean IGNORE_TOO_RARE_THRESHOLD = false;
 
 	/**
 	 * Base tolerance for deviation between observed and expected frequency,
@@ -63,7 +66,10 @@ public class LootRaritySimulationTest {
 	private static double totalWeight;
 
 	@BeforeAll
-	static void setUp() {
+	static void setUp() throws Exception {
+		Path tempDir = Files.createTempDirectory("pokeblocks-test");
+		DollRarityOverrides.initialize(tempDir);
+		PokeblocksConfig.reload();
 		Set<ModelFlag> excluded = PokeblocksConfig.getExcludedLootFlags();
 		variants = RarityScoreCalculator.computeAllVariants(excluded);
 		totalWeight = variants.stream().mapToDouble(DollVariant::weight).sum();

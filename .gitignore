@@ -26,8 +26,6 @@ classes/
 .settings/
 .vscode/
 bin/
-.classpath
-.project
 
 # macos
 *.DS_Store
@@ -48,3 +46,4 @@ runs
 
 # personal tools
 auxiliary_tools/
+.claude
