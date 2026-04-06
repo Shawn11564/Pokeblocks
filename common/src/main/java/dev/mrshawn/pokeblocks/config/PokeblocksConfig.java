@@ -17,7 +17,7 @@ public class PokeblocksConfig {
 	private static boolean kickOnDecline = true;
 
 	// [loot]
-	private static float lootDropChance = 0.15f;
+	private static float lootDropChance = 0.33f;
 	private static final Set<ResourceLocation> lootTables = new HashSet<>();
 	private static final Set<ModelFlag> excludedLootFlags = EnumSet.noneOf(ModelFlag.class);
 
@@ -66,7 +66,7 @@ public class PokeblocksConfig {
 		// Reset to defaults
 		dollPoppingEnabled = true;
 		kickOnDecline = true;
-		lootDropChance = 0.15f;
+		lootDropChance = 0.33f;
 		lootTables.clear();
 		excludedLootFlags.clear();
 		excludedLootFlags.add(ModelFlag.GIGANTIC);
@@ -147,7 +147,7 @@ public class PokeblocksConfig {
 					"true"),
 			new KeyDef("loot", "drop_chance",
 					"# Chance (0.0 to 1.0) that a Pokedoll appears in a configured loot chest.",
-					"0.15"),
+					"0.33f"),
 			new KeyDef("loot", "loot_tables",
 					"""
 					# Loot tables that Pokeblocks items can be injected into.
