@@ -9,4 +9,7 @@ public class ModSettings {
 	public static final String FIGURINE_ID = "figurine";
 	public static final String DEFAULT_FIGURINE = "doncheadle";
 
+	/** 1-in-N chance that popping a doll yields a substitute doll instead of wool. */
+	public static final int SUBSTITUTE_POP_CHANCE = 12;
+
 }

@@ -5,6 +5,7 @@ import com.mojang.serialization.MapCodec;
 import dev.mrshawn.pokeblocks.PokeblocksCommon;
 import dev.mrshawn.pokeblocks.block.entity.custom.PokedollBlockEntity;
 import dev.mrshawn.pokeblocks.constants.ModSettings;
+import dev.mrshawn.pokeblocks.item.custom.PokedollItem;
 import dev.mrshawn.pokeblocks.pokemon.ModelFlag;
 import dev.mrshawn.pokeblocks.registry.BlockEntityRegistry;
 import dev.mrshawn.pokeblocks.registry.SoundRegistry;
@@ -46,7 +47,9 @@ import org.joml.Vector3f;
 
 import java.util.ArrayList;
 import java.util.Comparator;
+import java.util.EnumMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 
 /**
@@ -199,14 +202,31 @@ public class PokedollBlock extends BaseEntityBlock implements EntityBlock, Simpl
 	}
 
 	/**
-	 * Breaks the doll from spam clicking, dropping string and color-matched wool.
+	 * Breaks the doll from spam clicking. Has a 1-in-{@link ModSettings#SUBSTITUTE_POP_CHANCE}
+	 * chance of dropping a substitute doll (shiny if the original was shiny) instead of wool.
 	 */
 	private void breakDoll(Level level, BlockPos pos, PokedollBlockEntity pokedoll) {
-		// Determine wool colors from texture before destroying the block
-		List<Block> woolColors = getWoolColorsForDoll(pokedoll);
-
 		// Play wool break sound
 		level.playSound(null, pos, SoundEvents.WOOL_BREAK, SoundSource.BLOCKS, 1.0f, 0.8f);
+
+		// 1-in-SUBSTITUTE_POP_CHANCE: pop into a substitute doll instead of wool.
+		// Read shiny status before destroying the block entity.
+		if (level.getRandom().nextInt(ModSettings.SUBSTITUTE_POP_CHANCE) == 0) {
+			boolean isShiny = pokedoll.getFlag(ModelFlag.SHINY);
+
+			// Destroy the block (triggers onRemove for standard break particles)
+			level.destroyBlock(pos, false);
+
+			Map<ModelFlag, Boolean> flagMap = new EnumMap<>(ModelFlag.class);
+			for (ModelFlag flag : ModelFlag.values()) flagMap.put(flag, false);
+			flagMap.put(ModelFlag.SHINY, isShiny);
+
+			popResource(level, pos, PokedollItem.createPokedoll(ModSettings.DEFAULT_POKEMON, flagMap));
+			return;
+		}
+
+		// Normal pop: determine wool colors from texture before destroying the block
+		List<Block> woolColors = getWoolColorsForDoll(pokedoll);
 
 		// Destroy the block (triggers onRemove for standard break particles)
 		level.destroyBlock(pos, false);

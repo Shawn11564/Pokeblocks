@@ -1,5 +1,6 @@
 package dev.mrshawn.pokeblocks.item.loot;
 
+import dev.mrshawn.pokeblocks.item.DollRarity;
 import dev.mrshawn.pokeblocks.item.RarityScoreCalculator;
 import dev.mrshawn.pokeblocks.item.RarityScoreCalculator.DollVariant;
 import dev.mrshawn.pokeblocks.item.custom.PokedollItem;
@@ -32,6 +33,9 @@ public class LootTableItemMap {
         List<LootEntry> entries = new ArrayList<>();
 
         for (DollVariant variant : variants) {
+            // DollRarity.NONE marks variants that should never appear in loot (e.g. substitute)
+            if (variant.rarity() == DollRarity.NONE) continue;
+
             // Convert fractional weight to integer, scaling to preserve relative differences
             int lootWeight = Math.max(1, (int) (variant.weight() * 10000));
 
