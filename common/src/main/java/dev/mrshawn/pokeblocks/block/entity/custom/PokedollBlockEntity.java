@@ -1,5 +1,6 @@
 package dev.mrshawn.pokeblocks.block.entity.custom;
 
+import dev.mrshawn.pokeblocks.PokeblocksCommon;
 import dev.mrshawn.pokeblocks.client.renderer.animation.AnimationResolver;
 import dev.mrshawn.pokeblocks.config.PokeblocksConfig;
 import dev.mrshawn.pokeblocks.constants.ModSettings;
@@ -9,8 +10,11 @@ import dev.mrshawn.pokeblocks.registry.BlockEntityRegistry;
 import dev.mrshawn.pokeblocks.registry.PokemonRegistry;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.HolderLookup;
+import net.minecraft.core.component.DataComponents;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.protocol.game.ClientboundBlockEntityDataPacket;
+import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.item.component.CustomData;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.state.BlockState;
 import software.bernie.geckolib.animatable.GeoBlockEntity;
@@ -194,6 +198,25 @@ public class PokedollBlockEntity extends BlockEntity implements GeoBlockEntity {
 			rapidClickWindowStart = now;
 		}
 		rapidClickCount++;
+	}
+
+	/**
+	 * Called during ctrl+middle-click to write block entity data onto the picked item.
+	 * Writes only the pokemon name and active flags — the same minimal tag that
+	 * {@link dev.mrshawn.pokeblocks.item.custom.PokedollItem#createPokedoll} writes —
+	 * so that ctrl+pick produces an identical ItemStack to regular pick, and all dolls
+	 * with the same pokemon and flags stack together regardless of how they were obtained.
+	 * Transient state (squish tick, click counts, wax) is intentionally excluded.
+	 */
+	@Override
+	public void saveToItem(ItemStack stack, HolderLookup.Provider registries) {
+		CompoundTag tag = new CompoundTag();
+		tag.putString("id", PokeblocksCommon.MOD_ID + ModSettings.DOLL_ID);
+		tag.putString("pokemon", this.pokemon);
+		for (ModelFlag flag : ModelFlag.values()) {
+			if (getFlag(flag)) tag.putBoolean(flag.getTagName(), true);
+		}
+		stack.set(DataComponents.BLOCK_ENTITY_DATA, CustomData.of(tag));
 	}
 
 	// --- Sync & persistence ---

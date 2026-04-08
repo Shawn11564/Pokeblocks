@@ -115,6 +115,24 @@ public class PokedollBlock extends BaseEntityBlock implements EntityBlock, Simpl
 		return BlockEntityRegistry.POKEDOLL_BLOCK_ENTITY.get().create(blockPos, blockState);
 	}
 
+	// --- Pick block (middle-click in creative) ---
+
+	/**
+	 * Returns a copy of the doll with its pokemon and flags intact, so middle-clicking
+	 * in creative gives the exact variant rather than the default substitute.
+	 */
+	@Override
+	public ItemStack getCloneItemStack(LevelReader level, BlockPos pos, BlockState state) {
+		if (level.getBlockEntity(pos) instanceof PokedollBlockEntity pokedoll) {
+			Map<ModelFlag, Boolean> flagMap = new EnumMap<>(ModelFlag.class);
+			for (ModelFlag flag : ModelFlag.values()) {
+				flagMap.put(flag, pokedoll.getFlag(flag));
+			}
+			return PokedollItem.createPokedoll(pokedoll.getPokemon(), flagMap);
+		}
+		return super.getCloneItemStack(level, pos, state);
+	}
+
 	// --- Interaction: honeycomb waxing ---
 
 	@Override
