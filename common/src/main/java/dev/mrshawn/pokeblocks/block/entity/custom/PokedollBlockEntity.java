@@ -30,6 +30,10 @@ public class PokedollBlockEntity extends BlockEntity implements GeoBlockEntity {
 	private String pokemon = ModSettings.DEFAULT_POKEMON;
 	private final Map<ModelFlag, Boolean> flags = new EnumMap<>(ModelFlag.class);
 
+	// Tracks which pokemon's animation is currently loaded in the GeckoLib controller.
+	// Used to detect changes so the controller reloads the animation from the correct file.
+	private String lastAnimPokemon = "";
+
 	// Game time (in ticks) when the last squish was triggered. -1 means no squish active.
 	private long squishStartTick = -1;
 	// Duration of the squish animation in ticks.
@@ -57,22 +61,23 @@ public class PokedollBlockEntity extends BlockEntity implements GeoBlockEntity {
 	public void registerControllers(AnimatableManager.ControllerRegistrar controllers) {
 		controllers.add(new AnimationController<>(this, "pokedoll_controller", 0, state -> {
 			PokemonData data = PokemonRegistry.getPokemonData(pokemon);
-			if (data == null) {
+			if (data == null) return PlayState.STOP;
+
+			// When the pokemon changes (e.g. after the server sync packet arrives on a freshly
+			// placed doll), force GeckoLib to reload the animation resource from the new file.
+			// Without this, the controller stays bound to the old (default) pokemon's animation
+			// and silently fails to play the new one.
+			if (!pokemon.equals(lastAnimPokemon)) {
+				lastAnimPokemon = pokemon;
 				state.getController().forceAnimationReset();
-				return PlayState.STOP;
 			}
 
 			AnimationResolver.AnimationType type = AnimationResolver.resolve(pokemon, this, data.animationProfile());
 
-			switch (type) {
-				case VARIANT, BASE -> {
-					return state.setAndContinue(RawAnimation.begin().thenLoop("animation.idle"));
-				}
-				default -> {
-					state.getController().forceAnimationReset();
-					return PlayState.STOP;
-				}
-			}
+			return switch (type) {
+				case VARIANT, BASE -> state.setAndContinue(RawAnimation.begin().thenLoop("animation.idle"));
+				default -> PlayState.STOP;
+			};
 		}));
 	}
 
