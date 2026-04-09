@@ -32,6 +32,86 @@ public class CustomPackBuilder {
 		return null;
 	}
 
+	/**
+	 * Scans custom pack directories for asset filenames without writing any zip file.
+	 * Returns null if there are no custom assets.
+	 */
+	public static PackBuildResult scanFiles(Path gameDir) throws IOException {
+		Path resourcePackDir = gameDir.resolve("config").resolve("Pokeblocks").resolve("resourcepack");
+		Path customDir = findCustomDir(gameDir);
+
+		Set<String> modelFileNames = new TreeSet<>();
+		Set<String> textureFileNames = new TreeSet<>();
+		Set<String> animationFileNames = new TreeSet<>();
+
+		if (Files.exists(resourcePackDir)) {
+			try (var stream = Files.list(resourcePackDir)) {
+				var packs = stream.filter(p -> {
+					String name = p.getFileName().toString();
+					if (name.equals("custom")) return false;
+					return Files.isDirectory(p) || name.toLowerCase().endsWith(".zip");
+				}).toList();
+
+				for (Path pack : packs) {
+					if (Files.isDirectory(pack)) {
+						scanFolderFileNames(pack, modelFileNames, textureFileNames, animationFileNames);
+					} else {
+						scanZipFileNames(pack, modelFileNames, textureFileNames, animationFileNames);
+					}
+				}
+			}
+		}
+
+		if (customDir != null) {
+			scanFolderFileNames(customDir, modelFileNames, textureFileNames, animationFileNames);
+		}
+
+		if (modelFileNames.isEmpty() && textureFileNames.isEmpty() && animationFileNames.isEmpty()) return null;
+
+		return new PackBuildResult(null, modelFileNames, textureFileNames, animationFileNames);
+	}
+
+	private static void scanFolderFileNames(Path packDir, Set<String> modelFileNames,
+											Set<String> textureFileNames, Set<String> animationFileNames) throws IOException {
+		Path assetsDir = packDir.resolve("assets");
+		if (!Files.exists(assetsDir)) return;
+
+		for (String folder : new String[]{"textures", "models", "animations"}) {
+			Path dir = assetsDir.resolve(folder);
+			if (!Files.exists(dir)) continue;
+
+			try (var stream = Files.list(dir)) {
+				stream.filter(Files::isRegularFile).map(p -> p.getFileName().toString()).forEach(name -> {
+					switch (folder) {
+						case "textures" -> textureFileNames.add(name);
+						case "models" -> modelFileNames.add(name);
+						case "animations" -> animationFileNames.add(name);
+					}
+				});
+			}
+		}
+	}
+
+	private static void scanZipFileNames(Path zipPath, Set<String> modelFileNames,
+										 Set<String> textureFileNames, Set<String> animationFileNames) throws IOException {
+		try (ZipFile zipFile = new ZipFile(zipPath.toFile())) {
+			var entries = zipFile.entries();
+			while (entries.hasMoreElements()) {
+				ZipEntry entry = entries.nextElement();
+				if (entry.isDirectory()) continue;
+				String name = entry.getName();
+				if (!name.startsWith("assets/")) continue;
+				String[] parts = name.split("/");
+				if (parts.length != 3) continue;
+				switch (parts[1]) {
+					case "textures" -> textureFileNames.add(parts[2]);
+					case "models" -> modelFileNames.add(parts[2]);
+					case "animations" -> animationFileNames.add(parts[2]);
+				}
+			}
+		}
+	}
+
 	public static PackBuildResult buildResourcePack(Path gameDir) throws IOException {
 		Path resourcePackDir = gameDir.resolve("config").resolve("Pokeblocks").resolve("resourcepack");
 		Path customDir = findCustomDir(gameDir);

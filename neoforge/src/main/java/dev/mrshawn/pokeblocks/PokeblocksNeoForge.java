@@ -3,6 +3,7 @@ package dev.mrshawn.pokeblocks;
 import dev.mrshawn.pokeblocks.command.ModCommands;
 import dev.mrshawn.pokeblocks.config.PokeblocksConfig;
 import dev.mrshawn.pokeblocks.item.loot.LootInjector;
+import dev.mrshawn.pokeblocks.resourcepack.CustomPackManager;
 import net.minecraft.core.registries.Registries;
 import net.minecraft.sounds.SoundEvent;
 import net.minecraft.world.entity.EntityType;
@@ -42,6 +43,7 @@ public final class PokeblocksNeoForge {
 		PokeblocksCommon.doRegistrations();
 
 		PokeblocksConfig.initialize(FMLPaths.GAMEDIR.get());
+		CustomPackManager.registerCustomAssets(FMLPaths.GAMEDIR.get());
 
 		NeoForge.EVENT_BUS.register(this);
 	}

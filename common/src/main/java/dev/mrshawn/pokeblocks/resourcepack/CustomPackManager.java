@@ -13,6 +13,40 @@ public class CustomPackManager {
 	private static Path cachedPack = null;
 	private static String cachedSha = null;
 
+	/**
+	 * Scans custom pack assets and registers any new pokemon/figurines into their
+	 * respective registries. Safe to call early (during mod init) before any server
+	 * events fire, so that LootTableLoadEvent sees all pokemon when building the pool.
+	 * Does not build or write any zip file.
+	 */
+	public static void registerCustomAssets(Path gameDir) {
+		try {
+			PackBuildResult result = CustomPackBuilder.scanFiles(gameDir);
+			if (result == null) return;
+
+			Set<String> pokedollModels = new TreeSet<>();
+			Set<String> pokedollTextures = new TreeSet<>();
+			Set<String> pokedollAnimations = new TreeSet<>();
+			Set<String> figurineModels = new TreeSet<>();
+			Set<String> figurineTextures = new TreeSet<>();
+
+			for (String f : result.modelFiles()) {
+				if (f.contains("_figurine")) figurineModels.add(f);
+				else pokedollModels.add(f);
+			}
+			for (String f : result.textureFiles()) {
+				if (f.contains("_figurine")) figurineTextures.add(f);
+				else pokedollTextures.add(f);
+			}
+			pokedollAnimations.addAll(result.animationFiles());
+
+			PokemonRegistry.registerFromFileNames(pokedollModels, pokedollTextures, pokedollAnimations, "custom pack (early)");
+			FigurineRegistry.registerFromFileNames(figurineModels, figurineTextures, "custom pack (early)");
+		} catch (Exception e) {
+			System.err.println("[Pokeblocks] Failed to register custom assets early: " + e);
+		}
+	}
+
 	public static void buildAndCache(MinecraftServer server) {
 		try {
 			Path gameDir = server.getServerDirectory();
