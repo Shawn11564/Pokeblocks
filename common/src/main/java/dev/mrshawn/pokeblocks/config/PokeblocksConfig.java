@@ -7,6 +7,7 @@ import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.*;
+import java.util.regex.Pattern;
 
 public class PokeblocksConfig {
 
@@ -19,6 +20,7 @@ public class PokeblocksConfig {
 	// [loot]
 	private static float lootDropChance = 0.33f;
 	private static final Set<ResourceLocation> lootTables = new HashSet<>();
+	private static final List<Pattern> lootTableWildcards = new ArrayList<>();
 	private static final Set<ModelFlag> excludedLootFlags = EnumSet.noneOf(ModelFlag.class);
 
 	private static Path configPath;
@@ -37,6 +39,10 @@ public class PokeblocksConfig {
 
 	public static Set<ResourceLocation> getLootTables() {
 		return lootTables;
+	}
+
+	public static List<Pattern> getLootTableWildcards() {
+		return lootTableWildcards;
 	}
 
 	public static Set<ModelFlag> getExcludedLootFlags() {
@@ -68,6 +74,7 @@ public class PokeblocksConfig {
 		kickOnDecline = true;
 		lootDropChance = 0.33f;
 		lootTables.clear();
+		lootTableWildcards.clear();
 		excludedLootFlags.clear();
 		excludedLootFlags.add(ModelFlag.GIGANTIC);
 
@@ -125,6 +132,7 @@ public class PokeblocksConfig {
 					+ ", kick_on_decline=" + kickOnDecline
 					+ ", drop_chance=" + lootDropChance
 					+ ", loot_tables=" + lootTables
+					+ ", loot_table_wildcards=" + lootTableWildcards.size()
 					+ ", excluded_flags=" + excludedLootFlags);
 
 		} catch (Exception e) {
@@ -318,11 +326,15 @@ public class PokeblocksConfig {
 			}
 
 			if (!cleaned.isEmpty()) {
-				ResourceLocation id = ResourceLocation.tryParse(cleaned);
-				if (id != null) {
-					lootTables.add(id);
+				if (cleaned.contains("*")) {
+					lootTableWildcards.add(globToPattern(cleaned));
 				} else {
-					System.err.println("[Pokeblocks] Invalid loot table id: " + cleaned);
+					ResourceLocation id = ResourceLocation.tryParse(cleaned);
+					if (id != null) {
+						lootTables.add(id);
+					} else {
+						System.err.println("[Pokeblocks] Invalid loot table id: " + cleaned);
+					}
 				}
 			}
 		}
@@ -371,6 +383,20 @@ public class PokeblocksConfig {
 		}
 
 		return i;
+	}
+
+	private static Pattern globToPattern(String glob) {
+		StringBuilder regex = new StringBuilder("^");
+		for (int i = 0; i < glob.length(); i++) {
+			char c = glob.charAt(i);
+			if (c == '*') {
+				regex.append(".*");
+			} else {
+				regex.append(Pattern.quote(String.valueOf(c)));
+			}
+		}
+		regex.append("$");
+		return Pattern.compile(regex.toString());
 	}
 
 	private static void writeDefaults() throws IOException {

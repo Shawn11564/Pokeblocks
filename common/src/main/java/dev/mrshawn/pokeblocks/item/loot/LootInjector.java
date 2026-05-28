@@ -11,6 +11,7 @@ import net.minecraft.world.level.storage.loot.predicates.LootItemRandomChanceCon
 import net.minecraft.world.level.storage.loot.providers.number.ConstantValue;
 
 import java.util.List;
+import java.util.regex.Pattern;
 
 public class LootInjector {
 
@@ -43,6 +44,11 @@ public class LootInjector {
 	}
 
 	public static boolean shouldInject(ResourceLocation tableId) {
-		return PokeblocksConfig.getLootTables().contains(tableId);
+		if (PokeblocksConfig.getLootTables().contains(tableId)) return true;
+		String tableStr = tableId.toString();
+		for (Pattern pattern : PokeblocksConfig.getLootTableWildcards()) {
+			if (pattern.matcher(tableStr).matches()) return true;
+		}
+		return false;
 	}
 }
