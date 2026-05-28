@@ -9,6 +9,7 @@
   ],
   "client": [
     "PokedollParticleMixin",
+    "PokedollSprintParticleMixin",
     "PackRepositoryMixin",
     "CreativePickBlockMixin"
   ],
