@@ -37,6 +37,12 @@ public class RarityScoreCalculator {
     private static final double MIN_PERCENTAGE_FOR_INTEGER_DISPLAY = 1.0;
     private static final int MAX_DISPLAY_DECIMAL_PLACES = 20;
 
+    /**
+     * Cached sum of all variant weights (no flag exclusions), used for tooltip display.
+     * Set to -1 when invalid; reset via {@link #invalidateTotalWeightCache()}.
+     */
+    private static double cachedTotalWeight = -1.0;
+
     private static double getEffectiveWeight(String pokemon, Set<ModelFlag> flags, DollRarity rarity) {
         double weight;
 
@@ -122,6 +128,15 @@ public class RarityScoreCalculator {
     }
 
     /**
+     * Invalidates the cached total weight so it will be recomputed on the next
+     * {@link #computeChance} call. Call this whenever the Pokémon registry or
+     * rarity config changes (e.g. on config reload).
+     */
+    public static void invalidateTotalWeightCache() {
+        cachedTotalWeight = -1.0;
+    }
+
+    /**
      * Computes the percentage chance of rolling a specific variant
      * out of all possible variants (no flag exclusions).
      */
@@ -129,12 +144,14 @@ public class RarityScoreCalculator {
         DollRarity targetRarity = resolveRarity(pokemon, activeFlags);
         double targetWeight = getEffectiveWeight(pokemon, activeFlags, targetRarity);
 
-        // For tooltip display, use all variants (no exclusions)
-        List<DollVariant> allVariants = computeAllVariants(EnumSet.noneOf(ModelFlag.class));
-        double totalWeight = allVariants.stream().mapToDouble(DollVariant::weight).sum();
+        // Reuse the cached total weight to avoid re-enumerating all variants on every tooltip render.
+        if (cachedTotalWeight < 0) {
+            List<DollVariant> allVariants = computeAllVariants(EnumSet.noneOf(ModelFlag.class));
+            cachedTotalWeight = allVariants.stream().mapToDouble(DollVariant::weight).sum();
+        }
 
-        if (totalWeight <= 0) return 0.0;
-        return (targetWeight / totalWeight) * 100.0;
+        if (cachedTotalWeight <= 0) return 0.0;
+        return (targetWeight / cachedTotalWeight) * 100.0;
     }
 
     public static String getDisplayString(String pokemon, Set<ModelFlag> activeFlags) {

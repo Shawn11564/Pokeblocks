@@ -1,5 +1,8 @@
 package dev.mrshawn.pokeblocks.item;
 
+import com.google.gson.Gson;
+import com.google.gson.JsonArray;
+import com.google.gson.JsonElement;
 import dev.mrshawn.pokeblocks.pokemon.ModelFlag;
 
 import java.io.InputStream;
@@ -11,6 +14,7 @@ public class DollRarityOverrides {
 
     private static final Map<String, DollRarity> overrides = new HashMap<>();
     private static Path configPath = null;
+    private static final Gson GSON = new Gson();
 
     /**
      * Copies the default doll_rarity.json from assets to config if it doesn't exist,
@@ -49,17 +53,11 @@ public class DollRarityOverrides {
         }
 
         try {
-            String content = Files.readString(configPath).trim();
+            String content = Files.readString(configPath);
+            JsonArray array = GSON.fromJson(content, JsonArray.class);
 
-            if (content.startsWith("[")) content = content.substring(1);
-            if (content.endsWith("]")) content = content.substring(0, content.length() - 1);
-
-            String[] entries = content.split(",");
-            for (String entry : entries) {
-                String trimmed = entry.trim();
-                if (trimmed.startsWith("\"")) trimmed = trimmed.substring(1);
-                if (trimmed.endsWith("\"")) trimmed = trimmed.substring(0, trimmed.length() - 1);
-                trimmed = trimmed.trim();
+            for (JsonElement element : array) {
+                String trimmed = element.getAsString().trim();
                 if (trimmed.isEmpty()) continue;
 
                 String[] parts = trimmed.split("\\s+");

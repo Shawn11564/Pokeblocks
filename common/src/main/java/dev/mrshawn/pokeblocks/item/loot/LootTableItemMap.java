@@ -1,5 +1,6 @@
 package dev.mrshawn.pokeblocks.item.loot;
 
+import dev.mrshawn.pokeblocks.PokeblocksCommon;
 import dev.mrshawn.pokeblocks.item.DollRarity;
 import dev.mrshawn.pokeblocks.item.RarityScoreCalculator;
 import dev.mrshawn.pokeblocks.item.RarityScoreCalculator.DollVariant;
@@ -37,7 +38,7 @@ public class LootTableItemMap {
             if (variant.rarity() == DollRarity.NONE) continue;
 
             // Convert fractional weight to integer, scaling to preserve relative differences
-            int lootWeight = Math.max(1, (int) (variant.weight() * 10000));
+            int lootWeight = Math.max(1, (int) (variant.weight() * 100));
 
             Map<ModelFlag, Boolean> flagMap = new EnumMap<>(ModelFlag.class);
             for (ModelFlag flag : ModelFlag.values()) {
@@ -48,8 +49,8 @@ public class LootTableItemMap {
             entries.add(new LootEntry(stack, lootWeight));
         }
 
-        System.out.println("[Pokeblocks] Built loot entry list: " + entries.size()
-                + " variants (excluded flags: " + excludedFlags + ")");
+        PokeblocksCommon.LOGGER.info("[Pokeblocks] Built loot entry list: {} variants (excluded flags: {})",
+                entries.size(), excludedFlags);
         return entries;
     }
 }

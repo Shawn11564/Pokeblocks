@@ -1,6 +1,7 @@
 package dev.mrshawn.pokeblocks;
 
 import dev.mrshawn.pokeblocks.config.PokeblocksConfig;
+import dev.mrshawn.pokeblocks.item.RarityScoreCalculator;
 import dev.mrshawn.pokeblocks.item.loot.LootInjector;
 import dev.mrshawn.pokeblocks.item.loot.LootTableItemMap;
 import dev.mrshawn.pokeblocks.platform.PokeblocksPlatform;
@@ -31,6 +32,13 @@ public final class PokeblocksCommon {
 		return lootEntries;
 	}
 
+	/**
+	 * Returns the shared {@link LootPool} that is injected into every matching loot table.
+	 * <p>
+	 * The same instance is intentionally reused across all tables: {@link LootPool} is
+	 * effectively immutable once built via its {@code Builder}, so sharing it is safe and
+	 * avoids rebuilding an identical pool for each table open event.
+	 */
 	public static LootPool getLootPool() {
 		if (cachedLootPool == null) {
 			cachedLootPool = LootInjector.buildPool(getLootEntries());
@@ -45,6 +53,7 @@ public final class PokeblocksCommon {
 	public static void invalidateLootMap() {
 		lootEntries = null;
 		cachedLootPool = null;
+		RarityScoreCalculator.invalidateTotalWeightCache();
 	}
 
 	public static void doRegistrations() {
