@@ -3,6 +3,7 @@ package dev.mrshawn.pokeblocks;
 import dev.mrshawn.pokeblocks.config.PokeblocksConfig;
 import dev.mrshawn.pokeblocks.item.DollRarityOverrides;
 import dev.mrshawn.pokeblocks.item.FigurineNameOverrides;
+import dev.mrshawn.pokeblocks.item.FigurineTagOverrides;
 import dev.mrshawn.pokeblocks.item.RarityWeightConfig;
 import dev.mrshawn.pokeblocks.resourcepack.CustomPackManager;
 import net.minecraft.server.MinecraftServer;
@@ -34,6 +35,7 @@ public final class PokeblocksServerLifecycle {
 
             DollRarityOverrides.initialize(serverDir);
             FigurineNameOverrides.initialize(serverDir);
+            FigurineTagOverrides.initialize(serverDir);
             RarityWeightConfig.initialize(serverDir);
 
             // MUST run before resource loading so that custom-pack pokemon

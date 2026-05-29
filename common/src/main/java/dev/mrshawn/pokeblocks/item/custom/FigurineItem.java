@@ -3,6 +3,7 @@ package dev.mrshawn.pokeblocks.item.custom;
 import dev.mrshawn.pokeblocks.client.renderer.item.FigurineItemRenderer;
 import dev.mrshawn.pokeblocks.constants.ModSettings;
 import dev.mrshawn.pokeblocks.item.FigurineNameOverrides;
+import dev.mrshawn.pokeblocks.item.FigurineTagOverrides;
 import dev.mrshawn.pokeblocks.registry.ItemRegistry;
 import net.minecraft.ChatFormatting;
 import net.minecraft.client.renderer.BlockEntityWithoutLevelRenderer;
@@ -10,7 +11,9 @@ import net.minecraft.core.component.DataComponents;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.chat.Component;
 import net.minecraft.world.item.BlockItem;
+import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.item.TooltipFlag;
 import net.minecraft.world.item.component.CustomData;
 import net.minecraft.world.level.block.Block;
 import software.bernie.geckolib.animatable.GeoItem;
@@ -19,6 +22,7 @@ import software.bernie.geckolib.animatable.instance.AnimatableInstanceCache;
 import software.bernie.geckolib.animation.AnimatableManager;
 import software.bernie.geckolib.util.GeckoLibUtil;
 
+import java.util.List;
 import java.util.function.Consumer;
 
 public class FigurineItem extends BlockItem implements GeoItem {
@@ -84,6 +88,15 @@ public class FigurineItem extends BlockItem implements GeoItem {
 			}
 		}
 		return ModSettings.DEFAULT_FIGURINE;
+	}
+
+	@Override
+	public void appendHoverText(ItemStack stack, Item.TooltipContext context, List<Component> tooltip, TooltipFlag flag) {
+		String figurine = getFigurineFromStack(stack);
+
+		if (FigurineTagOverrides.hasTag(figurine, FigurineTagOverrides.TAG_COBBLEMON_TEAM)) {
+			tooltip.add(Component.literal("Cobblemon Team Member").withStyle(ChatFormatting.AQUA));
+		}
 	}
 
 	public static ItemStack createFigurine(String figurine) {
