@@ -1,0 +1,126 @@
+{
+	"format_version": "1.8.0",
+	"animations": {
+		"animation.idle": {
+			"loop": true,
+			"bones": {
+				"pokedoll_skiploom": {
+					"position": {
+						"vector": [0, 0, -0.25]
+					}
+				},
+				"body": {
+					"position": {
+						"vector": [0, -1, 0]
+					}
+				},
+				"left_foot": {
+					"rotation": {
+						"vector": [180, 22.5, 0]
+					},
+					"position": {
+						"vector": [0.5, -1, 0]
+					}
+				},
+				"right_foot": {
+					"rotation": {
+						"vector": [180, -22.5, 0]
+					},
+					"position": {
+						"vector": [-0.5, -1, 0]
+					}
+				},
+				"flower": {
+					"position": {
+						"vector": [0, -0.75, 0]
+					}
+				},
+				"front_petal": {
+					"rotation": {
+						"vector": [-20, 0, 0]
+					}
+				},
+				"left_petal": {
+					"rotation": {
+						"vector": [0, 0, -20]
+					}
+				},
+				"right_petal": {
+					"rotation": {
+						"vector": [0, 0, 20]
+					}
+				},
+				"left_ear": {
+					"rotation": {
+						"vector": [0, -7.5, 22.5]
+					},
+					"position": {
+						"vector": [-0.1, 0, 0]
+					}
+				},
+				"right_ear": {
+					"rotation": {
+						"vector": [0, 7.5, -22.5]
+					},
+					"position": {
+						"vector": [0.1, 0, 0]
+					}
+				},
+				"left_paw": {
+					"rotation": {
+						"vector": [0, -25, 0]
+					},
+					"position": {
+						"vector": [0.5, -0.5, 0.5]
+					}
+				},
+				"right_paw": {
+					"rotation": {
+						"vector": [0, 25, 0]
+					},
+					"position": {
+						"vector": [-0.5, -0.5, 0.5]
+					}
+				},
+				"tail": {
+					"rotation": {
+						"vector": [-15, 0, 0]
+					},
+					"position": {
+						"vector": [0, -0.4, 0]
+					}
+				},
+				"back_petal": {
+					"rotation": {
+						"vector": [20, 0, 0]
+					}
+				},
+				"front_right_petal": {
+					"rotation": {
+						"vector": [-15, 0, 0]
+					}
+				},
+				"front_left_petal": {
+					"rotation": {
+						"vector": [0, 0, -15]
+					}
+				},
+				"back_right_petal": {
+					"rotation": {
+						"vector": [0, 0, 15]
+					}
+				},
+				"back_left_petal": {
+					"rotation": {
+						"vector": [15, 0, 0]
+					}
+				},
+				"tail_tip": {
+					"rotation": {
+						"vector": [15, 0, 0]
+					}
+				}
+			}
+		}
+	}
+}
