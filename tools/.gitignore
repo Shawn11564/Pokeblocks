@@ -1,0 +1,6 @@
+# Python bytecode caches from doll_uploader.py
+__pycache__/
+*.pyc
+
+# Generated drag/drop upload mirrors (manual PR mode)
+output/

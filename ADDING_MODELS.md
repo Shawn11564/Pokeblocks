@@ -1,297 +1,136 @@
-# Adding New Pokemon Models to Pokeblocks
+# Adding Custom Pokemon Models to Pokeblocks
+
+This guide is for **players/packmakers** adding your own dolls or figurines to an installed
+copy of the mod via the config folder. (Mod developers editing the source tree should read
+[ADDING_MODELS DEVS ONLY.md](ADDING_MODELS%20DEVS%20ONLY.md).)
 
 ## Quick Start
 
-1. **Navigate to your config folder**: `config/Pokeblocks/custom/`
-2. **Add your files** to the appropriate subfolders
-3. **Configure rarity** (optional)
-4. **Launch/restart the game**
+1. Find your custom folder: `config/Pokeblocks/resourcepack/custom/`
+2. Put your files in `custom/assets/models/`, `custom/assets/textures/`,
+   `custom/assets/animations/`
+3. (Optional) Set rarity in `config/Pokeblocks/doll_rarity.json`
+4. Launch / restart the game
 
-## File Structure Overview
+## Folder Structure
 
-### Config Folder Structure 
+The mod reads custom assets from a **simplified, flat** layout and remaps them into a
+generated resource pack automatically. Place files directly in these folders (no
+sub-directories):
+
 ```
-config/Pokeblocks/custom/
-├── models/                       # Model files (.geo.json)
-├── textures/                     # Texture files (.png)
-├── animations/                   # Animation files (.animation.json)
-├── assets/                       # Raw assets (advanced)
-└── pack.png                      # Custom pack icon (optional)
+config/Pokeblocks/resourcepack/custom/
+├── assets/
+│   ├── models/        # *.geo.json model files
+│   ├── textures/      # *.png texture files
+│   └── animations/    # *.animation.json files (optional)
+└── pack.png           # optional custom pack icon
 ```
+
+> You can also drop a complete pack — a folder **or** a `.zip` — directly into
+> `config/Pokeblocks/resourcepack/` (anything other than the `custom` folder), using the same
+> `assets/{models,textures,animations}/` layout. The `custom` folder is loaded last, so its
+> files win on conflicts.
 
 ## File Requirements
 
-### Required Files
+### Pokedolls
 
-- **Model**: `pokedoll_<pokemon_name>.geo.json` - The 3D model file
-- **Base Texture**: `pokedoll_<pokemon_name>.png` OR `pokedoll_<pokemon_name>_texture.png` - Default texture
+| File | Goes in | Required? |
+|------|---------|-----------|
+| Base model `pokedoll_<name>.geo.json` | `assets/models/` | **Yes** |
+| Base texture `pokedoll_<name>_texture.png` | `assets/textures/` | **Yes** |
+| Shiny texture `pokedoll_<name>_shiny_texture.png` | `assets/textures/` | Optional |
+| Animation `pokedoll_<name>.animation.json` | `assets/animations/` | Optional |
+| Variant files (add a flag suffix) | matching folder | Optional |
 
-### Optional Files
+> A bare `pokedoll_<name>.png` is accepted, but the recommended convention is the `_texture`
+> suffix: `pokedoll_<name>_texture.png`.
 
-- **Shiny Texture**: `pokedoll_<pokemon_name>_shiny.png` - Shiny variant texture
-- **Posed Model**: `pokedoll_<pokemon_name>_posed.geo.json` - Special pose model
-- **Animated Model**: `pokedoll_<pokemon_name>_animated.geo.json` - Animated model
-- **Animation**: `pokedoll_<pokemon_name>.animation.json` - Animation data
-- **Variant Animations**: `pokedoll_<pokemon_name>_<flag>.animation.json` - Flag-specific animations
+### Figurines
+
+| File | Goes in | Required? |
+|------|---------|-----------|
+| Model `<id>_figurine.geo.json` | `assets/models/` | **Yes** |
+| Texture `<id>_figurine_texture.png` | `assets/textures/` | **Yes** |
 
 ## Model Variants & Flags
 
-The system supports several model flags that can be combined:
+Flags are detected from filename suffixes and can be combined:
 
-| Flag | Model Suffix | Texture Suffix | Description |
-|------|-------------|----------------|-------------|
-| **POSED** | `_posed` | `_posed` | Special pose variant |
-| **ANIMATED** | `_animated` | `_animated` | Animated variant |
+| Flag | Texture suffix | Model suffix | Notes |
+|------|----------------|--------------|-------|
+| **SHINY** | `_shiny` | *(none)* | Shiny coloring (auto-rarity: shiny) |
+| **GIGANTIC** | *(none)* | *(none)* | Always available; large scale |
 | **FAMILY** | `_family` | `_family` | Family group variant |
-| **SHINY** | *(none)* | `_shiny` | Shiny coloring |
-| **GIGANTIC** | *(none)* | *(none)* | Large scale (auto-available) |
-| **NETHERITE** | *(none)* | `_netherite` | Netherite variant |
+| **ANIMATED** | `_animated` | `_animated` | Animated variant |
+| **POSED** | `_posed` | `_posed` | Special pose |
+| **NETHERITE** | `_netherite` | *(none)* | Netherite variant |
 | **ZENITH** | `_zenith` | `_zenith` | Zenith variant |
-| **NOICE** | `_noice` | `_noice` | Noice variant |
+| **NOICE** | `_noice` | `_noice` | No-ice variant |
+| **SPIKY** | `_spiky` | `_spiky` | e.g. spiky-eared Pichu |
+| **EARED** | `_eared` | `_eared` | combines with SPIKY |
+| **MALE / FEMALE** | `_male` / `_female` | *(none)* | mutually exclusive gender variants |
+
+Suffixes stack: `pokedoll_pikachu_posed.geo.json` + `pokedoll_pikachu_posed_texture.png`.
+
+### Required flag combinations
+If you provide `pokedoll_snorunt_family_animated.geo.json` without the individual
+`pokedoll_snorunt_family.geo.json` / `pokedoll_snorunt_animated.geo.json` models, the
+`family + animated` flags become a required pair (both must be applied together).
 
 ## Naming Conventions
 
-### Pokemon Names
-- Use **lowercase** names
-- Use **underscores** for spaces: `ho_oh`, `mr_mime`
-- Keep names **simple and consistent**
+- **Lowercase**, **underscores** for spaces (`ho_oh`, `mr_mime`).
+- Texture/animation names must match the model name (plus the same flag suffixes) exactly.
 
-### File Naming Examples
+## Rarity
 
-For a Pokemon named "pikachu":
+Edit `config/Pokeblocks/doll_rarity.json` — a JSON array of `"<name> [flag...] <rarity>"`:
 
-```
-# Required Files
-pokedoll_pikachu.geo.json         # Base model
-pokedoll_pikachu.png              # Base texture (preferred)
-# OR
-pokedoll_pikachu_texture.png      # Base texture (alternative)
-
-# Optional Variants
-pokedoll_pikachu_shiny.png        # Shiny texture
-pokedoll_pikachu_posed.geo.json   # Posed model
-pokedoll_pikachu_posed.png        # Posed texture (optional)
-pokedoll_pikachu_animated.geo.json # Animated model
-pokedoll_pikachu_animated.png     # Animated texture (optional)
-
-# Animation Files
-pokedoll_pikachu.animation.json   # Base animation
-pokedoll_pikachu_posed.animation.json    # Posed animation
-pokedoll_pikachu_animated.animation.json # Animated animation
-```
-
-## 📖 Step-by-Step Guide
-
-#### Step 1: Locate Config Folder
-Navigate to your Minecraft instance's config folder:
-- **Windows**: `%APPDATA%/.minecraft/config/Pokeblocks/custom/`
-- **Linux/Mac**: `~/.minecraft/config/Pokeblocks/custom/`
-- **Modded Launchers**: `<instance_folder>/config/Pokeblocks/custom/`
-
-#### Step 2: Prepare Folder Structure
-Create these folders if they don't exist:
-```
-config/Pokeblocks/custom/
-├── models/
-├── textures/
-└── animations/    (optional)
-```
-
-#### Step 3: Add Your Files
-1. **Models**: Place `.geo.json` files in `models/`
-2. **Textures**: Place `.png` files in `textures/`
-3. **Animations**: Place `.animation.json` files in `animations/`
-
-#### Step 4: Configure Rarity (Optional)
-Edit `config/Pokeblocks/doll_rarity.json`:
 ```json
 [
   "pikachu uncommon",
   "pikachu posed rare",
-  "pikachu animated epic"
+  "calyrex epic",
+  "calyrex animated legendary"
 ]
 ```
 
-#### Step 5: Launch Game
-The mod will automatically detect and load your custom models!
+Rarities: `none`, `common`, `uncommon`, `rare`, `epic`, `legendary`, `shiny`, `gigantic`.
 
+- No entry → defaults to `common`.
+- **Shiny** and **gigantic** variants get their rarity automatically — no entry needed.
+- Every other variant (posed/animated/family/…) needs its own line to set a non-common rarity.
 
-## Advanced Features
+## Figurine names & tags
 
-### Required Flag Combinations
+- `config/Pokeblocks/figurine_names.json` — `"<id> <DisplayName>"` to set the display name.
+- `config/Pokeblocks/figurine_tags.json` — `"<id> <tag>"`; `cobblemon_team` adds a
+  "Cobblemon Team Member" tooltip line.
 
-If you create a model like `pokedoll_snorunt_family_animated.geo.json` without individual `pokedoll_snorunt_family.geo.json` or `pokedoll_snorunt_animated.geo.json` files, the system treats `family + animated` as a required combination (both flags must be present together).
+## Custom Pack Icon
 
-### Animation System
-
-The mod supports sophisticated animation handling:
-
-- **Base Animation**: `pokedoll_<name>.animation.json`
-- **Variant Animations**: `pokedoll_<name>_<flag>.animation.json`
-
-Example animation setup:
-```
-pokedoll_calyrex.animation.json          # Base animation
-pokedoll_calyrex_animated.animation.json # Animated variant
-pokedoll_calyrex_posed.animation.json    # Posed variant
-```
-
-### Texture Variants
-
-Each model flag can have its own texture:
-```
-pokedoll_pokemon.png              # Base texture
-pokedoll_pokemon_shiny.png        # Shiny variant
-pokedoll_pokemon_posed.png        # Posed variant
-pokedoll_pokemon_animated.png     # Animated variant
-pokedoll_pokemon_family.png       # Family variant
-```
-
-### Custom Pack Icon
-
-Add a `pack.png` file to your custom folder root to set a custom icon for the generated resource pack.
-
-## Available Rarities
-
-Configure Pokemon rarity in `config/Pokeblocks/doll_rarity.json`:
-
-- `none` - Not available in loot (weight: 5)
-- `common` - Most common (weight: 500)
-- `uncommon` - Fairly common (weight: 300)
-- `rare` - Less common (weight: 150)
-- `epic` - Rare (weight: 70)
-- `legendary` - Very rare (weight: 30)
-- `shiny` - Special shiny chance (weight: 5%)
-- `gigantic` - Not in loot by default (weight: 0)
-
-## Troubleshooting
-
-### Pokemon Not Appearing
-
-1. **Check file names** - must follow exact naming convention
-2. **Check file locations** - must be in correct folders
-3. **Check console logs** - look for error messages
-4. **Verify required files** - model and texture are mandatory
-5. **Restart game** - config folder changes require restart
-
-### Texture Issues
-
-**Problem**: Model appears correctly in inventory but uses wrong texture when placed.
-
-**Solutions**:
-1. Use `pokedoll_<name>_texture.png` naming
-2. Check that texture file is in the `textures/` folder
-3. Verify texture file name matches model name exactly
-
-### Animation Issues
-
-**Problem**: Animations not playing or causing crashes.
-
-**Solutions**:
-1. Ensure animation files are valid JSON
-2. Check animation file names match model names
-3. Some Pokemon may not support animated variants (noted in code comments)
-
-### Common Issues
-
-- **Case sensitivity**: Use lowercase names consistently
-- **Missing base files**: Every Pokemon needs base model + texture
-- **Invalid file formats**: Use `.geo.json` for models, `.png` for textures
-- **Folder structure**: Files must be in correct subfolders
-
-## Debug Information
-
-The mod provides helpful startup logs:
-```
-[Pokeblocks] built-in scan: 67 pokemon (67 new)
-[Pokeblocks] built-in figurine scan: 11 found (11 new)
-[Pokeblocks] Custom resource pack: 7 model(s), 14 texture(s), 0 animation(s)
-[Pokeblocks] resource scan: 7 pokemon (7 new)
-```
-
-## Examples
-
-### Basic Pokemon (Pikachu)
-```
-Files needed:
-config/Pokeblocks/custom/
-├── models/pokedoll_pikachu.geo.json
-├── textures/pokedoll_pikachu.png
-└── textures/pokedoll_pikachu_shiny.png
-
-Rarity config:
-"pikachu uncommon"
-```
-
-### Advanced Pokemon with Poses (Charizard)
-```
-Files needed:
-config/Pokeblocks/custom/
-├── models/
-│   ├── pokedoll_charizard.geo.json
-│   └── pokedoll_charizard_posed.geo.json
-├── textures/
-│   ├── pokedoll_charizard.png
-│   ├── pokedoll_charizard_shiny.png
-│   └── pokedoll_charizard_posed.png
-└── animations/
-    ├── pokedoll_charizard.animation.json
-    └── pokedoll_charizard_posed.animation.json
-
-Rarity config:
-"charizard rare"
-"charizard posed epic"
-```
-
-### Animated Pokemon (Calyrex)
-```
-Files needed:
-config/Pokeblocks/custom/
-├── models/
-│   ├── pokedoll_calyrex.geo.json
-│   └── pokedoll_calyrex_animated.geo.json
-├── textures/
-│   ├── pokedoll_calyrex.png
-│   └── pokedoll_calyrex_animated.png
-└── animations/
-    ├── pokedoll_calyrex.animation.json
-    └── pokedoll_calyrex_animated.animation.json
-
-Rarity config:
-"calyrex epic"
-"calyrex animated legendary"
-```
-
-### Figurine (Custom Character)
-```
-Files needed:
-config/Pokeblocks/custom/
-├── models/pokedoll_custom_figurine.geo.json
-└── textures/pokedoll_custom_figurine.png
-
-Rarity config:
-"custom_figurine none"
-```
+Put a `pack.png` in `config/Pokeblocks/resourcepack/custom/` to set the generated pack's icon.
 
 ## Reloading Changes
 
-- **Rarity changes**: Use `/pokeblocks reload_rarity` command
-- **Weight changes**: Use `/pokeblocks reload_weights` command  
-- **New models/textures**: Restart the game (resource pack regeneration required)
+- **Rarity:** `/pokeblocks reload_rarity`
+- **Weights:** `/pokeblocks reload_weights`
+- **New models/textures:** restart the game (the resource pack is regenerated on launch)
 
-## Tips
+## Troubleshooting
 
-- **Start simple** - add basic model + texture first, then add variants
-- **Use existing Pokemon** as reference for file structure
-- **Test frequently** - catch issues early in development
-- **Keep backups** - especially when working with complex setups
-- **Check logs** - the mod provides detailed debug information
-- **Organize files** - use consistent naming and folder structure
+1. **Not appearing?** Check file names match the convention exactly, that the base model +
+   texture exist, and read the console log — the mod prints what it scanned and names any
+   skipped doll (missing model/texture).
+2. **Wrong texture when placed?** Use the `_texture.png` suffix and make sure flag suffixes on
+   the texture match the model.
+3. **Animation broken?** Verify the JSON is valid and the filename flags match the model.
+4. **Case sensitivity** — keep everything lowercase.
 
-## Getting Help
-
-- **Check console logs** for specific error messages
-- **Compare with existing Pokemon** in the mod files
-- **Verify file permissions** and locations
-- **Test with minimal setup** first (just model + texture)
-- **Use the debug logs** to understand what the mod is detecting
+The startup log confirms detection:
+```
+[Pokeblocks] Custom resource pack: 7 model(s), 14 texture(s), 0 animation(s)
+[Pokeblocks] resource scan: 7 pokemon (7 new)
+```
