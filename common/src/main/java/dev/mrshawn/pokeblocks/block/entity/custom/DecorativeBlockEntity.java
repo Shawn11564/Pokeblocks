@@ -1,11 +1,13 @@
 package dev.mrshawn.pokeblocks.block.entity.custom;
 
 import dev.mrshawn.pokeblocks.block.custom.decorative.DecorativeDefinition;
+import dev.mrshawn.pokeblocks.item.PokeblocksItemData;
 import dev.mrshawn.pokeblocks.pokemon.ModelFlag;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.HolderLookup;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.protocol.game.ClientboundBlockEntityDataPacket;
+import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.entity.BlockEntityType;
 import net.minecraft.world.level.block.state.BlockState;
@@ -91,6 +93,18 @@ public class DecorativeBlockEntity extends BlockEntity implements GeoBlockEntity
 
     public boolean isGigantic() {
         return getFlag(ModelFlag.GIGANTIC);
+    }
+
+    /**
+     * Writes the canonical minimal item tag on pick-block: the block-entity id, the active flags only,
+     * and any non-default custom-nbt values — matching {@link dev.mrshawn.pokeblocks.item.custom.DecorativeItem#createStack}
+     * (via {@link PokeblocksItemData}) so a picked decorative stacks with a given or looted one.
+     */
+    @Override
+    public void saveToItem(ItemStack stack, HolderLookup.Provider registries) {
+        String blockEntityId = PokeblocksItemData.blockEntityId(definition.id());
+        PokeblocksItemData.apply(stack,
+                PokeblocksItemData.decorativeTag(blockEntityId, getActiveFlags(), customNbt, definition));
     }
 
     private void syncToClient() {

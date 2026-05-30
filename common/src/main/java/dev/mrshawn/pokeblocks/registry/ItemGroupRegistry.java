@@ -1,6 +1,7 @@
 package dev.mrshawn.pokeblocks.registry;
 
 import dev.mrshawn.pokeblocks.PokeblocksCommon;
+import dev.mrshawn.pokeblocks.item.PokeblocksItemData;
 import dev.mrshawn.pokeblocks.item.RarityScoreCalculator;
 import dev.mrshawn.pokeblocks.item.custom.DecorativeItem;
 import dev.mrshawn.pokeblocks.item.custom.FigurineItem;
@@ -85,7 +86,7 @@ public final class ItemGroupRegistry {
 				}
 				// Decorative blocks — every flag variant (shiny, gigantic, …), default NBT only
 				for (DecorativeRegistry.DecorativeEntry entry : DecorativeRegistry.ALL_ENTRIES) {
-					String blockEntityId = PokeblocksCommon.MOD_ID + ":" + entry.definition().id();
+					String blockEntityId = PokeblocksItemData.blockEntityId(entry.definition().id());
 					for (ItemStack variant : DecorativeItem.getAllVariants(entry.item().get(), blockEntityId, entry.definition())) {
 						entries.accept(variant);
 					}

@@ -1,11 +1,14 @@
 package dev.mrshawn.pokeblocks.block.entity.custom;
 
 import dev.mrshawn.pokeblocks.constants.ModSettings;
+import dev.mrshawn.pokeblocks.item.PokeblocksItemData;
+import dev.mrshawn.pokeblocks.pokemon.ModelFlag;
 import dev.mrshawn.pokeblocks.registry.BlockEntityRegistry;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.HolderLookup;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.protocol.game.ClientboundBlockEntityDataPacket;
+import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.state.BlockState;
 import software.bernie.geckolib.animatable.GeoBlockEntity;
@@ -14,6 +17,9 @@ import software.bernie.geckolib.animation.AnimatableManager;
 import software.bernie.geckolib.animation.AnimationController;
 import software.bernie.geckolib.animation.PlayState;
 import software.bernie.geckolib.util.GeckoLibUtil;
+
+import java.util.EnumSet;
+import java.util.Set;
 
 public class FigurineBlockEntity extends BlockEntity implements GeoBlockEntity {
 	private final AnimatableInstanceCache cache = GeckoLibUtil.createInstanceCache(this);
@@ -56,6 +62,19 @@ public class FigurineBlockEntity extends BlockEntity implements GeoBlockEntity {
 
 	public boolean isGigantic() {
 		return this.gigantic;
+	}
+
+	/**
+	 * Writes the canonical minimal item tag on pick-block: just the figurine id (plus the gigantic
+	 * flag only when set), matching {@link dev.mrshawn.pokeblocks.item.custom.FigurineItem#createFigurine}
+	 * so a picked figurine stacks with a given one. Routed through {@link PokeblocksItemData} like every
+	 * other creation path.
+	 */
+	@Override
+	public void saveToItem(ItemStack stack, HolderLookup.Provider registries) {
+		Set<ModelFlag> activeFlags = EnumSet.noneOf(ModelFlag.class);
+		if (this.gigantic) activeFlags.add(ModelFlag.GIGANTIC);
+		PokeblocksItemData.apply(stack, PokeblocksItemData.figurineTag(this.figurine, activeFlags));
 	}
 
 	@Override

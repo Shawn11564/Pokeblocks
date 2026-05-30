@@ -1,6 +1,6 @@
 package dev.mrshawn.pokeblocks.interaction;
 
-import dev.mrshawn.pokeblocks.PokeblocksCommon;
+import dev.mrshawn.pokeblocks.item.PokeblocksItemData;
 import dev.mrshawn.pokeblocks.item.custom.DecorativeItem;
 import dev.mrshawn.pokeblocks.pokemon.ModelFlag;
 import dev.mrshawn.pokeblocks.registry.DecorativeRegistry;
@@ -59,7 +59,8 @@ public final class DollInteractions {
 
     private static ItemStack createEiscueHeadPile(Set<ModelFlag> flags) {
         DecorativeRegistry.DecorativeEntry entry = DecorativeRegistry.EISCUE_HEAD_PILE;
-        String blockEntityId = PokeblocksCommon.MOD_ID + ":" + entry.definition().id();
+        String blockEntityId = PokeblocksItemData.blockEntityId(entry.definition().id());
+        // headCount "1" is the default, so createStack drops it — the dropped pile stays minimal.
         return DecorativeItem.createStack(entry.item().get(), blockEntityId, flags, Map.of("headCount", "1"));
     }
 

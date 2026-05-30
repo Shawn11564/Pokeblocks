@@ -4,6 +4,7 @@ import com.mojang.blaze3d.platform.NativeImage;
 import com.mojang.serialization.MapCodec;
 import dev.mrshawn.pokeblocks.PokeblocksCommon;
 import dev.mrshawn.pokeblocks.block.entity.custom.PokedollBlockEntity;
+import dev.mrshawn.pokeblocks.client.model.PokeblocksAssetResolver;
 import dev.mrshawn.pokeblocks.constants.ModSettings;
 import dev.mrshawn.pokeblocks.interaction.DollInteractionRegistry;
 import dev.mrshawn.pokeblocks.item.custom.PokedollItem;
@@ -46,12 +47,12 @@ import net.minecraft.world.phys.shapes.VoxelShape;
 import org.jetbrains.annotations.Nullable;
 import org.joml.Vector3f;
 
-import java.util.ArrayList;
-import java.util.Comparator;
 import java.util.EnumMap;
+import java.util.EnumSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
+import java.util.Set;
 
 /**
  * Simple pokedoll block. Mostly a wrapper to provide a BlockEntity and render as an entity.
@@ -319,47 +320,18 @@ public class PokedollBlock extends BaseEntityBlock implements EntityBlock, Simpl
 		String pokemon = pokedoll.getPokemon();
 		if (pokemon == null || pokemon.isEmpty()) pokemon = ModSettings.DEFAULT_POKEMON;
 
-		List<ModelFlag> activeFlags = new ArrayList<>();
+		Set<ModelFlag> activeFlags = EnumSet.noneOf(ModelFlag.class);
 		for (ModelFlag flag : ModelFlag.values()) {
-			if (pokedoll.getFlag(flag) && !flag.getTextureSuffix().isEmpty()) {
-				activeFlags.add(flag);
-			}
+			if (pokedoll.getFlag(flag)) activeFlags.add(flag);
 		}
-		activeFlags.sort(Comparator.comparingInt(ModelFlag::getSortOrder));
-
-		StringBuilder texSuffix = new StringBuilder();
-		for (ModelFlag flag : activeFlags) {
-			texSuffix.append(flag.getTextureSuffix());
-		}
-
-		List<String> suffixesToTry = new ArrayList<>();
-		suffixesToTry.add(texSuffix.toString());
-
-		for (int i = activeFlags.size() - 1; i >= 0; i--) {
-			StringBuilder sub = new StringBuilder();
-			for (int j = 0; j < activeFlags.size(); j++) {
-				if (j != i) sub.append(activeFlags.get(j).getTextureSuffix());
-			}
-			String s = sub.toString();
-			if (!suffixesToTry.contains(s)) suffixesToTry.add(s);
-		}
-		if (!suffixesToTry.contains("")) suffixesToTry.add("");
 
 		try {
-			var rm = Minecraft.getInstance().getResourceManager();
-			for (String suffix : suffixesToTry) {
-				String[] paths = {
-						"textures/block/pokedoll_" + pokemon + suffix + "_texture.png",
-						"textures/block/pokedoll_" + pokemon + suffix + ".png"
-				};
-				for (String path : paths) {
-					ResourceLocation loc = ResourceLocation.fromNamespaceAndPath(PokeblocksCommon.MOD_ID, path);
-					if (rm.getResource(loc).isPresent()) return loc;
-				}
-			}
+			// Order-independent lookup shared with the render models (see PokeblocksAssetResolver), so the
+			// wool colors sampled on break come from the same texture the doll actually renders with.
+			return PokeblocksAssetResolver.pokedollTextureOrNull(Minecraft.getInstance().getResourceManager(), pokemon, activeFlags);
 		} catch (Exception ignored) {
+			return null;
 		}
-		return null;
 	}
 
 	private static Vector3f sampleAverageColor(ResourceLocation textureLoc) {

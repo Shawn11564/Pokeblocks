@@ -5,6 +5,7 @@ import com.mojang.brigadier.arguments.StringArgumentType;
 import com.mojang.brigadier.context.CommandContext;
 import com.mojang.brigadier.suggestion.SuggestionProvider;
 import dev.mrshawn.pokeblocks.block.custom.decorative.DecorativeDefinition;
+import dev.mrshawn.pokeblocks.item.PokeblocksItemData;
 import dev.mrshawn.pokeblocks.item.custom.DecorativeItem;
 import dev.mrshawn.pokeblocks.pokemon.ModelFlag;
 import dev.mrshawn.pokeblocks.registry.DecorativeRegistry;
@@ -171,7 +172,7 @@ public class DecorativeGiveCMD {
 
 			ItemStack stack = DecorativeItem.createStack(
 					entry.item().get(),
-					"pokeblocks:" + id,
+					PokeblocksItemData.blockEntityId(id),
 					activeFlags,
 					customNbt
 			);

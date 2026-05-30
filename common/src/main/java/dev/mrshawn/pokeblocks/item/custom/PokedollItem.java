@@ -1,10 +1,10 @@
 package dev.mrshawn.pokeblocks.item.custom;
 
-import dev.mrshawn.pokeblocks.PokeblocksCommon;
 import dev.mrshawn.pokeblocks.client.renderer.animation.AnimationResolver;
 import dev.mrshawn.pokeblocks.client.renderer.item.PokedollItemRenderer;
 import dev.mrshawn.pokeblocks.constants.ModSettings;
 import dev.mrshawn.pokeblocks.item.DollRarity;
+import dev.mrshawn.pokeblocks.item.PokeblocksItemData;
 import dev.mrshawn.pokeblocks.item.RarityScoreCalculator;
 import dev.mrshawn.pokeblocks.pokemon.ModelFlag;
 import dev.mrshawn.pokeblocks.pokemon.PokemonData;
@@ -12,8 +12,6 @@ import dev.mrshawn.pokeblocks.registry.ItemRegistry;
 import dev.mrshawn.pokeblocks.registry.PokemonRegistry;
 import net.minecraft.ChatFormatting;
 import net.minecraft.client.renderer.BlockEntityWithoutLevelRenderer;
-import net.minecraft.core.component.DataComponents;
-import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.MutableComponent;
 import net.minecraft.network.chat.Style;
@@ -23,7 +21,6 @@ import net.minecraft.world.item.BlockItem;
 import net.minecraft.world.item.Equipable;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.TooltipFlag;
-import net.minecraft.world.item.component.CustomData;
 import net.minecraft.world.level.block.Block;
 import software.bernie.geckolib.animatable.GeoItem;
 import software.bernie.geckolib.animatable.client.GeoRenderProvider;
@@ -37,7 +34,6 @@ import software.bernie.geckolib.util.GeckoLibUtil;
 
 import java.util.*;
 import java.util.function.Consumer;
-import java.util.stream.Collectors;
 
 public class PokedollItem extends BlockItem implements GeoItem, Equipable {
 
@@ -237,15 +233,7 @@ public class PokedollItem extends BlockItem implements GeoItem, Equipable {
 	 * Gets the pokemon name from the item's NBT data
 	 */
 	public static String getPokemonFromStack(ItemStack stack) {
-		CustomData blockEntityData = stack.get(DataComponents.BLOCK_ENTITY_DATA);
-		if (blockEntityData != null) {
-			CompoundTag tag = blockEntityData.copyTag();
-			if (tag.contains("pokemon")) {
-				String pokemon = tag.getString("pokemon");
-				return pokemon.isEmpty() ? ModSettings.DEFAULT_POKEMON : pokemon;
-			}
-		}
-		return ModSettings.DEFAULT_POKEMON;
+		return PokeblocksItemData.readString(stack, PokeblocksItemData.KEY_POKEMON, ModSettings.DEFAULT_POKEMON);
 	}
 
 	/**
@@ -253,26 +241,11 @@ public class PokedollItem extends BlockItem implements GeoItem, Equipable {
 	 * returns a set containing all ModelFlags that were present and true
 	 */
 	public static Set<ModelFlag> getFlagsFromStack(ItemStack stack) {
-		return getFlagsMapFromStack(stack)
-				.entrySet()
-				.stream()
-				.filter(entry -> entry.getValue() == true)
-				.map(Map.Entry::getKey)
-				.collect(Collectors.toSet());
+		return PokeblocksItemData.readActiveFlags(stack);
 	}
 
 	public static Map<ModelFlag, Boolean> getFlagsMapFromStack(ItemStack stack) {
-		Map<ModelFlag, Boolean> flags = new EnumMap<>(ModelFlag.class);
-		CustomData blockEntityData = stack.get(DataComponents.BLOCK_ENTITY_DATA);
-		if (blockEntityData != null) {
-			CompoundTag tag = blockEntityData.copyTag();
-			for (ModelFlag flag : ModelFlag.values()) {
-				if (tag.contains(flag.getTagName())) {
-					flags.put(flag, tag.getBoolean(flag.getTagName()));
-				}
-			}
-		}
-		return flags;
+		return PokeblocksItemData.readFlagsMap(stack);
 	}
 
 	/**
@@ -296,17 +269,12 @@ public class PokedollItem extends BlockItem implements GeoItem, Equipable {
 
 	public static ItemStack createPokedoll(String name, Map<ModelFlag, Boolean> flags) {
 		ItemStack stack = new ItemStack(ItemRegistry.POKEDOLL_ITEM.get());
-		CompoundTag tag = new CompoundTag();
-		tag.putString("id", PokeblocksCommon.MOD_ID + ":" + ModSettings.DOLL_ID);
-		tag.putString("pokemon", name == null || name.isEmpty() ? ModSettings.DEFAULT_POKEMON : name);
-
-		// only put true flags to save storage space
-		flags.entrySet()
-				.stream()
+		// Only the true flags reach the tag; PokeblocksItemData writes the canonical minimal form.
+		List<ModelFlag> activeFlags = flags.entrySet().stream()
 				.filter(Map.Entry::getValue)
-				.forEach(entry -> tag.putBoolean(entry.getKey().getTagName(), true));
-
-		stack.set(DataComponents.BLOCK_ENTITY_DATA, CustomData.of(tag));
+				.map(Map.Entry::getKey)
+				.toList();
+		PokeblocksItemData.apply(stack, PokeblocksItemData.pokedollTag(name, activeFlags));
 		return stack;
 	}
 

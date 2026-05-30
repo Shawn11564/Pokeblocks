@@ -1,20 +1,18 @@
 package dev.mrshawn.pokeblocks.block.entity.custom;
 
-import dev.mrshawn.pokeblocks.PokeblocksCommon;
 import dev.mrshawn.pokeblocks.client.renderer.animation.AnimationResolver;
 import dev.mrshawn.pokeblocks.config.PokeblocksConfig;
 import dev.mrshawn.pokeblocks.constants.ModSettings;
+import dev.mrshawn.pokeblocks.item.PokeblocksItemData;
 import dev.mrshawn.pokeblocks.pokemon.ModelFlag;
 import dev.mrshawn.pokeblocks.pokemon.PokemonData;
 import dev.mrshawn.pokeblocks.registry.BlockEntityRegistry;
 import dev.mrshawn.pokeblocks.registry.PokemonRegistry;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.HolderLookup;
-import net.minecraft.core.component.DataComponents;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.protocol.game.ClientboundBlockEntityDataPacket;
 import net.minecraft.world.item.ItemStack;
-import net.minecraft.world.item.component.CustomData;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.state.BlockState;
 import software.bernie.geckolib.animatable.GeoBlockEntity;
@@ -23,7 +21,9 @@ import software.bernie.geckolib.animation.*;
 import software.bernie.geckolib.util.GeckoLibUtil;
 
 import java.util.EnumMap;
+import java.util.EnumSet;
 import java.util.Map;
+import java.util.Set;
 
 public class PokedollBlockEntity extends BlockEntity implements GeoBlockEntity {
 	private final AnimatableInstanceCache cache = GeckoLibUtil.createInstanceCache(this);
@@ -215,13 +215,11 @@ public class PokedollBlockEntity extends BlockEntity implements GeoBlockEntity {
 	 */
 	@Override
 	public void saveToItem(ItemStack stack, HolderLookup.Provider registries) {
-		CompoundTag tag = new CompoundTag();
-		tag.putString("id", PokeblocksCommon.MOD_ID + ModSettings.DOLL_ID);
-		tag.putString("pokemon", this.pokemon);
+		Set<ModelFlag> activeFlags = EnumSet.noneOf(ModelFlag.class);
 		for (ModelFlag flag : ModelFlag.values()) {
-			if (getFlag(flag)) tag.putBoolean(flag.getTagName(), true);
+			if (getFlag(flag)) activeFlags.add(flag);
 		}
-		stack.set(DataComponents.BLOCK_ENTITY_DATA, CustomData.of(tag));
+		PokeblocksItemData.apply(stack, PokeblocksItemData.pokedollTag(this.pokemon, activeFlags));
 	}
 
 	// --- Sync & persistence ---

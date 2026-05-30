@@ -3,6 +3,7 @@ package dev.mrshawn.pokeblocks.client.model.block;
 import dev.mrshawn.pokeblocks.PokeblocksCommon;
 import dev.mrshawn.pokeblocks.block.custom.decorative.DecorativeDefinition;
 import dev.mrshawn.pokeblocks.block.entity.custom.DecorativeBlockEntity;
+import dev.mrshawn.pokeblocks.client.model.PokeblocksAssetResolver;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.RenderType;
 import net.minecraft.resources.ResourceLocation;
@@ -43,30 +44,7 @@ public class DecorativeModel extends DefaultedBlockGeoModel<DecorativeBlockEntit
 	public ResourceLocation getTextureResource(DecorativeBlockEntity animatable) {
 		ResourceManager rm = Minecraft.getInstance().getResourceManager();
 		String basePath = definition.texturePath(animatable.getActiveFlags(), animatable.getNbtLookup());
-
-		ResourceLocation withTexture = ResourceLocation.fromNamespaceAndPath(
-				PokeblocksCommon.MOD_ID, basePath + "_texture.png");
-		try {
-			if (rm.getResource(withTexture).isPresent()) return withTexture;
-		} catch (Exception e) {}
-
-		ResourceLocation plain = ResourceLocation.fromNamespaceAndPath(
-				PokeblocksCommon.MOD_ID, basePath + ".png");
-		try {
-			if (rm.getResource(plain).isPresent()) return plain;
-		} catch (Exception e) {}
-
-		// Fallback to base prefix
-		ResourceLocation baseTexture = ResourceLocation.fromNamespaceAndPath(
-				PokeblocksCommon.MOD_ID,
-				"textures/block/" + definition.modelPrefix() + "_texture.png");
-		try {
-			if (rm.getResource(baseTexture).isPresent()) return baseTexture;
-		} catch (Exception e) {}
-
-		return ResourceLocation.fromNamespaceAndPath(
-				PokeblocksCommon.MOD_ID,
-				"textures/block/" + definition.modelPrefix() + ".png");
+		return PokeblocksAssetResolver.decorativeTexture(rm, basePath, definition.modelPrefix());
 	}
 
 	@Override

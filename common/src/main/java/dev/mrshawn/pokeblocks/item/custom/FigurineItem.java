@@ -4,17 +4,15 @@ import dev.mrshawn.pokeblocks.client.renderer.item.FigurineItemRenderer;
 import dev.mrshawn.pokeblocks.constants.ModSettings;
 import dev.mrshawn.pokeblocks.item.FigurineNameOverrides;
 import dev.mrshawn.pokeblocks.item.FigurineTagOverrides;
+import dev.mrshawn.pokeblocks.item.PokeblocksItemData;
 import dev.mrshawn.pokeblocks.registry.ItemRegistry;
 import net.minecraft.ChatFormatting;
 import net.minecraft.client.renderer.BlockEntityWithoutLevelRenderer;
-import net.minecraft.core.component.DataComponents;
-import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.chat.Component;
 import net.minecraft.world.item.BlockItem;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.TooltipFlag;
-import net.minecraft.world.item.component.CustomData;
 import net.minecraft.world.level.block.Block;
 import software.bernie.geckolib.animatable.GeoItem;
 import software.bernie.geckolib.animatable.client.GeoRenderProvider;
@@ -79,15 +77,7 @@ public class FigurineItem extends BlockItem implements GeoItem {
 	}
 
 	public static String getFigurineFromStack(ItemStack stack) {
-		CustomData blockEntityData = stack.get(DataComponents.BLOCK_ENTITY_DATA);
-		if (blockEntityData != null) {
-			CompoundTag tag = blockEntityData.copyTag();
-			if (tag.contains("figurine")) {
-				String figurine = tag.getString("figurine");
-				return figurine.isEmpty() ? ModSettings.DEFAULT_FIGURINE : figurine;
-			}
-		}
-		return ModSettings.DEFAULT_FIGURINE;
+		return PokeblocksItemData.readString(stack, PokeblocksItemData.KEY_FIGURINE, ModSettings.DEFAULT_FIGURINE);
 	}
 
 	@Override
@@ -102,11 +92,8 @@ public class FigurineItem extends BlockItem implements GeoItem {
 
 	public static ItemStack createFigurine(String figurine) {
 		ItemStack stack = new ItemStack(ItemRegistry.FIGURINE_ITEM.get());
-		CompoundTag tag = new CompoundTag();
-		tag.putString("id", "pokeblocks:figurine");
-		tag.putString("figurine", figurine == null || figurine.isEmpty() ? ModSettings.DEFAULT_FIGURINE : figurine);
-		tag.putBoolean("gigantic", false);
-		stack.set(DataComponents.BLOCK_ENTITY_DATA, CustomData.of(tag));
+		// Figurines carry no active flags by default; PokeblocksItemData writes the canonical minimal form.
+		PokeblocksItemData.apply(stack, PokeblocksItemData.figurineTag(figurine, List.of()));
 		return stack;
 	}
 }

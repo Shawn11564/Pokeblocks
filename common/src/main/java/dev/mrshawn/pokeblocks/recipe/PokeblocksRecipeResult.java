@@ -2,7 +2,7 @@ package dev.mrshawn.pokeblocks.recipe;
 
 import com.mojang.serialization.Codec;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
-import dev.mrshawn.pokeblocks.PokeblocksCommon;
+import dev.mrshawn.pokeblocks.item.PokeblocksItemData;
 import dev.mrshawn.pokeblocks.item.custom.DecorativeItem;
 import dev.mrshawn.pokeblocks.item.custom.FigurineItem;
 import dev.mrshawn.pokeblocks.item.custom.PokedollItem;
@@ -65,7 +65,7 @@ public final class PokeblocksRecipeResult {
 			case DECORATIVE -> {
 				DecorativeRegistry.DecorativeEntry entry = DecorativeRegistry.getById(id);
 				if (entry == null) yield ItemStack.EMPTY;
-				ItemStack s = DecorativeItem.createStack(entry.item().get(), PokeblocksCommon.MOD_ID + ":" + id, flags);
+				ItemStack s = DecorativeItem.createStack(entry.item().get(), PokeblocksItemData.blockEntityId(id), flags);
 				s.setCount(count);
 				yield s;
 			}

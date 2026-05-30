@@ -2,6 +2,7 @@ package dev.mrshawn.pokeblocks.client.model.block;
 
 import dev.mrshawn.pokeblocks.PokeblocksCommon;
 import dev.mrshawn.pokeblocks.block.entity.custom.PokedollBlockEntity;
+import dev.mrshawn.pokeblocks.client.model.PokeblocksAssetResolver;
 import dev.mrshawn.pokeblocks.client.renderer.animation.AnimationResolver;
 import dev.mrshawn.pokeblocks.constants.ModSettings;
 import dev.mrshawn.pokeblocks.pokemon.ModelFlag;
@@ -14,79 +15,33 @@ import net.minecraft.server.packs.resources.ResourceManager;
 import software.bernie.geckolib.cache.object.BakedGeoModel;
 import software.bernie.geckolib.model.DefaultedBlockGeoModel;
 
-import java.util.*;
+import java.util.EnumSet;
+import java.util.Set;
 
 public class PokedollModel extends DefaultedBlockGeoModel<PokedollBlockEntity> {
-
-	private static final Set<String> validatedPokemon = new HashSet<>();
-
-	/** Cache of variant model paths that are known to not exist, so we fall back to base. */
-	private static final Set<String> missingVariantModels = new HashSet<>();
 
 	public PokedollModel() {
 		super(ResourceLocation.fromNamespaceAndPath(
 				PokeblocksCommon.MOD_ID,
 				"pokedoll_" + ModSettings.DEFAULT_POKEMON
 		));
-		validatedPokemon.add(ModSettings.DEFAULT_POKEMON);
 	}
 
+	/** @deprecated use {@link PokeblocksAssetResolver#clearPokemonCache()}. Retained for callers. */
+	@Deprecated
 	public static void clearCache() {
-		validatedPokemon.clear();
-		validatedPokemon.add(ModSettings.DEFAULT_POKEMON);
-		missingVariantModels.clear();
+		PokeblocksAssetResolver.clearPokemonCache();
 	}
 
-	private String getValidatedPokemon(String pokemon) {
-		if (pokemon == null || pokemon.isEmpty()) {
-			return ModSettings.DEFAULT_POKEMON;
-		}
-
-		if (validatedPokemon.contains(pokemon)) {
-			return pokemon;
-		}
-
-		ResourceLocation modelPath = ResourceLocation.fromNamespaceAndPath(
-				PokeblocksCommon.MOD_ID,
-				"geo/block/pokedoll_" + pokemon + ".geo.json"
-		);
-
-		try {
-			ResourceManager resourceManager = Minecraft.getInstance().getResourceManager();
-			if (resourceManager.getResource(modelPath).isPresent()) {
-				validatedPokemon.add(pokemon);
-				return pokemon;
-			}
-		} catch (Exception ignored) {
-		}
-
-		return ModSettings.DEFAULT_POKEMON;
-	}
-
-	private String computeSuffixes(PokedollBlockEntity animatable) {
-		if (animatable == null) return "";
-
-		List<ModelFlag> activeFlags = new ArrayList<>();
-		for (ModelFlag flag : ModelFlag.values()) {
-			if (animatable.getFlag(flag) && (!flag.getModelSuffix().isEmpty() || !flag.getTextureSuffix().isEmpty())) {
-				activeFlags.add(flag);
+	/** Active flags currently set on the doll. */
+	private static Set<ModelFlag> activeFlags(PokedollBlockEntity animatable) {
+		Set<ModelFlag> flags = EnumSet.noneOf(ModelFlag.class);
+		if (animatable != null) {
+			for (ModelFlag flag : ModelFlag.values()) {
+				if (animatable.getFlag(flag)) flags.add(flag);
 			}
 		}
-
-		// Model suffix: ascending sort order (matches .geo.json file naming convention)
-		List<ModelFlag> forModel = new ArrayList<>(activeFlags);
-		forModel.sort(Comparator.comparingInt(ModelFlag::getSortOrder));
-		StringBuilder modelSuffix = new StringBuilder();
-		for (ModelFlag flag : forModel) modelSuffix.append(flag.getModelSuffix());
-
-		// Texture suffix: descending sort order so variant/shape flags (e.g. noice, spiky) precede
-		// rarity flags (e.g. shiny), matching the file naming convention (_noice_shiny not _shiny_noice).
-		List<ModelFlag> forTexture = new ArrayList<>(activeFlags);
-		forTexture.sort(Comparator.comparingInt(ModelFlag::getSortOrder).reversed());
-		StringBuilder textureSuffix = new StringBuilder();
-		for (ModelFlag flag : forTexture) textureSuffix.append(flag.getTextureSuffix());
-
-		return modelSuffix + "|" + textureSuffix;
+		return flags;
 	}
 
 	@Override
@@ -94,205 +49,39 @@ public class PokedollModel extends DefaultedBlockGeoModel<PokedollBlockEntity> {
 		try {
 			return super.getBakedModel(location);
 		} catch (RuntimeException e) {
-			ResourceLocation fallback = ResourceLocation.fromNamespaceAndPath(
-					PokeblocksCommon.MOD_ID,
-					"geo/block/pokedoll_" + ModSettings.DEFAULT_POKEMON + ".geo.json"
-			);
-			return super.getBakedModel(fallback);
+			return super.getBakedModel(PokeblocksAssetResolver.loc(
+					"geo/block/pokedoll_" + ModSettings.DEFAULT_POKEMON + ".geo.json"));
 		}
 	}
 
 	@Override
 	public ResourceLocation getModelResource(PokedollBlockEntity animatable) {
-		String pokemon = getValidatedPokemon(animatable.getPokemon());
-		String suffixes = computeSuffixes(animatable);
-
-		String modelSuffix = "";
-		if (suffixes.contains("|"))
-			modelSuffix = suffixes.split("\\|", 2)[0];
-
-		// Try the variant model first
-		if (!modelSuffix.isEmpty()) {
-			String variantPath = "geo/block/pokedoll_" + pokemon + modelSuffix + ".geo.json";
-
-			// Check cache of known missing variants to avoid repeated resource lookups
-			if (!missingVariantModels.contains(variantPath)) {
-				ResourceLocation variantLoc = ResourceLocation.fromNamespaceAndPath(
-						PokeblocksCommon.MOD_ID, variantPath
-				);
-
-				try {
-					ResourceManager rm = Minecraft.getInstance().getResourceManager();
-					if (rm.getResource(variantLoc).isPresent()) {
-						return variantLoc;
-					}
-					// Confirmed absent — cache so we don't hit the RM every frame
-					missingVariantModels.add(variantPath);
-				} catch (Exception ignored) {
-					// Transient error — don't cache, will retry next frame
-				}
-			}
-		}
-
-		// Fall back to the base model
-		return ResourceLocation.fromNamespaceAndPath(
-				PokeblocksCommon.MOD_ID,
-				"geo/block/pokedoll_" + pokemon + ".geo.json"
-		);
+		ResourceManager rm = Minecraft.getInstance().getResourceManager();
+		String pokemon = PokeblocksAssetResolver.validatedPokemon(rm, animatable.getPokemon());
+		String modelSuffix = PokeblocksAssetResolver.pokedollModelSuffix(activeFlags(animatable));
+		return PokeblocksAssetResolver.pokedollModel(rm, pokemon, modelSuffix);
 	}
 
 	@Override
 	public ResourceLocation getTextureResource(PokedollBlockEntity animatable) {
-
 		ResourceManager rm = Minecraft.getInstance().getResourceManager();
-		String pokemon = getValidatedPokemon(animatable.getPokemon());
-
-		// Collect active flags that have texture suffixes. Sorted descending so variant/shape flags
-		// (higher sort order) precede rarity flags (lower sort order), matching the file naming
-		// convention where e.g. _noice comes before _shiny in the combined suffix.
-		List<ModelFlag> activeTextureFlags = new ArrayList<>();
-		if (animatable != null) {
-			for (ModelFlag flag : ModelFlag.values()) {
-				if (animatable.getFlag(flag) && !flag.getTextureSuffix().isEmpty()) {
-					activeTextureFlags.add(flag);
-				}
-			}
-			activeTextureFlags.sort(Comparator.comparingInt(ModelFlag::getSortOrder).reversed());
-		}
-
-		// Generate all flag subsets from most flags to fewest. With descending sort the full subset
-		// produces the correct combined suffix (e.g. _noice_shiny), then individual fallbacks follow.
-		List<List<ModelFlag>> subsets = generateSubsetsDescending(activeTextureFlags);
-
-		for (List<ModelFlag> subset : subsets) {
-			StringBuilder suffix = new StringBuilder();
-			for (ModelFlag flag : subset) {
-				suffix.append(flag.getTextureSuffix());
-			}
-			String texSuffix = suffix.toString();
-
-			ResourceLocation found = tryTextureVariants(rm, pokemon, texSuffix);
-			if (found != null) return found;
-		}
-
-		// Absolute fallback to default pokemon texture
-		return ResourceLocation.fromNamespaceAndPath(
-				PokeblocksCommon.MOD_ID,
-				"textures/block/pokedoll_" + ModSettings.DEFAULT_POKEMON + "_texture.png"
-		);
-	}
-
-	/**
-	 * Tries to find a texture for the given pokemon and texture suffix.
-	 * Returns null if no matching texture exists.
-	 */
-	private ResourceLocation tryTextureVariants(ResourceManager rm, String pokemon, String texSuffix) {
-		List<String> paths;
-		if (texSuffix.isEmpty()) {
-			paths = List.of(
-					"textures/block/pokedoll_" + pokemon + "_texture.png",
-					"textures/block/" + pokemon + "_texture.png",
-					"textures/block/pokedoll_" + pokemon + ".png",
-					"textures/block/" + pokemon + ".png"
-			);
-		} else {
-			paths = List.of(
-					"textures/block/pokedoll_" + pokemon + texSuffix + "_texture.png",
-					"textures/block/" + pokemon + texSuffix + "_texture.png",
-					"textures/block/pokedoll_" + pokemon + texSuffix + ".png",
-					"textures/block/" + pokemon + texSuffix + ".png"
-			);
-		}
-
-		for (String path : paths) {
-			ResourceLocation loc = ResourceLocation.fromNamespaceAndPath(PokeblocksCommon.MOD_ID, path);
-			try {
-				if (rm.getResource(loc).isPresent()) return loc;
-			} catch (Exception ignored) {}
-		}
-		return null;
-	}
-
-	/**
-	 * Generates all subsets of the given flags, ordered from largest to smallest.
-	 * Within the same size, subsets that retain higher-sort-order flags are preferred.
-	 * Input must be sorted by sort order ascending.
-	 * <p>
-	 * Example: flags [posed(3), shiny(7)] produces:
-	 * [posed, shiny], [shiny], [posed], []
-	 */
-	private List<List<ModelFlag>> generateSubsetsDescending(List<ModelFlag> flags) {
-		int n = flags.size();
-		List<List<ModelFlag>> subsets = new ArrayList<>();
-
-		for (int mask = (1 << n) - 1; mask >= 0; mask--) {
-			List<ModelFlag> subset = new ArrayList<>();
-			for (int i = 0; i < n; i++) {
-				if ((mask & (1 << i)) != 0) {
-					subset.add(flags.get(i));
-				}
-			}
-			subsets.add(subset);
-		}
-
-		// Sort: largest subsets first, then by sum of sort orders descending (keep high-priority flags)
-		subsets.sort((a, b) -> {
-			if (a.size() != b.size()) return b.size() - a.size();
-			int sumA = a.stream().mapToInt(ModelFlag::getSortOrder).sum();
-			int sumB = b.stream().mapToInt(ModelFlag::getSortOrder).sum();
-			return sumB - sumA;
-		});
-
-		return subsets;
+		String pokemon = PokeblocksAssetResolver.validatedPokemon(rm, animatable.getPokemon());
+		return PokeblocksAssetResolver.pokedollTexture(rm, pokemon, activeFlags(animatable));
 	}
 
 	@Override
 	public ResourceLocation getAnimationResource(PokedollBlockEntity animatable) {
 		ResourceManager rm = Minecraft.getInstance().getResourceManager();
-		String pokemon = getValidatedPokemon(animatable.getPokemon());
+		String pokemon = PokeblocksAssetResolver.validatedPokemon(rm, animatable.getPokemon());
 
 		PokemonData data = PokemonRegistry.getPokemonData(pokemon);
 		if (data == null) {
-			return ResourceLocation.fromNamespaceAndPath(
-					PokeblocksCommon.MOD_ID,
-					"animations/block/empty.animation.json"
-			);
+			return PokeblocksAssetResolver.loc("animations/block/empty.animation.json");
 		}
 
-		AnimationResolver.AnimationType type = AnimationResolver.resolve(
-				pokemon, animatable, data.animationProfile()
-		);
-
-		if (type == AnimationResolver.AnimationType.VARIANT) {
-			// Find which flag is active and has a variant animation
-			String suffixes = computeSuffixes(animatable);
-			String modelSuffix = "";
-			if (suffixes.contains("|")) modelSuffix = suffixes.split("\\|", 2)[0];
-
-			ResourceLocation variantAnim = ResourceLocation.fromNamespaceAndPath(
-					PokeblocksCommon.MOD_ID,
-					"animations/block/pokedoll_" + pokemon + modelSuffix + ".animation.json"
-			);
-			try {
-				if (rm.getResource(variantAnim).isPresent()) return variantAnim;
-			} catch (Exception ignored) {}
-		}
-
-		if (type == AnimationResolver.AnimationType.BASE || type == AnimationResolver.AnimationType.VARIANT) {
-			// Fall back to base animation
-			ResourceLocation baseAnim = ResourceLocation.fromNamespaceAndPath(
-					PokeblocksCommon.MOD_ID,
-					"animations/block/pokedoll_" + pokemon + ".animation.json"
-			);
-			try {
-				if (rm.getResource(baseAnim).isPresent()) return baseAnim;
-			} catch (Exception ignored) {}
-		}
-
-		return ResourceLocation.fromNamespaceAndPath(
-				PokeblocksCommon.MOD_ID,
-				"animations/block/empty.animation.json"
-		);
+		AnimationResolver.AnimationType type = AnimationResolver.resolve(pokemon, animatable, data.animationProfile());
+		String modelSuffix = PokeblocksAssetResolver.pokedollModelSuffix(activeFlags(animatable));
+		return PokeblocksAssetResolver.pokedollAnimation(rm, pokemon, modelSuffix, type);
 	}
 
 	@Override

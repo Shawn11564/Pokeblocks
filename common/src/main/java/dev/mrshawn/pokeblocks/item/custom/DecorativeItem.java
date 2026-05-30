@@ -4,16 +4,14 @@ import dev.mrshawn.pokeblocks.block.custom.decorative.DecorativeDefinition;
 import dev.mrshawn.pokeblocks.client.renderer.item.DecorativeItemRenderer;
 import dev.mrshawn.pokeblocks.item.DollRarity;
 import dev.mrshawn.pokeblocks.item.DollRarityOverrides;
+import dev.mrshawn.pokeblocks.item.PokeblocksItemData;
 import dev.mrshawn.pokeblocks.pokemon.ModelFlag;
 import net.minecraft.client.renderer.BlockEntityWithoutLevelRenderer;
-import net.minecraft.core.component.DataComponents;
-import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.chat.Component;
 import net.minecraft.world.item.BlockItem;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.TooltipFlag;
-import net.minecraft.world.item.component.CustomData;
 import net.minecraft.world.level.block.Block;
 
 import software.bernie.geckolib.animatable.GeoItem;
@@ -145,34 +143,15 @@ public class DecorativeItem extends BlockItem implements GeoItem {
 	}
 
 	public static Set<ModelFlag> getFlagsFromStack(ItemStack stack) {
-		EnumSet<ModelFlag> flags = EnumSet.noneOf(ModelFlag.class);
-		CustomData blockEntityData = stack.get(DataComponents.BLOCK_ENTITY_DATA);
-		if (blockEntityData != null) {
-			CompoundTag tag = blockEntityData.copyTag();
-			for (ModelFlag flag : ModelFlag.values()) {
-				if (tag.contains(flag.getTagName()) && tag.getBoolean(flag.getTagName())) {
-					flags.add(flag);
-				}
-			}
-		}
-		return flags;
+		return PokeblocksItemData.readActiveFlags(stack);
 	}
 
 	public static ItemStack createStack(DecorativeItem item, String blockEntityId, Set<ModelFlag> flags, Map<String, String> customNbt) {
 		ItemStack stack = new ItemStack(item);
-		CompoundTag tag = new CompoundTag();
-		tag.putString("id", blockEntityId);
-		if (flags != null) {
-			for (ModelFlag flag : flags) {
-				tag.putBoolean(flag.getTagName(), true);
-			}
-		}
-		if (customNbt != null) {
-			for (Map.Entry<String, String> entry : customNbt.entrySet()) {
-				tag.putString(entry.getKey(), entry.getValue());
-			}
-		}
-		stack.set(DataComponents.BLOCK_ENTITY_DATA, CustomData.of(tag));
+		// The definition lets PokeblocksItemData drop custom-nbt values that equal their default,
+		// keeping the stored tag minimal so default-valued variants stack with ones that omit the key.
+		PokeblocksItemData.apply(stack,
+				PokeblocksItemData.decorativeTag(blockEntityId, flags, customNbt, item.getDefinition()));
 		return stack;
 	}
 

@@ -4,6 +4,7 @@ import dev.mrshawn.pokeblocks.PokeblocksCommon;
 import dev.mrshawn.pokeblocks.config.PokeblocksConfig;
 import dev.mrshawn.pokeblocks.item.DollRarity;
 import dev.mrshawn.pokeblocks.item.DollRarityOverrides;
+import dev.mrshawn.pokeblocks.item.PokeblocksItemData;
 import dev.mrshawn.pokeblocks.item.RarityScoreCalculator;
 import dev.mrshawn.pokeblocks.item.RarityScoreCalculator.DollVariant;
 import dev.mrshawn.pokeblocks.item.custom.DecorativeItem;
@@ -62,7 +63,7 @@ public class LootTableItemMap {
         // intentionally left at their default here so they don't multiply loot weight.
         for (DecorativeRegistry.DecorativeEntry decorative : DecorativeRegistry.ALL_ENTRIES) {
             String id = decorative.definition().id();
-            String blockEntityId = PokeblocksCommon.MOD_ID + ":" + id;
+            String blockEntityId = PokeblocksItemData.blockEntityId(id);
 
             for (Set<ModelFlag> flags : DecorativeItem.validFlagCombinations(decorative.definition().supportedFlags())) {
                 boolean hasExcluded = false;
