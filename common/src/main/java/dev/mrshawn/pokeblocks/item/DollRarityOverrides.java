@@ -103,7 +103,7 @@ public class DollRarityOverrides {
         }
     }
 
-    private static String buildKey(String pokemon, Set<ModelFlag> flags) {
+    public static String buildKey(String pokemon, Set<ModelFlag> flags) {
         StringBuilder sb = new StringBuilder(pokemon.toLowerCase());
         List<ModelFlag> sorted = new ArrayList<>(flags);
         sorted.sort(Comparator.comparingInt(ModelFlag::getSortOrder));

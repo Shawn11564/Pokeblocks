@@ -1,6 +1,7 @@
 package dev.mrshawn.pokeblocks.item.loot;
 
 import dev.mrshawn.pokeblocks.PokeblocksCommon;
+import dev.mrshawn.pokeblocks.config.PokeblocksConfig;
 import dev.mrshawn.pokeblocks.item.DollRarity;
 import dev.mrshawn.pokeblocks.item.DollRarityOverrides;
 import dev.mrshawn.pokeblocks.item.RarityScoreCalculator;
@@ -39,8 +40,8 @@ public class LootTableItemMap {
         List<LootEntry> entries = new ArrayList<>();
 
         for (DollVariant variant : variants) {
-            // DollRarity.NONE marks variants that should never appear in loot (e.g. substitute)
             if (variant.rarity() == DollRarity.NONE) continue;
+            if (PokeblocksConfig.isDollExcludedFromLoot(variant.pokemon(), variant.flags())) continue;
 
             // Convert fractional weight to integer, scaling to preserve relative differences
             int lootWeight = Math.max(1, (int) (variant.weight() * 100));
@@ -77,6 +78,7 @@ public class LootTableItemMap {
 
                 DollRarity rarity = DollRarityOverrides.getOverride(id, flags);
                 if (rarity == null || rarity == DollRarity.NONE) continue;
+                if (PokeblocksConfig.isDollExcludedFromLoot(id, flags)) continue;
 
                 int lootWeight = Math.max(1, (int) (rarity.getWeight() * 100));
                 String blockEntityId = PokeblocksCommon.MOD_ID + ":" + id;
@@ -89,14 +91,15 @@ public class LootTableItemMap {
         for (String figurine : FigurineRegistry.ALL_FIGURINES.keySet()) {
             DollRarity rarity = DollRarityOverrides.getOverride(figurine, EnumSet.noneOf(ModelFlag.class));
             if (rarity == null || rarity == DollRarity.NONE) continue;
+            if (PokeblocksConfig.isDollExcludedFromLoot(figurine, EnumSet.noneOf(ModelFlag.class))) continue;
 
             int lootWeight = Math.max(1, (int) (rarity.getWeight() * 100));
             ItemStack stack = FigurineItem.createFigurine(figurine);
             entries.add(new LootEntry(stack, lootWeight));
         }
 
-        PokeblocksCommon.LOGGER.info("[Pokeblocks] Built loot entry list: {} variants (excluded flags: {})",
-                entries.size(), excludedFlags);
+        PokeblocksCommon.LOGGER.info("[Pokeblocks] Built loot entry list: {} variants (excluded flags: {}, excluded dolls: {})",
+                entries.size(), excludedFlags, PokeblocksConfig.getExcludedLootDolls());
         return entries;
     }
 }

@@ -2,15 +2,21 @@ package dev.mrshawn.pokeblocks.item.custom;
 
 import dev.mrshawn.pokeblocks.block.custom.decorative.DecorativeDefinition;
 import dev.mrshawn.pokeblocks.client.renderer.item.DecorativeItemRenderer;
+import dev.mrshawn.pokeblocks.item.DollRarity;
+import dev.mrshawn.pokeblocks.item.DollRarityOverrides;
 import dev.mrshawn.pokeblocks.pokemon.ModelFlag;
+import net.minecraft.ChatFormatting;
 import net.minecraft.client.renderer.BlockEntityWithoutLevelRenderer;
 import net.minecraft.core.component.DataComponents;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.chat.Component;
 import net.minecraft.world.item.BlockItem;
+import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.item.TooltipFlag;
 import net.minecraft.world.item.component.CustomData;
 import net.minecraft.world.level.block.Block;
+
 import software.bernie.geckolib.animatable.GeoItem;
 import software.bernie.geckolib.animatable.client.GeoRenderProvider;
 import software.bernie.geckolib.animatable.instance.AnimatableInstanceCache;
@@ -53,6 +59,16 @@ public class DecorativeItem extends BlockItem implements GeoItem {
 	@Override
 	public AnimatableInstanceCache getAnimatableInstanceCache() {
 		return this.cache;
+	}
+
+	@Override
+	public void appendHoverText(ItemStack stack, Item.TooltipContext context, List<Component> tooltip, TooltipFlag flag) {
+		Set<ModelFlag> flags = getFlagsFromStack(stack);
+		DollRarity rarity = DollRarityOverrides.getOverride(definition.id(), flags);
+		if (rarity != null && rarity != DollRarity.NONE) {
+			tooltip.add(Component.empty());
+			tooltip.add(Component.literal(rarity.getDisplayName()).withStyle(rarity.getFormatting()));
+		}
 	}
 
 	@Override

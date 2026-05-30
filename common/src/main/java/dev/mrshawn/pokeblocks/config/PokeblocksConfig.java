@@ -1,5 +1,6 @@
 package dev.mrshawn.pokeblocks.config;
 
+import dev.mrshawn.pokeblocks.item.DollRarityOverrides;
 import dev.mrshawn.pokeblocks.pokemon.ModelFlag;
 import net.minecraft.resources.ResourceLocation;
 
@@ -22,6 +23,7 @@ public class PokeblocksConfig {
 	private static final Set<ResourceLocation> lootTables = new HashSet<>();
 	private static final List<Pattern> lootTableWildcards = new ArrayList<>();
 	private static final Set<ModelFlag> excludedLootFlags = EnumSet.noneOf(ModelFlag.class);
+	private static final Set<String> excludedLootDolls = new LinkedHashSet<>();
 
 	private static Path configPath;
 
@@ -47,6 +49,10 @@ public class PokeblocksConfig {
 
 	public static Set<ModelFlag> getExcludedLootFlags() {
 		return excludedLootFlags;
+	}
+
+	public static Set<String> getExcludedLootDolls() {
+		return excludedLootDolls;
 	}
 
 	public static void initialize(Path serverDir) {
@@ -77,6 +83,7 @@ public class PokeblocksConfig {
 		lootTableWildcards.clear();
 		excludedLootFlags.clear();
 		excludedLootFlags.add(ModelFlag.GIGANTIC);
+		excludedLootDolls.clear();
 
 		if (configPath == null || !Files.exists(configPath)) return;
 
@@ -121,6 +128,7 @@ public class PokeblocksConfig {
 						switch (key) {
 							case "loot_tables" -> i = parseLootTableList(lines, i, value);
 							case "excluded_flags" -> i = parseExcludedFlagsList(lines, i, value);
+							case "excluded_dolls" -> i = parseExcludedDollsList(lines, i, value);
 							case "drop_chance" -> lootDropChance = parseFloat(value, 0.15f);
 						}
 					}
@@ -133,7 +141,8 @@ public class PokeblocksConfig {
 					+ ", drop_chance=" + lootDropChance
 					+ ", loot_tables=" + lootTables
 					+ ", loot_table_wildcards=" + lootTableWildcards.size()
-					+ ", excluded_flags=" + excludedLootFlags);
+					+ ", excluded_flags=" + excludedLootFlags
+					+ ", excluded_dolls=" + excludedLootDolls);
 
 		} catch (Exception e) {
 			System.err.println("[Pokeblocks] Failed to load config.toml: " + e);
@@ -204,6 +213,15 @@ public class PokeblocksConfig {
 					"""
 					[
 					  "gigantic"
+					]"""),
+			new KeyDef("loot", "excluded_dolls",
+					"""
+					# Specific doll IDs to exclude from loot table drops, regardless of their rarity.
+					# Format: "pokemon" to exclude all variants, or "pokemon flag1 flag2" for a specific variant.
+					# Example: "substitute" excludes all substitute variants; "substitute shiny" excludes only the shiny one.""",
+					"""
+					[
+					  "substitute"
 					]""")
 	);
 
@@ -383,6 +401,68 @@ public class PokeblocksConfig {
 		}
 
 		return i;
+	}
+
+	private static int parseExcludedDollsList(List<String> lines, int startIndex, String firstLineValue) {
+		StringBuilder builder = new StringBuilder(firstLineValue);
+
+		int i = startIndex;
+
+		while (!builder.toString().contains("]") && i + 1 < lines.size()) {
+			i++;
+			builder.append(lines.get(i).trim());
+		}
+
+		String full = builder.toString();
+
+		int start = full.indexOf('[');
+		int end = full.lastIndexOf(']');
+
+		if (start < 0 || end < 0 || end <= start) return i;
+
+		String inner = full.substring(start + 1, end);
+		String[] entries = inner.split(",");
+
+		excludedLootDolls.clear();
+
+		for (String entry : entries) {
+			String cleaned = entry.trim();
+
+			if (cleaned.startsWith("\"") && cleaned.endsWith("\"")) {
+				cleaned = cleaned.substring(1, cleaned.length() - 1);
+			}
+
+			cleaned = cleaned.trim().toLowerCase();
+			if (cleaned.isEmpty()) continue;
+
+			// Normalize to canonical key: first word is pokemon, remaining words are flag tag names
+			String[] words = cleaned.split("\\s+");
+			String pokemon = words[0];
+			Set<ModelFlag> flags = EnumSet.noneOf(ModelFlag.class);
+			for (int j = 1; j < words.length; j++) {
+				ModelFlag flag = ModelFlag.fromTagName(words[j]);
+				if (flag != null) {
+					flags.add(flag);
+				} else {
+					System.err.println("[Pokeblocks] Unknown flag '" + words[j] + "' in excluded_dolls entry: " + cleaned);
+				}
+			}
+			excludedLootDolls.add(DollRarityOverrides.buildKey(pokemon, flags));
+		}
+
+		return i;
+	}
+
+	/**
+	 * Returns true if this doll variant should be excluded from loot tables.
+	 * A bare pokemon name (e.g. "substitute") matches all variants of that pokemon;
+	 * a name with flags (e.g. "substitute shiny") matches only that exact variant.
+	 */
+	public static boolean isDollExcludedFromLoot(String pokemon, Set<ModelFlag> flags) {
+		// Bare pokemon name in the set means all variants of that pokemon are excluded
+		if (excludedLootDolls.contains(pokemon)) return true;
+		// Check for an exact variant match using the canonical key
+		return excludedLootDolls.contains(DollRarityOverrides.buildKey(pokemon, flags));
 	}
 
 	private static Pattern globToPattern(String glob) {

@@ -157,10 +157,10 @@ public class RarityScoreCalculator {
     public static String getDisplayString(String pokemon, Set<ModelFlag> activeFlags) {
         double chance = computeChance(pokemon, activeFlags);
 
-        if (chance <= 0) return "0%";
+        if (chance <= 0) return "0.0%";
 
         if (chance >= MIN_PERCENTAGE_FOR_INTEGER_DISPLAY) {
-            return Math.round(chance) + "%";
+            return String.format("%.1f%%", chance);
         }
 
         int decimalPlaces = 0;
@@ -169,6 +169,9 @@ public class RarityScoreCalculator {
             temp *= 10;
             decimalPlaces++;
         }
+
+        // Ensure at least 1 decimal place
+        decimalPlaces = Math.max(decimalPlaces, 1);
 
         double factor = Math.pow(10, decimalPlaces);
         double rounded = Math.round(chance * factor) / factor;

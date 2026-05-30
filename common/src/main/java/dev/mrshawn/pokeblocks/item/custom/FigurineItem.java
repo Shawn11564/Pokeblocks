@@ -95,6 +95,7 @@ public class FigurineItem extends BlockItem implements GeoItem {
 		String figurine = getFigurineFromStack(stack);
 
 		if (FigurineTagOverrides.hasTag(figurine, FigurineTagOverrides.TAG_COBBLEMON_TEAM)) {
+			tooltip.add(Component.empty());
 			tooltip.add(Component.literal("Cobblemon Team Member").withStyle(ChatFormatting.AQUA));
 		}
 	}
