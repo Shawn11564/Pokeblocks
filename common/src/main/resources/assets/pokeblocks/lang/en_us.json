@@ -5,7 +5,9 @@
   "item.pokeblocks.pokedoll": "Pokedoll",
   "item.pokeblocks.figurine": "Figurine",
 
-  "itemgroup.pokeblocks.items": "Pokeblocks Items",
+  "itemgroup.pokeblocks.regular": "Pokeblocks - Regular",
+  "itemgroup.pokeblocks.gigantics": "Pokeblocks - Gigantics",
+  "itemgroup.pokeblocks.misc": "Pokeblocks - Misc",
 
   "subtitles.pokeblocks.pokedoll_squeak": "Pokedoll squeaks"
 }

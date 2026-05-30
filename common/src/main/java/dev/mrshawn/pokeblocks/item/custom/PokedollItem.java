@@ -286,10 +286,18 @@ public class PokedollItem extends BlockItem implements GeoItem, Equipable {
 		return createPokedoll(name, pokemonData.modelFlags());
 	}
 
+	public static ItemStack createPokedoll(String name, ModelFlag... activeFlags) {
+		Map<ModelFlag, Boolean> flags = new EnumMap<>(ModelFlag.class);
+		for (ModelFlag flag : activeFlags) {
+			flags.put(flag, true);
+		}
+		return createPokedoll(name, flags);
+	}
+
 	public static ItemStack createPokedoll(String name, Map<ModelFlag, Boolean> flags) {
 		ItemStack stack = new ItemStack(ItemRegistry.POKEDOLL_ITEM.get());
 		CompoundTag tag = new CompoundTag();
-		tag.putString("id", PokeblocksCommon.MOD_ID + ModSettings.DOLL_ID);
+		tag.putString("id", PokeblocksCommon.MOD_ID + ":" + ModSettings.DOLL_ID);
 		tag.putString("pokemon", name == null || name.isEmpty() ? ModSettings.DEFAULT_POKEMON : name);
 
 		// only put true flags to save storage space

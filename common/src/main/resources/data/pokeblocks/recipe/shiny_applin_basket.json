@@ -1,0 +1,14 @@
+{
+  "type": "pokeblocks:crafting_shaped",
+  "category": "misc",
+  "pattern": [
+    "PPP",
+    "AAA",
+    "PPP"
+  ],
+  "key": {
+    "P": { "tag": "minecraft:planks" },
+    "A": { "doll": "applin", "flags": ["shiny"] }
+  },
+  "result": { "decorative": "applin_basket", "flags": ["shiny"] }
+}

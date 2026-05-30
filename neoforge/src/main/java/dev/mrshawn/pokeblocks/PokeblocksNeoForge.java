@@ -9,6 +9,7 @@ import net.minecraft.sounds.SoundEvent;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.item.CreativeModeTab;
 import net.minecraft.world.item.Item;
+import net.minecraft.world.item.crafting.RecipeSerializer;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.entity.BlockEntityType;
 import net.minecraft.world.level.storage.loot.LootPool;
@@ -31,6 +32,7 @@ public final class PokeblocksNeoForge {
 	public static final DeferredRegister<CreativeModeTab> CREATIVE_TABS = DeferredRegister.create(Registries.CREATIVE_MODE_TAB, PokeblocksCommon.MOD_ID);
 	public static final DeferredRegister<Item> ITEMS = DeferredRegister.create(Registries.ITEM, PokeblocksCommon.MOD_ID);
 	public static final DeferredRegister<SoundEvent> SOUND_EVENTS = DeferredRegister.create(Registries.SOUND_EVENT, PokeblocksCommon.MOD_ID);
+	public static final DeferredRegister<RecipeSerializer<?>> RECIPE_SERIALIZERS = DeferredRegister.create(Registries.RECIPE_SERIALIZER, PokeblocksCommon.MOD_ID);
 
 	public PokeblocksNeoForge(IEventBus modEventBus) {
 		BLOCKS.register(modEventBus);
@@ -39,6 +41,7 @@ public final class PokeblocksNeoForge {
 		CREATIVE_TABS.register(modEventBus);
 		ITEMS.register(modEventBus);
 		SOUND_EVENTS.register(modEventBus);
+		RECIPE_SERIALIZERS.register(modEventBus);
 
 		PokeblocksCommon.doRegistrations();
 

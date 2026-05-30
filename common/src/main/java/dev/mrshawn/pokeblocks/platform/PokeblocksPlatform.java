@@ -9,6 +9,7 @@ import net.minecraft.world.item.ArmorMaterial;
 import net.minecraft.world.item.CreativeModeTab;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.SpawnEggItem;
+import net.minecraft.world.item.crafting.RecipeSerializer;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.entity.BlockEntityType;
@@ -25,6 +26,7 @@ public interface PokeblocksPlatform {
     <T extends Item> Supplier<T> registerItem(String id, Supplier<T> item);
     <T extends CreativeModeTab> Supplier<T> registerCreativeModeTab(String id, Supplier<T> tab);
     <T extends SoundEvent> Supplier<T> registerSound(String id, Supplier<T> sound);
+    <T extends RecipeSerializer<?>> Supplier<T> registerRecipeSerializer(String id, Supplier<T> serializer);
 
     CreativeModeTab.Builder newCreativeTabBuilder();
 

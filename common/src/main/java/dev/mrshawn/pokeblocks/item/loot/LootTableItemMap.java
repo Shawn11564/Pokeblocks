@@ -55,33 +55,27 @@ public class LootTableItemMap {
             entries.add(new LootEntry(stack, lootWeight));
         }
 
-        // Add decorative block entries based on doll_rarity.json overrides
+        // Add decorative block entries. Rarity and flag-variant enumeration are resolved through
+        // DecorativeItem (the single source of truth shared with the creative tab and tooltips), so
+        // shiny/gigantic variants always get a rarity (override first, then flag-based fallback)
+        // without needing an explicit doll_rarity.json entry. NBT variants (e.g. head counts) are
+        // intentionally left at their default here so they don't multiply loot weight.
         for (DecorativeRegistry.DecorativeEntry decorative : DecorativeRegistry.ALL_ENTRIES) {
             String id = decorative.definition().id();
-            List<ModelFlag> supportedList = new ArrayList<>(decorative.definition().supportedFlags());
-            int n = supportedList.size();
+            String blockEntityId = PokeblocksCommon.MOD_ID + ":" + id;
 
-            for (int mask = 0; mask < (1 << n); mask++) {
-                Set<ModelFlag> flags = EnumSet.noneOf(ModelFlag.class);
+            for (Set<ModelFlag> flags : DecorativeItem.validFlagCombinations(decorative.definition().supportedFlags())) {
                 boolean hasExcluded = false;
-                for (int i = 0; i < n; i++) {
-                    if ((mask & (1 << i)) != 0) {
-                        ModelFlag flag = supportedList.get(i);
-                        if (excludedFlags.contains(flag)) {
-                            hasExcluded = true;
-                            break;
-                        }
-                        flags.add(flag);
-                    }
+                for (ModelFlag flag : flags) {
+                    if (excludedFlags.contains(flag)) { hasExcluded = true; break; }
                 }
                 if (hasExcluded) continue;
 
-                DollRarity rarity = DollRarityOverrides.getOverride(id, flags);
+                DollRarity rarity = DecorativeItem.resolveRarity(id, flags);
                 if (rarity == null || rarity == DollRarity.NONE) continue;
                 if (PokeblocksConfig.isDollExcludedFromLoot(id, flags)) continue;
 
                 int lootWeight = Math.max(1, (int) (rarity.getWeight() * 100));
-                String blockEntityId = PokeblocksCommon.MOD_ID + ":" + id;
                 ItemStack stack = DecorativeItem.createStack(decorative.item().get(), blockEntityId, flags);
                 entries.add(new LootEntry(stack, lootWeight));
             }

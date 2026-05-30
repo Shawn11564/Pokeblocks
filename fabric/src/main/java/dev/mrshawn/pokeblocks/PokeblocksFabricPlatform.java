@@ -11,6 +11,7 @@ import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.item.CreativeModeTab;
 import net.minecraft.world.item.Item;
+import net.minecraft.world.item.crafting.RecipeSerializer;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.entity.BlockEntityType;
@@ -46,6 +47,11 @@ public class PokeblocksFabricPlatform implements PokeblocksPlatform {
     @Override
     public <T extends SoundEvent> Supplier<T> registerSound(String id, Supplier<T> sound) {
         return registerSupplier(BuiltInRegistries.SOUND_EVENT, id, sound);
+    }
+
+    @Override
+    public <T extends RecipeSerializer<?>> Supplier<T> registerRecipeSerializer(String id, Supplier<T> serializer) {
+        return registerSupplier(BuiltInRegistries.RECIPE_SERIALIZER, id, serializer);
     }
 
     @Override

@@ -1,0 +1,14 @@
+{
+  "type": "pokeblocks:crafting_shaped",
+  "category": "misc",
+  "pattern": [
+    "W W",
+    "WLW",
+    " W "
+  ],
+  "key": {
+    "W": { "item": "minecraft:pink_wool" },
+    "L": { "doll": "luvdisc" }
+  },
+  "result": { "decorative": "luvdisc_cushion" }
+}

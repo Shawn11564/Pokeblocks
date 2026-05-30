@@ -5,7 +5,6 @@ import dev.mrshawn.pokeblocks.client.renderer.item.DecorativeItemRenderer;
 import dev.mrshawn.pokeblocks.item.DollRarity;
 import dev.mrshawn.pokeblocks.item.DollRarityOverrides;
 import dev.mrshawn.pokeblocks.pokemon.ModelFlag;
-import net.minecraft.ChatFormatting;
 import net.minecraft.client.renderer.BlockEntityWithoutLevelRenderer;
 import net.minecraft.core.component.DataComponents;
 import net.minecraft.nbt.CompoundTag;
@@ -63,12 +62,70 @@ public class DecorativeItem extends BlockItem implements GeoItem {
 
 	@Override
 	public void appendHoverText(ItemStack stack, Item.TooltipContext context, List<Component> tooltip, TooltipFlag flag) {
-		Set<ModelFlag> flags = getFlagsFromStack(stack);
-		DollRarity rarity = DollRarityOverrides.getOverride(definition.id(), flags);
+		DollRarity rarity = getRarity(stack);
 		if (rarity != null && rarity != DollRarity.NONE) {
 			tooltip.add(Component.empty());
 			tooltip.add(Component.literal(rarity.getDisplayName()).withStyle(rarity.getFormatting()));
 		}
+	}
+
+	/** Resolves the rarity of this decorative stack. See {@link #resolveRarity(String, Set)}. */
+	public DollRarity getRarity(ItemStack stack) {
+		return resolveRarity(definition.id(), getFlagsFromStack(stack));
+	}
+
+	/**
+	 * Resolves the rarity for a decorative variant. This is the single source of truth used by the
+	 * tooltip, the creative tab and the loot tables, so all three always agree.
+	 * <p>
+	 * An explicit {@code doll_rarity.json} override wins; otherwise the rarity falls back to the
+	 * highest rarity-bearing flag (e.g. {@code shiny} → Shiny, {@code gigantic} → Gigantic). A plain
+	 * decorative with no override and no rarity flags has {@link DollRarity#NONE} (no rarity shown).
+	 */
+	public static DollRarity resolveRarity(String id, Set<ModelFlag> flags) {
+		DollRarity override = DollRarityOverrides.getOverride(id, flags);
+		if (override != null) return override;
+		return DollRarity.getHighestRarity(flags);
+	}
+
+	/**
+	 * Returns the creative-menu variants of a decorative: one entry per valid flag combination
+	 * (shiny / gigantic / …), each with its NBT variants left at their default value. This is the
+	 * single source of truth for "which decorative variants the menu shows", so any new decorative
+	 * (or new flag on an existing one) appears automatically with no further wiring.
+	 * <p>
+	 * NBT variants (e.g. the eiscue head pile's {@code headCount}) are intentionally pinned to their
+	 * default value here, so only the default form (e.g. the single head pile) is shown — the other
+	 * counts remain obtainable in-world but don't clutter the menu.
+	 */
+	public static List<ItemStack> getAllVariants(DecorativeItem item, String blockEntityId, DecorativeDefinition definition) {
+		Map<String, String> defaultNbt = new LinkedHashMap<>();
+		for (DecorativeDefinition.NbtVariant variant : definition.nbtVariants()) {
+			defaultNbt.put(variant.nbtKey(), variant.defaultValue());
+		}
+
+		List<ItemStack> variants = new ArrayList<>();
+		for (Set<ModelFlag> flags : validFlagCombinations(definition.supportedFlags())) {
+			variants.add(createStack(item, blockEntityId, flags, defaultNbt));
+		}
+		return variants;
+	}
+
+	/** All valid flag combinations (power set of supported flags) minus mutually-exclusive conflicts. */
+	public static List<Set<ModelFlag>> validFlagCombinations(Set<ModelFlag> supportedFlags) {
+		List<ModelFlag> list = new ArrayList<>(supportedFlags);
+		list.sort(Comparator.comparingInt(ModelFlag::getSortOrder));
+
+		List<Set<ModelFlag>> result = new ArrayList<>();
+		int total = 1 << list.size();
+		for (int mask = 0; mask < total; mask++) {
+			Set<ModelFlag> combo = EnumSet.noneOf(ModelFlag.class);
+			for (int i = 0; i < list.size(); i++) {
+				if ((mask & (1 << i)) != 0) combo.add(list.get(i));
+			}
+			if (!ModelFlag.hasExclusionConflict(combo)) result.add(combo);
+		}
+		return result;
 	}
 
 	@Override

@@ -80,6 +80,16 @@ public class DecorativeRegistry {
 		return entry;
 	}
 
+	/** Looks up a registered decorative entry by its definition id (e.g. {@code "applin_basket"}). */
+	public static DecorativeEntry getById(String id) {
+		for (DecorativeEntry entry : ALL_ENTRIES) {
+			if (entry.definition().id().equals(id)) {
+				return entry;
+			}
+		}
+		return null;
+	}
+
 	public record DecorativeEntry(
 			DecorativeDefinition definition,
 			Supplier<DecorativeBlock> block,
