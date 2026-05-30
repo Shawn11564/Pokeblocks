@@ -5,6 +5,7 @@ import dev.mrshawn.pokeblocks.item.RarityScoreCalculator;
 import dev.mrshawn.pokeblocks.item.loot.LootInjector;
 import dev.mrshawn.pokeblocks.item.loot.LootTableItemMap;
 import dev.mrshawn.pokeblocks.platform.PokeblocksPlatform;
+import dev.mrshawn.pokeblocks.interaction.DollInteractions;
 import dev.mrshawn.pokeblocks.recipe.PokeblocksRecipeSerializers;
 import dev.mrshawn.pokeblocks.registry.*;
 import net.minecraft.world.level.storage.loot.LootPool;
@@ -68,5 +69,6 @@ public final class PokeblocksCommon {
 		ItemGroupRegistry.init();
 		SoundRegistry.init();
 		PokeblocksRecipeSerializers.init();
+		DollInteractions.init();
 	}
 }

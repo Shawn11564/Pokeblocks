@@ -212,7 +212,8 @@ public class PokeblocksConfig {
 					# Dolls with any of these flags will never appear in loot.""",
 					"""
 					[
-					  "gigantic"
+					  "gigantic",
+					  "noice"
 					]"""),
 			new KeyDef("loot", "excluded_dolls",
 					"""

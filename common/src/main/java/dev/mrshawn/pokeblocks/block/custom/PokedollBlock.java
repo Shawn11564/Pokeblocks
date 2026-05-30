@@ -5,6 +5,7 @@ import com.mojang.serialization.MapCodec;
 import dev.mrshawn.pokeblocks.PokeblocksCommon;
 import dev.mrshawn.pokeblocks.block.entity.custom.PokedollBlockEntity;
 import dev.mrshawn.pokeblocks.constants.ModSettings;
+import dev.mrshawn.pokeblocks.interaction.DollInteractionRegistry;
 import dev.mrshawn.pokeblocks.item.custom.PokedollItem;
 import dev.mrshawn.pokeblocks.pokemon.ModelFlag;
 import dev.mrshawn.pokeblocks.registry.BlockEntityRegistry;
@@ -133,32 +134,33 @@ public class PokedollBlock extends BaseEntityBlock implements EntityBlock, Simpl
 		return super.getCloneItemStack(level, pos, state);
 	}
 
-	// --- Interaction: honeycomb waxing ---
+	// --- Interaction: custom handlers + honeycomb waxing ---
 
 	@Override
 	protected ItemInteractionResult useItemOn(ItemStack stack, BlockState state, Level level, BlockPos pos,
 											  Player player, InteractionHand hand, BlockHitResult hit) {
 		if (level.isClientSide()) return ItemInteractionResult.PASS_TO_DEFAULT_BLOCK_INTERACTION;
 
-		if (stack.is(Items.HONEYCOMB) && level.getBlockEntity(pos) instanceof PokedollBlockEntity pokedoll) {
+		if (!(level.getBlockEntity(pos) instanceof PokedollBlockEntity pokedoll)) {
+			return ItemInteractionResult.PASS_TO_DEFAULT_BLOCK_INTERACTION;
+		}
+
+		// Pokemon-specific interactions registered via DollInteractionRegistry (e.g. shearing eiscue).
+		ItemInteractionResult custom = DollInteractionRegistry.dispatch(
+				pokedoll.getPokemon(), stack, state, level, pos, player, hand, pokedoll);
+		if (custom != null) return custom;
+
+		// Honeycomb waxing
+		if (stack.is(Items.HONEYCOMB)) {
 			if (pokedoll.isWaxed()) {
-				// Already waxed
 				return ItemInteractionResult.PASS_TO_DEFAULT_BLOCK_INTERACTION;
 			}
-
-			// Wax the doll
 			pokedoll.setWaxed(true);
-
 			if (!player.isCreative()) {
 				stack.shrink(1);
 			}
-
-			// Play wax on sound (same as copper waxing)
 			level.playSound(null, pos, SoundEvents.HONEYCOMB_WAX_ON, SoundSource.BLOCKS, 1.0f, 1.0f);
-
-			// Spawn wax particles
 			spawnWaxParticles(level, pos, 10);
-
 			return ItemInteractionResult.SUCCESS;
 		}
 

@@ -66,15 +66,18 @@ public class PokedollItemModel extends GeoModel<PokedollItem> {
             }
         }
 
-        activeFlags.sort(Comparator.comparingInt(ModelFlag::getSortOrder));
-
+        // Model suffix: ascending sort order (matches .geo.json file naming convention)
+        List<ModelFlag> forModel = new ArrayList<>(activeFlags);
+        forModel.sort(Comparator.comparingInt(ModelFlag::getSortOrder));
         StringBuilder modelSuffix = new StringBuilder();
-        StringBuilder textureSuffix = new StringBuilder();
+        for (ModelFlag flag : forModel) modelSuffix.append(flag.getModelSuffix());
 
-        for (ModelFlag flag : activeFlags) {
-            modelSuffix.append(flag.getModelSuffix());
-            textureSuffix.append(flag.getTextureSuffix());
-        }
+        // Texture suffix: descending sort order so variant/shape flags (e.g. noice, spiky) precede
+        // rarity flags (e.g. shiny), matching the file naming convention (_noice_shiny not _shiny_noice).
+        List<ModelFlag> forTexture = new ArrayList<>(activeFlags);
+        forTexture.sort(Comparator.comparingInt(ModelFlag::getSortOrder).reversed());
+        StringBuilder textureSuffix = new StringBuilder();
+        for (ModelFlag flag : forTexture) textureSuffix.append(flag.getTextureSuffix());
 
         return modelSuffix + "|" + textureSuffix;
     }

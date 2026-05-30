@@ -67,22 +67,24 @@ public class PokedollModel extends DefaultedBlockGeoModel<PokedollBlockEntity> {
 		if (animatable == null) return "";
 
 		List<ModelFlag> activeFlags = new ArrayList<>();
-
 		for (ModelFlag flag : ModelFlag.values()) {
 			if (animatable.getFlag(flag) && (!flag.getModelSuffix().isEmpty() || !flag.getTextureSuffix().isEmpty())) {
 				activeFlags.add(flag);
 			}
 		}
 
-		activeFlags.sort(Comparator.comparingInt(ModelFlag::getSortOrder));
-
+		// Model suffix: ascending sort order (matches .geo.json file naming convention)
+		List<ModelFlag> forModel = new ArrayList<>(activeFlags);
+		forModel.sort(Comparator.comparingInt(ModelFlag::getSortOrder));
 		StringBuilder modelSuffix = new StringBuilder();
-		StringBuilder textureSuffix = new StringBuilder();
+		for (ModelFlag flag : forModel) modelSuffix.append(flag.getModelSuffix());
 
-		for (ModelFlag flag : activeFlags) {
-			modelSuffix.append(flag.getModelSuffix());
-			textureSuffix.append(flag.getTextureSuffix());
-		}
+		// Texture suffix: descending sort order so variant/shape flags (e.g. noice, spiky) precede
+		// rarity flags (e.g. shiny), matching the file naming convention (_noice_shiny not _shiny_noice).
+		List<ModelFlag> forTexture = new ArrayList<>(activeFlags);
+		forTexture.sort(Comparator.comparingInt(ModelFlag::getSortOrder).reversed());
+		StringBuilder textureSuffix = new StringBuilder();
+		for (ModelFlag flag : forTexture) textureSuffix.append(flag.getTextureSuffix());
 
 		return modelSuffix + "|" + textureSuffix;
 	}
@@ -124,10 +126,11 @@ public class PokedollModel extends DefaultedBlockGeoModel<PokedollBlockEntity> {
 					if (rm.getResource(variantLoc).isPresent()) {
 						return variantLoc;
 					}
-				} catch (Exception ignored) {}
-
-				// Variant model doesn't exist — cache this and fall back to base
-				missingVariantModels.add(variantPath);
+					// Confirmed absent — cache so we don't hit the RM every frame
+					missingVariantModels.add(variantPath);
+				} catch (Exception ignored) {
+					// Transient error — don't cache, will retry next frame
+				}
 			}
 		}
 
@@ -144,7 +147,9 @@ public class PokedollModel extends DefaultedBlockGeoModel<PokedollBlockEntity> {
 		ResourceManager rm = Minecraft.getInstance().getResourceManager();
 		String pokemon = getValidatedPokemon(animatable.getPokemon());
 
-		// Collect active flags that have texture suffixes, sorted by priority
+		// Collect active flags that have texture suffixes. Sorted descending so variant/shape flags
+		// (higher sort order) precede rarity flags (lower sort order), matching the file naming
+		// convention where e.g. _noice comes before _shiny in the combined suffix.
 		List<ModelFlag> activeTextureFlags = new ArrayList<>();
 		if (animatable != null) {
 			for (ModelFlag flag : ModelFlag.values()) {
@@ -152,13 +157,11 @@ public class PokedollModel extends DefaultedBlockGeoModel<PokedollBlockEntity> {
 					activeTextureFlags.add(flag);
 				}
 			}
-			activeTextureFlags.sort(Comparator.comparingInt(ModelFlag::getSortOrder));
+			activeTextureFlags.sort(Comparator.comparingInt(ModelFlag::getSortOrder).reversed());
 		}
 
-		// Generate all flag subsets from most flags to fewest.
-		// For flags [posed, shiny] this produces: [posed, shiny], [shiny], [posed], []
-		// This ensures we try the most specific texture first and progressively
-		// strip flags, preferring to keep higher-priority (higher sort order) flags.
+		// Generate all flag subsets from most flags to fewest. With descending sort the full subset
+		// produces the correct combined suffix (e.g. _noice_shiny), then individual fallbacks follow.
 		List<List<ModelFlag>> subsets = generateSubsetsDescending(activeTextureFlags);
 
 		for (List<ModelFlag> subset : subsets) {
