@@ -1,5 +1,6 @@
 package dev.mrshawn.pokeblocks.interaction;
 
+import dev.mrshawn.pokeblocks.block.custom.PokedollBlock;
 import dev.mrshawn.pokeblocks.block.entity.custom.PokedollBlockEntity;
 import net.minecraft.core.BlockPos;
 import net.minecraft.world.InteractionHand;
