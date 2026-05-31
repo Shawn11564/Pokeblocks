@@ -9,5 +9,22 @@
   "itemgroup.pokeblocks.gigantics": "Pokeblocks - Gigantics",
   "itemgroup.pokeblocks.misc": "Pokeblocks - Misc",
 
+  "block.pokeblocks.pokeblock_bulbasaur": "Bulbasaur Block",
+  "block.pokeblocks.pokeblock_shiny_bulbasaur": "Shiny Bulbasaur Block",
+  "block.pokeblocks.pokeblock_charmander": "Charmander Block",
+  "block.pokeblocks.pokeblock_shiny_charmander": "Shiny Charmander Block",
+  "block.pokeblocks.pokeblock_squirtle": "Squirtle Block",
+  "block.pokeblocks.pokeblock_shiny_squirtle": "Shiny Squirtle Block",
+
+  "item.pokeblocks.poke_coin": "Poke Coin",
+  "item.pokeblocks.poke_egg": "Poke Egg",
+  "item.pokeblocks.nickel": "Nickel",
+  "item.pokeblocks.dime": "Dime",
+  "item.pokeblocks.raid_pass": "Raid Pass",
+  "item.pokeblocks.raid_voucher": "Raid Voucher",
+  "item.pokeblocks.radiant_voucher": "Radiant Voucher",
+  "item.pokeblocks.summer_raid_soul": "Summer Raid Soul",
+  "item.pokeblocks.summer_token": "Summer Token",
+
   "subtitles.pokeblocks.pokedoll_squeak": "Pokedoll squeaks"
 }

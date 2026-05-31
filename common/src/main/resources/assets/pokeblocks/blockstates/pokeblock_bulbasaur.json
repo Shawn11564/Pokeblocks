@@ -1,0 +1,8 @@
+{
+  "variants": {
+    "facing=south": { "model": "pokeblocks:block/pokeblock_bulbasaur" },
+    "facing=west":  { "model": "pokeblocks:block/pokeblock_bulbasaur", "y": 90 },
+    "facing=north": { "model": "pokeblocks:block/pokeblock_bulbasaur", "y": 180 },
+    "facing=east":  { "model": "pokeblocks:block/pokeblock_bulbasaur", "y": 270 }
+  }
+}

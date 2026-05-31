@@ -91,6 +91,14 @@ public final class ItemGroupRegistry {
 						entries.accept(variant);
 					}
 				}
+				// Pokeblock cube blocks
+				for (Supplier<net.minecraft.world.item.Item> item : PokeBlockRegistry.ITEMS) {
+					entries.accept(new ItemStack(item.get()));
+				}
+				// Misc items (poke coin, vouchers, etc.)
+				for (Supplier<net.minecraft.world.item.Item> item : ItemRegistry.MISC_ITEMS) {
+					entries.accept(new ItemStack(item.get()));
+				}
 			})
 			.build());
 }

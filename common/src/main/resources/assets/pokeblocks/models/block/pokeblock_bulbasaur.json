@@ -1,0 +1,21 @@
+{
+  "parent": "minecraft:block/block",
+  "textures": {
+    "all": "pokeblocks:block/pokeblock_bulbasaur_texture",
+    "particle": "pokeblocks:block/pokeblock_bulbasaur_texture"
+  },
+  "elements": [
+    {
+      "from": [0, 0, 0],
+      "to": [16, 16, 16],
+      "faces": {
+        "up":    { "uv": [4, 0, 8, 4],   "texture": "#all", "cullface": "up" },
+        "down":  { "uv": [8, 0, 12, 4],  "texture": "#all", "cullface": "down" },
+        "north": { "uv": [12, 4, 16, 8], "texture": "#all", "cullface": "north" },
+        "south": { "uv": [4, 4, 8, 8],   "texture": "#all", "cullface": "south" },
+        "west":  { "uv": [0, 4, 4, 8],   "texture": "#all", "cullface": "west" },
+        "east":  { "uv": [8, 4, 12, 8],  "texture": "#all", "cullface": "east" }
+      }
+    }
+  ]
+}

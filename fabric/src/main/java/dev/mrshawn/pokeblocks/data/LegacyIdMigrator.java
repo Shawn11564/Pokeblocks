@@ -24,10 +24,9 @@ import java.util.Set;
  * <h2>Output format</h2>
  * The {@link LegacyVariant#strings} + true-only {@link LegacyVariant#trueFlags} are exactly the
  * canonical, minimal tag that {@code PokeblocksItemData} writes for freshly-minted content: a content
- * key ({@code pokemon} for dolls / placeholders, {@code figurine} for figurines, none for decoratives)
- * and only the flags that are {@code true}. Producing the same bytes is what lets a migrated item stack
- * stack with a {@code /give}-n one. The {@code id} key is intentionally <b>not</b> included — the rename
- * fixes own the id.
+ * key ({@code pokemon} for dolls, {@code figurine} for figurines, none for decoratives) and only the
+ * flags that are {@code true}. Producing the same bytes is what lets a migrated item stack stack with a
+ * {@code /give}-n one. The {@code id} key is intentionally <b>not</b> included — the rename fixes own the id.
  *
  * <h2>Legacy id grammar</h2>
  * <ul>
@@ -38,11 +37,11 @@ import java.util.Set;
  *   <li><b>Decoratives:</b> {@code [gigantic_][shiny_]<base>} where {@code <base>} is one of
  *       {@code applin_basket, eiscue_head_pile, luvdisc_cushion, magikarp_fishbowl, pokemon_trophy}
  *       → {@code pokeblocks:<base>}, flags from the prefixes.</li>
- *   <li><b>Gaps (no new equivalent yet):</b> the 6 {@code pokeblock_*} blocks and the 9 misc items map to
- *       a placeholder substitute pokedoll so existing data is not silently destroyed. <b>TODO:</b> once
- *       those are re-added as native content, remap them to their real new ids (see the plan's post-task
- *       follow-ups).</li>
  * </ul>
+ * The legacy {@code pokeblock_*} cube blocks and the misc items (poke coin, vouchers, …) need no entry
+ * here: they were re-added natively under their original ids ({@code PokeBlockRegistry},
+ * {@code ItemRegistry.MISC_ITEMS}), so their ids are unchanged and load directly — {@link #migrate}
+ * returns empty for them and the rename fixes leave them alone.
  */
 public final class LegacyIdMigrator {
 
@@ -76,23 +75,11 @@ public final class LegacyIdMigrator {
         SUFFIX_FLAGS.put("_family", ModelFlag.FAMILY);
     }
 
-    /** Old items with no new equivalent yet; mapped to the placeholder substitute pokedoll. */
-    private static final Set<String> MISC_ITEMS = Set.of(
-            "poke_coin",
-            "poke_egg",
-            "nickel",
-            "dime",
-            "raid_pass",
-            "raid_voucher",
-            "radiant_voucher",
-            "summer_raid_soul",
-            "summer_token"
-    );
-
     /**
      * Maps a legacy id (with or without the {@code pokeblocks:} namespace) to its new id + variant NBT,
-     * or {@link Optional#empty()} if the id is not a recognized legacy Pokeblocks id (including ids in
-     * other namespaces, which are left untouched).
+     * or {@link Optional#empty()} if the id is not a recognized legacy Pokeblocks id that needs migrating
+     * (ids in other namespaces, and the natively re-added {@code pokeblock_*} / misc items whose ids are
+     * unchanged, are left untouched).
      */
     public static Optional<LegacyVariant> migrate(String legacyId) {
         if (legacyId == null) return Optional.empty();
@@ -106,10 +93,7 @@ public final class LegacyIdMigrator {
         result = tryDoll(id);
         if (result.isPresent()) return result;
 
-        result = tryDecorative(id);
-        if (result.isPresent()) return result;
-
-        return tryPlaceholder(id);
+        return tryDecorative(id);
     }
 
     private static Optional<LegacyVariant> tryFigurine(String id) {
@@ -189,15 +173,6 @@ public final class LegacyIdMigrator {
 
         if (DECORATIVE_IDS.contains(core)) {
             return Optional.of(new LegacyVariant(newId(core), Map.of(), flags));
-        }
-        return Optional.empty();
-    }
-
-    private static Optional<LegacyVariant> tryPlaceholder(String id) {
-        if (id.startsWith("pokeblock_") || MISC_ITEMS.contains(id)) {
-            // TODO: remap to the real re-added blocks/items before release (see plan post-task list).
-            return Optional.of(new LegacyVariant(newId(ModSettings.DOLL_ID),
-                    Map.of(PokeblocksItemData.KEY_POKEMON, ModSettings.DEFAULT_POKEMON), List.of()));
         }
         return Optional.empty();
     }
