@@ -9,7 +9,6 @@ import com.mojang.brigadier.context.CommandContext;
 import com.mojang.brigadier.suggestion.SuggestionProvider;
 import com.mojang.serialization.JsonOps;
 import dev.mrshawn.pokeblocks.PokeblocksCommon;
-import dev.mrshawn.pokeblocks.item.loot.LootInjector;
 import dev.mrshawn.pokeblocks.item.loot.LootTableItemMap;
 import dev.mrshawn.pokeblocks.pokemon.ModelFlag;
 import net.minecraft.commands.CommandSourceStack;
@@ -108,7 +107,8 @@ public class IntableSearchCMD {
 	 * <p>
 	 * The Pokeblocks injected pool is not reliably reproduced when the table is re-encoded
 	 * via {@code LootTable.DIRECT_CODEC}, so those entries are searched directly from
-	 * {@link PokeblocksCommon#getLootEntries()} when the queried table is configured for injection.
+	 * {@link PokeblocksCommon#getLootEntriesFor(ResourceLocation)}, which returns exactly the
+	 * entries (default pool plus any matching loot group) that can drop from this table.
 	 */
 	private static List<Component> searchLootTable(LootTable table, ResourceLocation tableId, String searchString, MinecraftServer server) {
 		List<Component> results = new ArrayList<>();
@@ -140,9 +140,11 @@ public class IntableSearchCMD {
 			}
 		}
 
-		// Directly search Pokeblocks loot entries (bypasses codec re-encoding)
-		if (LootInjector.shouldInject(tableId)) {
-			for (LootTableItemMap.LootEntry pbEntry : PokeblocksCommon.getLootEntries()) {
+		// Directly search Pokeblocks loot entries (bypasses codec re-encoding).
+		// getLootEntriesFor resolves the default pool plus any loot group that targets this table.
+		List<LootTableItemMap.LootEntry> injectable = PokeblocksCommon.getLootEntriesFor(tableId);
+		if (!injectable.isEmpty()) {
+			for (LootTableItemMap.LootEntry pbEntry : injectable) {
 				ResourceLocation itemKey = BuiltInRegistries.ITEM.getKey(pbEntry.stack().getItem());
 				String itemId = itemKey != null ? itemKey.toString() : "";
 

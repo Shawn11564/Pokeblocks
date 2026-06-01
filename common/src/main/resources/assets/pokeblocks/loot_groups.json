@@ -1,0 +1,30 @@
+{
+  "_comment": "Routes specific dolls into their own loot pool injected ONLY into the loot tables listed for the group, instead of into the default global pool. Any doll assigned to a group is automatically removed from the default loot pool. 'loot_tables' accepts full loot table IDs or glob patterns using '*' (e.g. 'minecraft:archaeology/*'). 'dolls' uses the same format as the config's excluded_dolls: 'pokemon' matches all variants, 'pokemon flag1 flag2' matches one specific variant. 'drop_chance' (optional, 0.0-1.0) overrides the global [loot] drop_chance for that group/tier only. Within a group, dolls are weighted by their rarity. PER-TABLE RARITY GATING: instead of 'loot_tables'+'dolls' directly, a group may define 'tiers' — an ordered list of { name, loot_tables, dolls, drop_chance? }. Each tier is its own pool, so a rich table that matches several tiers receives each matching tier's pool. Put common dolls in a tier targeting all tables and rarer dolls in a tier targeting only the richer tables, so rarer dolls only appear when brushing rarer suspicious blocks. Tiers inherit the group's drop_chance unless they set their own.",
+  "groups": {
+    "archaeology": {
+      "drop_chance": 0.05,
+      "tiers": [
+        {
+          "name": "common",
+          "loot_tables": [
+            "minecraft:archaeology/*"
+          ],
+          "dolls": [
+            "kabuto"
+          ]
+        },
+        {
+          "name": "rare",
+          "loot_tables": [
+            "minecraft:archaeology/trail_ruins_rare",
+            "minecraft:archaeology/desert_well"
+          ],
+          "drop_chance": 0.03,
+          "dolls": [
+            "kabutops"
+          ]
+        }
+      ]
+    }
+  }
+}

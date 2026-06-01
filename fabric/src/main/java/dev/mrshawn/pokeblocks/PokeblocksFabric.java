@@ -31,11 +31,8 @@ public final class PokeblocksFabric implements ModInitializer {
 		ServerLifecycleEvents.SERVER_STARTED.register(PokeblocksServerLifecycle::onServerStarted);
 
 		LootTableEvents.MODIFY.register((key, tableBuilder, source, registries) -> {
-			if (LootInjector.shouldInject(key.location())) {
-				LootPool pool = PokeblocksCommon.getLootPool();
-				if (pool != null) {
-					tableBuilder.pool(pool);
-				}
+			for (LootPool pool : LootInjector.poolsFor(key.location())) {
+				tableBuilder.pool(pool);
 			}
 		});
 

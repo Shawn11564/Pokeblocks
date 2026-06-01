@@ -5,6 +5,7 @@ import dev.mrshawn.pokeblocks.item.DollRarityOverrides;
 import dev.mrshawn.pokeblocks.item.FigurineNameOverrides;
 import dev.mrshawn.pokeblocks.item.FigurineTagOverrides;
 import dev.mrshawn.pokeblocks.item.RarityWeightConfig;
+import dev.mrshawn.pokeblocks.item.loot.LootGroupConfig;
 import dev.mrshawn.pokeblocks.resourcepack.CustomPackManager;
 import net.minecraft.server.MinecraftServer;
 
@@ -37,6 +38,7 @@ public final class PokeblocksServerLifecycle {
             FigurineNameOverrides.initialize(serverDir);
             FigurineTagOverrides.initialize(serverDir);
             RarityWeightConfig.initialize(serverDir);
+            LootGroupConfig.initialize(serverDir);
 
             // MUST run before resource loading so that custom-pack pokemon
             // (e.g. "alien") are in PokemonRegistry when LootTableLoadEvent fires.

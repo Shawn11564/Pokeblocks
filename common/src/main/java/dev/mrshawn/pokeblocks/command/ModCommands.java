@@ -12,6 +12,7 @@ public class ModCommands {
 		RebuildPackCMD.register(dispatcher);
 		ReloadRarityCMD.register(dispatcher);
 		ReloadWeightsCMD.register(dispatcher);
+		ReloadLootGroupsCMD.register(dispatcher);
 		IntableSearchCMD.register(dispatcher);
     }
 }

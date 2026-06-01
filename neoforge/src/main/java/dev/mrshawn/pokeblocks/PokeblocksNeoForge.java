@@ -68,11 +68,8 @@ public final class PokeblocksNeoForge {
 
 	@SubscribeEvent
 	public void onLootTableLoad(LootTableLoadEvent event) {
-		if (LootInjector.shouldInject(event.getName())) {
-			LootPool pool = PokeblocksCommon.getLootPool();
-			if (pool != null) {
-				event.getTable().addPool(pool);
-			}
+		for (LootPool pool : LootInjector.poolsFor(event.getName())) {
+			event.getTable().addPool(pool);
 		}
 	}
 

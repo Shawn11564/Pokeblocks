@@ -1,5 +1,6 @@
 package dev.mrshawn.pokeblocks.item.loot;
 
+import dev.mrshawn.pokeblocks.PokeblocksCommon;
 import dev.mrshawn.pokeblocks.config.PokeblocksConfig;
 import net.minecraft.core.component.DataComponents;
 import net.minecraft.resources.ResourceLocation;
@@ -10,15 +11,14 @@ import net.minecraft.world.level.storage.loot.functions.SetComponentsFunction;
 import net.minecraft.world.level.storage.loot.predicates.LootItemRandomChanceCondition;
 import net.minecraft.world.level.storage.loot.providers.number.ConstantValue;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.regex.Pattern;
 
 public class LootInjector {
 
-	public static LootPool buildPool(List<LootTableItemMap.LootEntry> entries) {
+	public static LootPool buildPool(List<LootTableItemMap.LootEntry> entries, float dropChance) {
 		if (entries == null || entries.isEmpty()) return null;
-
-		float dropChance = PokeblocksConfig.getLootDropChance();
 
 		LootPool.Builder pool = LootPool.lootPool()
 				.setRolls(ConstantValue.exactly(1))
@@ -43,7 +43,36 @@ public class LootInjector {
 		return pool.build();
 	}
 
-	public static boolean shouldInject(ResourceLocation tableId) {
+	/**
+	 * Returns every pool that should be added to the given loot table: the default global pool
+	 * if the table is one of the standard configured tables, plus the pool of any named
+	 * {@link LootGroup} (from {@code loot_groups.json}) whose tables match. Each returned pool
+	 * rolls independently against its own drop chance.
+	 */
+	public static List<LootPool> poolsFor(ResourceLocation tableId) {
+		List<LootPool> pools = new ArrayList<>();
+
+		if (matchesDefaultTables(tableId)) {
+			LootPool pool = PokeblocksCommon.getLootPool(LootTableItemMap.DEFAULT_GROUP);
+			if (pool != null) pools.add(pool);
+		}
+
+		for (LootGroup group : LootGroupConfig.getGroups()) {
+			if (group.matchesTable(tableId)) {
+				LootPool pool = PokeblocksCommon.getLootPool(group.name());
+				if (pool != null) pools.add(pool);
+			}
+		}
+
+		return pools;
+	}
+
+	/**
+	 * Returns true if the table is one of the standard configured loot tables (the default
+	 * global pool's targets) — i.e. an explicit entry or wildcard match in the {@code [loot]}
+	 * config. This intentionally ignores named loot groups.
+	 */
+	public static boolean matchesDefaultTables(ResourceLocation tableId) {
 		if (PokeblocksConfig.getLootTables().contains(tableId)) return true;
 		String tableStr = tableId.toString();
 		for (Pattern pattern : PokeblocksConfig.getLootTableWildcards()) {

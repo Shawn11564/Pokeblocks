@@ -466,7 +466,7 @@ public class PokeblocksConfig {
 		return excludedLootDolls.contains(DollRarityOverrides.buildKey(pokemon, flags));
 	}
 
-	private static Pattern globToPattern(String glob) {
+	public static Pattern globToPattern(String glob) {
 		StringBuilder regex = new StringBuilder("^");
 		for (int i = 0; i < glob.length(); i++) {
 			char c = glob.charAt(i);

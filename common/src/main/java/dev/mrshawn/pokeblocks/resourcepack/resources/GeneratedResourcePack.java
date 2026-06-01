@@ -17,11 +17,12 @@ public class GeneratedResourcePack {
     public static Map<String, String> generateAll() {
         Map<String, String> resources = new LinkedHashMap<>();
 
-        String blockModel = GSON.toJson(blockModelJson());
-        String itemModel = GSON.toJson(itemModelJson());
+        String blockModel    = GSON.toJson(blockModelJson());
+        String dollItemModel = GSON.toJson(dollItemModelJson());
+        String itemModel     = GSON.toJson(itemModelJson());
 
-        // Pokedoll
-        addBlock(resources, "pokedoll", blockModel, itemModel);
+        // Pokedoll – uses the doll-specific display transforms (scale 0.5; gigantic handled by renderer)
+        addBlock(resources, "pokedoll", blockModel, dollItemModel);
 
         // Figurine
         addBlock(resources, "figurine", blockModel, itemModel);
@@ -57,6 +58,43 @@ public class GeneratedResourcePack {
         return json;
     }
 
+    /**
+     * Display transforms for pokedoll items.
+     * All hand/ground contexts use scale 0.5; GUI also uses 0.5 with a -8 vertical offset.
+     * Gigantic dolls receive additional renderer-based scaling on top of these values.
+     */
+    private static Map<String, Object> dollItemModelJson() {
+        Map<String, Object> json = new LinkedHashMap<>();
+        json.put("parent", "builtin/entity");
+
+        Map<String, Object> display = new LinkedHashMap<>();
+
+        Map<String, Object> hand = new LinkedHashMap<>();
+        hand.put("rotation", new int[]{0, 135, 0});
+        hand.put("scale", new double[]{0.5, 0.5, 0.5});
+
+        Map<String, Object> ground = new LinkedHashMap<>();
+        ground.put("scale", new double[]{0.5, 0.5, 0.5});
+
+        Map<String, Object> gui = new LinkedHashMap<>();
+        gui.put("rotation", new int[]{0, 135, 0});
+        gui.put("scale", new double[]{0.5, 0.5, 0.5});
+        gui.put("translation", new int[]{0, -8, 0});
+
+        display.put("thirdperson_righthand", hand);
+        display.put("thirdperson_lefthand", hand);
+        display.put("firstperson_righthand", hand);
+        display.put("firstperson_lefthand", hand);
+        display.put("ground", ground);
+        display.put("gui", gui);
+
+        json.put("display", display);
+        return json;
+    }
+
+    /**
+     * Default display transforms for non-doll items (figurines, decorative blocks).
+     */
     private static Map<String, Object> itemModelJson() {
         Map<String, Object> json = new LinkedHashMap<>();
         json.put("parent", "builtin/entity");
