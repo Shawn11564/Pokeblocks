@@ -12,7 +12,9 @@ import net.minecraft.world.level.block.entity.BlockEntityType;
 import java.util.*;
 import java.util.function.Supplier;
 
-public class DecorativeRegistry {
+public final class DecorativeRegistry {
+	private DecorativeRegistry() {}
+
 	public static void init() {}
 
 	public static final List<DecorativeEntry> ALL_ENTRIES = new ArrayList<>();

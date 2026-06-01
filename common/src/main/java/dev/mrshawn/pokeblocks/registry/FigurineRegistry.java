@@ -1,18 +1,27 @@
 package dev.mrshawn.pokeblocks.registry;
 
-import java.net.URI;
-import java.net.URL;
-import java.nio.file.*;
-import java.util.*;
+import dev.mrshawn.pokeblocks.PokeblocksCommon;
+import net.minecraft.client.Minecraft;
+import net.minecraft.server.packs.resources.ResourceManager;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+import java.util.LinkedHashSet;
+import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
-import java.util.stream.Stream;
 
-public class FigurineRegistry {
+public final class FigurineRegistry {
+	// Standalone logger (see AssetScanner): this class scans during static init, reachable from
+	// unit tests that don't bootstrap a platform, so it must not touch PokeblocksCommon.
+	private static final Logger LOGGER = LoggerFactory.getLogger(PokeblocksCommon.MOD_ID);
+
+	private FigurineRegistry() {}
+
 	public static void init() {}
 
-	public static final Map<String, Boolean> ALL_FIGURINES = new ConcurrentHashMap<>();
+	public static final Set<String> ALL_FIGURINES = ConcurrentHashMap.newKeySet();
 
 	static final Pattern MODEL_PATTERN = Pattern.compile(
 			"^(.+)_figurine\\.geo\\.json$", Pattern.CASE_INSENSITIVE
@@ -26,50 +35,16 @@ public class FigurineRegistry {
 	}
 
 	private static void scanBuiltInAssets() {
-		Set<String> modelFiles = new TreeSet<>();
-		Set<String> textureFiles = new TreeSet<>();
-
-		scanClasspathDirectory("assets/pokeblocks/geo/block", modelFiles, "_figurine.geo.json");
-		scanClasspathDirectory("assets/pokeblocks/textures/block", textureFiles, "_figurine");
+		Set<String> modelFiles = AssetScanner.scanClasspath("assets/pokeblocks/geo/block", n -> n.contains("_figurine.geo.json"));
+		Set<String> textureFiles = AssetScanner.scanClasspath("assets/pokeblocks/textures/block", n -> n.contains("_figurine"));
 
 		if (!modelFiles.isEmpty() || !textureFiles.isEmpty()) {
 			registerFromFileNames(modelFiles, textureFiles, "built-in");
 		}
 	}
 
-	private static void scanClasspathDirectory(String resourceDir, Set<String> output, String contains) {
-		try {
-			URL dirUrl = FigurineRegistry.class.getClassLoader().getResource(resourceDir);
-			if (dirUrl == null) return;
-
-			URI uri = dirUrl.toURI();
-			Path dirPath;
-
-			if (uri.getScheme().equals("jar")) {
-				FileSystem fs;
-				try {
-					fs = FileSystems.getFileSystem(uri);
-				} catch (FileSystemNotFoundException e) {
-					fs = FileSystems.newFileSystem(uri, Collections.emptyMap());
-				}
-				dirPath = fs.getPath(resourceDir);
-			} else {
-				dirPath = Paths.get(uri);
-			}
-
-			try (Stream<Path> walk = Files.walk(dirPath, 1)) {
-				walk.filter(Files::isRegularFile)
-						.map(p -> p.getFileName().toString())
-						.filter(name -> name.toLowerCase().contains(contains))
-						.forEach(output::add);
-			}
-		} catch (Exception e) {
-			System.err.println("[Pokeblocks] Failed to scan classpath for figurines in '" + resourceDir + "': " + e);
-		}
-	}
-
 	public static boolean isRegistered(String name) {
-		return ALL_FIGURINES.containsKey(name.toLowerCase());
+		return ALL_FIGURINES.contains(name.toLowerCase());
 	}
 
 	public static void registerFromFileNames(Set<String> modelFiles, Set<String> textureFiles, String source) {
@@ -78,7 +53,7 @@ public class FigurineRegistry {
 		for (String filename : modelFiles) {
 			Matcher m = MODEL_PATTERN.matcher(filename);
 			if (!m.matches()) {
-				System.out.println("[Pokeblocks] Unrecognized figurine model: " + filename);
+				LOGGER.info("Unrecognized figurine model: {}", filename);
 				continue;
 			}
 			modelNames.add(m.group(1).toLowerCase());
@@ -94,47 +69,29 @@ public class FigurineRegistry {
 		int newCount = 0;
 		for (String name : modelNames) {
 			if (!textureNames.contains(name)) {
-				System.err.println("[Pokeblocks] Skipping figurine '" + name + "': missing texture (expected " + name + "_figurine_texture.png or " + name + "_figurine.png)");
+				LOGGER.warn("Skipping figurine '{}': missing texture (expected {}_figurine_texture.png or {}_figurine.png)", name, name, name);
 				continue;
 			}
-			if (!ALL_FIGURINES.containsKey(name)) {
+			if (ALL_FIGURINES.add(name)) {
 				newCount++;
 			}
-			ALL_FIGURINES.put(name, true);
 		}
 
 		// Warn about textures without models
 		for (String name : textureNames) {
 			if (!modelNames.contains(name)) {
-				System.out.println("[Pokeblocks] Figurine texture for '" + name + "' has no matching model");
+				LOGGER.info("Figurine texture for '{}' has no matching model", name);
 			}
 		}
 
-		System.out.println("[Pokeblocks] " + source + " figurine scan: " + modelNames.size() + " found (" + newCount + " new)");
+		LOGGER.info("{} figurine scan: {} found ({} new)", source, modelNames.size(), newCount);
 	}
 
 	public static void scanAndRegisterFromResources() {
-		net.minecraft.server.packs.resources.ResourceManager resourceManager =
-				net.minecraft.client.Minecraft.getInstance().getResourceManager();
+		ResourceManager resourceManager = Minecraft.getInstance().getResourceManager();
 
-		Set<String> modelFileNames = new TreeSet<>();
-		Set<String> textureFileNames = new TreeSet<>();
-
-		resourceManager.listResources("geo/block", loc -> loc.getPath().endsWith(".geo.json"))
-				.keySet().stream()
-				.filter(loc -> loc.getNamespace().equals("pokeblocks"))
-				.forEach(loc -> {
-					String filename = loc.getPath().substring(loc.getPath().lastIndexOf('/') + 1);
-					if (filename.contains("_figurine")) modelFileNames.add(filename);
-				});
-
-		resourceManager.listResources("textures/block", loc -> loc.getPath().endsWith(".png"))
-				.keySet().stream()
-				.filter(loc -> loc.getNamespace().equals("pokeblocks"))
-				.forEach(loc -> {
-					String filename = loc.getPath().substring(loc.getPath().lastIndexOf('/') + 1);
-					if (filename.contains("_figurine")) textureFileNames.add(filename);
-				});
+		Set<String> modelFileNames = AssetScanner.listResourceFilenames(resourceManager, "geo/block", ".geo.json", f -> f.contains("_figurine"));
+		Set<String> textureFileNames = AssetScanner.listResourceFilenames(resourceManager, "textures/block", ".png", f -> f.contains("_figurine"));
 
 		registerFromFileNames(modelFileNames, textureFileNames, "resource");
 	}

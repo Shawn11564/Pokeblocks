@@ -9,6 +9,8 @@ import net.minecraft.world.level.block.Block;
 import java.util.function.Supplier;
 
 public final class BlockRegistry {
+	private BlockRegistry() {}
+
 	public static void init() {}
 
 	public static final Supplier<PokedollBlock> POKEDOLL_BLOCK = registerBlock(ModSettings.DOLL_ID, PokedollBlock::new);

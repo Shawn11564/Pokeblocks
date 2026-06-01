@@ -1,13 +1,13 @@
 package dev.mrshawn.pokeblocks.resourcepack;
 
+import dev.mrshawn.pokeblocks.PokeblocksCommon;
+import dev.mrshawn.pokeblocks.registry.AssetScanner;
 import dev.mrshawn.pokeblocks.registry.FigurineRegistry;
 import dev.mrshawn.pokeblocks.registry.PokemonRegistry;
 import net.minecraft.server.MinecraftServer;
 
 import java.nio.file.Files;
 import java.nio.file.Path;
-import java.util.Set;
-import java.util.TreeSet;
 
 public class CustomPackManager {
 	private static Path cachedPack = null;
@@ -24,26 +24,12 @@ public class CustomPackManager {
 			PackBuildResult result = CustomPackBuilder.scanFiles(gameDir);
 			if (result == null) return;
 
-			Set<String> pokedollModels = new TreeSet<>();
-			Set<String> pokedollTextures = new TreeSet<>();
-			Set<String> pokedollAnimations = new TreeSet<>();
-			Set<String> figurineModels = new TreeSet<>();
-			Set<String> figurineTextures = new TreeSet<>();
+			AssetScanner.SplitAssets assets = AssetScanner.split(result.modelFiles(), result.textureFiles(), result.animationFiles());
 
-			for (String f : result.modelFiles()) {
-				if (f.contains("_figurine")) figurineModels.add(f);
-				else pokedollModels.add(f);
-			}
-			for (String f : result.textureFiles()) {
-				if (f.contains("_figurine")) figurineTextures.add(f);
-				else pokedollTextures.add(f);
-			}
-			pokedollAnimations.addAll(result.animationFiles());
-
-			PokemonRegistry.registerFromFileNames(pokedollModels, pokedollTextures, pokedollAnimations, "custom pack (early)");
-			FigurineRegistry.registerFromFileNames(figurineModels, figurineTextures, "custom pack (early)");
+			PokemonRegistry.registerFromFileNames(assets.pokedollModels(), assets.pokedollTextures(), assets.pokedollAnimations(), "custom pack (early)");
+			FigurineRegistry.registerFromFileNames(assets.figurineModels(), assets.figurineTextures(), "custom pack (early)");
 		} catch (Exception e) {
-			System.err.println("[Pokeblocks] Failed to register custom assets early: " + e);
+			PokeblocksCommon.LOGGER.error("Failed to register custom assets early", e);
 		}
 	}
 
@@ -54,37 +40,21 @@ public class CustomPackManager {
 			if (result != null && Files.exists(result.zipFile())) {
 				cachedPack = result.zipFile();
 				cachedSha = CustomPackBuilder.computeSHA1(cachedPack);
-				System.out.println("[Pokeblocks] Custom resource pack cached: " + cachedPack + " sha1=" + cachedSha);
+				PokeblocksCommon.LOGGER.info("Custom resource pack cached: {} sha1={}", cachedPack, cachedSha);
 
-				// Split files into pokedoll vs figurine
-				Set<String> pokedollModels = new TreeSet<>();
-				Set<String> pokedollTextures = new TreeSet<>();
-				Set<String> pokedollAnimations = new TreeSet<>();
-				Set<String> figurineModels = new TreeSet<>();
-				Set<String> figurineTextures = new TreeSet<>();
+				AssetScanner.SplitAssets assets = AssetScanner.split(result.modelFiles(), result.textureFiles(), result.animationFiles());
 
-				for (String f : result.modelFiles()) {
-					if (f.contains("_figurine")) figurineModels.add(f);
-					else pokedollModels.add(f);
-				}
-				for (String f : result.textureFiles()) {
-					if (f.contains("_figurine")) figurineTextures.add(f);
-					else pokedollTextures.add(f);
-				}
-				// animations are only for pokedolls
-				pokedollAnimations.addAll(result.animationFiles());
-
-				PokemonRegistry.registerFromFileNames(pokedollModels, pokedollTextures, pokedollAnimations, "custom pack");
-				FigurineRegistry.registerFromFileNames(figurineModels, figurineTextures, "custom pack");
+				PokemonRegistry.registerFromFileNames(assets.pokedollModels(), assets.pokedollTextures(), assets.pokedollAnimations(), "custom pack");
+				FigurineRegistry.registerFromFileNames(assets.figurineModels(), assets.figurineTextures(), "custom pack");
 			} else {
 				cachedPack = null;
 				cachedSha = null;
-				System.out.println("[Pokeblocks] No custom resources found, skipping pack build.");
+				PokeblocksCommon.LOGGER.info("No custom resources found, skipping pack build.");
 			}
 		} catch (Exception e) {
 			cachedPack = null;
 			cachedSha = null;
-			System.err.println("[Pokeblocks] Failed to build custom resource pack: " + e);
+			PokeblocksCommon.LOGGER.error("Failed to build custom resource pack", e);
 		}
 	}
 

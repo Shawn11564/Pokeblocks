@@ -20,6 +20,8 @@ import java.util.Set;
 import java.util.function.Supplier;
 
 public final class ItemGroupRegistry {
+	private ItemGroupRegistry() {}
+
 	public static void init() {}
 
 	/**
@@ -81,7 +83,7 @@ public final class ItemGroupRegistry {
 			.icon(() -> FigurineItem.createFigurine("doncheadle"))
 			.displayItems((enabledFeatures, entries) -> {
 				// Figurines
-				for (String figurine : FigurineRegistry.ALL_FIGURINES.keySet()) {
+				for (String figurine : FigurineRegistry.ALL_FIGURINES) {
 					entries.accept(FigurineItem.createFigurine(figurine));
 				}
 				// Decorative blocks — every flag variant (shiny, gigantic, …), default NBT only

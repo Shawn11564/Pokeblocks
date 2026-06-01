@@ -16,6 +16,8 @@ import java.util.function.Supplier;
  * ({@code LegacyIdMigrator}) maps the old ids straight onto these.
  */
 public final class PokeBlockRegistry {
+	private PokeBlockRegistry() {}
+
 	public static void init() {}
 
 	/** Registry ids of the pokeblock cube blocks (also the block-item ids). */

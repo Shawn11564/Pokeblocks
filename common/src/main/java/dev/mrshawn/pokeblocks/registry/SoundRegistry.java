@@ -6,15 +6,17 @@ import net.minecraft.sounds.SoundEvent;
 
 import java.util.function.Supplier;
 
-public class SoundRegistry {
+public final class SoundRegistry {
+	private SoundRegistry() {}
 
-    public static Supplier<SoundEvent> POKEDOLL_SQUEAK;
+	public static void init() {}
 
-    public static void init() {
-       POKEDOLL_SQUEAK = PokeblocksCommon.COMMON_PLATFORM.registerSound(
-                "pokedoll_squeak",
-                () -> SoundEvent.createVariableRangeEvent(ResourceLocation.fromNamespaceAndPath("pokeblocks", "pokedoll_squeak"))
-        );
-    }
+	public static final Supplier<SoundEvent> POKEDOLL_SQUEAK = registerSound(
+			"pokedoll_squeak",
+			() -> SoundEvent.createVariableRangeEvent(ResourceLocation.fromNamespaceAndPath("pokeblocks", "pokedoll_squeak"))
+	);
 
+	private static Supplier<SoundEvent> registerSound(String id, Supplier<SoundEvent> sound) {
+		return PokeblocksCommon.COMMON_PLATFORM.registerSound(id, sound);
+	}
 }

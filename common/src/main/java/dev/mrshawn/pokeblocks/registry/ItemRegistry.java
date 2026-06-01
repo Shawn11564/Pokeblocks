@@ -11,6 +11,8 @@ import java.util.List;
 import java.util.function.Supplier;
 
 public final class ItemRegistry {
+	private ItemRegistry() {}
+
 	public static void init() {}
 
 	public static final Supplier<BlockItem> POKEDOLL_ITEM = registerItem("pokedoll", () -> new PokedollItem(BlockRegistry.POKEDOLL_BLOCK.get(), new Item.Properties()));

@@ -92,7 +92,7 @@ public class LootTableItemMap {
         }
 
         // Add figurine entries based on doll_rarity.json overrides
-        for (String figurine : FigurineRegistry.ALL_FIGURINES.keySet()) {
+        for (String figurine : FigurineRegistry.ALL_FIGURINES) {
             DollRarity rarity = DollRarityOverrides.getOverride(figurine, EnumSet.noneOf(ModelFlag.class));
             if (rarity == null || rarity == DollRarity.NONE) continue;
             if (PokeblocksConfig.isDollExcludedFromLoot(figurine, EnumSet.noneOf(ModelFlag.class))) continue;

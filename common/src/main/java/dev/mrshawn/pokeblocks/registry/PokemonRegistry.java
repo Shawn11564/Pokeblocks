@@ -1,21 +1,26 @@
 package dev.mrshawn.pokeblocks.registry;
 
+import dev.mrshawn.pokeblocks.PokeblocksCommon;
 import dev.mrshawn.pokeblocks.client.renderer.animation.AnimationProfile;
 import dev.mrshawn.pokeblocks.pokemon.ModelFlag;
 import dev.mrshawn.pokeblocks.pokemon.PokemonData;
 import net.minecraft.client.Minecraft;
 import net.minecraft.server.packs.resources.ResourceManager;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
-import java.net.URI;
-import java.net.URL;
-import java.nio.file.*;
 import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
-import java.util.stream.Stream;
 
-public class PokemonRegistry {
+public final class PokemonRegistry {
+	// Standalone logger (see AssetScanner): this class scans during static init, reachable from
+	// unit tests that don't bootstrap a platform, so it must not touch PokeblocksCommon.
+	private static final Logger LOGGER = LoggerFactory.getLogger(PokeblocksCommon.MOD_ID);
+
+	private PokemonRegistry() {}
+
 	public static void init() {
 	}
 
@@ -36,47 +41,12 @@ public class PokemonRegistry {
 	}
 
 	private static void scanBuiltInAssets() {
-		Set<String> modelFiles = new TreeSet<>();
-		Set<String> textureFiles = new TreeSet<>();
-		Set<String> animationFiles = new TreeSet<>();
-
-		scanClasspathDirectory("assets/pokeblocks/geo/block", modelFiles, ".geo.json");
-		scanClasspathDirectory("assets/pokeblocks/textures/block", textureFiles, ".png");
-		scanClasspathDirectory("assets/pokeblocks/animations/block", animationFiles, ".animation.json");
+		Set<String> modelFiles = AssetScanner.scanClasspath("assets/pokeblocks/geo/block", n -> n.endsWith(".geo.json"));
+		Set<String> textureFiles = AssetScanner.scanClasspath("assets/pokeblocks/textures/block", n -> n.endsWith(".png"));
+		Set<String> animationFiles = AssetScanner.scanClasspath("assets/pokeblocks/animations/block", n -> n.endsWith(".animation.json"));
 
 		if (!modelFiles.isEmpty() || !textureFiles.isEmpty()) {
 			registerFromFileNames(modelFiles, textureFiles, animationFiles, "built-in");
-		}
-	}
-
-	private static void scanClasspathDirectory(String resourceDir, Set<String> output, String extension) {
-		try {
-			URL dirUrl = PokemonRegistry.class.getClassLoader().getResource(resourceDir);
-			if (dirUrl == null) return;
-
-			URI uri = dirUrl.toURI();
-			Path dirPath;
-
-			if (uri.getScheme().equals("jar")) {
-				FileSystem fs;
-				try {
-					fs = FileSystems.getFileSystem(uri);
-				} catch (FileSystemNotFoundException e) {
-					fs = FileSystems.newFileSystem(uri, Collections.emptyMap());
-				}
-				dirPath = fs.getPath(resourceDir);
-			} else {
-				dirPath = Paths.get(uri);
-			}
-
-			try (Stream<Path> walk = Files.walk(dirPath, 1)) {
-				walk.filter(Files::isRegularFile)
-						.map(p -> p.getFileName().toString())
-						.filter(name -> name.toLowerCase().endsWith(extension))
-						.forEach(output::add);
-			}
-		} catch (Exception e) {
-			System.err.println("[Pokeblocks] Failed to scan classpath directory '" + resourceDir + "': " + e);
 		}
 	}
 
@@ -94,9 +64,46 @@ public class PokemonRegistry {
 	}
 
 	public static void registerFromFileNames(Set<String> modelFiles, Set<String> textureFiles, Set<String> animationFiles, String source) {
-		Map<String, Set<ModelFlag>> pokemonFlags = new LinkedHashMap<>();
+		Map<String, Set<ModelFlag>> pokemonFlags = parseModelFlags(modelFiles);
+		Map<String, List<Set<ModelFlag>>> requiredCombos = detectRequiredCombos(modelFiles);
+		Map<String, Set<Set<ModelFlag>>> validTexCombos = parseTextureCombos(textureFiles, pokemonFlags);
+		AnimationScan animScan = parseAnimations(animationFiles);
 
-		// Parse models for base pokemon names and model-level flags
+		// Register animation-only variant flags
+		// If a variant animation exists (e.g. pokedoll_chikorita_posed.animation.json)
+		// but there's no matching geo model, the variant should still be registered
+		// as an available flag — it will use the base geo model at render time.
+		for (var animEntry : animScan.variants().entrySet()) {
+			String name = animEntry.getKey();
+			if (!pokemonFlags.containsKey(name)) continue; // no base model exists at all
+			pokemonFlags.get(name).addAll(animEntry.getValue().keySet());
+		}
+
+		int newCount = 0;
+		for (var entry : pokemonFlags.entrySet()) {
+			String name = entry.getKey();
+			Set<ModelFlag> detectedFlags = entry.getValue();
+
+			// Validate base model exists
+			if (!hasBaseModel(modelFiles, name)) {
+				LOGGER.warn("Skipping pokemon '{}': missing base model (expected pokedoll_{}.geo.json)", name, name);
+				continue;
+			}
+
+			Set<Set<ModelFlag>> texCombos = validTexCombos.getOrDefault(name, Collections.emptySet());
+			List<Set<ModelFlag>> combos = requiredCombos.getOrDefault(name, List.of());
+			PokemonData existing = ALL_POKEMON.get(name);
+			if (existing == null) newCount++;
+
+			ALL_POKEMON.put(name, buildPokemonData(name, detectedFlags, texCombos, animScan, combos, existing));
+		}
+
+		LOGGER.info("{} scan: {} pokemon ({} new)", source, pokemonFlags.size(), newCount);
+	}
+
+	/** Extracts base pokemon names and their model-level flags from the geo model file names. */
+	private static Map<String, Set<ModelFlag>> parseModelFlags(Set<String> modelFiles) {
+		Map<String, Set<ModelFlag>> pokemonFlags = new LinkedHashMap<>();
 		for (String filename : modelFiles) {
 			Matcher m = MODEL_PATTERN.matcher(filename);
 			if (!m.matches()) continue; // silently skip non-pokedoll files
@@ -105,16 +112,19 @@ public class PokemonRegistry {
 			if (result.name().isEmpty()) continue;
 
 			String name = result.name().toLowerCase();
-			pokemonFlags.computeIfAbsent(name, k -> EnumSet.noneOf(ModelFlag.class));
-			pokemonFlags.get(name).addAll(result.flags());
+			pokemonFlags.computeIfAbsent(name, k -> EnumSet.noneOf(ModelFlag.class)).addAll(result.flags());
 		}
+		return pokemonFlags;
+	}
 
-		// Detect required flag combinations from multi-flag models
-		// If pokedoll_snorunt_family_animated.geo.json exists but neither
-		// pokedoll_snorunt_family.geo.json nor pokedoll_snorunt_animated.geo.json exist,
-		// then family+animated is a required combination for snorunt.
+	/**
+	 * Detects required flag combinations from multi-flag models. If
+	 * {@code pokedoll_snorunt_family_animated.geo.json} exists but neither
+	 * {@code pokedoll_snorunt_family.geo.json} nor {@code pokedoll_snorunt_animated.geo.json} exist,
+	 * then family+animated is a required combination for snorunt.
+	 */
+	private static Map<String, List<Set<ModelFlag>>> detectRequiredCombos(Set<String> modelFiles) {
 		Map<String, List<Set<ModelFlag>>> requiredCombos = new HashMap<>();
-
 		for (String filename : modelFiles) {
 			Matcher m = MODEL_PATTERN.matcher(filename);
 			if (!m.matches()) continue;
@@ -140,10 +150,15 @@ public class PokemonRegistry {
 				requiredCombos.computeIfAbsent(name, k -> new ArrayList<>()).add(combo);
 			}
 		}
+		return requiredCombos;
+	}
 
-		// Parse textures to detect flag variants and track valid texture combinations
+	/**
+	 * Parses textures to detect flag variants and track the flag combinations that have a valid
+	 * texture. Texture-only flags are folded back into {@code pokemonFlags} in place.
+	 */
+	private static Map<String, Set<Set<ModelFlag>>> parseTextureCombos(Set<String> textureFiles, Map<String, Set<ModelFlag>> pokemonFlags) {
 		Map<String, Set<Set<ModelFlag>>> validTexCombos = new HashMap<>();
-
 		for (String filename : textureFiles) {
 			Matcher m = TEXTURE_PATTERN.matcher(filename);
 			if (!m.matches()) continue; // silently skip non-pokedoll files
@@ -161,13 +176,18 @@ public class PokemonRegistry {
 						: EnumSet.copyOf(result.flags());
 				validTexCombos.computeIfAbsent(name, k -> new HashSet<>()).add(texCombo);
 			} else {
-				System.out.println("[Pokeblocks] Texture '" + filename + "' has no matching model for pokemon: " + result.name());
+				LOGGER.info("Texture '{}' has no matching model for pokemon: {}", filename, result.name());
 			}
 		}
+		return validTexCombos;
+	}
 
-		// Parse animation files to build AnimationProfiles
-		// Animation naming: pokedoll_<name>.animation.json = base animation
-		//                   pokedoll_<name>_<flag>.animation.json = variant animation
+	/**
+	 * Parses animation files into base and variant animation maps.
+	 * Naming: {@code pokedoll_<name>.animation.json} = base animation,
+	 * {@code pokedoll_<name>_<flag>.animation.json} = variant animation.
+	 */
+	private static AnimationScan parseAnimations(Set<String> animationFiles) {
 		Map<String, Boolean> baseAnimations = new HashMap<>();
 		Map<String, Map<ModelFlag, Boolean>> variantAnimations = new HashMap<>();
 
@@ -175,8 +195,7 @@ public class PokemonRegistry {
 			Matcher m = ANIMATION_PATTERN.matcher(filename);
 			if (!m.matches()) continue;
 
-			String body = m.group(1);
-			ParseResult result = parseSuffixes(body);
+			ParseResult result = parseSuffixes(m.group(1));
 			if (result.name().isEmpty()) continue;
 
 			String name = result.name().toLowerCase();
@@ -186,138 +205,91 @@ public class PokemonRegistry {
 				baseAnimations.put(name, true);
 			} else {
 				// Variant animation (e.g. pokedoll_calyrex_animated.animation.json)
-				variantAnimations.computeIfAbsent(name, k -> new EnumMap<>(ModelFlag.class));
+				Map<ModelFlag, Boolean> variants = variantAnimations.computeIfAbsent(name, k -> new EnumMap<>(ModelFlag.class));
 				for (ModelFlag flag : result.flags()) {
-					variantAnimations.get(name).put(flag, true);
+					variants.put(flag, true);
 				}
 			}
 		}
+		return new AnimationScan(baseAnimations, variantAnimations);
+	}
 
-		// Register animation-only variant flags
-		// If a variant animation exists (e.g. pokedoll_chikorita_posed.animation.json)
-		// but there's no matching geo model, the variant should still be registered
-		// as an available flag — it will use the base geo model at render time.
-		for (var animEntry : variantAnimations.entrySet()) {
-			String name = animEntry.getKey();
-			if (!pokemonFlags.containsKey(name)) continue; // no base model exists at all
+	/** Whether a flagless base geo model exists for {@code name}. */
+	private static boolean hasBaseModel(Set<String> modelFiles, String name) {
+		return modelFiles.stream().anyMatch(f -> {
+			Matcher m = MODEL_PATTERN.matcher(f);
+			if (!m.matches()) return false;
+			ParseResult r = parseSuffixes(m.group(1));
+			return r.name().equalsIgnoreCase(name) && r.flags().isEmpty();
+		});
+	}
 
-			for (ModelFlag flag : animEntry.getValue().keySet()) {
-				pokemonFlags.get(name).add(flag);
-			}
+	/**
+	 * Builds the {@link PokemonData} for one pokemon, merging with any previously-registered data
+	 * (e.g. a built-in scan followed by a custom-pack scan).
+	 */
+	private static PokemonData buildPokemonData(String name, Set<ModelFlag> detectedFlags,
+			Set<Set<ModelFlag>> texCombos, AnimationScan animScan,
+			List<Set<ModelFlag>> requiredCombos, PokemonData existing) {
+
+		// GIGANTIC is always available
+		detectedFlags.add(ModelFlag.GIGANTIC);
+
+		// Build flag map
+		Map<ModelFlag, Boolean> flagMap = new EnumMap<>(ModelFlag.class);
+		for (ModelFlag flag : ModelFlag.values()) {
+			flagMap.put(flag, detectedFlags.contains(flag));
 		}
 
-		// Register pokemon
-		int newCount = 0;
-		for (var entry : pokemonFlags.entrySet()) {
-			String name = entry.getKey();
-			Set<ModelFlag> detectedFlags = entry.getValue();
+		// Build animation profile
+		boolean hasBase = Boolean.TRUE.equals(animScan.base().get(name));
+		Map<ModelFlag, Boolean> variants = animScan.variants().getOrDefault(name, new EnumMap<>(ModelFlag.class));
+		AnimationProfile animProfile = new AnimationProfile(hasBase, variants);
 
-			// Get valid texture combinations for this pokemon
-			Set<Set<ModelFlag>> texCombos = validTexCombos.getOrDefault(name, Collections.emptySet());
+		List<Set<ModelFlag>> combos = requiredCombos;
 
-			// Validate base model exists
-			boolean hasBaseModel = modelFiles.stream().anyMatch(f -> {
-				Matcher m = MODEL_PATTERN.matcher(f);
-				if (!m.matches()) return false;
-				ParseResult r = parseSuffixes(m.group(1));
-				return r.name().equalsIgnoreCase(name) && r.flags().isEmpty();
-			});
-
-			if (!hasBaseModel) {
-				System.err.println("[Pokeblocks] Skipping pokemon '" + name + "': missing base model (expected pokedoll_" + name + ".geo.json)");
-				continue;
-			}
-
-			// GIGANTIC is always available
-			detectedFlags.add(ModelFlag.GIGANTIC);
-
-			// Build flag map
-			Map<ModelFlag, Boolean> flagMap = new EnumMap<>(ModelFlag.class);
+		// Merge with existing
+		if (existing != null) {
+			Map<ModelFlag, Boolean> merged = new EnumMap<>(ModelFlag.class);
 			for (ModelFlag flag : ModelFlag.values()) {
-				flagMap.put(flag, detectedFlags.contains(flag));
+				boolean existingVal = Boolean.TRUE.equals(existing.modelFlags().get(flag));
+				boolean newVal = Boolean.TRUE.equals(flagMap.get(flag));
+				merged.put(flag, existingVal || newVal);
 			}
+			flagMap = merged;
 
-			// Build animation profile
-			boolean hasBase = Boolean.TRUE.equals(baseAnimations.get(name));
-			Map<ModelFlag, Boolean> variants = variantAnimations.getOrDefault(name, new EnumMap<>(ModelFlag.class));
-			AnimationProfile animProfile = new AnimationProfile(hasBase, variants);
-
-			// Build required combinations
-			List<Set<ModelFlag>> combos = requiredCombos.getOrDefault(name, List.of());
-
-			// Merge with existing
-			PokemonData existing = ALL_POKEMON.get(name);
-			if (existing != null) {
-				Map<ModelFlag, Boolean> merged = new EnumMap<>(ModelFlag.class);
-				for (ModelFlag flag : ModelFlag.values()) {
-					boolean existingVal = Boolean.TRUE.equals(existing.modelFlags().get(flag));
-					boolean newVal = Boolean.TRUE.equals(flagMap.get(flag));
-					merged.put(flag, existingVal || newVal);
-				}
-				flagMap = merged;
-
-				// Merge animation profiles
-				boolean mergedBase = existing.animationProfile().hasBaseAnimation() || hasBase;
-				Map<ModelFlag, Boolean> mergedVariants = new EnumMap<>(ModelFlag.class);
-				for (ModelFlag flag : ModelFlag.values()) {
-					boolean ev = existing.animationProfile().hasVariant(flag);
-					boolean nv = Boolean.TRUE.equals(variants.get(flag));
-					if (ev || nv) mergedVariants.put(flag, true);
-				}
-				animProfile = new AnimationProfile(mergedBase, mergedVariants);
-
-				// Merge combinations
-				List<Set<ModelFlag>> mergedCombos = new ArrayList<>(existing.requiredCombinations());
-				for (Set<ModelFlag> combo : combos) {
-					if (!mergedCombos.contains(combo)) mergedCombos.add(combo);
-				}
-				combos = mergedCombos;
-
-				// Merge valid texture combinations from both scans
-				Set<Set<ModelFlag>> mergedTexCombos = new HashSet<>(existing.validTextureCombinations());
-				mergedTexCombos.addAll(texCombos);
-				texCombos = mergedTexCombos;
-			} else {
-				newCount++;
+			// Merge animation profiles
+			boolean mergedBase = existing.animationProfile().hasBaseAnimation() || hasBase;
+			Map<ModelFlag, Boolean> mergedVariants = new EnumMap<>(ModelFlag.class);
+			for (ModelFlag flag : ModelFlag.values()) {
+				boolean ev = existing.animationProfile().hasVariant(flag);
+				boolean nv = Boolean.TRUE.equals(variants.get(flag));
+				if (ev || nv) mergedVariants.put(flag, true);
 			}
+			animProfile = new AnimationProfile(mergedBase, mergedVariants);
 
-			ALL_POKEMON.put(name, new PokemonData(flagMap, animProfile, combos, texCombos));
+			// Merge combinations
+			List<Set<ModelFlag>> mergedCombos = new ArrayList<>(existing.requiredCombinations());
+			for (Set<ModelFlag> combo : combos) {
+				if (!mergedCombos.contains(combo)) mergedCombos.add(combo);
+			}
+			combos = mergedCombos;
+
+			// Merge valid texture combinations from both scans
+			Set<Set<ModelFlag>> mergedTexCombos = new HashSet<>(existing.validTextureCombinations());
+			mergedTexCombos.addAll(texCombos);
+			texCombos = mergedTexCombos;
 		}
 
-		System.out.println("[Pokeblocks] " + source + " scan: " + pokemonFlags.size() + " pokemon (" + newCount + " new)");
+		return new PokemonData(flagMap, animProfile, combos, texCombos);
 	}
 
 	public static void scanAndRegisterFromResources() {
-		ResourceManager resourceManager =
-				Minecraft.getInstance().getResourceManager();
+		ResourceManager resourceManager = Minecraft.getInstance().getResourceManager();
 
-		Set<String> modelFileNames = new TreeSet<>();
-		Set<String> textureFileNames = new TreeSet<>();
-		Set<String> animationFileNames = new TreeSet<>();
-
-		resourceManager.listResources("geo/block", loc -> loc.getPath().endsWith(".geo.json"))
-				.keySet().stream()
-				.filter(loc -> loc.getNamespace().equals("pokeblocks"))
-				.forEach(loc -> {
-					String filename = loc.getPath().substring(loc.getPath().lastIndexOf('/') + 1);
-					modelFileNames.add(filename);
-				});
-
-		resourceManager.listResources("textures/block", loc -> loc.getPath().endsWith(".png"))
-				.keySet().stream()
-				.filter(loc -> loc.getNamespace().equals("pokeblocks"))
-				.forEach(loc -> {
-					String filename = loc.getPath().substring(loc.getPath().lastIndexOf('/') + 1);
-					textureFileNames.add(filename);
-				});
-
-		resourceManager.listResources("animations/block", loc -> loc.getPath().endsWith(".animation.json"))
-				.keySet().stream()
-				.filter(loc -> loc.getNamespace().equals("pokeblocks"))
-				.forEach(loc -> {
-					String filename = loc.getPath().substring(loc.getPath().lastIndexOf('/') + 1);
-					animationFileNames.add(filename);
-				});
+		Set<String> modelFileNames = AssetScanner.listResourceFilenames(resourceManager, "geo/block", ".geo.json", f -> true);
+		Set<String> textureFileNames = AssetScanner.listResourceFilenames(resourceManager, "textures/block", ".png", f -> true);
+		Set<String> animationFileNames = AssetScanner.listResourceFilenames(resourceManager, "animations/block", ".animation.json", f -> true);
 
 		registerFromFileNames(modelFileNames, textureFileNames, animationFileNames, "resource");
 	}
@@ -357,4 +329,7 @@ public class PokemonRegistry {
 	}
 
 	record ParseResult(String name, Set<ModelFlag> flags) {}
+
+	/** Base and variant animation availability, keyed by pokemon name. */
+	record AnimationScan(Map<String, Boolean> base, Map<String, Map<ModelFlag, Boolean>> variants) {}
 }

@@ -16,7 +16,7 @@ import net.minecraft.world.item.ItemStack;
 public class FigurineGiveCMD {
 
 	private static final SuggestionProvider<CommandSourceStack> SUGGEST_FIGURINES = (context, builder) -> {
-		for (String id : FigurineRegistry.ALL_FIGURINES.keySet()) builder.suggest(id);
+		for (String id : FigurineRegistry.ALL_FIGURINES) builder.suggest(id);
 		return builder.buildFuture();
 	};
 

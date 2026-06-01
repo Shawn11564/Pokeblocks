@@ -9,6 +9,8 @@ import net.minecraft.world.level.block.entity.BlockEntityType;
 import java.util.function.Supplier;
 
 public final class BlockEntityRegistry {
+	private BlockEntityRegistry() {}
+
 	public static void init() {}
 
 	public static final Supplier<BlockEntityType<PokedollBlockEntity>> POKEDOLL_BLOCK_ENTITY = registerBlockEntity("pokedoll", () -> BlockEntityType.Builder.of(PokedollBlockEntity::new, BlockRegistry.POKEDOLL_BLOCK.get()).build(null));
