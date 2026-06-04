@@ -11,8 +11,11 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.Comparator;
+import java.util.EnumSet;
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 
 /**
@@ -47,6 +50,21 @@ public final class PokeblocksAssetResolver {
 	private static final Set<String> VALIDATED_FIGURINES = new HashSet<>();
 	/** Variant model paths confirmed absent, so we fall back to the base model without re-querying every frame. */
 	private static final Set<String> MISSING_MODELS = new HashSet<>();
+	/**
+	 * Resolved pokedoll textures keyed by {@code (pokemon, activeFlags)}. The lookup is otherwise a per-frame
+	 * subset/permutation enumeration over the flags plus several {@link ResourceManager#getResource} disk probes
+	 * (each a filesystem {@code exists} syscall on the render thread), so we memoize the result — it only changes
+	 * on resource reload. A stored {@code null} value records "no texture matched" so we don't re-probe either.
+	 */
+	private static final Map<TextureKey, ResourceLocation> RESOLVED_TEXTURES = new HashMap<>();
+
+	/** Cache key for {@link #pokedollTextureOrNull}; copies the flag set so a caller's later mutation can't corrupt it. */
+	private record TextureKey(String pokemon, Set<ModelFlag> flags) {
+		private TextureKey(String pokemon, Set<ModelFlag> flags) {
+			this.pokemon = pokemon;
+			this.flags = flags.isEmpty() ? Set.of() : EnumSet.copyOf(flags);
+		}
+	}
 
 	static {
 		VALIDATED_POKEMON.add(ModSettings.DEFAULT_POKEMON);
@@ -102,6 +120,7 @@ public final class PokeblocksAssetResolver {
 		VALIDATED_POKEMON.clear();
 		VALIDATED_POKEMON.add(ModSettings.DEFAULT_POKEMON);
 		MISSING_MODELS.clear();
+		RESOLVED_TEXTURES.clear();
 	}
 
 	/**
@@ -158,6 +177,17 @@ public final class PokeblocksAssetResolver {
 	 * for callers like the doll-break wool sampling that want to distinguish "no texture" from a default.
 	 */
 	public static ResourceLocation pokedollTextureOrNull(ResourceManager rm, String pokemon, Set<ModelFlag> activeFlags) {
+		TextureKey key = new TextureKey(pokemon, activeFlags);
+		ResourceLocation cached = RESOLVED_TEXTURES.get(key);
+		if (cached != null || RESOLVED_TEXTURES.containsKey(key)) return cached; // null value means "confirmed no match"
+
+		ResourceLocation resolved = resolvePokedollTexture(rm, pokemon, activeFlags);
+		RESOLVED_TEXTURES.put(key, resolved);
+		return resolved;
+	}
+
+	/** The uncached resolution behind {@link #pokedollTextureOrNull}: order-independent file probing over the flags. */
+	private static ResourceLocation resolvePokedollTexture(ResourceManager rm, String pokemon, Set<ModelFlag> activeFlags) {
 		List<ModelFlag> textureFlags = new ArrayList<>();
 		for (ModelFlag flag : activeFlags) {
 			if (!flag.getTextureSuffix().isEmpty()) textureFlags.add(flag);

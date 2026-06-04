@@ -38,7 +38,8 @@ import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.block.state.StateDefinition;
 import net.minecraft.world.level.block.state.properties.BlockStateProperties;
 import net.minecraft.world.level.block.state.properties.BooleanProperty;
-import net.minecraft.world.level.block.state.properties.DirectionProperty;
+import net.minecraft.world.level.block.state.properties.IntegerProperty;
+import net.minecraft.world.level.block.state.properties.RotationSegment;
 import net.minecraft.world.level.material.FluidState;
 import net.minecraft.world.level.material.Fluids;
 import net.minecraft.world.phys.BlockHitResult;
@@ -58,7 +59,11 @@ import java.util.Set;
  * Simple pokedoll block. Mostly a wrapper to provide a BlockEntity and render as an entity.
  */
 public class PokedollBlock extends BaseEntityBlock implements EntityBlock, SimpleWaterloggedBlock {
-	public static final DirectionProperty FACING = BlockStateProperties.HORIZONTAL_FACING;
+	/**
+	 * Fine-grained placement rotation (0-15), matching vanilla standing signs/banners.
+	 * The doll's GeckoLib model is rotated by {@link dev.mrshawn.pokeblocks.client.renderer.block.PokedollBlockRenderer}.
+	 */
+	public static final IntegerProperty ROTATION = BlockStateProperties.ROTATION_16;
 	public static final BooleanProperty WATERLOGGED = BlockStateProperties.WATERLOGGED;
 
 	/**
@@ -69,7 +74,7 @@ public class PokedollBlock extends BaseEntityBlock implements EntityBlock, Simpl
 	public PokedollBlock() {
 		super(Properties.of().sound(SoundType.WOOL).strength(0.4f).noOcclusion());
 		this.registerDefaultState(this.stateDefinition.any()
-				.setValue(FACING, Direction.NORTH)
+				.setValue(ROTATION, 0)
 				.setValue(WATERLOGGED, false));
 	}
 
@@ -85,7 +90,7 @@ public class PokedollBlock extends BaseEntityBlock implements EntityBlock, Simpl
 
 	@Override
 	protected void createBlockStateDefinition(StateDefinition.Builder<Block, BlockState> builder) {
-		builder.add(FACING, WATERLOGGED);
+		builder.add(ROTATION, WATERLOGGED);
 	}
 
 	@Nullable
@@ -93,8 +98,19 @@ public class PokedollBlock extends BaseEntityBlock implements EntityBlock, Simpl
 	public BlockState getStateForPlacement(BlockPlaceContext context) {
 		FluidState fluidState = context.getLevel().getFluidState(context.getClickedPos());
 		return this.defaultBlockState()
-				.setValue(FACING, context.getHorizontalDirection().getOpposite())
+				// Face the placer. (No +180 offset; the model's authored front already faces the player.)
+				.setValue(ROTATION, RotationSegment.convertToSegment(context.getRotation()))
 				.setValue(WATERLOGGED, fluidState.getType() == Fluids.WATER);
+	}
+
+	@Override
+	protected BlockState rotate(BlockState state, Rotation rotation) {
+		return state.setValue(ROTATION, rotation.rotate(state.getValue(ROTATION), 16));
+	}
+
+	@Override
+	protected BlockState mirror(BlockState state, Mirror mirror) {
+		return state.setValue(ROTATION, mirror.mirror(state.getValue(ROTATION), 16));
 	}
 
 	@Override
@@ -367,14 +383,12 @@ public class PokedollBlock extends BaseEntityBlock implements EntityBlock, Simpl
 		return new Vector3f(0.9f, 0.9f, 0.9f);
 	}
 
+	/** Centered box, so it stays correct at any of the 16 rotations. */
+	private static final VoxelShape SHAPE = Block.box(4, 0, 4, 12, 12, 12);
+
 	@Override
 	public VoxelShape getShape(BlockState state, BlockGetter world, BlockPos pos, CollisionContext context) {
-		return switch (state.getValue(FACING)) {
-			case NORTH -> Block.box(4, 0, 4, 12, 12, 12);
-			case SOUTH -> Block.box(4, 0, 4, 12, 12, 12);
-			case WEST -> Block.box(4, 0, 4, 12, 12, 12);
-			default -> Block.box(4, 0, 4, 12, 12, 12);
-		};
+		return SHAPE;
 	}
 
 	@Override

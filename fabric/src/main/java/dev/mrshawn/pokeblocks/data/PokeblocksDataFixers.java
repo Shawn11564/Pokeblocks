@@ -1,6 +1,7 @@
 package dev.mrshawn.pokeblocks.data;
 
 import dev.mrshawn.pokeblocks.PokeblocksCommon;
+import dev.mrshawn.pokeblocks.data.datafixer.fixes.PokedollFacingToRotationFix;
 import dev.mrshawn.pokeblocks.data.datafixer.fixes.PreserveLegacyBlockEntitiesFix;
 import dev.mrshawn.pokeblocks.data.datafixer.fixes.PreserveLegacyItemsFix;
 import dev.mrshawn.pokeblocks.data.datafixer.schemas.V1;
@@ -60,8 +61,15 @@ public class PokeblocksDataFixers {
         builder.addFixer(BlockRenameFix.create(schemaV2, "Rename legacy Pokeblocks blocks", renamer));
         builder.addFixer(ItemRenameFix.create(schemaV2, "Rename legacy Pokeblocks items", renamer));
 
+        // v3: the pokedoll block swapped its 4-way `facing` property for a 16-step `rotation` (sign-style
+        // placement). Convert the property on already-placed dolls so they keep their orientation. No new
+        // types are introduced, so a plain NamespacedSchema suffices. Runs after the v2 rename above, so the
+        // doll is already the unified `pokeblocks:pokedoll` block by this point.
+        Schema schemaV3 = builder.addSchema(3, NamespacedSchema::new);
+        builder.addFixer(new PokedollFacingToRotationFix(schemaV3, "Convert pokedoll facing to 16-step rotation"));
+
         // the below is to ensure we don't get out of sync with PokeblocksCommon.DATA_FIXER_VERSION
         //noinspection ConstantValue
-        assert 2 == PokeblocksCommon.DATA_FIXER_VERSION : "DATA_FIXER_VERSION does not match the latest schema version!";
+        assert 3 == PokeblocksCommon.DATA_FIXER_VERSION : "DATA_FIXER_VERSION does not match the latest schema version!";
     }
 }

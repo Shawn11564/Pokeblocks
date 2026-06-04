@@ -26,7 +26,7 @@ public final class PokeblocksCommon {
 	public static final String MOD_ID = "pokeblocks";
 	public static final Logger LOGGER = LoggerFactory.getLogger(MOD_ID);
 
-	public static final int DATA_FIXER_VERSION = 2;
+	public static final int DATA_FIXER_VERSION = 3;
 
 	public static final PokeblocksPlatform COMMON_PLATFORM = ServiceLoader.load(PokeblocksPlatform.class).findFirst().orElseThrow();
 
