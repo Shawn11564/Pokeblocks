@@ -4,6 +4,7 @@ import dev.mrshawn.pokeblocks.item.custom.PokedollItem;
 import dev.mrshawn.pokeblocks.pokemon.ModelFlag;
 import dev.mrshawn.pokeblocks.registry.PokemonRegistry;
 import net.minecraft.ChatFormatting;
+import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.components.Button;
 import net.minecraft.client.gui.screens.Screen;
@@ -175,6 +176,12 @@ public class CompendiumScreen extends Screen {
             }
         }
         return -1;
+    }
+
+    /** True while either compendium screen is the active screen. Used by world doll rendering. */
+    public static boolean isOpen() {
+        Screen screen = Minecraft.getInstance().screen;
+        return screen instanceof CompendiumScreen || screen instanceof CompendiumDetailScreen;
     }
 
     @Override
