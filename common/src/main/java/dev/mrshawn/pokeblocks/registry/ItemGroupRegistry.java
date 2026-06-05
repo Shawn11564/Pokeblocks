@@ -101,6 +101,8 @@ public final class ItemGroupRegistry {
 				for (Supplier<net.minecraft.world.item.Item> item : ItemRegistry.MISC_ITEMS) {
 					entries.accept(new ItemStack(item.get()));
 				}
+				// POC doll compendium book
+				entries.accept(new ItemStack(ItemRegistry.COMPENDIUM_ITEM.get()));
 			})
 			.build());
 }

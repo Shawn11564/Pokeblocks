@@ -1,6 +1,7 @@
 package dev.mrshawn.pokeblocks.registry;
 
 import dev.mrshawn.pokeblocks.PokeblocksCommon;
+import dev.mrshawn.pokeblocks.item.custom.CompendiumItem;
 import dev.mrshawn.pokeblocks.item.custom.FigurineItem;
 import dev.mrshawn.pokeblocks.item.custom.PokedollItem;
 import net.minecraft.world.item.BlockItem;
@@ -17,6 +18,9 @@ public final class ItemRegistry {
 
 	public static final Supplier<BlockItem> POKEDOLL_ITEM = registerItem("pokedoll", () -> new PokedollItem(BlockRegistry.POKEDOLL_BLOCK.get(), new Item.Properties()));
 	public static final Supplier<BlockItem> FIGURINE_ITEM = registerItem("figurine", () -> new FigurineItem(BlockRegistry.FIGURINE_BLOCK.get(), new Item.Properties()));
+
+	/** POC doll compendium book — opens a screen of 3D doll silhouettes. */
+	public static final Supplier<Item> COMPENDIUM_ITEM = registerItem("compendium", () -> new CompendiumItem(new Item.Properties().stacksTo(1)));
 
 	/**
 	 * Plain misc items re-added from the pre-rewrite mod (poke coin, vouchers, etc.). They have no

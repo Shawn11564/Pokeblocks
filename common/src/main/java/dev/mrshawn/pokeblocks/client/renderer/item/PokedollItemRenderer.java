@@ -10,10 +10,20 @@ import net.minecraft.world.item.ItemStack;
 import software.bernie.geckolib.animatable.GeoItem;
 import software.bernie.geckolib.cache.object.BakedGeoModel;
 import software.bernie.geckolib.renderer.GeoItemRenderer;
+import software.bernie.geckolib.util.Color;
 
 import java.util.Set;
 
 public class PokedollItemRenderer extends GeoItemRenderer<PokedollItem> {
+
+    /**
+     * When {@code true}, dolls render as a flat dark silhouette instead of their textured form.
+     * Toggled by the compendium screen around each uncollected doll so the same shared renderer
+     * can draw both states. Read on the render thread only, so a plain static flag is sufficient.
+     */
+    public static boolean SILHOUETTE = false;
+
+    private static final Color SILHOUETTE_COLOR = Color.ofRGB(0, 0, 0);
 
     private final PokedollItemModel model;
     private ItemDisplayContext currentTransformType = ItemDisplayContext.NONE;
@@ -24,6 +34,13 @@ public class PokedollItemRenderer extends GeoItemRenderer<PokedollItem> {
     public PokedollItemRenderer() {
         super(new PokedollItemModel());
         this.model = (PokedollItemModel) this.getGeoModel();
+    }
+
+    @Override
+    public Color getRenderColor(PokedollItem animatable, float partialTick, int packedLight) {
+        // Multiplying every vertex by a near-black color collapses the textured model into a
+        // solid silhouette while the texture's alpha still carves out the doll's shape.
+        return SILHOUETTE ? SILHOUETTE_COLOR : super.getRenderColor(animatable, partialTick, packedLight);
     }
 
     @Override
