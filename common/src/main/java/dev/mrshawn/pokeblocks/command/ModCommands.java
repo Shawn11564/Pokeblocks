@@ -14,5 +14,6 @@ public class ModCommands {
 		ReloadWeightsCMD.register(dispatcher);
 		ReloadLootGroupsCMD.register(dispatcher);
 		IntableSearchCMD.register(dispatcher);
+		ConfigSyncCMD.register(dispatcher);
     }
 }

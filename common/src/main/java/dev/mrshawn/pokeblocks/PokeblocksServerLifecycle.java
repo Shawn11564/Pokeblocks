@@ -1,5 +1,6 @@
 package dev.mrshawn.pokeblocks;
 
+import dev.mrshawn.pokeblocks.config.ConfigSync;
 import dev.mrshawn.pokeblocks.config.PokeblocksConfig;
 import dev.mrshawn.pokeblocks.item.DollRarityAcquisitionDivisors;
 import dev.mrshawn.pokeblocks.item.DollRarityIgnoredFlags;
@@ -35,6 +36,16 @@ public final class PokeblocksServerLifecycle {
             Files.createDirectories(customDir.resolve("models"));
             Files.createDirectories(customDir.resolve("textures"));
             Files.createDirectories(customDir.resolve("animations"));
+
+            // Merge any new/changed bundled defaults into the server's config files before the
+            // loaders read them, preserving admin customizations. Honors the [config_sync]
+            // settings loaded above (auto_update / frozen_files); force = false here.
+            ConfigSync.SyncReport syncReport = ConfigSync.sync(serverDir, false, false);
+            if (syncReport.anyChanges()) {
+                PokeblocksLog.LOGGER.info("[ConfigSync] Applied config updates: +{} new entr{}, ~{} changed. "
+                                + "See config/Pokeblocks/.sync/last_sync_report.txt for details.",
+                        syncReport.totalAdded(), syncReport.totalAdded() == 1 ? "y" : "ies", syncReport.totalUpdated());
+            }
 
             DollRarityOverrides.initialize(serverDir);
             DollRarityIgnoredFlags.initialize(serverDir);

@@ -25,6 +25,12 @@ public class PokeblocksConfig {
 	private static final Set<ModelFlag> excludedLootFlags = EnumSet.noneOf(ModelFlag.class);
 	private static final Set<String> excludedLootDolls = new LinkedHashSet<>();
 
+	// [config_sync] — controls how the bundled default JSON configs are merged into the
+	// server's files on update (see ConfigSync).
+	private static boolean configAutoUpdate = true;
+	private static boolean configBackupBeforeUpdate = true;
+	private static final Set<String> frozenConfigFiles = new LinkedHashSet<>();
+
 	private static Path configPath;
 
 	public static boolean isDollPoppingEnabled() {
@@ -53,6 +59,21 @@ public class PokeblocksConfig {
 
 	public static Set<String> getExcludedLootDolls() {
 		return excludedLootDolls;
+	}
+
+	/** Master switch for automatic merging of bundled default configs on startup. */
+	public static boolean isConfigAutoUpdate() {
+		return configAutoUpdate;
+	}
+
+	/** Whether a timestamped backup is taken before a config file is rewritten by a sync. */
+	public static boolean isConfigBackupBeforeUpdate() {
+		return configBackupBeforeUpdate;
+	}
+
+	/** File names (e.g. {@code "doll_rarity.json"}) that should never be auto-updated. */
+	public static Set<String> getFrozenConfigFiles() {
+		return frozenConfigFiles;
 	}
 
 	public static void initialize(Path serverDir) {
@@ -84,6 +105,9 @@ public class PokeblocksConfig {
 		excludedLootFlags.clear();
 		excludedLootFlags.add(ModelFlag.GIGANTIC);
 		excludedLootDolls.clear();
+		configAutoUpdate = true;
+		configBackupBeforeUpdate = true;
+		frozenConfigFiles.clear();
 
 		if (configPath == null || !Files.exists(configPath)) return;
 
@@ -132,6 +156,13 @@ public class PokeblocksConfig {
 							case "drop_chance" -> lootDropChance = parseFloat(value, 0.15f);
 						}
 					}
+					case "config_sync" -> {
+						switch (key) {
+							case "auto_update" -> configAutoUpdate = parseBoolean(value, true);
+							case "backup_before_update" -> configBackupBeforeUpdate = parseBoolean(value, true);
+							case "frozen_files" -> i = parseFrozenFilesList(lines, i, value);
+						}
+					}
 				}
 			}
 
@@ -142,7 +173,10 @@ public class PokeblocksConfig {
 					+ ", loot_tables=" + lootTables
 					+ ", loot_table_wildcards=" + lootTableWildcards.size()
 					+ ", excluded_flags=" + excludedLootFlags
-					+ ", excluded_dolls=" + excludedLootDolls);
+					+ ", excluded_dolls=" + excludedLootDolls
+					+ ", config_auto_update=" + configAutoUpdate
+					+ ", config_backup=" + configBackupBeforeUpdate
+					+ ", frozen_config_files=" + frozenConfigFiles);
 
 		} catch (Exception e) {
 			System.err.println("[Pokeblocks] Failed to load config.toml: " + e);
@@ -223,6 +257,26 @@ public class PokeblocksConfig {
 					"""
 					[
 					  "substitute"
+					]"""),
+			new KeyDef("config_sync", "auto_update",
+					"""
+					# When the mod updates, its bundled default JSON configs (doll_rarity.json,
+					# rarity_weights.json, loot_groups.json, etc.) often gain new entries for new
+					# content. With auto_update = true these new/changed defaults are merged into
+					# your files on startup WITHOUT touching your custom entries or your deletions.
+					# Set to false to freeze every config file — nothing is auto-merged, and you can
+					# pull updates manually later with "/pokeblocks config sync".""",
+					"true"),
+			new KeyDef("config_sync", "backup_before_update",
+					"# Take a timestamped backup (in config/Pokeblocks/.sync/backups/) before a sync rewrites a file.",
+					"true"),
+			new KeyDef("config_sync", "frozen_files",
+					"""
+					# Individual config files to exclude from auto-update while the rest keep updating.
+					# Use this for a file you have heavily customized. Example: ["doll_rarity.json"].
+					# Run "/pokeblocks config status" to preview pending changes, "/pokeblocks config sync" to apply.""",
+					"""
+					[
 					]""")
 	);
 
@@ -449,6 +503,44 @@ public class PokeblocksConfig {
 				}
 			}
 			excludedLootDolls.add(DollRarityOverrides.buildKey(pokemon, flags));
+		}
+
+		return i;
+	}
+
+	private static int parseFrozenFilesList(List<String> lines, int startIndex, String firstLineValue) {
+		StringBuilder builder = new StringBuilder(firstLineValue);
+
+		int i = startIndex;
+
+		while (!builder.toString().contains("]") && i + 1 < lines.size()) {
+			i++;
+			builder.append(lines.get(i).trim());
+		}
+
+		String full = builder.toString();
+
+		int start = full.indexOf('[');
+		int end = full.lastIndexOf(']');
+
+		if (start < 0 || end < 0 || end <= start) return i;
+
+		String inner = full.substring(start + 1, end);
+		String[] entries = inner.split(",");
+
+		frozenConfigFiles.clear();
+
+		for (String entry : entries) {
+			String cleaned = entry.trim();
+
+			if (cleaned.startsWith("\"") && cleaned.endsWith("\"")) {
+				cleaned = cleaned.substring(1, cleaned.length() - 1);
+			}
+
+			cleaned = cleaned.trim();
+			if (!cleaned.isEmpty()) {
+				frozenConfigFiles.add(cleaned);
+			}
 		}
 
 		return i;
