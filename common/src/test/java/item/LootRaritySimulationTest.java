@@ -2,6 +2,8 @@ package item;
 
 import dev.mrshawn.pokeblocks.config.PokeblocksConfig;
 import dev.mrshawn.pokeblocks.item.DollRarity;
+import dev.mrshawn.pokeblocks.item.DollRarityAcquisitionDivisors;
+import dev.mrshawn.pokeblocks.item.DollRarityIgnoredFlags;
 import dev.mrshawn.pokeblocks.item.DollRarityOverrides;
 import dev.mrshawn.pokeblocks.item.RarityScoreCalculator;
 import dev.mrshawn.pokeblocks.item.RarityScoreCalculator.DollVariant;
@@ -69,6 +71,8 @@ public class LootRaritySimulationTest {
 	static void setUp() throws Exception {
 		Path tempDir = Files.createTempDirectory("pokeblocks-test");
 		DollRarityOverrides.initialize(tempDir);
+		DollRarityIgnoredFlags.initialize(tempDir);
+		DollRarityAcquisitionDivisors.initialize(tempDir);
 		PokeblocksConfig.reload();
 		Set<ModelFlag> excluded = PokeblocksConfig.getExcludedLootFlags();
 		variants = RarityScoreCalculator.computeAllVariants(excluded);

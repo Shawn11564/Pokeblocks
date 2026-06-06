@@ -27,11 +27,36 @@ public class RarityScoreCalculator {
         DollRarity override = DollRarityOverrides.getOverride(pokemon, flags);
         if (override != null) return override;
 
-        if (flags.isEmpty()) return DollRarity.COMMON;
-        DollRarity highest = DollRarity.getHighestRarity(flags);
+        Set<ModelFlag> effectiveFlags = withoutIgnored(pokemon, flags);
+        if (effectiveFlags.isEmpty()) return DollRarity.COMMON;
+        DollRarity highest = DollRarity.getHighestRarity(effectiveFlags);
         return highest == DollRarity.NONE ? DollRarity.COMMON : highest;
     }
 
+    /** Strips flags that are marked as ignored for rarity purposes for the given pokemon. */
+    private static Set<ModelFlag> withoutIgnored(String pokemon, Set<ModelFlag> flags) {
+        Set<ModelFlag> ignored = DollRarityIgnoredFlags.getIgnoredFlags(pokemon);
+        if (ignored.isEmpty() || flags.isEmpty()) return flags;
+        Set<ModelFlag> effective = EnumSet.copyOf(flags);
+        effective.removeAll(ignored);
+        return effective;
+    }
+
+    /**
+     * Divisor applied to a variant's weight for each "extra rarity factor" it carries.
+     * <p>
+     * Used in two places:
+     * <ul>
+     *   <li><b>GIGANTIC variants</b> — weight is the base (non-gigantic) doll's <em>full effective
+     *       weight</em> / 4, because the gigantic crafting recipe
+     *       ({@link dev.mrshawn.pokeblocks.recipe.GiganticDollRecipe}) requires exactly 4 matching
+     *       dolls. A gigantic is therefore always exactly 4× as rare as the specific doll it is
+     *       crafted from, inheriting all of that doll's own penalties.</li>
+     *   <li><b>Extra flags</b> — each flag present on a variant beyond the one that determines its
+     *       rarity tier also divides the weight by 4 (cascading rarity penalty).</li>
+     * </ul>
+     * If the gigantic recipe ingredient count ever changes, this constant should be updated to match.
+     */
     private static final double FLAG_RARITY_DIVISOR = 4.0;
     private static final double MIN_WEIGHT_INPUT = 1.0;
     private static final double MIN_PERCENTAGE_FOR_INTEGER_DISPLAY = 1.0;
@@ -44,21 +69,30 @@ public class RarityScoreCalculator {
     private static double cachedTotalWeight = -1.0;
 
     private static double getEffectiveWeight(String pokemon, Set<ModelFlag> flags, DollRarity rarity) {
-        double weight;
-
+        // A gigantic doll is crafted from FLAG_RARITY_DIVISOR (4) copies of its non-gigantic
+        // counterpart, so its rarity is that of the WHOLE base doll divided once more for the
+        // crafting cost. Computing the base weight recursively means the gigantic automatically
+        // inherits every penalty the base carries — acquisition divisors (e.g. the substitute
+        // pop chance), extra-flag penalties and rarity overrides — instead of silently dropping
+        // them. Without this, a gigantic shiny substitute would lose the base's 1-in-12 pop
+        // penalty and end up barely rarer than (and rounding to the same % as) a shiny substitute.
         if (flags.contains(ModelFlag.GIGANTIC)) {
             Set<ModelFlag> nonGiganticFlags = EnumSet.copyOf(flags);
             nonGiganticFlags.remove(ModelFlag.GIGANTIC);
             DollRarity baseRarity = resolveRarity(pokemon, nonGiganticFlags);
-            double baseWeight = Math.max(baseRarity.getWeight(), MIN_WEIGHT_INPUT);
-            weight = baseWeight / FLAG_RARITY_DIVISOR;
-        } else {
-            weight = Math.max(rarity.getWeight(), MIN_WEIGHT_INPUT);
+            return getEffectiveWeight(pokemon, nonGiganticFlags, baseRarity) / FLAG_RARITY_DIVISOR;
         }
 
-        int extraFlags = countExtraFlags(flags, rarity);
+        double weight = Math.max(rarity.getWeight(), MIN_WEIGHT_INPUT);
+
+        int extraFlags = countExtraFlags(withoutIgnored(pokemon, flags), rarity);
         for (int i = 0; i < extraFlags; i++) {
             weight /= FLAG_RARITY_DIVISOR;
+        }
+
+        int acquisitionDivisor = DollRarityAcquisitionDivisors.getAcquisitionDivisor(pokemon, flags);
+        if (acquisitionDivisor > 1) {
+            weight /= acquisitionDivisor;
         }
 
         return weight;

@@ -18,9 +18,12 @@ public final class PokeblocksRecipeSerializers {
 	private PokeblocksRecipeSerializers() {}
 
 	public static Supplier<PokeblocksShapedRecipe.Serializer> SHAPED;
+	public static Supplier<GiganticDollRecipe.Serializer> GIGANTIC_DOLL;
 
 	public static void init() {
 		SHAPED = PokeblocksCommon.COMMON_PLATFORM.registerRecipeSerializer(
 				"crafting_shaped", PokeblocksShapedRecipe.Serializer::new);
+		GIGANTIC_DOLL = PokeblocksCommon.COMMON_PLATFORM.registerRecipeSerializer(
+				"gigantic_doll", GiganticDollRecipe.Serializer::new);
 	}
 }

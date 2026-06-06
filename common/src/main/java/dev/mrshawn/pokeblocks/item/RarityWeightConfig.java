@@ -3,6 +3,7 @@ package dev.mrshawn.pokeblocks.item;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.google.gson.JsonObject;
+import dev.mrshawn.pokeblocks.PokeblocksLog;
 
 import java.io.InputStream;
 import java.nio.file.Files;
@@ -31,9 +32,9 @@ public class RarityWeightConfig {
                 copyDefaultConfig();
             }
         } catch (Exception e) {
-            System.err.println("[Pokeblocks] Failed to copy rarity_weights.json to config: " + e);
+            PokeblocksLog.LOGGER.error("Failed to copy rarity_weights.json to config", e);
         }
-        
+
         reload();
         initialized = true;
     }
@@ -45,13 +46,13 @@ public class RarityWeightConfig {
         try (InputStream is = RarityWeightConfig.class.getResourceAsStream("/assets/pokeblocks/rarity_weights.json")) {
             if (is != null) {
                 Files.copy(is, configPath);
-                System.out.println("[Pokeblocks] Copied default rarity_weights.json to " + configPath);
+                PokeblocksLog.LOGGER.info("Copied default rarity_weights.json to {}", configPath);
             } else {
                 // Create default config if asset doesn't exist
                 createDefaultConfig();
             }
         } catch (Exception e) {
-            System.err.println("[Pokeblocks] Failed to copy default config, creating new one: " + e);
+            PokeblocksLog.LOGGER.error("Failed to copy default config, creating new one", e);
             createDefaultConfig();
         }
     }
@@ -70,9 +71,9 @@ public class RarityWeightConfig {
             }
             
             Files.writeString(configPath, gson.toJson(config));
-            System.out.println("[Pokeblocks] Created default rarity_weights.json at " + configPath);
+            PokeblocksLog.LOGGER.info("Created default rarity_weights.json at {}", configPath);
         } catch (Exception e) {
-            System.err.println("[Pokeblocks] Failed to create default config: " + e);
+            PokeblocksLog.LOGGER.error("Failed to create default config", e);
         }
     }
     
@@ -83,7 +84,7 @@ public class RarityWeightConfig {
         weights.clear();
         
         if (configPath == null || !Files.exists(configPath)) {
-            System.out.println("[Pokeblocks] No rarity_weights.json found, using hardcoded defaults");
+            PokeblocksLog.LOGGER.info("No rarity_weights.json found, using hardcoded defaults");
             loadDefaults();
             return;
         }
@@ -102,9 +103,9 @@ public class RarityWeightConfig {
                 }
             }
             
-            System.out.println("[Pokeblocks] Loaded rarity weights from config");
+            PokeblocksLog.LOGGER.info("Loaded rarity weights from config");
         } catch (Exception e) {
-            System.err.println("[Pokeblocks] Failed to load rarity_weights.json, using defaults: " + e);
+            PokeblocksLog.LOGGER.error("Failed to load rarity_weights.json, using defaults", e);
             loadDefaults();
         }
     }
@@ -132,7 +133,7 @@ public class RarityWeightConfig {
             createDefaultConfig();
             reload();
         } catch (Exception e) {
-            System.err.println("[Pokeblocks] Failed to recreate config: " + e);
+            PokeblocksLog.LOGGER.error("Failed to recreate config", e);
         }
     }
     

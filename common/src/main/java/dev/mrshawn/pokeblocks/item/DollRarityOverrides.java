@@ -3,9 +3,10 @@ package dev.mrshawn.pokeblocks.item;
 import com.google.gson.Gson;
 import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
+import dev.mrshawn.pokeblocks.PokeblocksLog;
+import dev.mrshawn.pokeblocks.config.PokeblocksConfigFiles;
 import dev.mrshawn.pokeblocks.pokemon.ModelFlag;
 
-import java.io.InputStream;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.*;
@@ -21,23 +22,7 @@ public class DollRarityOverrides {
      * then loads from config. Call during server startup.
      */
     public static void initialize(Path serverDir) {
-        configPath = serverDir.resolve("config").resolve("Pokeblocks").resolve("doll_rarity.json");
-
-        try {
-            Files.createDirectories(configPath.getParent());
-
-            if (!Files.exists(configPath)) {
-                try (InputStream is = DollRarityOverrides.class.getResourceAsStream("/assets/pokeblocks/doll_rarity.json")) {
-                    if (is != null) {
-                        Files.copy(is, configPath);
-                        System.out.println("[Pokeblocks] Copied default doll_rarity.json to " + configPath);
-                    }
-                }
-            }
-        } catch (Exception e) {
-            System.err.println("[Pokeblocks] Failed to copy doll_rarity.json to config: " + e);
-        }
-
+        configPath = PokeblocksConfigFiles.ensureExtracted(serverDir, "doll_rarity.json");
         reload();
     }
 
@@ -48,7 +33,7 @@ public class DollRarityOverrides {
         overrides.clear();
 
         if (configPath == null || !Files.exists(configPath)) {
-            System.out.println("[Pokeblocks] No doll_rarity.json found, skipping rarity overrides");
+            PokeblocksLog.LOGGER.info("No doll_rarity.json found, skipping rarity overrides");
             return;
         }
 
@@ -62,7 +47,7 @@ public class DollRarityOverrides {
 
                 String[] parts = trimmed.split("\\s+");
                 if (parts.length < 2) {
-                    System.err.println("[Pokeblocks] Invalid doll_rarity entry (need at least pokemon + rarity): " + trimmed);
+                    PokeblocksLog.LOGGER.error("Invalid doll_rarity entry (need at least pokemon + rarity): {}", trimmed);
                     continue;
                 }
 
@@ -73,33 +58,20 @@ public class DollRarityOverrides {
                 try {
                     rarity = DollRarity.valueOf(rarityStr);
                 } catch (IllegalArgumentException e) {
-                    System.err.println("[Pokeblocks] Invalid rarity '" + parts[parts.length - 1] + "' in doll_rarity entry: " + trimmed);
+                    PokeblocksLog.LOGGER.error("Invalid rarity '{}' in doll_rarity entry: {}", parts[parts.length - 1], trimmed);
                     continue;
                 }
 
-                Set<ModelFlag> flags = EnumSet.noneOf(ModelFlag.class);
-                for (int i = 1; i < parts.length - 1; i++) {
-                    String flagName = parts[i].toLowerCase();
-                    boolean found = false;
-                    for (ModelFlag flag : ModelFlag.values()) {
-                        if (flag.getTagName().equals(flagName)) {
-                            flags.add(flag);
-                            found = true;
-                            break;
-                        }
-                    }
-                    if (!found) {
-                        System.err.println("[Pokeblocks] Unknown flag '" + parts[i] + "' in doll_rarity entry: " + trimmed);
-                    }
-                }
+                // Flags are the tokens between the pokemon (first) and rarity (last).
+                Set<ModelFlag> flags = DollFlagParser.parseFlags(parts, 1, parts.length - 1, trimmed);
 
                 String key = buildKey(pokemon, flags);
                 overrides.put(key, rarity);
             }
 
-            System.out.println("[Pokeblocks] Loaded " + overrides.size() + " rarity override(s)");
+            PokeblocksLog.LOGGER.info("Loaded {} rarity override(s)", overrides.size());
         } catch (Exception e) {
-            System.err.println("[Pokeblocks] Failed to load doll_rarity.json: " + e);
+            PokeblocksLog.LOGGER.error("Failed to load doll_rarity.json", e);
         }
     }
 

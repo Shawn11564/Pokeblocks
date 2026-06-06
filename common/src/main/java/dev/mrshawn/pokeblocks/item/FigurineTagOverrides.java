@@ -3,8 +3,9 @@ package dev.mrshawn.pokeblocks.item;
 import com.google.gson.Gson;
 import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
+import dev.mrshawn.pokeblocks.PokeblocksLog;
+import dev.mrshawn.pokeblocks.config.PokeblocksConfigFiles;
 
-import java.io.InputStream;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.*;
@@ -43,23 +44,7 @@ public class FigurineTagOverrides {
      * directory if it doesn't exist, then loads it.
      */
     public static void initialize(Path serverDir) {
-        configPath = serverDir.resolve("config").resolve("Pokeblocks").resolve(OVERRIDES_FILE);
-
-        try {
-            Files.createDirectories(configPath.getParent());
-
-            if (!Files.exists(configPath)) {
-                try (InputStream is = FigurineTagOverrides.class.getResourceAsStream("/assets/pokeblocks/" + OVERRIDES_FILE)) {
-                    if (is != null) {
-                        Files.copy(is, configPath);
-                        System.out.println("[Pokeblocks] Copied default " + OVERRIDES_FILE + " to " + configPath);
-                    }
-                }
-            }
-        } catch (Exception e) {
-            System.err.println("[Pokeblocks] Failed to copy " + OVERRIDES_FILE + " to config: " + e);
-        }
-
+        configPath = PokeblocksConfigFiles.ensureExtracted(serverDir, OVERRIDES_FILE);
         reload();
     }
 
@@ -70,7 +55,7 @@ public class FigurineTagOverrides {
         tags.clear();
 
         if (configPath == null || !Files.exists(configPath)) {
-            System.out.println("[Pokeblocks] No " + OVERRIDES_FILE + " found, skipping figurine tag overrides");
+            PokeblocksLog.LOGGER.info("No {} found, skipping figurine tag overrides", OVERRIDES_FILE);
             return;
         }
 
@@ -84,7 +69,7 @@ public class FigurineTagOverrides {
 
                 String[] parts = trimmed.split("\\s+");
                 if (parts.length < 2) {
-                    System.err.println("[Pokeblocks] Invalid figurine_tags entry (need figurine id + at least one tag): " + trimmed);
+                    PokeblocksLog.LOGGER.error("Invalid figurine_tags entry (need figurine id + at least one tag): {}", trimmed);
                     continue;
                 }
 
@@ -95,9 +80,9 @@ public class FigurineTagOverrides {
                 }
             }
 
-            System.out.println("[Pokeblocks] Loaded figurine tags for " + tags.size() + " figurine(s)");
+            PokeblocksLog.LOGGER.info("Loaded figurine tags for {} figurine(s)", tags.size());
         } catch (Exception e) {
-            System.err.println("[Pokeblocks] Failed to load " + OVERRIDES_FILE + ": " + e);
+            PokeblocksLog.LOGGER.error("Failed to load {}", OVERRIDES_FILE, e);
         }
     }
 
