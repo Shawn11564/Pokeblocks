@@ -3,6 +3,7 @@ package dev.mrshawn.pokeblocks.client.model.item;
 import dev.mrshawn.pokeblocks.PokeblocksCommon;
 import dev.mrshawn.pokeblocks.block.custom.decorative.DecorativeDefinition;
 import dev.mrshawn.pokeblocks.client.model.PokeblocksAssetResolver;
+import dev.mrshawn.pokeblocks.client.renderer.PokeblocksRenderTypes;
 import dev.mrshawn.pokeblocks.item.custom.DecorativeItem;
 import dev.mrshawn.pokeblocks.pokemon.ModelFlag;
 import net.minecraft.client.Minecraft;
@@ -89,6 +90,6 @@ public class DecorativeItemModel extends GeoModel<DecorativeItem> {
 
 	@Override
 	public RenderType getRenderType(DecorativeItem animatable, ResourceLocation texture) {
-		return RenderType.entityTranslucent(texture);
+		return PokeblocksRenderTypes.forModel(definition.modelPrefix(), texture);
 	}
 }

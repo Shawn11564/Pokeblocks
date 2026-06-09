@@ -1,6 +1,7 @@
 package dev.mrshawn.pokeblocks.client.model.item;
 
 import dev.mrshawn.pokeblocks.client.model.PokeblocksAssetResolver;
+import dev.mrshawn.pokeblocks.client.renderer.PokeblocksRenderTypes;
 import dev.mrshawn.pokeblocks.constants.ModSettings;
 import dev.mrshawn.pokeblocks.item.custom.FigurineItem;
 import net.minecraft.client.Minecraft;
@@ -52,6 +53,7 @@ public class FigurineItemModel extends GeoModel<FigurineItem> {
 
 	@Override
 	public RenderType getRenderType(FigurineItem animatable, ResourceLocation texture) {
-		return RenderType.entityTranslucent(texture);
+		ResourceManager rm = Minecraft.getInstance().getResourceManager();
+		return PokeblocksRenderTypes.forModel(figurine(rm), texture);
 	}
 }

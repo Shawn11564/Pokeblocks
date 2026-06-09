@@ -4,6 +4,7 @@ import dev.mrshawn.pokeblocks.PokeblocksCommon;
 import dev.mrshawn.pokeblocks.block.custom.decorative.DecorativeDefinition;
 import dev.mrshawn.pokeblocks.block.entity.custom.DecorativeBlockEntity;
 import dev.mrshawn.pokeblocks.client.model.PokeblocksAssetResolver;
+import dev.mrshawn.pokeblocks.client.renderer.PokeblocksRenderTypes;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.RenderType;
 import net.minecraft.resources.ResourceLocation;
@@ -63,6 +64,6 @@ public class DecorativeModel extends DefaultedBlockGeoModel<DecorativeBlockEntit
 
 	@Override
 	public RenderType getRenderType(DecorativeBlockEntity animatable, ResourceLocation texture) {
-		return RenderType.entityTranslucent(texture);
+		return PokeblocksRenderTypes.forModel(definition.modelPrefix(), texture);
 	}
 }

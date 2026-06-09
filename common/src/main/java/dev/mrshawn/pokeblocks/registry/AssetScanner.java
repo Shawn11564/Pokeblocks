@@ -32,7 +32,7 @@ public final class AssetScanner {
 	 * files whose lowercased name satisfies {@code nameFilter}. Handles both exploded (dev) and jar
 	 * ({@code jar:} URI) classpaths. Returns an empty set if the directory is absent or unreadable.
 	 */
-	static Set<String> scanClasspath(String resourceDir, Predicate<String> nameFilter) {
+	public static Set<String> scanClasspath(String resourceDir, Predicate<String> nameFilter) {
 		Set<String> output = new TreeSet<>();
 		try {
 			URL dirUrl = AssetScanner.class.getClassLoader().getResource(resourceDir);

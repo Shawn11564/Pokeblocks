@@ -3,6 +3,7 @@ package dev.mrshawn.pokeblocks.client.model.block;
 import dev.mrshawn.pokeblocks.PokeblocksCommon;
 import dev.mrshawn.pokeblocks.block.entity.custom.PokedollBlockEntity;
 import dev.mrshawn.pokeblocks.client.model.PokeblocksAssetResolver;
+import dev.mrshawn.pokeblocks.client.renderer.PokeblocksRenderTypes;
 import dev.mrshawn.pokeblocks.client.renderer.animation.AnimationResolver;
 import dev.mrshawn.pokeblocks.constants.ModSettings;
 import dev.mrshawn.pokeblocks.pokemon.ModelFlag;
@@ -86,6 +87,8 @@ public class PokedollModel extends DefaultedBlockGeoModel<PokedollBlockEntity> {
 
 	@Override
 	public RenderType getRenderType(PokedollBlockEntity animatable, ResourceLocation texture) {
-		return RenderType.entityTranslucent(texture);
+		ResourceManager rm = Minecraft.getInstance().getResourceManager();
+		String pokemon = PokeblocksAssetResolver.validatedPokemon(rm, animatable.getPokemon());
+		return PokeblocksRenderTypes.forModel(pokemon, texture);
 	}
 }

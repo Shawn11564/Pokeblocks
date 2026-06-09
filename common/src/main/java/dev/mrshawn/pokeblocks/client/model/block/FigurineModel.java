@@ -3,6 +3,7 @@ package dev.mrshawn.pokeblocks.client.model.block;
 import dev.mrshawn.pokeblocks.PokeblocksCommon;
 import dev.mrshawn.pokeblocks.block.entity.custom.FigurineBlockEntity;
 import dev.mrshawn.pokeblocks.client.model.PokeblocksAssetResolver;
+import dev.mrshawn.pokeblocks.client.renderer.PokeblocksRenderTypes;
 import dev.mrshawn.pokeblocks.constants.ModSettings;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.RenderType;
@@ -45,6 +46,8 @@ public class FigurineModel extends DefaultedBlockGeoModel<FigurineBlockEntity> {
 
     @Override
     public RenderType getRenderType(FigurineBlockEntity animatable, ResourceLocation texture) {
-        return RenderType.entityTranslucent(getTextureResource(animatable));
+        ResourceManager rm = Minecraft.getInstance().getResourceManager();
+        String figurine = PokeblocksAssetResolver.validatedFigurine(rm, animatable.getFigurine());
+        return PokeblocksRenderTypes.forModel(figurine, getTextureResource(animatable));
     }
 }

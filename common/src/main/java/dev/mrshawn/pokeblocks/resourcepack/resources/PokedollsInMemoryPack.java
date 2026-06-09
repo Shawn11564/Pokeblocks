@@ -41,7 +41,15 @@ public class PokedollsInMemoryPack implements PackResources {
             resources.put(entry.getKey(), entry.getValue().getBytes(StandardCharsets.UTF_8));
         }
 
-        System.out.println("[Pokeblocks] Generated " + generated.size() + " resource files");
+        // Best-effort z-fighting fixes: corrected geo models served at TOP priority override the
+        // jar's originals, so GeckoLib loads the patched geometry. Logs per-model fix suggestions.
+        Map<String, String> geoFixes = GeoZFightFixer.generateCorrections();
+        for (Map.Entry<String, String> entry : geoFixes.entrySet()) {
+            resources.put(entry.getKey(), entry.getValue().getBytes(StandardCharsets.UTF_8));
+        }
+
+        System.out.println("[Pokeblocks] Generated " + generated.size() + " resource files"
+                + (geoFixes.isEmpty() ? "" : " (+" + geoFixes.size() + " z-fight-corrected models)"));
     }
 
     @Override
