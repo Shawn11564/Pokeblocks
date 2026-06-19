@@ -1,9 +1,11 @@
 {
   "block.pokeblocks.pokedoll": "Pokedoll",
   "block.pokeblocks.figurine": "Figurine",
+  "block.pokeblocks.custom_decoration": "Decoration",
 
   "item.pokeblocks.pokedoll": "Pokedoll",
   "item.pokeblocks.figurine": "Figurine",
+  "item.pokeblocks.custom_decoration": "Decoration",
 
   "itemgroup.pokeblocks.regular": "Pokeblocks - Regular",
   "itemgroup.pokeblocks.gigantics": "Pokeblocks - Gigantics",

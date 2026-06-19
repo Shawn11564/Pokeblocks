@@ -4,6 +4,7 @@ import com.sun.net.httpserver.Headers;
 import com.sun.net.httpserver.HttpExchange;
 import com.sun.net.httpserver.HttpHandler;
 import com.sun.net.httpserver.HttpServer;
+import dev.mrshawn.pokeblocks.PokeblocksLog;
 import net.minecraft.network.protocol.common.ClientboundResourcePackPushPacket;
 import net.minecraft.server.MinecraftServer;
 
@@ -23,6 +24,12 @@ public final class ResourcePackServer {
 	private static String url;
 
 	private ResourcePackServer() {}
+
+	/** Stable pack identity derived from content hash, so the vanilla client reuses its cached
+	 *  download across restarts when the pack is unchanged. */
+	public static UUID packUuid(String sha) {
+		return UUID.nameUUIDFromBytes(("pokeblocks-pack:" + (sha == null ? "" : sha)).getBytes(StandardCharsets.UTF_8));
+	}
 
 	public static synchronized String start(MinecraftServer mcServer, Path file) throws IOException {
 		if (server != null && Files.exists(servedFile) && servedFile.equals(file) && url != null) {
@@ -52,8 +59,21 @@ public final class ResourcePackServer {
 						return;
 					}
 
+					String sha = CustomPackManager.getCachedSha();
+					String etag = (sha == null || sha.isEmpty()) ? null : "\"" + sha + "\"";
+					if (etag != null && etag.equals(exchange.getRequestHeaders().getFirst("If-None-Match"))) {
+						exchange.sendResponseHeaders(304, -1);
+						return;
+					}
+
 					Headers h = exchange.getResponseHeaders();
 					h.add("Content-Type", "application/zip");
+					if (etag != null) h.add("ETag", etag);
+					h.add("Cache-Control", "max-age=0, must-revalidate");
+					h.add("Last-Modified", java.time.format.DateTimeFormatter.RFC_1123_DATE_TIME.format(
+							java.time.ZonedDateTime.ofInstant(
+									java.time.Instant.ofEpochMilli(Files.getLastModifiedTime(servedFile).toMillis()),
+									java.time.ZoneOffset.UTC)));
 					long size = Files.size(servedFile);
 					exchange.sendResponseHeaders(200, size);
 					try (OutputStream os = exchange.getResponseBody()) {
@@ -86,7 +106,7 @@ public final class ResourcePackServer {
 		}
 
 		url = URI.create("http://" + hostForUrl + ":" + port + path).toString();
-		System.out.println("[Pokeblocks] Resource pack server started at: " + url);
+		PokeblocksLog.LOGGER.info("Resource pack server started at: {}", url);
 		return url;
 	}
 
@@ -106,7 +126,7 @@ public final class ResourcePackServer {
 				}
 			}
 		} catch (Exception e) {
-			System.err.println("[Pokeblocks] Failed to enumerate network interfaces: " + e);
+			PokeblocksLog.LOGGER.warn("Failed to enumerate network interfaces", e);
 		}
 		// Last resort
 		return "127.0.0.1";
@@ -123,8 +143,9 @@ public final class ResourcePackServer {
 
 	public static synchronized UUID serveAndPush(MinecraftServer mcServer, Path file, boolean required) throws IOException {
 		String url = start(mcServer, file);
-		String sha = CustomPackBuilder.computeSHA1(file);
-		UUID uuid = UUID.nameUUIDFromBytes(url.getBytes(StandardCharsets.UTF_8));
+		String sha = CustomPackManager.getCachedSha();
+		if (sha == null || sha.isEmpty()) sha = CustomPackBuilder.computeSHA1(file);
+		UUID uuid = packUuid(sha);
 		ClientboundResourcePackPushPacket pkt = new ClientboundResourcePackPushPacket(uuid, url, sha, required, Optional.empty());
 		mcServer.getConnection().getConnections().forEach(conn -> conn.send(pkt));
 		return uuid;

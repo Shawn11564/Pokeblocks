@@ -4,6 +4,7 @@ import com.mojang.brigadier.CommandDispatcher;
 import com.mojang.brigadier.context.CommandContext;
 import dev.mrshawn.pokeblocks.PokeblocksCommon;
 import dev.mrshawn.pokeblocks.config.ConfigSync;
+import dev.mrshawn.pokeblocks.config.ConfigUpdateMode;
 import dev.mrshawn.pokeblocks.config.PokeblocksConfig;
 import dev.mrshawn.pokeblocks.item.DollRarityAcquisitionDivisors;
 import dev.mrshawn.pokeblocks.item.DollRarityIgnoredFlags;
@@ -23,9 +24,9 @@ import java.util.Map;
 /**
  * {@code /pokeblocks config status|sync} — preview or apply a {@link ConfigSync} pass on demand.
  * <p>
- * Both subcommands use {@code force = true} so they work even when {@code [config_sync] auto_update}
- * is off: that is the intended workflow for admins who keep auto-update disabled but occasionally
- * want to pull in new content. Frozen files are still respected.
+ * Both subcommands use {@code force = true} so they work even when {@code auto_update_configs} is
+ * off: that is the intended workflow for admins who keep auto-update disabled but occasionally want
+ * to pull in new content. Frozen files are still respected.
  */
 public class ConfigSyncCMD {
 
@@ -44,9 +45,9 @@ public class ConfigSyncCMD {
 		CommandSourceStack source = ctx.getSource();
 		ConfigSync.SyncReport report = ConfigSync.sync(source.getServer().getServerDirectory(), true, true);
 
-		boolean autoOn = PokeblocksConfig.isConfigAutoUpdate();
-		source.sendSuccess(() -> Component.literal("Config auto-update is " + (autoOn ? "ON" : "OFF"))
-				.withStyle(autoOn ? ChatFormatting.GREEN : ChatFormatting.YELLOW), false);
+		ConfigUpdateMode mode = PokeblocksConfig.getConfigUpdateMode();
+		source.sendSuccess(() -> Component.literal("Config auto-update mode: " + mode.token())
+				.withStyle(mode == ConfigUpdateMode.OFF ? ChatFormatting.YELLOW : ChatFormatting.GREEN), false);
 
 		if (!report.anyChanges()) {
 			source.sendSuccess(() -> Component.literal("All config files are up to date.").withStyle(ChatFormatting.GRAY), false);
@@ -92,7 +93,9 @@ public class ConfigSyncCMD {
 	}
 
 	private static String summary(String verb, ConfigSync.SyncReport report) {
-		return verb + " config updates: +" + report.totalAdded() + " new, ~" + report.totalUpdated() + " changed.";
+		String base = verb + " config updates: +" + report.totalAdded() + " new, ~" + report.totalUpdated() + " changed";
+		if (!report.overwritten.isEmpty()) base += ", " + report.overwritten.size() + " overwritten";
+		return base + ".";
 	}
 
 	private static void sendDetails(CommandSourceStack source, ConfigSync.SyncReport report) {
@@ -103,6 +106,10 @@ public class ConfigSyncCMD {
 			if (added.isEmpty() && updated.isEmpty()) continue;
 			source.sendSuccess(() -> Component.literal("  " + file + ": +" + added.size() + " new, ~" + updated.size() + " changed")
 					.withStyle(ChatFormatting.DARK_AQUA), false);
+		}
+		for (String file : report.overwritten) {
+			source.sendSuccess(() -> Component.literal("  " + file + ": overwritten with bundled default")
+					.withStyle(ChatFormatting.GOLD), false);
 		}
 	}
 

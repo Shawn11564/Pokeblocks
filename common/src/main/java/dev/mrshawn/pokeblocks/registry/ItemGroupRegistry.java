@@ -1,8 +1,10 @@
 package dev.mrshawn.pokeblocks.registry;
 
 import dev.mrshawn.pokeblocks.PokeblocksCommon;
+import dev.mrshawn.pokeblocks.constants.ModSettings;
 import dev.mrshawn.pokeblocks.item.PokeblocksItemData;
 import dev.mrshawn.pokeblocks.item.RarityScoreCalculator;
+import dev.mrshawn.pokeblocks.item.custom.CustomDecorationItem;
 import dev.mrshawn.pokeblocks.item.custom.DecorativeItem;
 import dev.mrshawn.pokeblocks.item.custom.FigurineItem;
 import dev.mrshawn.pokeblocks.item.custom.PokedollItem;
@@ -85,6 +87,12 @@ public final class ItemGroupRegistry {
 				// Figurines
 				for (String figurine : FigurineRegistry.ALL_FIGURINES) {
 					entries.accept(FigurineItem.createFigurine(figurine));
+				}
+				// Custom decorations (generic data-driven block) — one stack per discovered id.
+				// The seeded default id is a fallback placeholder, not a real decoration, so it's skipped.
+				for (String decoration : CustomDecorationRegistry.ALL_CUSTOM_DECORATIONS) {
+					if (decoration.equals(ModSettings.DEFAULT_DECORATION)) continue;
+					entries.accept(CustomDecorationItem.createDecoration(decoration));
 				}
 				// Decorative blocks — every flag variant (shiny, gigantic, …), default NBT only
 				for (DecorativeRegistry.DecorativeEntry entry : DecorativeRegistry.ALL_ENTRIES) {

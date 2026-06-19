@@ -6,9 +6,9 @@ import com.google.gson.JsonElement;
 import dev.mrshawn.pokeblocks.PokeblocksLog;
 import dev.mrshawn.pokeblocks.config.PokeblocksConfigFiles;
 
-import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 public class FigurineNameOverrides {
@@ -34,13 +34,28 @@ public class FigurineNameOverrides {
 	public static void reload() {
 		overrides.clear();
 
-		if (configPath == null || !Files.exists(configPath)) {
+		String content = PokeblocksConfigFiles.readConfigContent(configPath, OVERRIDES_FILE);
+		if (content == null) {
 			PokeblocksLog.LOGGER.info("No {} found, skipping figurine name overrides", OVERRIDES_FILE);
-			return;
+		} else {
+			applyContent(content);
+			PokeblocksLog.LOGGER.info("Loaded {} figurine name override(s)", overrides.size());
 		}
 
+		// Resource packs may contribute override entries; later packs win by key.
+		List<String> packOverrides = PokeblocksConfigFiles.collectPackOverrides(
+				configPath == null ? null : configPath.getParent(), OVERRIDES_FILE);
+		for (String override : packOverrides) {
+			applyContent(override);
+		}
+		if (!packOverrides.isEmpty()) {
+			PokeblocksLog.LOGGER.debug("Applied {} pack override(s) for {}", packOverrides.size(), OVERRIDES_FILE);
+		}
+	}
+
+	/** Parses one JSON-array content string into {@link #overrides}, merging by key (does not clear). */
+	private static void applyContent(String content) {
 		try {
-			String content = Files.readString(configPath);
 			JsonArray array = GSON.fromJson(content, JsonArray.class);
 
 			for (JsonElement element : array) {
@@ -59,7 +74,6 @@ public class FigurineNameOverrides {
 
 				overrides.put(figurine, displayName);
 			}
-			PokeblocksLog.LOGGER.info("Loaded {} figurine name override(s)", overrides.size());
 		} catch (Exception e) {
 			PokeblocksLog.LOGGER.error("Failed to load {}", OVERRIDES_FILE, e);
 		}

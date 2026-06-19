@@ -4,11 +4,12 @@ import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.google.gson.JsonObject;
 import dev.mrshawn.pokeblocks.PokeblocksLog;
+import dev.mrshawn.pokeblocks.config.PokeblocksConfigFiles;
 
-import java.io.InputStream;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 public class RarityWeightConfig {
@@ -23,40 +24,12 @@ public class RarityWeightConfig {
      * then loads from config. Call during server startup.
      */
     public static void initialize(Path serverDir) {
-        configPath = serverDir.resolve("config").resolve("Pokeblocks").resolve("rarity_weights.json");
-        
-        try {
-            Files.createDirectories(configPath.getParent());
-            
-            if (!Files.exists(configPath)) {
-                copyDefaultConfig();
-            }
-        } catch (Exception e) {
-            PokeblocksLog.LOGGER.error("Failed to copy rarity_weights.json to config", e);
-        }
+        configPath = PokeblocksConfigFiles.ensureExtracted(serverDir, "rarity_weights.json");
 
         reload();
         initialized = true;
     }
-    
-    /**
-     * Copies the default config from assets to the config directory
-     */
-    private static void copyDefaultConfig() {
-        try (InputStream is = RarityWeightConfig.class.getResourceAsStream("/assets/pokeblocks/rarity_weights.json")) {
-            if (is != null) {
-                Files.copy(is, configPath);
-                PokeblocksLog.LOGGER.info("Copied default rarity_weights.json to {}", configPath);
-            } else {
-                // Create default config if asset doesn't exist
-                createDefaultConfig();
-            }
-        } catch (Exception e) {
-            PokeblocksLog.LOGGER.error("Failed to copy default config, creating new one", e);
-            createDefaultConfig();
-        }
-    }
-    
+
     /**
      * Creates a default config file with hardcoded values
      */
@@ -82,17 +55,36 @@ public class RarityWeightConfig {
      */
     public static void reload() {
         weights.clear();
-        
-        if (configPath == null || !Files.exists(configPath)) {
+
+        String content = PokeblocksConfigFiles.readConfigContent(configPath, "rarity_weights.json");
+        if (content == null) {
             PokeblocksLog.LOGGER.info("No rarity_weights.json found, using hardcoded defaults");
             loadDefaults();
-            return;
+        } else {
+            applyContent(content);
+            PokeblocksLog.LOGGER.info("Loaded rarity weights from config");
         }
-        
+
+        // Resource packs may contribute weight overrides; only keys present in a pack override the base.
+        List<String> packOverrides = PokeblocksConfigFiles.collectPackOverrides(
+                configPath == null ? null : configPath.getParent(), "rarity_weights.json");
+        for (String override : packOverrides) {
+            applyOverride(override);
+        }
+        if (!packOverrides.isEmpty()) {
+            PokeblocksLog.LOGGER.debug("Applied {} pack override(s) for {}", packOverrides.size(), "rarity_weights.json");
+        }
+    }
+
+    /**
+     * Parses the base config content into {@link #weights}: every rarity is populated, using the
+     * value from the config when present and the hardcoded default otherwise. Does not clear; on
+     * parse failure falls back to {@link #loadDefaults()} (matching prior behavior).
+     */
+    private static void applyContent(String content) {
         try {
-            String content = Files.readString(configPath);
             JsonObject config = gson.fromJson(content, JsonObject.class);
-            
+
             for (DollRarity rarity : DollRarity.values()) {
                 String key = rarity.name().toLowerCase();
                 if (config.has(key)) {
@@ -102,11 +94,28 @@ public class RarityWeightConfig {
                     weights.put(rarity, rarity.getDefaultWeight());
                 }
             }
-            
-            PokeblocksLog.LOGGER.info("Loaded rarity weights from config");
         } catch (Exception e) {
             PokeblocksLog.LOGGER.error("Failed to load rarity_weights.json, using defaults", e);
             loadDefaults();
+        }
+    }
+
+    /**
+     * Applies a resource-pack override on top of already-loaded base weights. Unlike the base load,
+     * this only overrides rarities the override file actually specifies, leaving the rest untouched.
+     */
+    private static void applyOverride(String content) {
+        try {
+            JsonObject config = gson.fromJson(content, JsonObject.class);
+
+            for (DollRarity rarity : DollRarity.values()) {
+                String key = rarity.name().toLowerCase();
+                if (config.has(key)) {
+                    weights.put(rarity, config.get(key).getAsInt());
+                }
+            }
+        } catch (Exception e) {
+            PokeblocksLog.LOGGER.error("Failed to apply rarity_weights.json pack override", e);
         }
     }
     

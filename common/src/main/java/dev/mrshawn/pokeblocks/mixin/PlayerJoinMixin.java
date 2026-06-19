@@ -1,5 +1,6 @@
 package dev.mrshawn.pokeblocks.mixin;
 
+import dev.mrshawn.pokeblocks.PokeblocksLog;
 import dev.mrshawn.pokeblocks.config.PokeblocksConfig;
 import dev.mrshawn.pokeblocks.resourcepack.CustomPackManager;
 import dev.mrshawn.pokeblocks.resourcepack.ResourcePackServer;
@@ -14,7 +15,6 @@ import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
-import java.nio.charset.StandardCharsets;
 import java.util.Optional;
 import java.util.UUID;
 
@@ -33,7 +33,8 @@ public abstract class PlayerJoinMixin {
 
 		try {
 			String url = ResourcePackServer.start(server, CustomPackManager.getCachedPack());
-			UUID uuid = UUID.nameUUIDFromBytes(url.getBytes(StandardCharsets.UTF_8));
+			String sha = CustomPackManager.getCachedSha();
+			UUID uuid = ResourcePackServer.packUuid(sha);
 
 			boolean required = PokeblocksConfig.isKickOnDecline();
 
@@ -42,11 +43,11 @@ public abstract class PlayerJoinMixin {
 					: Optional.empty();
 
 			ClientboundResourcePackPushPacket pkt = new ClientboundResourcePackPushPacket(
-					uuid, url, CustomPackManager.getCachedSha(), required, prompt
+					uuid, url, sha, required, prompt
 			);
 			player.connection.send(pkt);
 		} catch (Exception e) {
-			System.err.println("[Pokeblocks] Failed to send custom resource pack to " + player.getName().getString() + ": " + e);
+			PokeblocksLog.LOGGER.error("Failed to send custom resource pack to {}", player.getName().getString(), e);
 		}
 	}
 }

@@ -12,6 +12,7 @@ import java.nio.file.Path;
 public class CustomPackManager {
 	private static Path cachedPack = null;
 	private static String cachedSha = null;
+	private static String cachedFingerprint = null;
 
 	/**
 	 * Scans custom pack assets and registers any new pokemon/figurines into their
@@ -36,10 +37,17 @@ public class CustomPackManager {
 	public static void buildAndCache(MinecraftServer server) {
 		try {
 			Path gameDir = server.getServerDirectory();
+			String fp = CustomPackBuilder.computeInputFingerprint(gameDir);
+			if (cachedPack != null && Files.exists(cachedPack) && !fp.isEmpty() && fp.equals(cachedFingerprint)) {
+				PokeblocksCommon.LOGGER.info("Custom resource pack inputs unchanged, reusing cached pack {} sha1={}", cachedPack, cachedSha);
+				return;
+			}
+
 			PackBuildResult result = CustomPackBuilder.buildResourcePack(gameDir);
 			if (result != null && Files.exists(result.zipFile())) {
 				cachedPack = result.zipFile();
 				cachedSha = CustomPackBuilder.computeSHA1(cachedPack);
+				cachedFingerprint = fp;
 				PokeblocksCommon.LOGGER.info("Custom resource pack cached: {} sha1={}", cachedPack, cachedSha);
 
 				AssetScanner.SplitAssets assets = AssetScanner.split(result.modelFiles(), result.textureFiles(), result.animationFiles());
@@ -49,11 +57,13 @@ public class CustomPackManager {
 			} else {
 				cachedPack = null;
 				cachedSha = null;
+				cachedFingerprint = null;
 				PokeblocksCommon.LOGGER.info("No custom resources found, skipping pack build.");
 			}
 		} catch (Exception e) {
 			cachedPack = null;
 			cachedSha = null;
+			cachedFingerprint = null;
 			PokeblocksCommon.LOGGER.error("Failed to build custom resource pack", e);
 		}
 	}

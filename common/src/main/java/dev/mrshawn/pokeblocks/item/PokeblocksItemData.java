@@ -46,6 +46,7 @@ public final class PokeblocksItemData {
 	public static final String KEY_ID = "id";
 	public static final String KEY_POKEMON = "pokemon";
 	public static final String KEY_FIGURINE = "figurine";
+	public static final String KEY_DECORATION = "decoration";
 
 	private PokeblocksItemData() {}
 
@@ -68,6 +69,18 @@ public final class PokeblocksItemData {
 	public static CompoundTag figurineTag(String figurine, Collection<ModelFlag> activeFlags) {
 		CompoundTag tag = base(blockEntityId(ModSettings.FIGURINE_ID));
 		tag.putString(KEY_FIGURINE, figurine == null || figurine.isEmpty() ? ModSettings.DEFAULT_FIGURINE : figurine);
+		writeFlags(tag, activeFlags);
+		return tag;
+	}
+
+	/**
+	 * Builds the canonical custom-decoration tag: {@code {id, decoration, <true flags>}}.
+	 * Mirrors {@link #figurineTag} — the generic decoration block stores its specific decoration id under
+	 * {@link #KEY_DECORATION}, resolved by id at render time.
+	 */
+	public static CompoundTag decorationTag(String decoration, Collection<ModelFlag> activeFlags) {
+		CompoundTag tag = base(blockEntityId(ModSettings.CUSTOM_DECORATION_ID));
+		tag.putString(KEY_DECORATION, decoration == null || decoration.isEmpty() ? ModSettings.DEFAULT_DECORATION : decoration);
 		writeFlags(tag, activeFlags);
 		return tag;
 	}

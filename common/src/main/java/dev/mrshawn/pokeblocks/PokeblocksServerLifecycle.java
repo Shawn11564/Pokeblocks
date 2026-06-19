@@ -59,7 +59,7 @@ public final class PokeblocksServerLifecycle {
             // (e.g. "alien") are in PokemonRegistry when LootTableLoadEvent fires.
             CustomPackManager.buildAndCache(server);
         } catch (Exception e) {
-            System.err.println("[Pokeblocks] Failed during server pre-start: " + e);
+            PokeblocksLog.LOGGER.error("Failed during server pre-start", e);
         }
     }
 

@@ -1,6 +1,7 @@
 package dev.mrshawn.pokeblocks.resourcepack.resources;
 
 import dev.mrshawn.pokeblocks.PokeblocksCommon;
+import dev.mrshawn.pokeblocks.PokeblocksLog;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.packs.PackLocationInfo;
@@ -41,7 +42,7 @@ public class PokedollsInMemoryPack implements PackResources {
             resources.put(entry.getKey(), entry.getValue().getBytes(StandardCharsets.UTF_8));
         }
 
-        System.out.println("[Pokeblocks] Generated " + generated.size() + " resource files");
+        PokeblocksLog.LOGGER.debug("Generated {} resource files", generated.size());
     }
 
     @Override

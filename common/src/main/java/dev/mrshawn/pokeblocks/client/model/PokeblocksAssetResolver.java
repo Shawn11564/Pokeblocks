@@ -45,9 +45,10 @@ public final class PokeblocksAssetResolver {
 	private static final String TEX = "textures/block/";
 	private static final String ANIM = "animations/block/";
 
-	/** Pokemon/figurine ids whose base model has been confirmed present, so we skip the lookup next time. */
+	/** Pokemon/figurine/decoration ids whose base model has been confirmed present, so we skip the lookup next time. */
 	private static final Set<String> VALIDATED_POKEMON = new HashSet<>();
 	private static final Set<String> VALIDATED_FIGURINES = new HashSet<>();
+	private static final Set<String> VALIDATED_DECORATIONS = new HashSet<>();
 	/** Variant model paths confirmed absent, so we fall back to the base model without re-querying every frame. */
 	private static final Set<String> MISSING_MODELS = new HashSet<>();
 	/**
@@ -69,6 +70,7 @@ public final class PokeblocksAssetResolver {
 	static {
 		VALIDATED_POKEMON.add(ModSettings.DEFAULT_POKEMON);
 		VALIDATED_FIGURINES.add(ModSettings.DEFAULT_FIGURINE);
+		VALIDATED_DECORATIONS.add(ModSettings.DEFAULT_DECORATION);
 	}
 
 	private PokeblocksAssetResolver() {}
@@ -121,6 +123,18 @@ public final class PokeblocksAssetResolver {
 		VALIDATED_POKEMON.add(ModSettings.DEFAULT_POKEMON);
 		MISSING_MODELS.clear();
 		RESOLVED_TEXTURES.clear();
+	}
+
+	/** Clears the figurine validation cache (e.g. on resource reload) so newly-added ids re-validate. */
+	public static void clearFigurineCache() {
+		VALIDATED_FIGURINES.clear();
+		VALIDATED_FIGURINES.add(ModSettings.DEFAULT_FIGURINE);
+	}
+
+	/** Clears the custom-decoration validation cache (e.g. on resource reload) so newly-added ids re-validate. */
+	public static void clearDecorationCache() {
+		VALIDATED_DECORATIONS.clear();
+		VALIDATED_DECORATIONS.add(ModSettings.DEFAULT_DECORATION);
 	}
 
 	/**
@@ -242,6 +256,42 @@ public final class PokeblocksAssetResolver {
 		ResourceLocation found = textureFromBase(rm, TEX + figurine + "_figurine");
 		if (found != null) return found;
 		return loc(TEX + ModSettings.DEFAULT_FIGURINE + "_figurine_texture.png");
+	}
+
+	// --- Custom decoration ---------------------------------------------------
+	// The generic data-driven decoration block; mirrors the figurine resolution above with a
+	// {@code _decoration} marker. See CustomDecorationRegistry for the naming convention.
+
+	/** Returns {@code decoration} if its model exists (cached), else the default decoration. */
+	public static String validatedDecoration(ResourceManager rm, String decoration) {
+		if (decoration == null || decoration.isEmpty()) return ModSettings.DEFAULT_DECORATION;
+		if (VALIDATED_DECORATIONS.contains(decoration)) return decoration;
+		if (exists(rm, GEO + decoration + "_decoration.geo.json")) {
+			VALIDATED_DECORATIONS.add(decoration);
+			return decoration;
+		}
+		return ModSettings.DEFAULT_DECORATION;
+	}
+
+	/** The decoration model path {@code geo/block/<decoration>_decoration.geo.json}. */
+	public static ResourceLocation customDecorationModel(String decoration) {
+		return loc(GEO + decoration + "_decoration.geo.json");
+	}
+
+	/** Resolves a decoration texture, falling back to the default decoration texture. */
+	public static ResourceLocation customDecorationTexture(ResourceManager rm, String decoration) {
+		ResourceLocation found = textureFromBase(rm, TEX + decoration + "_decoration");
+		if (found != null) return found;
+		return loc(TEX + ModSettings.DEFAULT_DECORATION + "_decoration_texture.png");
+	}
+
+	/**
+	 * Resolves the optional decoration animation {@code animations/block/<decoration>_decoration.animation.json},
+	 * or {@code null} if absent (GeckoLib treats a {@code null} animation resource as "no animations").
+	 */
+	public static ResourceLocation customDecorationAnimation(ResourceManager rm, String decoration) {
+		String path = ANIM + decoration + "_decoration.animation.json";
+		return exists(rm, path) ? loc(path) : null;
 	}
 
 	// --- Decorative ----------------------------------------------------------

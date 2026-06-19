@@ -50,21 +50,44 @@ public final class ConfigSync {
 
     enum Strategy { ARRAY_HEAD, ARRAY_ALL_BUT_LAST, ARRAY_WHOLE, JSON_OBJECT, JSON_GROUPS }
 
-    private record Managed(String file, Strategy strategy) {}
+    /**
+     * A managed config file.
+     *
+     * @param shownByDefault whether the file is written into the config folder by default. Niche
+     *        files tied to hardcoded values (e.g. the substitute acquisition divisor) are hidden to
+     *        reduce clutter; their bundled defaults still apply via
+     *        {@link PokeblocksConfigFiles#readConfigContent}. Admins override visibility per file
+     *        with the {@code show_files}/{@code hide_files} lists in {@code config.toml} (#68).
+     */
+    private record Managed(String file, Strategy strategy, boolean shownByDefault) {}
 
     /**
      * The config files ConfigSync owns. {@code sounds.json} is intentionally excluded — it is a
      * vanilla resource-pack asset, not an admin-editable config.
      */
     private static final List<Managed> MANAGED = List.of(
-            new Managed("doll_rarity.json", Strategy.ARRAY_ALL_BUT_LAST),
-            new Managed("rarity_acquisition_divisors.json", Strategy.ARRAY_ALL_BUT_LAST),
-            new Managed("figurine_names.json", Strategy.ARRAY_HEAD),
-            new Managed("figurine_tags.json", Strategy.ARRAY_HEAD),
-            new Managed("ignored_rarity_flags.json", Strategy.ARRAY_WHOLE),
-            new Managed("rarity_weights.json", Strategy.JSON_OBJECT),
-            new Managed("loot_groups.json", Strategy.JSON_GROUPS)
+            new Managed("doll_rarity.json", Strategy.ARRAY_ALL_BUT_LAST, true),
+            new Managed("rarity_acquisition_divisors.json", Strategy.ARRAY_ALL_BUT_LAST, false),
+            new Managed("figurine_names.json", Strategy.ARRAY_HEAD, true),
+            new Managed("figurine_tags.json", Strategy.ARRAY_HEAD, true),
+            new Managed("ignored_rarity_flags.json", Strategy.ARRAY_WHOLE, false),
+            new Managed("rarity_weights.json", Strategy.JSON_OBJECT, true),
+            new Managed("loot_groups.json", Strategy.JSON_GROUPS, true)
     );
+
+    /**
+     * Whether a config file should be written into {@code config/Pokeblocks/}. Honors the admin's
+     * {@code hide_files}/{@code show_files} overrides first, then the file's default visibility.
+     * Unmanaged files are always shown. Hidden files still load their bundled defaults at runtime.
+     */
+    public static boolean isFileShown(String fileName) {
+        if (PokeblocksConfig.getHiddenConfigFiles().contains(fileName)) return false;
+        if (PokeblocksConfig.getShownConfigFiles().contains(fileName)) return true;
+        for (Managed m : MANAGED) {
+            if (m.file().equals(fileName)) return m.shownByDefault();
+        }
+        return true;
+    }
 
     /**
      * Runs a sync pass.
@@ -83,9 +106,24 @@ public final class ConfigSync {
         Path syncDir = modDir.resolve(SYNC_DIR);
         Path baselineDir = syncDir.resolve(BASELINE_DIR);
 
-        boolean autoUpdate = force || PokeblocksConfig.isConfigAutoUpdate();
+        ConfigUpdateMode mode = PokeblocksConfig.getConfigUpdateMode();
+        // A forced run (the manual /pokeblocks config sync command) pulls updates even when the mode
+        // is OFF, so admins who keep auto-update off can still sync on demand: a forced OFF runs once
+        // as a (non-destructive) MERGE.
+        ConfigUpdateMode effectiveMode = (force && mode == ConfigUpdateMode.OFF) ? ConfigUpdateMode.MERGE : mode;
         boolean backup = PokeblocksConfig.isConfigBackupBeforeUpdate();
         Set<String> frozen = PokeblocksConfig.getFrozenConfigFiles();
+
+        if (!dryRun) {
+            if (mode == ConfigUpdateMode.OVERWRITE) {
+                PokeblocksLog.LOGGER.warn("[ConfigSync] auto_update_configs = overwrite: managed config files will be "
+                        + "reset to the mod defaults (backups kept in {}/{}). Use 'merge' to keep your customizations.",
+                        SYNC_DIR, BACKUP_DIR);
+            } else if (mode == ConfigUpdateMode.OFF && !force) {
+                PokeblocksLog.LOGGER.info("[ConfigSync] auto_update_configs = off: config files are not auto-updated. "
+                        + "Run \"/pokeblocks config sync\" after a mod update to pull new content.");
+            }
+        }
 
         if (!dryRun) {
             try {
@@ -98,7 +136,7 @@ public final class ConfigSync {
 
         for (Managed managed : MANAGED) {
             try {
-                processFile(managed, modDir, baselineDir, syncDir, autoUpdate, backup, frozen, dryRun, report);
+                processFile(managed, modDir, baselineDir, syncDir, effectiveMode, backup, frozen, dryRun, report);
             } catch (Exception e) {
                 PokeblocksLog.LOGGER.error("[ConfigSync] Failed to sync {}", managed.file(), e);
             }
@@ -116,7 +154,7 @@ public final class ConfigSync {
     }
 
     private static void processFile(Managed managed, Path modDir, Path baselineDir, Path syncDir,
-                                    boolean autoUpdate, boolean backup, Set<String> frozen,
+                                    ConfigUpdateMode mode, boolean backup, Set<String> frozen,
                                     boolean dryRun, SyncReport report) {
         String file = managed.file();
         Path live = modDir.resolve(file);
@@ -127,8 +165,17 @@ public final class ConfigSync {
             return;
         }
 
-        // First run / fresh install: extract the default so there is something to merge against.
+        // First run / fresh install: extract the default so there is something to merge against —
+        // unless the file is hidden (#68), in which case it is deliberately kept out of the folder
+        // and its bundled default applies at load time (via PokeblocksConfigFiles.readConfigContent).
         if (!Files.exists(live)) {
+            if (!isFileShown(file)) {
+                if (dryRun) {
+                    report.notes.add(file + ": hidden by default (not created; its bundled default still "
+                            + "applies). Add it to show_files to edit it.");
+                }
+                return;
+            }
             if (dryRun) {
                 report.notes.add(file + ": would be created from the bundled default");
                 return;
@@ -144,9 +191,35 @@ public final class ConfigSync {
         }
 
         boolean isFrozen = frozen.contains(file) || frozen.contains(file.toLowerCase(Locale.ROOT));
-        if (!autoUpdate || isFrozen) {
+        if (isFrozen || mode == ConfigUpdateMode.OFF) {
             // Do NOT advance the baseline — that lets a later re-enable replay everything since.
-            report.skipped.add(file + (autoUpdate ? " (frozen)" : " (auto-update off)"));
+            report.skipped.add(file + (isFrozen ? " (frozen)" : " (auto-update off)"));
+            return;
+        }
+
+        // OVERWRITE: replace the admin's file wholesale with the bundled default (backing it up first).
+        if (mode == ConfigUpdateMode.OVERWRITE) {
+            String current = readFile(live);
+            if (current == null || !current.equals(theirs)) {
+                report.overwritten.add(file);
+                if (!dryRun) {
+                    if (backup) backup(live, syncDir, file);
+                    try {
+                        Files.writeString(live, theirs);
+                        PokeblocksLog.LOGGER.info("[ConfigSync] Overwrote {} with the bundled default", file);
+                    } catch (Exception e) {
+                        PokeblocksLog.LOGGER.error("[ConfigSync] Failed to overwrite {}", file, e);
+                        return;
+                    }
+                }
+            }
+            if (!dryRun) {
+                try {
+                    Files.writeString(baselineDir.resolve(file), theirs);
+                } catch (Exception e) {
+                    PokeblocksLog.LOGGER.error("[ConfigSync] Failed to update baseline for {}", file, e);
+                }
+            }
             return;
         }
 
@@ -239,6 +312,8 @@ public final class ConfigSync {
         public final Map<String, List<String>> added = new LinkedHashMap<>();
         /** file → entries updated to a new default. */
         public final Map<String, List<String>> updated = new LinkedHashMap<>();
+        /** Files replaced wholesale by the bundled default (overwrite mode). */
+        public final List<String> overwritten = new ArrayList<>();
         /** Human-readable notes about files skipped (frozen, auto-update off, invalid JSON). */
         public final List<String> skipped = new ArrayList<>();
         /** Other notes (e.g. a file that would be created on a dry run). */
@@ -249,7 +324,7 @@ public final class ConfigSync {
         }
 
         public boolean anyChanges() {
-            return totalAdded() > 0 || totalUpdated() > 0;
+            return totalAdded() > 0 || totalUpdated() > 0 || !overwritten.isEmpty();
         }
 
         public int totalAdded() {
@@ -270,7 +345,9 @@ public final class ConfigSync {
                     .append(new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").format(new Date()))
                     .append(dryRun ? " (preview)\n" : "\n");
             sb.append("Added ").append(totalAdded()).append(" entr").append(totalAdded() == 1 ? "y" : "ies")
-                    .append(", updated ").append(totalUpdated()).append(".\n");
+                    .append(", updated ").append(totalUpdated());
+            if (!overwritten.isEmpty()) sb.append(", overwrote ").append(overwritten.size()).append(" file(s)");
+            sb.append(".\n");
 
             for (String file : added.keySet()) {
                 List<String> a = added.getOrDefault(file, List.of());
@@ -279,6 +356,11 @@ public final class ConfigSync {
                 sb.append('\n').append(file).append(":\n");
                 for (String e : a) sb.append("  + ").append(e).append('\n');
                 for (String e : u) sb.append("  ~ ").append(e).append('\n');
+            }
+
+            if (!overwritten.isEmpty()) {
+                sb.append("\nOverwritten with bundled defaults:\n");
+                for (String f : overwritten) sb.append("  ! ").append(f).append('\n');
             }
 
             if (!skipped.isEmpty()) {

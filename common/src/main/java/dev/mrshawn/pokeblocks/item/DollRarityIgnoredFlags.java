@@ -7,7 +7,6 @@ import dev.mrshawn.pokeblocks.PokeblocksLog;
 import dev.mrshawn.pokeblocks.config.PokeblocksConfigFiles;
 import dev.mrshawn.pokeblocks.pokemon.ModelFlag;
 
-import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.*;
 
@@ -55,13 +54,29 @@ public class DollRarityIgnoredFlags {
         ignoredFlagsMap.clear();
         globalIgnoredFlags.clear();
 
-        if (configPath == null || !Files.exists(configPath)) {
+        String content = PokeblocksConfigFiles.readConfigContent(configPath, "ignored_rarity_flags.json");
+        if (content == null) {
             PokeblocksLog.LOGGER.info("No ignored_rarity_flags.json found, skipping ignored rarity flags");
-            return;
+        } else {
+            applyContent(content);
+            PokeblocksLog.LOGGER.info("Loaded ignored rarity flags for {} pokemon and {} blanket flag(s)",
+                    ignoredFlagsMap.size(), globalIgnoredFlags.size());
         }
 
+        // Resource packs may contribute additional ignored-flag entries; these union with the base.
+        List<String> packOverrides = PokeblocksConfigFiles.collectPackOverrides(
+                configPath == null ? null : configPath.getParent(), "ignored_rarity_flags.json");
+        for (String override : packOverrides) {
+            applyContent(override);
+        }
+        if (!packOverrides.isEmpty()) {
+            PokeblocksLog.LOGGER.debug("Applied {} pack override(s) for {}", packOverrides.size(), "ignored_rarity_flags.json");
+        }
+    }
+
+    /** Parses one JSON-array content string into the ignored-flag structures, unioning entries (does not clear). */
+    private static void applyContent(String content) {
         try {
-            String content = Files.readString(configPath);
             JsonArray array = GSON.fromJson(content, JsonArray.class);
 
             for (JsonElement element : array) {
@@ -94,9 +109,6 @@ public class DollRarityIgnoredFlags {
                     });
                 }
             }
-
-            PokeblocksLog.LOGGER.info("Loaded ignored rarity flags for {} pokemon and {} blanket flag(s)",
-                    ignoredFlagsMap.size(), globalIgnoredFlags.size());
         } catch (Exception e) {
             PokeblocksLog.LOGGER.error("Failed to load ignored_rarity_flags.json", e);
         }

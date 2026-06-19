@@ -1,7 +1,7 @@
 package dev.mrshawn.pokeblocks.block.custom;
 
 import com.mojang.serialization.MapCodec;
-import dev.mrshawn.pokeblocks.block.entity.custom.FigurineBlockEntity;
+import dev.mrshawn.pokeblocks.block.entity.custom.CustomDecorationBlockEntity;
 import dev.mrshawn.pokeblocks.registry.BlockEntityRegistry;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
@@ -23,11 +23,17 @@ import net.minecraft.world.level.material.Fluids;
 import net.minecraft.world.phys.shapes.CollisionContext;
 import net.minecraft.world.phys.shapes.VoxelShape;
 
-public class FigurineBlock extends BaseEntityBlock implements EntityBlock, SimpleWaterloggedBlock {
+/**
+ * The single, generic data-driven custom-decoration block. Mirrors {@link FigurineBlock}: a shared
+ * {@code BaseEntityBlock} with FACING + WATERLOGGED whose specific decoration is a string id stored on
+ * the {@link dev.mrshawn.pokeblocks.block.entity.custom.CustomDecorationBlockEntity} and resolved by id
+ * at render time. Generic decorations have no per-id shape config, so a centered box is used for all.
+ */
+public class CustomDecorationBlock extends BaseEntityBlock implements EntityBlock, SimpleWaterloggedBlock {
 	public static final DirectionProperty FACING = BlockStateProperties.HORIZONTAL_FACING;
 	public static final BooleanProperty WATERLOGGED = BlockStateProperties.WATERLOGGED;
 
-	public FigurineBlock() {
+	public CustomDecorationBlock() {
 		super(Properties.of().noOcclusion());
 		this.registerDefaultState(this.stateDefinition.any()
 				.setValue(FACING, Direction.NORTH)
@@ -73,20 +79,19 @@ public class FigurineBlock extends BaseEntityBlock implements EntityBlock, Simpl
 
 	@Override
 	public BlockEntity newBlockEntity(BlockPos blockPos, BlockState blockState) {
-		return BlockEntityRegistry.FIGURINE_BLOCK_ENTITY.get().create(blockPos, blockState);
+		return BlockEntityRegistry.CUSTOM_DECORATION_BLOCK_ENTITY.get().create(blockPos, blockState);
 	}
 
 	/**
-	 * Pick-block (middle-click): copy the figurine's variant so a plain middle-click in creative gives
-	 * the exact figurine instead of the default. (Ctrl+middle-click already copied the block-entity data;
-	 * this makes the no-modifier pick behave the same.) Reuses {@link FigurineBlockEntity#saveToItem},
+	 * Pick-block (middle-click): copy the decoration's variant so a plain middle-click in creative gives
+	 * the exact decoration instead of the default "missing". Reuses {@link CustomDecorationBlockEntity#saveToItem},
 	 * the canonical pick-block tag writer.
 	 */
 	@Override
 	public ItemStack getCloneItemStack(LevelReader level, BlockPos pos, BlockState state) {
 		ItemStack stack = super.getCloneItemStack(level, pos, state);
-		if (level instanceof Level lvl && lvl.getBlockEntity(pos) instanceof FigurineBlockEntity figurine) {
-			figurine.saveToItem(stack, lvl.registryAccess());
+		if (level instanceof Level lvl && lvl.getBlockEntity(pos) instanceof CustomDecorationBlockEntity decoration) {
+			decoration.saveToItem(stack, lvl.registryAccess());
 		}
 		return stack;
 	}

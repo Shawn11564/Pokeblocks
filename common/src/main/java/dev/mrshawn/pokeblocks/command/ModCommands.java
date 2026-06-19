@@ -9,7 +9,7 @@ public class ModCommands {
 		PokeGiveCMD.register(dispatcher);
 		FigurineGiveCMD.register(dispatcher);
 		DecorativeGiveCMD.register(dispatcher);
-		RebuildPackCMD.register(dispatcher);
+		ResourcePackCMD.register(dispatcher);
 		ReloadRarityCMD.register(dispatcher);
 		ReloadWeightsCMD.register(dispatcher);
 		ReloadLootGroupsCMD.register(dispatcher);

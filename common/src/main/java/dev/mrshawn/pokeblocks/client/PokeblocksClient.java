@@ -1,5 +1,7 @@
 package dev.mrshawn.pokeblocks.client;
 
+import dev.mrshawn.pokeblocks.client.model.PokeblocksAssetResolver;
+import dev.mrshawn.pokeblocks.client.renderer.block.CustomDecorationBlockRenderer;
 import dev.mrshawn.pokeblocks.client.renderer.block.DecorativeBlockRenderer;
 import dev.mrshawn.pokeblocks.client.renderer.block.FigurineBlockRenderer;
 import dev.mrshawn.pokeblocks.client.renderer.block.PokedollBlockRenderer;
@@ -22,6 +24,7 @@ public final class PokeblocksClient {
 		if (DEBUG_SKIP_RENDERING) return;
 		blockEntityRenderers.accept(BlockEntityRegistry.POKEDOLL_BLOCK_ENTITY.get(), context -> new PokedollBlockRenderer());
 		blockEntityRenderers.accept(BlockEntityRegistry.FIGURINE_BLOCK_ENTITY.get(), context -> new FigurineBlockRenderer());
+		blockEntityRenderers.accept(BlockEntityRegistry.CUSTOM_DECORATION_BLOCK_ENTITY.get(), context -> new CustomDecorationBlockRenderer());
 
 		for (DecorativeRegistry.DecorativeEntry entry : DecorativeRegistry.ALL_ENTRIES) {
 			blockEntityRenderers.accept(entry.blockEntityType().get(),
@@ -38,8 +41,21 @@ public final class PokeblocksClient {
 		});
 	}
 
-	public static void registerPokemon() {
+	/**
+	 * Clears the client asset-resolution caches and (re-)scans the client {@link net.minecraft.server.packs.resources.ResourceManager}
+	 * for pokedoll, figurine and custom-decoration assets, registering any newly discovered ids.
+	 * <p>
+	 * Invoked from each loader's client resource-reload listener, so it fires on the INITIAL client resource
+	 * load and again whenever resource packs change (including when a server-pushed pack is applied) — making
+	 * pack-added figurines, pokemon and decorations appear without a client restart. Caches are cleared first so
+	 * newly-added ids re-validate; the scans add to sets and are therefore safe to re-run.
+	 */
+	public static void reloadPokeblocksAssets() {
+		PokeblocksAssetResolver.clearPokemonCache();
+		PokeblocksAssetResolver.clearFigurineCache();
+		PokeblocksAssetResolver.clearDecorationCache();
 		PokemonRegistry.scanAndRegisterFromResources();
 		FigurineRegistry.scanAndRegisterFromResources();
+		CustomDecorationRegistry.scanAndRegisterFromResources();
 	}
 }
