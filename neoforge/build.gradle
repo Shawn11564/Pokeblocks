@@ -35,6 +35,12 @@ dependencies {
     implementation "net.neoforged:neoforge:${neoforge_version}"
     implementation "software.bernie.geckolib:geckolib-neoforge-${minecraft_version}:${geckolib_version}"
     compileOnly project(":common")
+    // mc-test server-truth SPI — this module recompiles common's sources (incl. PokeblocksStateProvider),
+    // so it needs the interface on its compile classpath. Provided by the agent at runtime; never bundled.
+    // testCompileOnly too: the `source(project(":common")…allSource)` rule below feeds common's main
+    // sources into compileTestJava as well, so the SPI must be on the test compile classpath too.
+    compileOnly 'io.mctest:mc-test-agent-core:0.1.0'
+    testCompileOnly 'io.mctest:mc-test-agent-core:0.1.0'
 }
 
 Spec<Task> notNeoTask = { Task it -> !it.name.startsWith("neo") } as Spec<Task>

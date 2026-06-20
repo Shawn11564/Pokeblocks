@@ -1,0 +1,90 @@
+# yaml-language-server: $schema=https://mc-test.dev/schema/mctest-stepfile.schema.json
+name: pokeblocks-state-truth
+# Assert REAL, authoritative server-side state of the running Pokeblocks mod via its
+# McTestStateProvider SPI (resolved by the co-selected server-* agent over ServiceLoader). This is a
+# server-truth-only test (cap `pluginState` → cost-1 `server` driver, no player join). If no server
+# agent is co-selected (e.g. the NeoForge row before its agent jar is built), every step honestly
+# SKIPS `unmet:[pluginState]` — never a false green.
+requires:
+  pluginState: true
+target: ${matrix}
+steps:
+  # ── Vanilla registry truth: Pokeblocks' items are really registered into BuiltInRegistries ──
+  - assertPluginState:
+      requires: { pluginState: true }
+      query: "item.exists"
+      args: { id: "pokeblocks:pokedoll" }
+      expect: true
+  - assertPluginState:
+      requires: { pluginState: true }
+      query: "item.exists"
+      args: { id: "pokeblocks:compendium" }
+      expect: true
+  - assertPluginState:
+      requires: { pluginState: true }
+      query: "item.exists"
+      args: { id: "pokeblocks:figurine" }
+      expect: true
+  # Negative control: an item that does not exist must report false (proves the lookup is real).
+  - assertPluginState:
+      requires: { pluginState: true }
+      query: "item.exists"
+      args: { id: "pokeblocks:not_a_real_item" }
+      expect: false
+
+  # ── Asset-scanned Pokémon registry: the mod actually discovered its bundled models ──
+  - assertPluginState:
+      requires: { pluginState: true }
+      query: "pokemon.registered"
+      args: { name: "bulbasaur" }
+      expect: true
+  - assertPluginState:
+      requires: { pluginState: true }
+      query: "pokemon.registered"
+      args: { name: "calyrex" }
+      expect: true
+  - assertPluginState:
+      requires: { pluginState: true }
+      query: "pokemon.registered"
+      args: { name: "definitely_not_a_pokemon" }
+      expect: false
+  # The scan populated a substantial registry (the mod ships ~90 base models; assert a safe floor).
+  - assertPluginState:
+      requires: { pluginState: true }
+      query: "pokemon.count"
+      expect: { gte: 50 }
+
+  # ── Rarity config truth: doll_rarity.json was loaded and resolves to the configured tiers ──
+  # Each value below is the literal override in the bundled config, keyed exactly as the mod builds it.
+  - assertPluginState:
+      requires: { pluginState: true }
+      query: "rarity.override"
+      args: { pokemon: "venusaur" }
+      expect: { equals: "Legendary" }
+  - assertPluginState:
+      requires: { pluginState: true }
+      query: "rarity.override"
+      args: { pokemon: "bulbasaur" }
+      expect: { equals: "Common" }
+  - assertPluginState:
+      requires: { pluginState: true }
+      query: "rarity.override"
+      args: { pokemon: "calyrex", flags: ["animated"] }   # "calyrex animated legendary"
+      expect: { equals: "Legendary" }
+  - assertPluginState:
+      requires: { pluginState: true }
+      query: "rarity.override"
+      args: { pokemon: "bulbasaur", flags: ["posed"] }    # "bulbasaur posed rare"
+      expect: { equals: "Rare" }
+
+  # ── Flag-tier truth: the intrinsic rarity each ModelFlag contributes (pure enum logic) ──
+  - assertPluginState:
+      requires: { pluginState: true }
+      query: "rarity.flagTier"
+      args: { flag: "shiny" }
+      expect: { equals: "Shiny" }
+  - assertPluginState:
+      requires: { pluginState: true }
+      query: "rarity.flagTier"
+      args: { flag: "gigantic" }
+      expect: { equals: "Gigantic" }
