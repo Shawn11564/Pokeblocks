@@ -39,6 +39,9 @@ replay_*.log
 *.hprof
 *.jfr
 
+# runtime logs (dev/server runs write these; never version them)
+logs/
+
 # other
 eclipse
 run
