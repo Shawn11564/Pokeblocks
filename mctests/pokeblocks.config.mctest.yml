@@ -1,0 +1,39 @@
+# yaml-language-server: $schema=https://mc-test.dev/schema/mctest-stepfile.schema.json
+name: pokeblocks-config-and-figurines
+# Assert the config layer loaded its bundled DEFAULTS correctly on a clean dedicated server, the
+# config-file visibility rules, and the figurine name/tag override maps. These prove the config
+# parsing + ConfigSync wiring actually populate server-side state (PokeblocksServerLifecycle runs all
+# initializers before the agent answers). NOTE: values are the SHIPPED defaults — a server with an
+# admin-customized config.toml would legitimately differ; this lane boots a fresh, default config.
+# Server-truth-only (cap pluginState -> cost-1 server driver, no player join).
+requires:
+  pluginState: true
+target: ${matrix}
+steps:
+  # ── config.toml defaults ──
+  # Doll "popping" (right-click-to-break-into-wool easter egg) is on by default.
+  - assertPluginState: { requires: { pluginState: true }, query: "config.dollPopping", expect: true }
+  # [loot] drop_chance default 0.33 (×1000 -> 330).
+  - assertPluginState: { requires: { pluginState: true }, query: "config.lootDropChanceX1000", expect: { equals: 330 } }
+  # [config_sync] auto_update_configs default = MERGE (non-destructive three-way merge).
+  - assertPluginState: { requires: { pluginState: true }, query: "config.updateMode", expect: { equals: "MERGE" } }
+
+  # ── ConfigSync file visibility: which managed files get written into config/Pokeblocks/ ──
+  # (Hidden files still LOAD their bundled defaults at runtime; visibility only controls clutter.)
+  - assertPluginState: { requires: { pluginState: true }, query: "config.fileShown", args: { file: "doll_rarity.json" }, expect: true }
+  - assertPluginState: { requires: { pluginState: true }, query: "config.fileShown", args: { file: "loot_groups.json" }, expect: true }
+  # These two ship hidden-by-default.
+  - assertPluginState: { requires: { pluginState: true }, query: "config.fileShown", args: { file: "rarity_acquisition_divisors.json" }, expect: false }
+  - assertPluginState: { requires: { pluginState: true }, query: "config.fileShown", args: { file: "ignored_rarity_flags.json" }, expect: false }
+
+  # ── Figurine name overrides (figurine_names.json) — preserve author-intended capitalization ──
+  - assertPluginState: { requires: { pluginState: true }, query: "figurine.nameOverride", args: { id: "doncheadle" }, expect: { equals: "DonCheadle" } }
+  - assertPluginState: { requires: { pluginState: true }, query: "figurine.nameOverride", args: { id: "a09robert" }, expect: { equals: "a09Robert" } }
+  - assertPluginState: { requires: { pluginState: true }, query: "figurine.nameOverride", args: { id: "zackghast" }, expect: { equals: "Zackghast" } }
+  # No override configured -> the SPI's "NONE" sentinel.
+  - assertPluginState: { requires: { pluginState: true }, query: "figurine.nameOverride", args: { id: "not_a_figurine" }, expect: { equals: "NONE" } }
+
+  # ── Figurine tag overrides (figurine_tags.json) — only 3 figurines carry "cobblemon_team" ──
+  - assertPluginState: { requires: { pluginState: true }, query: "figurine.hasTag", args: { id: "zackghast", tag: "cobblemon_team" }, expect: true }
+  - assertPluginState: { requires: { pluginState: true }, query: "figurine.hasTag", args: { id: "torchmarrow", tag: "cobblemon_team" }, expect: true }
+  - assertPluginState: { requires: { pluginState: true }, query: "figurine.hasTag", args: { id: "doncheadle", tag: "cobblemon_team" }, expect: false }

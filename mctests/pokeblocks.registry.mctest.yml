@@ -1,0 +1,57 @@
+# yaml-language-server: $schema=https://mc-test.dev/schema/mctest-stepfile.schema.json
+name: pokeblocks-registry
+# Prove the mod's CONTENT is really registered into the vanilla registries on a dedicated server —
+# blocks, block-items, the seat entity, the misc items, and the asset-scanned Pokémon set. This
+# exercises the existing block.exists / entity.exists / item.exists / pokemon.* SPI queries (no new
+# provider code) and notably fills the block.exists and entity.exists queries, which had no coverage.
+# Every id below was cross-checked against the registry classes, so a typo'd id is a real failure,
+# not a test bug. Server-truth-only (cap pluginState -> cost-1 server driver, no player join).
+requires:
+  pluginState: true
+target: ${matrix}
+steps:
+  # ── Fixed blocks (BlockRegistry): each registers a block AND a same-id BlockItem (ItemRegistry) ──
+  # block.exists had ZERO coverage before this file (statetruth only asserts item.exists).
+  - assertPluginState: { requires: { pluginState: true }, query: "block.exists", args: { id: "pokeblocks:pokedoll" }, expect: true }
+  - assertPluginState: { requires: { pluginState: true }, query: "block.exists", args: { id: "pokeblocks:figurine" }, expect: true }
+  - assertPluginState: { requires: { pluginState: true }, query: "block.exists", args: { id: "pokeblocks:custom_decoration" }, expect: true }
+  # custom_decoration is the single generic data-driven decoration block — its item must exist too.
+  - assertPluginState: { requires: { pluginState: true }, query: "item.exists", args: { id: "pokeblocks:custom_decoration" }, expect: true }
+  # Negative control: a block id the mod never registers must report false (proves the lookup is real).
+  - assertPluginState: { requires: { pluginState: true }, query: "block.exists", args: { id: "pokeblocks:not_a_real_block" }, expect: false }
+
+  # ── Decorative blocks (DecorativeRegistry): each id is a block + block-entity + item under one id ──
+  - assertPluginState: { requires: { pluginState: true }, query: "block.exists", args: { id: "pokeblocks:applin_basket" }, expect: true }
+  - assertPluginState: { requires: { pluginState: true }, query: "block.exists", args: { id: "pokeblocks:eiscue_head_pile" }, expect: true }
+  - assertPluginState: { requires: { pluginState: true }, query: "block.exists", args: { id: "pokeblocks:luvdisc_cushion" }, expect: true }
+  - assertPluginState: { requires: { pluginState: true }, query: "block.exists", args: { id: "pokeblocks:magikarp_fishbowl" }, expect: true }
+  - assertPluginState: { requires: { pluginState: true }, query: "item.exists",  args: { id: "pokeblocks:pokemon_trophy" }, expect: true }
+
+  # ── PokeBlock cubes (PokeBlockRegistry): legacy pokeblock_* cubes, block + block-item per id ──
+  - assertPluginState: { requires: { pluginState: true }, query: "block.exists", args: { id: "pokeblocks:pokeblock_bulbasaur" }, expect: true }
+  - assertPluginState: { requires: { pluginState: true }, query: "item.exists",  args: { id: "pokeblocks:pokeblock_shiny_squirtle" }, expect: true }
+
+  # ── Misc items (ItemRegistry.MISC_ITEM_IDS): plain re-added items the data fixer migrates onto ──
+  - assertPluginState: { requires: { pluginState: true }, query: "item.exists", args: { id: "pokeblocks:poke_coin" }, expect: true }
+  - assertPluginState: { requires: { pluginState: true }, query: "item.exists", args: { id: "pokeblocks:radiant_voucher" }, expect: true }
+  - assertPluginState: { requires: { pluginState: true }, query: "item.exists", args: { id: "pokeblocks:summer_token" }, expect: true }
+  # Negative control: figurines are NOT distinct items (the generic pokeblocks:figurine item carries the
+  # id in NBT), so an item named after a figurine must NOT exist.
+  - assertPluginState: { requires: { pluginState: true }, query: "item.exists", args: { id: "pokeblocks:doncheadle" }, expect: false }
+
+  # ── Seat entity (EntityRegistry): the sit-mount used by sittable decoratives ──
+  # The registered id is literally "seat" — NOT "seat_entity". The negative control guards the most
+  # common wrong guess so a future rename can't silently pass.
+  - assertPluginState: { requires: { pluginState: true }, query: "entity.exists", args: { id: "pokeblocks:seat" }, expect: true }
+  - assertPluginState: { requires: { pluginState: true }, query: "entity.exists", args: { id: "pokeblocks:seat_entity" }, expect: false }
+
+  # ── Asset-scanned Pokémon registry: the jar's geo models were discovered on the dedicated server ──
+  # Complements statetruth's bulbasaur/calyrex with later/edge entries and a figurine negative control.
+  - assertPluginState: { requires: { pluginState: true }, query: "pokemon.registered", args: { name: "substitute" }, expect: true }
+  - assertPluginState: { requires: { pluginState: true }, query: "pokemon.registered", args: { name: "washing_machine" }, expect: true }
+  - assertPluginState: { requires: { pluginState: true }, query: "pokemon.registered", args: { name: "skibidi_mewlet" }, expect: true }
+  # doncheadle is a figurine model (pokedoll_ prefix absent), so it must NOT be in the Pokémon registry.
+  - assertPluginState: { requires: { pluginState: true }, query: "pokemon.registered", args: { name: "doncheadle" }, expect: false }
+  # The mod ships ~91 base models; assert a tighter floor than statetruth's 50. Stays gte (custom
+  # resource packs can only ADD models), so it never goes falsely red as content grows.
+  - assertPluginState: { requires: { pluginState: true }, query: "pokemon.count", expect: { gte: 91 } }

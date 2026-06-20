@@ -1,0 +1,50 @@
+# yaml-language-server: $schema=https://mc-test.dev/schema/mctest-stepfile.schema.json
+name: pokeblocks-loot-routing
+# Assert the loot-injection ROUTING layer: which dolls are assigned to which loot pool, which loot
+# tables each pool targets, the per-group drop chances, and what is excluded. This is the pure
+# config/mapping decision layer (loot_groups.json + [loot] config) loaded server-side — distinct from
+# the actual weighted roll, which needs a live LootContext and is out of scope for a server-truth test.
+# Values cross-checked against loot_groups.json and PokeblocksConfig defaults.
+# Server-truth-only (cap pluginState -> cost-1 server driver, no player join).
+requires:
+  pluginState: true
+target: ${matrix}
+steps:
+  # ── Doll -> group routing (loot_groups.json ships one tiered "archaeology" group => 2 compiled groups) ──
+  - assertPluginState: { requires: { pluginState: true }, query: "loot.groupCount", expect: { equals: 2 } }
+  # kabuto is routed to the common archaeology tier; kabutops to the rare tier (so it only drops from
+  # richer suspicious blocks). bulbasaur is unrouted -> stays in the default global pool ("NONE").
+  - assertPluginState: { requires: { pluginState: true }, query: "loot.groupForDoll", args: { pokemon: "kabuto" },    expect: { equals: "archaeology:common" } }
+  - assertPluginState: { requires: { pluginState: true }, query: "loot.groupForDoll", args: { pokemon: "kabutops" }, expect: { equals: "archaeology:rare" } }
+  - assertPluginState: { requires: { pluginState: true }, query: "loot.groupForDoll", args: { pokemon: "bulbasaur" }, expect: { equals: "NONE" } }
+
+  # ── Group -> loot-table matching (exact ids + globs) ──
+  # The common tier targets "minecraft:archaeology/*" (wildcard) -> it matches every archaeology table.
+  - assertPluginState: { requires: { pluginState: true }, query: "loot.groupMatchesTable", args: { group: "archaeology:common", id: "minecraft:archaeology/trail_ruins_rare" }, expect: true }
+  - assertPluginState: { requires: { pluginState: true }, query: "loot.groupMatchesTable", args: { group: "archaeology:common", id: "minecraft:archaeology/desert_well" }, expect: true }
+  # The rare tier targets only two explicit tables: desert_well matches, trail_ruins_common does not.
+  - assertPluginState: { requires: { pluginState: true }, query: "loot.groupMatchesTable", args: { group: "archaeology:rare", id: "minecraft:archaeology/desert_well" }, expect: true }
+  - assertPluginState: { requires: { pluginState: true }, query: "loot.groupMatchesTable", args: { group: "archaeology:rare", id: "minecraft:archaeology/trail_ruins_common" }, expect: false }
+
+  # ── Per-group drop chance (×1000): rare overrides 0.03; common inherits the group's 0.05 ──
+  - assertPluginState: { requires: { pluginState: true }, query: "loot.groupDropChanceX1000", args: { group: "archaeology:common" }, expect: { equals: 50 } }
+  - assertPluginState: { requires: { pluginState: true }, query: "loot.groupDropChanceX1000", args: { group: "archaeology:rare" }, expect: { equals: 30 } }
+
+  # ── Default global pool table targeting ([loot] loot_tables) ──
+  # In the shipped default list (chests). Village sub-tables are included too.
+  - assertPluginState: { requires: { pluginState: true }, query: "loot.targetsTable", args: { id: "minecraft:chests/simple_dungeon" }, expect: true }
+  - assertPluginState: { requires: { pluginState: true }, query: "loot.targetsTable", args: { id: "minecraft:chests/ancient_city" }, expect: true }
+  - assertPluginState: { requires: { pluginState: true }, query: "loot.targetsTable", args: { id: "minecraft:chests/village/village_weaponsmith" }, expect: true }
+  # NOT in the default list -> false (buried_treasure was deliberately left out).
+  - assertPluginState: { requires: { pluginState: true }, query: "loot.targetsTable", args: { id: "minecraft:chests/buried_treasure" }, expect: false }
+  # Archaeology tables belong to the named GROUP, not the default pool — proving the two are separate.
+  - assertPluginState: { requires: { pluginState: true }, query: "loot.targetsTable", args: { id: "minecraft:archaeology/desert_well" }, expect: false }
+
+  # ── Loot exclusions ([loot] excluded_dolls = ["substitute"], excluded_flags = ["gigantic","noice"]) ──
+  # A bare name excludes ALL of that pokemon's variants.
+  - assertPluginState: { requires: { pluginState: true }, query: "loot.dollExcluded", args: { pokemon: "substitute" }, expect: true }
+  - assertPluginState: { requires: { pluginState: true }, query: "loot.dollExcluded", args: { pokemon: "substitute", flags: ["shiny"] }, expect: true }
+  - assertPluginState: { requires: { pluginState: true }, query: "loot.dollExcluded", args: { pokemon: "bulbasaur" }, expect: false }
+  - assertPluginState: { requires: { pluginState: true }, query: "loot.flagExcluded", args: { flag: "gigantic" }, expect: true }
+  - assertPluginState: { requires: { pluginState: true }, query: "loot.flagExcluded", args: { flag: "noice" }, expect: true }
+  - assertPluginState: { requires: { pluginState: true }, query: "loot.flagExcluded", args: { flag: "shiny" }, expect: false }
