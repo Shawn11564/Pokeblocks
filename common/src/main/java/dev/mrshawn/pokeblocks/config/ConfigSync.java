@@ -69,6 +69,7 @@ public final class ConfigSync {
             new Managed("doll_rarity.json", Strategy.ARRAY_ALL_BUT_LAST, true),
             new Managed("rarity_acquisition_divisors.json", Strategy.ARRAY_ALL_BUT_LAST, false),
             new Managed("figurine_names.json", Strategy.ARRAY_HEAD, true),
+            new Managed("figurine_descriptions.json", Strategy.ARRAY_HEAD, true),
             new Managed("figurine_tags.json", Strategy.ARRAY_HEAD, true),
             new Managed("ignored_rarity_flags.json", Strategy.ARRAY_WHOLE, false),
             new Managed("rarity_weights.json", Strategy.JSON_OBJECT, true),

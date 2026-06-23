@@ -111,6 +111,8 @@ public final class ItemGroupRegistry {
 				}
 				// POC doll compendium book
 				entries.accept(new ItemStack(ItemRegistry.COMPENDIUM_ITEM.get()));
+				// Figurine compendium book
+				entries.accept(new ItemStack(ItemRegistry.FIGURINE_COMPENDIUM_ITEM.get()));
 			})
 			.build());
 }

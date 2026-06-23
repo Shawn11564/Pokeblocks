@@ -9,6 +9,7 @@ import dev.mrshawn.pokeblocks.config.PokeblocksConfig;
 import dev.mrshawn.pokeblocks.item.DollRarityAcquisitionDivisors;
 import dev.mrshawn.pokeblocks.item.DollRarityIgnoredFlags;
 import dev.mrshawn.pokeblocks.item.DollRarityOverrides;
+import dev.mrshawn.pokeblocks.item.FigurineDescriptionOverrides;
 import dev.mrshawn.pokeblocks.item.FigurineNameOverrides;
 import dev.mrshawn.pokeblocks.item.FigurineTagOverrides;
 import dev.mrshawn.pokeblocks.item.RarityWeightConfig;
@@ -85,6 +86,7 @@ public class ConfigSyncCMD {
 		DollRarityIgnoredFlags.reload();
 		DollRarityAcquisitionDivisors.reload();
 		FigurineNameOverrides.reload();
+		FigurineDescriptionOverrides.reload();
 		FigurineTagOverrides.reload();
 		RarityWeightConfig.reload();
 		LootGroupConfig.reload();

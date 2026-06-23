@@ -5,6 +5,7 @@ import dev.mrshawn.pokeblocks.config.PokeblocksConfig;
 import dev.mrshawn.pokeblocks.item.DollRarityAcquisitionDivisors;
 import dev.mrshawn.pokeblocks.item.DollRarityIgnoredFlags;
 import dev.mrshawn.pokeblocks.item.DollRarityOverrides;
+import dev.mrshawn.pokeblocks.item.FigurineDescriptionOverrides;
 import dev.mrshawn.pokeblocks.item.FigurineNameOverrides;
 import dev.mrshawn.pokeblocks.item.FigurineTagOverrides;
 import dev.mrshawn.pokeblocks.item.RarityWeightConfig;
@@ -51,6 +52,7 @@ public final class PokeblocksServerLifecycle {
             DollRarityIgnoredFlags.initialize(serverDir);
             DollRarityAcquisitionDivisors.initialize(serverDir);
             FigurineNameOverrides.initialize(serverDir);
+            FigurineDescriptionOverrides.initialize(serverDir);
             FigurineTagOverrides.initialize(serverDir);
             RarityWeightConfig.initialize(serverDir);
             LootGroupConfig.initialize(serverDir);

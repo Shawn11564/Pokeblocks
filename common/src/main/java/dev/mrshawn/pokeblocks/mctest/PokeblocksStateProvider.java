@@ -6,6 +6,7 @@ import dev.mrshawn.pokeblocks.item.DollRarity;
 import dev.mrshawn.pokeblocks.item.DollRarityAcquisitionDivisors;
 import dev.mrshawn.pokeblocks.item.DollRarityIgnoredFlags;
 import dev.mrshawn.pokeblocks.item.DollRarityOverrides;
+import dev.mrshawn.pokeblocks.item.FigurineDescriptionOverrides;
 import dev.mrshawn.pokeblocks.item.FigurineNameOverrides;
 import dev.mrshawn.pokeblocks.item.FigurineTagOverrides;
 import dev.mrshawn.pokeblocks.item.RarityScoreCalculator;
@@ -142,10 +143,14 @@ public final class PokeblocksStateProvider implements McTestStateProvider {
             // Whether a managed config file is written to config/Pokeblocks/ (hidden files still load defaults).
             case "config.fileShown" -> ConfigSync.isFileShown(requireStr(args, "file"));
 
-            // ── Figurine overrides (figurine_names.json / figurine_tags.json) ──
+            // ── Figurine overrides (figurine_names.json / figurine_descriptions.json / figurine_tags.json) ──
             case "figurine.nameOverride" -> {
                 String name = FigurineNameOverrides.getOverride(requireStr(args, "id"));
                 yield name == null ? "NONE" : name;
+            }
+            case "figurine.descriptionOverride" -> {
+                String description = FigurineDescriptionOverrides.getOverride(requireStr(args, "id"));
+                yield description == null ? "NONE" : description;
             }
             case "figurine.hasTag" -> FigurineTagOverrides.hasTag(requireStr(args, "id"), requireStr(args, "tag"));
 
