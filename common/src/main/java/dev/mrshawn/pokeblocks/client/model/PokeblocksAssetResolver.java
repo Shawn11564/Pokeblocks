@@ -49,8 +49,6 @@ public final class PokeblocksAssetResolver {
 	private static final Set<String> VALIDATED_POKEMON = new HashSet<>();
 	private static final Set<String> VALIDATED_FIGURINES = new HashSet<>();
 	private static final Set<String> VALIDATED_DECORATIONS = new HashSet<>();
-	/** Variant model paths confirmed absent, so we fall back to the base model without re-querying every frame. */
-	private static final Set<String> MISSING_MODELS = new HashSet<>();
 	/**
 	 * Resolved pokedoll textures keyed by {@code (pokemon, activeFlags)}. The lookup is otherwise a per-frame
 	 * subset/permutation enumeration over the flags plus several {@link ResourceManager#getResource} disk probes
@@ -58,6 +56,21 @@ public final class PokeblocksAssetResolver {
 	 * on resource reload. A stored {@code null} value records "no texture matched" so we don't re-probe either.
 	 */
 	private static final Map<TextureKey, ResourceLocation> RESOLVED_TEXTURES = new HashMap<>();
+
+	/**
+	 * Resolved paths for the remaining render-thread lookups that previously hit
+	 * {@link ResourceManager#getResource} (a filesystem {@code exists} probe) on every frame for every
+	 * visible block entity. Like {@link #RESOLVED_TEXTURES} these only change on resource reload and are
+	 * cleared by the {@code clear*Cache()} hooks. Keys join their inputs with {@code '|'} (ids contain only
+	 * lowercase, digits and {@code '_'}, so it can't collide). Maps that can resolve to "nothing" store a
+	 * {@code null} value and are read with {@code containsKey} so the absence is cached too.
+	 */
+	private static final Map<String, ResourceLocation> RESOLVED_POKEDOLL_MODELS = new HashMap<>();
+	private static final Map<String, ResourceLocation> RESOLVED_POKEDOLL_ANIMATIONS = new HashMap<>();
+	private static final Map<String, ResourceLocation> RESOLVED_FIGURINE_TEXTURES = new HashMap<>();
+	private static final Map<String, ResourceLocation> RESOLVED_DECORATION_TEXTURES = new HashMap<>();
+	private static final Map<String, ResourceLocation> RESOLVED_DECORATION_ANIMATIONS = new HashMap<>();
+	private static final Map<String, ResourceLocation> RESOLVED_DECORATIVE_TEXTURES = new HashMap<>();
 
 	/** Cache key for {@link #pokedollTextureOrNull}; copies the flag set so a caller's later mutation can't corrupt it. */
 	private record TextureKey(String pokemon, Set<ModelFlag> flags) {
@@ -121,20 +134,25 @@ public final class PokeblocksAssetResolver {
 	public static void clearPokemonCache() {
 		VALIDATED_POKEMON.clear();
 		VALIDATED_POKEMON.add(ModSettings.DEFAULT_POKEMON);
-		MISSING_MODELS.clear();
 		RESOLVED_TEXTURES.clear();
+		RESOLVED_POKEDOLL_MODELS.clear();
+		RESOLVED_POKEDOLL_ANIMATIONS.clear();
 	}
 
 	/** Clears the figurine validation cache (e.g. on resource reload) so newly-added ids re-validate. */
 	public static void clearFigurineCache() {
 		VALIDATED_FIGURINES.clear();
 		VALIDATED_FIGURINES.add(ModSettings.DEFAULT_FIGURINE);
+		RESOLVED_FIGURINE_TEXTURES.clear();
 	}
 
 	/** Clears the custom-decoration validation cache (e.g. on resource reload) so newly-added ids re-validate. */
 	public static void clearDecorationCache() {
 		VALIDATED_DECORATIONS.clear();
 		VALIDATED_DECORATIONS.add(ModSettings.DEFAULT_DECORATION);
+		RESOLVED_DECORATION_TEXTURES.clear();
+		RESOLVED_DECORATION_ANIMATIONS.clear();
+		RESOLVED_DECORATIVE_TEXTURES.clear();
 	}
 
 	/**
@@ -155,18 +173,24 @@ public final class PokeblocksAssetResolver {
 
 	/** The variant model {@code pokedoll_<pokemon><modelSuffix>.geo.json} if it exists, else the base model. */
 	public static ResourceLocation pokedollModel(ResourceManager rm, String pokemon, String modelSuffix) {
+		String key = pokemon + "|" + modelSuffix;
+		ResourceLocation cached = RESOLVED_POKEDOLL_MODELS.get(key);
+		if (cached != null) return cached;
+
+		ResourceLocation base = loc(GEO + "pokedoll_" + pokemon + ".geo.json");
 		if (!modelSuffix.isEmpty()) {
 			String variantPath = GEO + "pokedoll_" + pokemon + modelSuffix + ".geo.json";
-			if (!MISSING_MODELS.contains(variantPath)) {
-				try {
-					if (rm.getResource(loc(variantPath)).isPresent()) return loc(variantPath);
-					MISSING_MODELS.add(variantPath); // confirmed absent — cache so we don't query every frame
-				} catch (Exception ignored) {
-					// transient error — don't cache, retry next frame
-				}
+			try {
+				ResourceLocation result = rm.getResource(loc(variantPath)).isPresent() ? loc(variantPath) : base;
+				RESOLVED_POKEDOLL_MODELS.put(key, result);
+				return result;
+			} catch (Exception ignored) {
+				// transient error — fall back to base but don't cache, so we retry next frame
+				return base;
 			}
 		}
-		return loc(GEO + "pokedoll_" + pokemon + ".geo.json");
+		RESOLVED_POKEDOLL_MODELS.put(key, base);
+		return base;
 	}
 
 	/**
@@ -222,15 +246,22 @@ public final class PokeblocksAssetResolver {
 	 */
 	public static ResourceLocation pokedollAnimation(ResourceManager rm, String pokemon, String modelSuffix,
 													 AnimationResolver.AnimationType type) {
+		String key = pokemon + "|" + modelSuffix + "|" + type;
+		ResourceLocation cached = RESOLVED_POKEDOLL_ANIMATIONS.get(key);
+		if (cached != null) return cached;
+
+		ResourceLocation resolved = null;
 		if (type == AnimationResolver.AnimationType.VARIANT) {
 			String variantPath = ANIM + "pokedoll_" + pokemon + modelSuffix + ".animation.json";
-			if (exists(rm, variantPath)) return loc(variantPath);
+			if (exists(rm, variantPath)) resolved = loc(variantPath);
 		}
-		if (type == AnimationResolver.AnimationType.VARIANT || type == AnimationResolver.AnimationType.BASE) {
+		if (resolved == null && (type == AnimationResolver.AnimationType.VARIANT || type == AnimationResolver.AnimationType.BASE)) {
 			String basePath = ANIM + "pokedoll_" + pokemon + ".animation.json";
-			if (exists(rm, basePath)) return loc(basePath);
+			if (exists(rm, basePath)) resolved = loc(basePath);
 		}
-		return loc(ANIM + "empty.animation.json");
+		if (resolved == null) resolved = loc(ANIM + "empty.animation.json");
+		RESOLVED_POKEDOLL_ANIMATIONS.put(key, resolved);
+		return resolved;
 	}
 
 	// --- Figurine ------------------------------------------------------------
@@ -253,9 +284,12 @@ public final class PokeblocksAssetResolver {
 
 	/** Resolves a figurine texture, falling back to the default figurine texture. */
 	public static ResourceLocation figurineTexture(ResourceManager rm, String figurine) {
+		ResourceLocation cached = RESOLVED_FIGURINE_TEXTURES.get(figurine);
+		if (cached != null) return cached;
 		ResourceLocation found = textureFromBase(rm, TEX + figurine + "_figurine");
-		if (found != null) return found;
-		return loc(TEX + ModSettings.DEFAULT_FIGURINE + "_figurine_texture.png");
+		if (found == null) found = loc(TEX + ModSettings.DEFAULT_FIGURINE + "_figurine_texture.png");
+		RESOLVED_FIGURINE_TEXTURES.put(figurine, found);
+		return found;
 	}
 
 	// --- Custom decoration ---------------------------------------------------
@@ -280,9 +314,12 @@ public final class PokeblocksAssetResolver {
 
 	/** Resolves a decoration texture, falling back to the default decoration texture. */
 	public static ResourceLocation customDecorationTexture(ResourceManager rm, String decoration) {
+		ResourceLocation cached = RESOLVED_DECORATION_TEXTURES.get(decoration);
+		if (cached != null) return cached;
 		ResourceLocation found = textureFromBase(rm, TEX + decoration + "_decoration");
-		if (found != null) return found;
-		return loc(TEX + ModSettings.DEFAULT_DECORATION + "_decoration_texture.png");
+		if (found == null) found = loc(TEX + ModSettings.DEFAULT_DECORATION + "_decoration_texture.png");
+		RESOLVED_DECORATION_TEXTURES.put(decoration, found);
+		return found;
 	}
 
 	/**
@@ -290,8 +327,11 @@ public final class PokeblocksAssetResolver {
 	 * or {@code null} if absent (GeckoLib treats a {@code null} animation resource as "no animations").
 	 */
 	public static ResourceLocation customDecorationAnimation(ResourceManager rm, String decoration) {
+		if (RESOLVED_DECORATION_ANIMATIONS.containsKey(decoration)) return RESOLVED_DECORATION_ANIMATIONS.get(decoration);
 		String path = ANIM + decoration + "_decoration.animation.json";
-		return exists(rm, path) ? loc(path) : null;
+		ResourceLocation resolved = exists(rm, path) ? loc(path) : null;
+		RESOLVED_DECORATION_ANIMATIONS.put(decoration, resolved);
+		return resolved;
 	}
 
 	// --- Decorative ----------------------------------------------------------
@@ -302,11 +342,14 @@ public final class PokeblocksAssetResolver {
 	 * GeckoLib surfaces the missing texture rather than a silent default).
 	 */
 	public static ResourceLocation decorativeTexture(ResourceManager rm, String basePath, String modelPrefix) {
+		String key = basePath + "|" + modelPrefix;
+		ResourceLocation cached = RESOLVED_DECORATIVE_TEXTURES.get(key);
+		if (cached != null) return cached;
 		ResourceLocation found = textureFromBase(rm, basePath);
-		if (found != null) return found;
-		found = textureFromBase(rm, TEX + modelPrefix);
-		if (found != null) return found;
-		return loc(TEX + modelPrefix + ".png");
+		if (found == null) found = textureFromBase(rm, TEX + modelPrefix);
+		if (found == null) found = loc(TEX + modelPrefix + ".png");
+		RESOLVED_DECORATIVE_TEXTURES.put(key, found);
+		return found;
 	}
 
 	// --- Internals -----------------------------------------------------------

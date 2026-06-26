@@ -3,14 +3,12 @@ package dev.mrshawn.pokeblocks.command;
 import com.mojang.brigadier.CommandDispatcher;
 import com.mojang.brigadier.context.CommandContext;
 import dev.mrshawn.pokeblocks.PokeblocksLog;
-import dev.mrshawn.pokeblocks.config.PokeblocksConfig;
 import dev.mrshawn.pokeblocks.resourcepack.CustomPackBuilder;
 import dev.mrshawn.pokeblocks.resourcepack.CustomPackManager;
 import dev.mrshawn.pokeblocks.resourcepack.ResourcePackServer;
 import net.minecraft.commands.CommandSourceStack;
 import net.minecraft.commands.Commands;
 import net.minecraft.network.chat.Component;
-import net.minecraft.network.protocol.common.ClientboundResourcePackPushPacket;
 import net.minecraft.server.MinecraftServer;
 
 import java.io.IOException;
@@ -19,8 +17,6 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.StandardCopyOption;
 import java.util.List;
-import java.util.Optional;
-import java.util.UUID;
 import java.util.stream.Collectors;
 
 /**
@@ -65,22 +61,26 @@ public class ResourcePackCMD {
 			// Rebuild and cache the pack from every sub-pack under resourcepack/.
 			CustomPackManager.buildAndCache(server);
 
-			if (!CustomPackManager.hasPack()) {
-				src.sendFailure(Component.literal("No custom resources found; nothing to build."));
+			if (CustomPackManager.hasPack()) {
+				Path zip = CustomPackManager.getCachedPack();
+				String sha = CustomPackManager.getCachedSha();
+				src.sendSuccess(() -> Component.literal("Built resource pack: " + zip), false);
+				src.sendSuccess(() -> Component.literal("SHA1: " + sha), false);
+			}
+
+			// Resolve self-host vs. remote-URL distribution (starts the built-in server when self-hosting),
+			// then re-push to everyone online. Honors the [resourcepack] config.
+			ResourcePackServer.PackPush push = ResourcePackServer.prepare(server);
+			if (push == null) {
+				src.sendFailure(Component.literal("Nothing to distribute: either no custom resources were found to "
+						+ "build, or distribution = remote_url without a usable remote_url/remote_sha1 "
+						+ "(see the [resourcepack] section of config.toml)."));
 				return 0;
 			}
 
-			Path zip = CustomPackManager.getCachedPack();
-			String sha = CustomPackManager.getCachedSha();
-			src.sendSuccess(() -> Component.literal("Built resource pack: " + zip), false);
-			src.sendSuccess(() -> Component.literal("SHA1: " + sha), false);
-
-			String url = ResourcePackServer.start(server, zip);
-			src.sendSuccess(() -> Component.literal("Serving resource pack at: " + url), false);
-
-			UUID uuid = ResourcePackServer.packUuid(sha);
-			ClientboundResourcePackPushPacket pkt = new ClientboundResourcePackPushPacket(uuid, url, sha, PokeblocksConfig.isKickOnDecline(), Optional.empty());
-			server.getConnection().getConnections().forEach(conn -> conn.send(pkt));
+			src.sendSuccess(() -> Component.literal("Distributing resource pack from: " + push.url()), false);
+			ResourcePackServer.pushToAll(server);
+			src.sendSuccess(() -> Component.literal("Re-sent the pack to connected players."), false);
 
 			return 1;
 		} catch (Exception e) {

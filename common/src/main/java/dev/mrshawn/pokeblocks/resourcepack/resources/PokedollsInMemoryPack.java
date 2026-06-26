@@ -2,6 +2,7 @@ package dev.mrshawn.pokeblocks.resourcepack.resources;
 
 import dev.mrshawn.pokeblocks.PokeblocksCommon;
 import dev.mrshawn.pokeblocks.PokeblocksLog;
+import net.minecraft.SharedConstants;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.packs.PackLocationInfo;
@@ -25,7 +26,13 @@ import java.util.Set;
 public class PokedollsInMemoryPack implements PackResources {
 
     private static final String PACK_ID = "pokeblocks_generated";
-    private static final int PACK_FORMAT = 26;
+    /**
+     * The client-resources pack format for the running game version (34 on 1.21.1), read from the game
+     * itself rather than hardcoded so the generated pack is never flagged as made for another version and
+     * stays correct across Minecraft updates. {@link net.minecraft.DetectedVersion} is the source of truth.
+     */
+    private static final int PACK_FORMAT =
+            SharedConstants.getCurrentVersion().getPackVersion(PackType.CLIENT_RESOURCES);
     private final Map<String, byte[]> resources = new HashMap<>();
     private final PackLocationInfo locationInfo;
 

@@ -29,6 +29,13 @@ public class PokedollBlockRenderer extends GeoBlockRenderer<PokedollBlockEntity>
 	/** Per-doll eased render yaw, so dolls turn smoothly instead of snapping. Keyed by position. */
 	private static final Map<BlockPos, Facing> FACING = new HashMap<>();
 
+	/**
+	 * The compendium's open state as of the last rendered doll, so we can detect the close edge and drop
+	 * all easing state in one shot. Easing state only exists while the compendium is open, so there is
+	 * nothing to keep once it closes.
+	 */
+	private static boolean wasCompendiumOpen = false;
+
 	private static final class Facing {
 		float yaw;
 		long lastMs;
@@ -55,18 +62,26 @@ public class PokedollBlockRenderer extends GeoBlockRenderer<PokedollBlockEntity>
 	protected void rotateBlock(Direction facing, PoseStack poseStack) {
 		if (this.animatable == null) return;
 
-		BlockPos pos = this.animatable.getBlockPos().immutable();
+		// Detect the compendium closing and clear the whole easing map at once. Removing entries one doll
+		// at a time on render (the previous approach) leaked entries for dolls that were unloaded or left
+		// the view while the compendium was open. This fires on the first doll rendered after a close.
+		boolean open = CompendiumScreen.isOpen();
+		if (open != wasCompendiumOpen) {
+			wasCompendiumOpen = open;
+			if (!open) FACING.clear();
+		}
+
 		int segment = this.animatable.getBlockState().getValue(PokedollBlock.ROTATION);
 		float placementYaw = -RotationSegment.convertToDegrees(segment);
 
-		// Closed: snap back to the placed rotation instantly and drop any easing state.
-		if (!CompendiumScreen.isOpen()) {
-			FACING.remove(pos);
+		// Closed: snap back to the placed rotation instantly.
+		if (!open) {
 			poseStack.mulPose(Axis.YP.rotationDegrees(placementYaw));
 			return;
 		}
 
 		// Open: ease toward facing the camera.
+		BlockPos pos = this.animatable.getBlockPos().immutable();
 		poseStack.mulPose(Axis.YP.rotationDegrees(easedYaw(pos, facingCameraDegrees(pos), placementYaw)));
 	}
 

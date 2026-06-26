@@ -18,6 +18,11 @@ public class PokeblocksConfig {
 
 	// [resourcepack]
 	private static boolean kickOnDecline = true;
+	// How the custom pack reaches clients, and the knobs each distribution mode needs.
+	private static PackDistribution packDistribution = PackDistribution.SELF_HOST;
+	private static String remotePackUrl = "";
+	private static String remotePackSha1 = "";
+	private static String selfHostAddress = "";
 
 	// [loot]
 	private static float lootDropChance = 0.33f;
@@ -44,6 +49,26 @@ public class PokeblocksConfig {
 
 	public static boolean isKickOnDecline() {
 		return kickOnDecline;
+	}
+
+	/** How the custom resource pack is distributed to clients: self-hosted (default) or an admin remote URL. */
+	public static PackDistribution getPackDistribution() {
+		return packDistribution;
+	}
+
+	/** The admin-provided pack URL used when {@link #getPackDistribution()} is {@link PackDistribution#REMOTE_URL}. */
+	public static String getRemotePackUrl() {
+		return remotePackUrl;
+	}
+
+	/** Optional SHA-1 of the remote pack; when blank the locally-built pack's hash is used instead. */
+	public static String getRemotePackSha1() {
+		return remotePackSha1;
+	}
+
+	/** Optional host/IP to advertise in the self-hosted pack URL (e.g. a public address); blank = auto-detect. */
+	public static String getSelfHostAddress() {
+		return selfHostAddress;
 	}
 
 	public static float getLootDropChance() {
@@ -122,6 +147,10 @@ public class PokeblocksConfig {
 		// Reset to defaults
 		dollPoppingEnabled = true;
 		kickOnDecline = true;
+		packDistribution = PackDistribution.SELF_HOST;
+		remotePackUrl = "";
+		remotePackSha1 = "";
+		selfHostAddress = "";
 		lootDropChance = 0.33f;
 		lootTables.clear();
 		lootTableWildcards.clear();
@@ -172,8 +201,12 @@ public class PokeblocksConfig {
 						}
 					}
 					case "resourcepack" -> {
-						if (key.equals("kick_on_decline")) {
-							kickOnDecline = parseBoolean(value, true);
+						switch (key) {
+							case "kick_on_decline" -> kickOnDecline = parseBoolean(value, true);
+							case "distribution" -> packDistribution = PackDistribution.parse(unquote(value), PackDistribution.SELF_HOST);
+							case "remote_url" -> remotePackUrl = unquote(value);
+							case "remote_sha1" -> remotePackSha1 = unquote(value);
+							case "self_host_address" -> selfHostAddress = unquote(value);
 						}
 					}
 					case "loot" -> {
@@ -205,10 +238,12 @@ public class PokeblocksConfig {
 				}
 			}
 
-			PokeblocksLog.LOGGER.debug("Loaded config: doll_popping_enabled={}, kick_on_decline={}, drop_chance={}, "
+			PokeblocksLog.LOGGER.debug("Loaded config: doll_popping_enabled={}, kick_on_decline={}, "
+					+ "pack_distribution={}, remote_url_set={}, self_host_address={}, drop_chance={}, "
 					+ "loot_tables={}, loot_table_wildcards={}, excluded_flags={}, excluded_dolls={}, "
 					+ "config_update_mode={}, config_backup={}, frozen_config_files={}, shown_config_files={}, hidden_config_files={}",
-					dollPoppingEnabled, kickOnDecline, lootDropChance, lootTables, lootTableWildcards.size(),
+					dollPoppingEnabled, kickOnDecline, packDistribution.token(), !remotePackUrl.isBlank(),
+					selfHostAddress.isBlank() ? "(auto)" : selfHostAddress, lootDropChance, lootTables, lootTableWildcards.size(),
 					excludedLootFlags, excludedLootDolls, configUpdateMode, configBackupBeforeUpdate, frozenConfigFiles,
 					shownConfigFiles, hiddenConfigFiles);
 
@@ -270,6 +305,33 @@ public class PokeblocksConfig {
 			new KeyDef("resourcepack", "kick_on_decline",
 					"# Whether to kick players who decline the custom Pokeblocks resource pack.",
 					"true"),
+			new KeyDef("resourcepack", "distribution",
+					"""
+					# How the custom resource pack is delivered to players:
+					#   self_host  = (default) Pokeblocks serves the pack from a small built-in web server and
+					#                tells clients where to download it. Works out of the box on LAN / singleplayer.
+					#                For a PUBLIC server, also set self_host_address below to an address players
+					#                can actually reach (the auto-detected one is usually a LAN-only IP).
+					#   remote_url = advertise your own remote_url instead of self-hosting (e.g. a CDN or web host).
+					#                Set remote_url (and ideally remote_sha1) below.""",
+					"self_host"),
+			new KeyDef("resourcepack", "self_host_address",
+					"""
+					# Host or IP advertised in the self-hosted download URL. Leave blank to auto-detect
+					# (server-ip from server.properties, else a LAN address). Set this to your server's public
+					# address/domain so off-LAN players can download the pack. Only used when distribution = self_host.""",
+					"\"\""),
+			new KeyDef("resourcepack", "remote_url",
+					"""
+					# Direct download URL of the pack .zip when distribution = remote_url
+					# (e.g. "https://cdn.example.com/pokeblocks_pack.zip"). Ignored when self-hosting.""",
+					"\"\""),
+			new KeyDef("resourcepack", "remote_sha1",
+					"""
+					# SHA-1 hash of the file at remote_url. Strongly recommended so clients can verify and cache
+					# the download. If left blank, Pokeblocks uses the hash of the pack it built locally — in which
+					# case you MUST upload that exact built zip to remote_url or clients will reject the download.""",
+					"\"\""),
 			new KeyDef("loot", "drop_chance",
 					"# Chance (0.0 to 1.0) that a Pokedoll appears in a configured loot chest.",
 					"0.33f"),
@@ -683,6 +745,20 @@ public class PokeblocksConfig {
 		}
 
 		Files.writeString(configPath, sb.toString());
+	}
+
+	/** Strips a single pair of surrounding single or double quotes from a TOML scalar string value. */
+	private static String unquote(String value) {
+		if (value == null) return "";
+		String v = value.trim();
+		if (v.length() >= 2) {
+			char first = v.charAt(0);
+			char last = v.charAt(v.length() - 1);
+			if ((first == '"' && last == '"') || (first == '\'' && last == '\'')) {
+				return v.substring(1, v.length() - 1);
+			}
+		}
+		return v;
 	}
 
 	private static boolean parseBoolean(String value, boolean defaultValue) {
