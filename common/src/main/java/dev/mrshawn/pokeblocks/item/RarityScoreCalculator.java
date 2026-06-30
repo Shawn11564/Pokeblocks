@@ -66,7 +66,9 @@ public class RarityScoreCalculator {
      * Cached sum of all variant weights (no flag exclusions), used for tooltip display.
      * Set to -1 when invalid; reset via {@link #invalidateTotalWeightCache()}.
      */
-    private static double cachedTotalWeight = -1.0;
+    // volatile: written from the server thread (invalidateTotalWeightCache via reload/lifecycle) and read
+    // from the client render thread (tooltip % via PokedollItem.appendHoverText), so publish writes safely.
+    private static volatile double cachedTotalWeight = -1.0;
 
     private static double getEffectiveWeight(String pokemon, Set<ModelFlag> flags, DollRarity rarity) {
         // A gigantic doll is crafted from FLAG_RARITY_DIVISOR (4) copies of its non-gigantic

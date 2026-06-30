@@ -1,8 +1,8 @@
 package dev.mrshawn.pokeblocks.block.custom;
 
-import com.mojang.blaze3d.platform.NativeImage;
 import com.mojang.serialization.MapCodec;
 import dev.mrshawn.pokeblocks.PokeblocksCommon;
+import dev.mrshawn.pokeblocks.block.ParticleSourceBlock;
 import dev.mrshawn.pokeblocks.block.entity.custom.PokedollBlockEntity;
 import dev.mrshawn.pokeblocks.client.model.PokeblocksAssetResolver;
 import dev.mrshawn.pokeblocks.constants.ModSettings;
@@ -12,13 +12,11 @@ import dev.mrshawn.pokeblocks.pokemon.ModelFlag;
 import dev.mrshawn.pokeblocks.registry.BlockEntityRegistry;
 import dev.mrshawn.pokeblocks.registry.SoundRegistry;
 import dev.mrshawn.pokeblocks.utils.ColorFactory;
-import dev.mrshawn.pokeblocks.utils.WoolColorMatcher;
 import net.minecraft.client.Minecraft;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.core.particles.DustParticleOptions;
 import net.minecraft.resources.ResourceLocation;
-import net.minecraft.server.packs.resources.Resource;
 import net.minecraft.sounds.SoundEvents;
 import net.minecraft.sounds.SoundSource;
 import net.minecraft.world.InteractionHand;
@@ -33,6 +31,8 @@ import net.minecraft.world.level.Level;
 import net.minecraft.world.level.LevelAccessor;
 import net.minecraft.world.level.LevelReader;
 import net.minecraft.world.level.block.*;
+import net.minecraft.world.level.storage.loot.LootParams;
+import net.minecraft.world.level.storage.loot.parameters.LootContextParams;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.block.state.StateDefinition;
@@ -52,13 +52,12 @@ import java.util.EnumMap;
 import java.util.EnumSet;
 import java.util.List;
 import java.util.Map;
-import java.util.Optional;
 import java.util.Set;
 
 /**
  * Simple pokedoll block. Mostly a wrapper to provide a BlockEntity and render as an entity.
  */
-public class PokedollBlock extends BaseEntityBlock implements EntityBlock, SimpleWaterloggedBlock {
+public class PokedollBlock extends BaseEntityBlock implements EntityBlock, SimpleWaterloggedBlock, ParticleSourceBlock {
 	/**
 	 * Fine-grained placement rotation (0-15), matching vanilla standing signs/banners.
 	 * The doll's GeckoLib model is rotated by {@link dev.mrshawn.pokeblocks.client.renderer.block.PokedollBlockRenderer}.
@@ -72,7 +71,8 @@ public class PokedollBlock extends BaseEntityBlock implements EntityBlock, Simpl
 	private static final Vector3f WAX_PARTICLE_COLOR = new Vector3f(0.95f, 0.75f, 0.2f);
 
 	public PokedollBlock() {
-		super(Properties.of().sound(SoundType.WOOL).strength(0.4f).noOcclusion());
+		// noLootTable: drops are built from the block entity in getDrops (NBT-preserving), not a json table.
+		super(Properties.of().sound(SoundType.WOOL).strength(0.4f).noOcclusion().noLootTable());
 		this.registerDefaultState(this.stateDefinition.any()
 				.setValue(ROTATION, 0)
 				.setValue(WATERLOGGED, false));
@@ -149,6 +149,26 @@ public class PokedollBlock extends BaseEntityBlock implements EntityBlock, Simpl
 			return PokedollItem.createPokedoll(pokedoll.getPokemon(), flagMap);
 		}
 		return super.getCloneItemStack(level, pos, state);
+	}
+
+	// --- Drops ---
+
+	/**
+	 * Mining the block drops the doll itself with its pokemon + flags intact (the data-driven block has no
+	 * loot-table json, so the drop is built from the block entity here — mirrors {@link #getCloneItemStack}).
+	 * The spam-click "pop" path ({@link #breakDoll}) breaks via {@code destroyBlock(pos, false)}, which never
+	 * calls {@code getDrops}, so it keeps dropping wool/substitute instead.
+	 */
+	@Override
+	protected java.util.List<ItemStack> getDrops(BlockState state, LootParams.Builder params) {
+		if (params.getOptionalParameter(LootContextParams.BLOCK_ENTITY) instanceof PokedollBlockEntity pokedoll) {
+			Map<ModelFlag, Boolean> flagMap = new EnumMap<>(ModelFlag.class);
+			for (ModelFlag flag : ModelFlag.values()) {
+				flagMap.put(flag, pokedoll.getFlag(flag));
+			}
+			return java.util.List.of(PokedollItem.createPokedoll(pokedoll.getPokemon(), flagMap));
+		}
+		return super.getDrops(state, params);
 	}
 
 	// --- Interaction: custom handlers + honeycomb waxing ---
@@ -319,16 +339,20 @@ public class PokedollBlock extends BaseEntityBlock implements EntityBlock, Simpl
 
 	// --- Texture color sampling for wool drops ---
 
+	/** Wool dropped when a doll's texture can't be sampled. */
+	private static final List<Block> FALLBACK_WOOLS = List.of(Blocks.WHITE_WOOL, Blocks.LIGHT_GRAY_WOOL);
+
 	private List<Block> getWoolColorsForDoll(PokedollBlockEntity pokedoll) {
 		try {
 			ResourceLocation textureLoc = getTextureForDoll(pokedoll);
 			if (textureLoc != null) {
-				Vector3f avgColor = ColorFactory.sampleAverageColor(textureLoc, new Vector3f(0.5f, 0.5f, 0.5f));
-				return WoolColorMatcher.getClosestWools(avgColor.x(), avgColor.y(), avgColor.z(), 2);
+				// Saturation-weighted dominant colors of the texture (cached per texture), so the drops
+				// reflect the doll's signature colors rather than the muddy average of all its pixels.
+				return ColorFactory.sampleDominantWools(textureLoc, 2, FALLBACK_WOOLS);
 			}
 		} catch (Exception ignored) {
 		}
-		return List.of(Blocks.WHITE_WOOL, Blocks.LIGHT_GRAY_WOOL);
+		return FALLBACK_WOOLS;
 	}
 
 	@Nullable
@@ -348,39 +372,6 @@ public class PokedollBlock extends BaseEntityBlock implements EntityBlock, Simpl
 		} catch (Exception ignored) {
 			return null;
 		}
-	}
-
-	private static Vector3f sampleAverageColor(ResourceLocation textureLoc) {
-		try {
-			Optional<Resource> resource = Minecraft.getInstance().getResourceManager().getResource(textureLoc);
-			if (resource.isPresent()) {
-				try (var is = resource.get().open();
-					 NativeImage image = NativeImage.read(is)) {
-					long r = 0, g = 0, b = 0;
-					int count = 0;
-					for (int x = 0; x < image.getWidth(); x++) {
-						for (int y = 0; y < image.getHeight(); y++) {
-							int pixel = image.getPixelRGBA(x, y);
-							int a = (pixel >> 24) & 0xFF;
-							if (a < 128) continue;
-							r += pixel & 0xFF;
-							g += (pixel >> 8) & 0xFF;
-							b += (pixel >> 16) & 0xFF;
-							count++;
-						}
-					}
-					if (count > 0) {
-						return new Vector3f(
-								(r / (float) count) / 255f,
-								(g / (float) count) / 255f,
-								(b / (float) count) / 255f
-						);
-					}
-				}
-			}
-		} catch (Exception ignored) {
-		}
-		return new Vector3f(0.9f, 0.9f, 0.9f);
 	}
 
 	/** Centered box, so it stays correct at any of the 16 rotations. */

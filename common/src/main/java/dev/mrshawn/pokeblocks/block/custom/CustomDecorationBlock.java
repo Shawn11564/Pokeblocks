@@ -1,6 +1,7 @@
 package dev.mrshawn.pokeblocks.block.custom;
 
 import com.mojang.serialization.MapCodec;
+import dev.mrshawn.pokeblocks.block.ParticleSourceBlock;
 import dev.mrshawn.pokeblocks.block.entity.custom.CustomDecorationBlockEntity;
 import dev.mrshawn.pokeblocks.registry.BlockEntityRegistry;
 import net.minecraft.core.BlockPos;
@@ -13,6 +14,8 @@ import net.minecraft.world.level.LevelAccessor;
 import net.minecraft.world.level.LevelReader;
 import net.minecraft.world.level.block.*;
 import net.minecraft.world.level.block.entity.BlockEntity;
+import net.minecraft.world.level.storage.loot.LootParams;
+import net.minecraft.world.level.storage.loot.parameters.LootContextParams;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.block.state.StateDefinition;
 import net.minecraft.world.level.block.state.properties.BlockStateProperties;
@@ -29,12 +32,14 @@ import net.minecraft.world.phys.shapes.VoxelShape;
  * the {@link dev.mrshawn.pokeblocks.block.entity.custom.CustomDecorationBlockEntity} and resolved by id
  * at render time. Generic decorations have no per-id shape config, so a centered box is used for all.
  */
-public class CustomDecorationBlock extends BaseEntityBlock implements EntityBlock, SimpleWaterloggedBlock {
+public class CustomDecorationBlock extends BaseEntityBlock implements EntityBlock, SimpleWaterloggedBlock, ParticleSourceBlock {
 	public static final DirectionProperty FACING = BlockStateProperties.HORIZONTAL_FACING;
 	public static final BooleanProperty WATERLOGGED = BlockStateProperties.WATERLOGGED;
 
 	public CustomDecorationBlock() {
-		super(Properties.of().noOcclusion());
+		// Match the pokedoll/figurine feel: soft wool break (sound + 0.4 hardness). See PokedollBlock.
+		// noLootTable: drops are built from the block entity in getDrops (NBT-preserving), not a json table.
+		super(Properties.of().sound(SoundType.WOOL).strength(0.4f).noOcclusion().noLootTable());
 		this.registerDefaultState(this.stateDefinition.any()
 				.setValue(FACING, Direction.NORTH)
 				.setValue(WATERLOGGED, false));
@@ -94,6 +99,20 @@ public class CustomDecorationBlock extends BaseEntityBlock implements EntityBloc
 			decoration.saveToItem(stack, lvl.registryAccess());
 		}
 		return stack;
+	}
+
+	/**
+	 * Mining the block drops the decoration itself with its id + gigantic flag intact (the data-driven block
+	 * has no loot-table json, so the drop is built from the block entity here, mirroring pick-block).
+	 */
+	@Override
+	protected java.util.List<ItemStack> getDrops(BlockState state, LootParams.Builder params) {
+		if (params.getOptionalParameter(LootContextParams.BLOCK_ENTITY) instanceof CustomDecorationBlockEntity decoration) {
+			ItemStack stack = new ItemStack(this);
+			decoration.saveToItem(stack, params.getLevel().registryAccess());
+			return java.util.List.of(stack);
+		}
+		return super.getDrops(state, params);
 	}
 
 	@Override

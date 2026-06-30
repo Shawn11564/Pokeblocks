@@ -2,6 +2,7 @@ package dev.mrshawn.pokeblocks.client.renderer.block;
 
 import dev.mrshawn.pokeblocks.block.custom.PokedollBlock;
 import dev.mrshawn.pokeblocks.block.entity.custom.PokedollBlockEntity;
+import dev.mrshawn.pokeblocks.client.laser.ActiveLaserDots;
 import dev.mrshawn.pokeblocks.client.model.block.PokedollModel;
 import dev.mrshawn.pokeblocks.client.screen.CompendiumScreen;
 import dev.mrshawn.pokeblocks.constants.ModSettings;
@@ -26,8 +27,24 @@ public class PokedollBlockRenderer extends GeoBlockRenderer<PokedollBlockEntity>
 	private static final float TURN_SECONDS = 10f;
 	private static final float TURN_RATE = 3f / TURN_SECONDS;
 
+	/**
+	 * Laser-pointer turning settles much faster than the compendium (~1.2s vs 10s), so dolls visibly snap
+	 * their gaze toward the dot as it sweeps past them.
+	 */
+	private static final float LASER_TURN_SECONDS = 1.2f;
+	private static final float LASER_TURN_RATE = 3f / LASER_TURN_SECONDS;
+
+	/** Dolls within this many blocks of a laser dot turn to look at it. */
+	private static final double LASER_RADIUS = 8.0;
+
 	/** Per-doll eased render yaw, so dolls turn smoothly instead of snapping. Keyed by position. */
 	private static final Map<BlockPos, Facing> FACING = new HashMap<>();
+
+	/**
+	 * Separate eased-yaw state for laser-pointer turning, so it can run (and settle back) independently of
+	 * the compendium. Entries are removed once a doll has settled back to its placement rotation.
+	 */
+	private static final Map<BlockPos, Facing> LASER_FACING = new HashMap<>();
 
 	/**
 	 * The compendium's open state as of the last rendered doll, so we can detect the close edge and drop
@@ -74,37 +91,75 @@ public class PokedollBlockRenderer extends GeoBlockRenderer<PokedollBlockEntity>
 		int segment = this.animatable.getBlockState().getValue(PokedollBlock.ROTATION);
 		float placementYaw = -RotationSegment.convertToDegrees(segment);
 
-		// Closed: snap back to the placed rotation instantly.
-		if (!open) {
-			poseStack.mulPose(Axis.YP.rotationDegrees(placementYaw));
+		BlockPos pos = this.animatable.getBlockPos().immutable();
+
+		// Compendium open: ease toward facing the camera. Takes precedence over the laser pointer.
+		if (open) {
+			poseStack.mulPose(Axis.YP.rotationDegrees(
+					advance(FACING, pos, facingCameraDegrees(pos), placementYaw, TURN_RATE)));
 			return;
 		}
 
-		// Open: ease toward facing the camera.
-		BlockPos pos = this.animatable.getBlockPos().immutable();
-		poseStack.mulPose(Axis.YP.rotationDegrees(easedYaw(pos, facingCameraDegrees(pos), placementYaw)));
+		// Laser pointer: if a dot is within range, turn quickly to look straight at it. Driven by the
+		// synced LaserDotEntity, so this runs identically on every client (holder and bystanders).
+		Vec3 dot = ActiveLaserDots.nearestWithin(Vec3.atCenterOf(pos), LASER_RADIUS);
+		if (dot != null) {
+			float target = facingPointDegrees(pos, dot);
+			poseStack.mulPose(Axis.YP.rotationDegrees(
+					advance(LASER_FACING, pos, target, placementYaw, LASER_TURN_RATE)));
+			return;
+		}
+
+		// Out of range: ease back to the placed rotation if this doll was mid-turn, otherwise sit at it.
+		Float settled = settleLaser(pos, placementYaw);
+		poseStack.mulPose(Axis.YP.rotationDegrees(settled != null ? settled : placementYaw));
 	}
 
 	/**
-	 * Advances this doll's eased yaw toward {@code target} and returns it. Uses a per-doll time
-	 * delta (so it's correct regardless of render order) and exponential smoothing that settles in
-	 * about {@link #TURN_SECONDS}. Only called while the compendium is open; {@code placementYaw}
-	 * is the starting orientation the first time a doll begins turning.
+	 * Advances a doll's eased yaw (stored in {@code map}, keyed by position) toward {@code target} and
+	 * returns it. Uses a per-doll time delta (so it's correct regardless of render order) and exponential
+	 * smoothing at {@code turnRate}; {@code startYaw} is the orientation the first time a doll begins turning.
 	 */
-	private static float easedYaw(BlockPos pos, float target, float placementYaw) {
+	private static float advance(Map<BlockPos, Facing> map, BlockPos pos, float target, float startYaw, float turnRate) {
 		long now = Util.getMillis();
-		Facing f = FACING.get(pos);
+		Facing f = map.get(pos);
 		if (f == null) {
-			f = new Facing(placementYaw, now); // start from where the doll actually sits
-			FACING.put(pos, f);
+			f = new Facing(startYaw, now); // start from where the doll actually sits
+			map.put(pos, f);
 		}
 
 		float dt = Math.min((now - f.lastMs) / 1000f, 0.1f);
 		f.lastMs = now;
 
-		float ease = 1f - (float) Math.exp(-dt * TURN_RATE);
+		float ease = 1f - (float) Math.exp(-dt * turnRate);
 		f.yaw = Mth.wrapDegrees(f.yaw + Mth.degreesDifference(f.yaw, target) * ease);
 		return f.yaw;
+	}
+
+	/**
+	 * Eases a doll that was turning for the laser back toward its placement rotation. Returns the eased
+	 * yaw while settling, or {@code null} once it has effectively arrived (the entry is then dropped so the
+	 * doll simply renders at its placement rotation again). Returns {@code null} immediately if the doll
+	 * was never turning.
+	 */
+	private static Float settleLaser(BlockPos pos, float placementYaw) {
+		if (!LASER_FACING.containsKey(pos)) return null;
+		float yaw = advance(LASER_FACING, pos, placementYaw, placementYaw, LASER_TURN_RATE);
+		if (Math.abs(Mth.degreesDifference(yaw, placementYaw)) < 0.5f) {
+			LASER_FACING.remove(pos);
+			return null;
+		}
+		return yaw;
+	}
+
+	/**
+	 * Render yaw (degrees) that points the doll's front at a world point. Same convention as
+	 * {@link #facingCameraDegrees}, with the laser dot in place of the camera.
+	 */
+	private static float facingPointDegrees(BlockPos pos, Vec3 point) {
+		double dx = (pos.getX() + 0.5) - point.x;
+		double dz = (pos.getZ() + 0.5) - point.z;
+		return (float) Math.toDegrees(Math.atan2(dx, dz));
 	}
 
 	/**

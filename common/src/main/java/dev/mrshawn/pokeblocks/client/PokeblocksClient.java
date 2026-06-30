@@ -1,10 +1,12 @@
 package dev.mrshawn.pokeblocks.client;
 
 import dev.mrshawn.pokeblocks.client.model.PokeblocksAssetResolver;
+import dev.mrshawn.pokeblocks.utils.ColorFactory;
 import dev.mrshawn.pokeblocks.client.renderer.block.CustomDecorationBlockRenderer;
 import dev.mrshawn.pokeblocks.client.renderer.block.DecorativeBlockRenderer;
 import dev.mrshawn.pokeblocks.client.renderer.block.FigurineBlockRenderer;
 import dev.mrshawn.pokeblocks.client.renderer.block.PokedollBlockRenderer;
+import dev.mrshawn.pokeblocks.client.renderer.entity.LaserDotRenderer;
 import dev.mrshawn.pokeblocks.registry.*;
 import net.minecraft.client.renderer.blockentity.BlockEntityRendererProvider;
 import net.minecraft.client.renderer.entity.EntityRenderer;
@@ -39,6 +41,7 @@ public final class PokeblocksClient {
 				return null;
 			}
 		});
+		entityRenderers.accept(EntityRegistry.LASER_DOT_ENTITY.get(), LaserDotRenderer::new);
 	}
 
 	/**
@@ -54,6 +57,9 @@ public final class PokeblocksClient {
 		PokeblocksAssetResolver.clearPokemonCache();
 		PokeblocksAssetResolver.clearFigurineCache();
 		PokeblocksAssetResolver.clearDecorationCache();
+		// Texture-derived color samples (wool drops + particle tints) can go stale when a resource pack
+		// swaps textures under the same id.
+		ColorFactory.clearCaches();
 		PokemonRegistry.scanAndRegisterFromResources();
 		FigurineRegistry.scanAndRegisterFromResources();
 		CustomDecorationRegistry.scanAndRegisterFromResources();

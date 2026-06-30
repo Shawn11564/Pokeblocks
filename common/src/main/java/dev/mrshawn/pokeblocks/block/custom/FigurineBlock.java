@@ -1,6 +1,7 @@
 package dev.mrshawn.pokeblocks.block.custom;
 
 import com.mojang.serialization.MapCodec;
+import dev.mrshawn.pokeblocks.block.ParticleSourceBlock;
 import dev.mrshawn.pokeblocks.block.entity.custom.FigurineBlockEntity;
 import dev.mrshawn.pokeblocks.registry.BlockEntityRegistry;
 import net.minecraft.core.BlockPos;
@@ -13,6 +14,8 @@ import net.minecraft.world.level.LevelAccessor;
 import net.minecraft.world.level.LevelReader;
 import net.minecraft.world.level.block.*;
 import net.minecraft.world.level.block.entity.BlockEntity;
+import net.minecraft.world.level.storage.loot.LootParams;
+import net.minecraft.world.level.storage.loot.parameters.LootContextParams;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.block.state.StateDefinition;
 import net.minecraft.world.level.block.state.properties.BlockStateProperties;
@@ -23,12 +26,15 @@ import net.minecraft.world.level.material.Fluids;
 import net.minecraft.world.phys.shapes.CollisionContext;
 import net.minecraft.world.phys.shapes.VoxelShape;
 
-public class FigurineBlock extends BaseEntityBlock implements EntityBlock, SimpleWaterloggedBlock {
+public class FigurineBlock extends BaseEntityBlock implements EntityBlock, SimpleWaterloggedBlock, ParticleSourceBlock {
 	public static final DirectionProperty FACING = BlockStateProperties.HORIZONTAL_FACING;
 	public static final BooleanProperty WATERLOGGED = BlockStateProperties.WATERLOGGED;
 
 	public FigurineBlock() {
-		super(Properties.of().noOcclusion());
+		// Match the pokedoll's feel: soft wool break (sound + 0.4 hardness), as every figurine/doll
+		// block did pre-rewrite (FabricBlockSettings.copy(WHITE_WOOL).strength(0.4f)). See PokedollBlock.
+		// noLootTable: drops are built from the block entity in getDrops (NBT-preserving), not a json table.
+		super(Properties.of().sound(SoundType.WOOL).strength(0.4f).noOcclusion().noLootTable());
 		this.registerDefaultState(this.stateDefinition.any()
 				.setValue(FACING, Direction.NORTH)
 				.setValue(WATERLOGGED, false));
@@ -89,6 +95,20 @@ public class FigurineBlock extends BaseEntityBlock implements EntityBlock, Simpl
 			figurine.saveToItem(stack, lvl.registryAccess());
 		}
 		return stack;
+	}
+
+	/**
+	 * Mining the block drops the figurine itself with its id + gigantic flag intact (the data-driven block
+	 * has no loot-table json, so the drop is built from the block entity here, mirroring pick-block).
+	 */
+	@Override
+	protected java.util.List<ItemStack> getDrops(BlockState state, LootParams.Builder params) {
+		if (params.getOptionalParameter(LootContextParams.BLOCK_ENTITY) instanceof FigurineBlockEntity figurine) {
+			ItemStack stack = new ItemStack(this);
+			figurine.saveToItem(stack, params.getLevel().registryAccess());
+			return java.util.List.of(stack);
+		}
+		return super.getDrops(state, params);
 	}
 
 	@Override

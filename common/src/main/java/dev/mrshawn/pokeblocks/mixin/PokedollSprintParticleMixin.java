@@ -23,14 +23,12 @@ import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
-import java.util.HashMap;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
 @Mixin(Entity.class)
 public class PokedollSprintParticleMixin {
 
-    private static final Map<String, Vector3f> colorCache = new HashMap<>();
     private static final PokedollModel pokedollModel = new PokedollModel();
     private static final FigurineModel figurineModel = new FigurineModel();
     private static final Map<String, DecorativeModel> decorativeModels = new ConcurrentHashMap<>();
@@ -76,9 +74,7 @@ public class PokedollSprintParticleMixin {
 
         if (textureLoc == null) return; // Cancelled but silent
 
-        ResourceLocation finalTextureLoc = textureLoc;
-        Vector3f color = colorCache.computeIfAbsent(textureLoc.toString(),
-                k -> ColorFactory.sampleAverageColor(finalTextureLoc, new Vector3f(0.5f, 0.5f, 0.5f)));
+        Vector3f color = ColorFactory.sampleAverageColorCached(textureLoc, new Vector3f(0.5f, 0.5f, 0.5f));
 
         // Mirror vanilla's sprint particle: one particle kicked up behind the entity
         Vec3 movement = self.getDeltaMovement();

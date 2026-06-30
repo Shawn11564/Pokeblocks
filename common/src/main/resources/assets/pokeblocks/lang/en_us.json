@@ -29,6 +29,10 @@
   "item.pokeblocks.summer_token": "Summer Token",
   "item.pokeblocks.compendium": "Doll Compendium",
   "item.pokeblocks.figurine_compendium": "Figurine Compendium",
+  "item.pokeblocks.laser_pointer": "Laser Pointer",
+
+  "tooltip.pokeblocks.incomplete": "⚠ Incomplete Feature",
+  "tooltip.pokeblocks.incomplete.detail": "Functionality may not be fully working.",
 
   "subtitles.pokeblocks.pokedoll_squeak": "Pokedoll squeaks"
 }

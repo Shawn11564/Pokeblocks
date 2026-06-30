@@ -1,7 +1,9 @@
 package dev.mrshawn.pokeblocks.registry;
 
 import dev.mrshawn.pokeblocks.PokeblocksCommon;
+import dev.mrshawn.pokeblocks.config.PokeblocksConfig;
 import dev.mrshawn.pokeblocks.constants.ModSettings;
+import dev.mrshawn.pokeblocks.item.IncompleteFeatureItem;
 import dev.mrshawn.pokeblocks.item.PokeblocksItemData;
 import dev.mrshawn.pokeblocks.item.RarityScoreCalculator;
 import dev.mrshawn.pokeblocks.item.custom.CustomDecorationItem;
@@ -110,9 +112,21 @@ public final class ItemGroupRegistry {
 					entries.accept(new ItemStack(item.get()));
 				}
 				// POC doll compendium book
-				entries.accept(new ItemStack(ItemRegistry.COMPENDIUM_ITEM.get()));
+				acceptIfShown(entries, new ItemStack(ItemRegistry.COMPENDIUM_ITEM.get()));
 				// Figurine compendium book
-				entries.accept(new ItemStack(ItemRegistry.FIGURINE_COMPENDIUM_ITEM.get()));
+				acceptIfShown(entries, new ItemStack(ItemRegistry.FIGURINE_COMPENDIUM_ITEM.get()));
+				// Laser pointer (incomplete feature)
+				acceptIfShown(entries, new ItemStack(ItemRegistry.LASER_POINTER_ITEM.get()));
 			})
 			.build());
+
+	/**
+	 * Adds a stack to the creative tab, but skips items flagged {@link IncompleteFeatureItem} unless
+	 * {@code [creative] show_incomplete_items} is enabled. Non-incomplete items are always added.
+	 */
+	private static void acceptIfShown(CreativeModeTab.Output entries, ItemStack stack) {
+		if (!(stack.getItem() instanceof IncompleteFeatureItem) || PokeblocksConfig.isShowIncompleteItems()) {
+			entries.accept(stack);
+		}
+	}
 }

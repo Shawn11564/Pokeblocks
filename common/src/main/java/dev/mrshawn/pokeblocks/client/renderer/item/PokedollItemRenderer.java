@@ -28,8 +28,8 @@ public class PokedollItemRenderer extends GeoItemRenderer<PokedollItem> {
     private final PokedollItemModel model;
     private ItemDisplayContext currentTransformType = ItemDisplayContext.NONE;
 
-    private final float GIGANTIC_HELD_SCALE = 0.75f;
-    private final float GIGANTIC_INVENTORY_SCALE = 0.7f;
+    private static final float GIGANTIC_HELD_SCALE = 0.75f;
+    private static final float GIGANTIC_INVENTORY_SCALE = 0.7f;
 
     public PokedollItemRenderer() {
         super(new PokedollItemModel());

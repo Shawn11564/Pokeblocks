@@ -16,6 +16,9 @@ public class PokeblocksConfig {
 	// [eastereggs]
 	private static boolean dollPoppingEnabled = true;
 
+	// [creative] — controls visibility of unfinished content in the creative menu.
+	private static boolean showIncompleteItems = false;
+
 	// [resourcepack]
 	private static boolean kickOnDecline = true;
 	// How the custom pack reaches clients, and the knobs each distribution mode needs.
@@ -45,6 +48,14 @@ public class PokeblocksConfig {
 
 	public static boolean isDollPoppingEnabled() {
 		return dollPoppingEnabled;
+	}
+
+	/**
+	 * Whether items flagged as incomplete (see {@link dev.mrshawn.pokeblocks.item.IncompleteFeatureItem})
+	 * are shown in the creative menu. Defaults to {@code false} so unfinished features stay hidden.
+	 */
+	public static boolean isShowIncompleteItems() {
+		return showIncompleteItems;
 	}
 
 	public static boolean isKickOnDecline() {
@@ -146,6 +157,7 @@ public class PokeblocksConfig {
 	public static void reload() {
 		// Reset to defaults
 		dollPoppingEnabled = true;
+		showIncompleteItems = false;
 		kickOnDecline = true;
 		packDistribution = PackDistribution.SELF_HOST;
 		remotePackUrl = "";
@@ -198,6 +210,11 @@ public class PokeblocksConfig {
 					case "eastereggs" -> {
 						if (key.equals("doll_popping_enabled")) {
 							dollPoppingEnabled = parseBoolean(value, true);
+						}
+					}
+					case "creative" -> {
+						if (key.equals("show_incomplete_items")) {
+							showIncompleteItems = parseBoolean(value, false);
 						}
 					}
 					case "resourcepack" -> {
@@ -302,6 +319,12 @@ public class PokeblocksConfig {
 			new KeyDef("eastereggs", "doll_popping_enabled",
 					"# Whether dolls can \"pop\" (break into wool and string) when right-clicked too many times quickly.",
 					"true"),
+			new KeyDef("creative", "show_incomplete_items",
+					"""
+					# Whether items whose feature is still unfinished (the laser pointer, the doll compendium and
+					# the figurine compendium) appear in the creative menu. When false (default) they are hidden.
+					# When true they show up but carry a tooltip warning that the feature may not be fully working.""",
+					"false"),
 			new KeyDef("resourcepack", "kick_on_decline",
 					"# Whether to kick players who decline the custom Pokeblocks resource pack.",
 					"true"),
@@ -708,8 +731,9 @@ public class PokeblocksConfig {
 	 * a name with flags (e.g. "substitute shiny") matches only that exact variant.
 	 */
 	public static boolean isDollExcludedFromLoot(String pokemon, Set<ModelFlag> flags) {
-		// Bare pokemon name in the set means all variants of that pokemon are excluded
-		if (excludedLootDolls.contains(pokemon)) return true;
+		// Bare pokemon name in the set means all variants of that pokemon are excluded.
+		// Lowercase to match the canonical keys (buildKey lowercases) and LootGroup.containsDoll.
+		if (excludedLootDolls.contains(pokemon.toLowerCase())) return true;
 		// Check for an exact variant match using the canonical key
 		return excludedLootDolls.contains(DollRarityOverrides.buildKey(pokemon, flags));
 	}
