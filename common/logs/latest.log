@@ -1,2 +1,56 @@
-[04:08:08] [Test worker/INFO]: [ZFightFix] Corrected z-fighting in 115 model(s) (1001 cube(s) nudged) at runtime. Best-effort only — raise 'inflate' on the listed cubes in the source models to fix permanently.
-[04:08:08] [Test worker/INFO]: [ZFightFix] Corrected z-fighting in 115 model(s) (1001 cube(s) nudged) at runtime. Best-effort only — raise 'inflate' on the listed cubes in the source models to fix permanently.
+[09:51:05] [Test worker/INFO]: Created default config.toml at C:\Users\thund\AppData\Local\Temp\junit11502989034034140221\config\Pokeblocks\config.toml
+[09:51:05] [Test worker/INFO]: [ConfigSync] Extracted default doll_rarity.json
+[09:51:05] [Test worker/INFO]: [ConfigSync] Extracted default figurine_names.json
+[09:51:05] [Test worker/INFO]: [ConfigSync] Extracted default figurine_descriptions.json
+[09:51:05] [Test worker/INFO]: [ConfigSync] Extracted default figurine_tags.json
+[09:51:05] [Test worker/INFO]: [ConfigSync] Extracted default rarity_weights.json
+[09:51:05] [Test worker/INFO]: [ConfigSync] Extracted default loot_groups.json
+[09:51:05] [Test worker/INFO]: Created default config.toml at C:\Users\thund\AppData\Local\Temp\junit5344839757686135513\config\Pokeblocks\config.toml
+[09:51:05] [Test worker/INFO]: [ConfigSync] Extracted default doll_rarity.json
+[09:51:05] [Test worker/INFO]: [ConfigSync] Extracted default figurine_names.json
+[09:51:05] [Test worker/INFO]: [ConfigSync] Extracted default figurine_descriptions.json
+[09:51:05] [Test worker/INFO]: [ConfigSync] Extracted default figurine_tags.json
+[09:51:05] [Test worker/INFO]: [ConfigSync] Extracted default rarity_weights.json
+[09:51:05] [Test worker/INFO]: [ConfigSync] Extracted default loot_groups.json
+[09:51:05] [Test worker/INFO]: [ConfigSync] Updated doll_rarity.json (+1 new, ~0 changed)
+[09:51:05] [Test worker/INFO]: Created default config.toml at C:\Users\thund\AppData\Local\Temp\junit2374457790883545164\config\Pokeblocks\config.toml
+[09:51:05] [Test worker/INFO]: [ConfigSync] Extracted default doll_rarity.json
+[09:51:05] [Test worker/INFO]: [ConfigSync] Extracted default figurine_names.json
+[09:51:05] [Test worker/INFO]: [ConfigSync] Extracted default figurine_descriptions.json
+[09:51:05] [Test worker/INFO]: [ConfigSync] Extracted default figurine_tags.json
+[09:51:05] [Test worker/INFO]: [ConfigSync] Extracted default rarity_weights.json
+[09:51:05] [Test worker/INFO]: [ConfigSync] Extracted default loot_groups.json
+[09:51:05] [Test worker/INFO]: Created default config.toml at C:\Users\thund\AppData\Local\Temp\junit3368618082860801785\config\Pokeblocks\config.toml
+[09:51:05] [Test worker/INFO]: [ConfigSync] Extracted default doll_rarity.json
+[09:51:05] [Test worker/INFO]: [ConfigSync] Extracted default figurine_names.json
+[09:51:05] [Test worker/INFO]: [ConfigSync] Extracted default figurine_descriptions.json
+[09:51:05] [Test worker/INFO]: [ConfigSync] Extracted default figurine_tags.json
+[09:51:05] [Test worker/INFO]: [ConfigSync] Extracted default rarity_weights.json
+[09:51:05] [Test worker/INFO]: [ConfigSync] Extracted default loot_groups.json
+[09:51:05] [Test worker/WARN]: [ConfigSync] auto_update_configs = overwrite: managed config files will be reset to the mod defaults (backups kept in .sync/backups). Use 'merge' to keep your customizations.
+[09:51:05] [Test worker/INFO]: [ConfigSync] Overwrote doll_rarity.json with the bundled default
+[09:51:05] [Test worker/INFO]: Created default config.toml at C:\Users\thund\AppData\Local\Temp\junit14602231903931825699\config\Pokeblocks\config.toml
+[09:51:05] [Test worker/INFO]: [ConfigSync] Extracted default doll_rarity.json
+[09:51:05] [Test worker/INFO]: [ConfigSync] Extracted default figurine_names.json
+[09:51:05] [Test worker/INFO]: [ConfigSync] Extracted default figurine_descriptions.json
+[09:51:05] [Test worker/INFO]: [ConfigSync] Extracted default figurine_tags.json
+[09:51:05] [Test worker/INFO]: [ConfigSync] Extracted default rarity_weights.json
+[09:51:05] [Test worker/INFO]: [ConfigSync] Extracted default loot_groups.json
+[09:51:05] [Test worker/INFO]: Created default config.toml at C:\Users\thund\AppData\Local\Temp\junit1106488033062589614\config\Pokeblocks\config.toml
+[09:51:05] [Test worker/INFO]: Loaded 2 acquisition divisor(s)
+[09:51:05] [Test worker/INFO]: Copied default rarity_acquisition_divisors.json to C:\Users\thund\AppData\Local\Temp\junit1106488033062589614\config\Pokeblocks\rarity_acquisition_divisors.json
+[09:51:05] [Test worker/INFO]: Loaded 2 acquisition divisor(s)
+[09:51:05] [Test worker/INFO]: Created default config.toml at C:\Users\thund\AppData\Local\Temp\junit4107668143877976723\config\Pokeblocks\config.toml
+[09:51:05] [Test worker/INFO]: [ConfigSync] Extracted default doll_rarity.json
+[09:51:05] [Test worker/INFO]: [ConfigSync] Extracted default figurine_names.json
+[09:51:05] [Test worker/INFO]: [ConfigSync] Extracted default figurine_descriptions.json
+[09:51:05] [Test worker/INFO]: [ConfigSync] Extracted default figurine_tags.json
+[09:51:05] [Test worker/INFO]: [ConfigSync] Extracted default rarity_weights.json
+[09:51:05] [Test worker/INFO]: [ConfigSync] Extracted default loot_groups.json
+[09:51:05] [Test worker/INFO]: [ConfigSync] auto_update_configs = off: config files are not auto-updated. Run "/pokeblocks config sync" after a mod update to pull new content.
+[09:51:05] [Test worker/INFO]: [ConfigSync] Updated doll_rarity.json (+1 new, ~0 changed)
+[09:51:05] [Test worker/INFO]: Copied default doll_rarity.json to C:\Users\thund\AppData\Local\Temp\pokeblocks-test7334636518058459061\config\Pokeblocks\doll_rarity.json
+[09:51:05] [Test worker/INFO]: Loaded 123 rarity override(s)
+[09:51:05] [Test worker/INFO]: Loaded ignored rarity flags for 1 pokemon and 0 blanket flag(s)
+[09:51:05] [Test worker/INFO]: Loaded 2 acquisition divisor(s)
+[09:51:05] [Test worker/INFO]: built-in scan: 91 pokemon (91 new)

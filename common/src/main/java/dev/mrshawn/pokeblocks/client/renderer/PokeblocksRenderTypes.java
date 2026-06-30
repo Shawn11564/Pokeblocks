@@ -30,6 +30,12 @@ import java.util.Set;
  * culling the translucent type had and changing only the blend → alpha-test behaviour. Models that
  * genuinely need both sides drawn (single-thickness flat geometry) can opt into no-cull via
  * {@link #DOUBLE_SIDED_MODELS}.
+ *
+ * <p><b>Companion fix.</b> Picking an opaque, depth-writing render type removes the blend shimmer but
+ * not the z-fighting between cubes that sit at (nearly) the same depth — stacked decals, layered
+ * shells. That residual case is handled at render time by {@link GeoDepthBias} (via the
+ * {@code GeoRendererDepthBiasMixin}), which nudges later-painted quads a hair toward the camera so the
+ * depth buffer respects paint order. The two work together; neither edits the {@code .geo.json}.
  */
 public final class PokeblocksRenderTypes {
 

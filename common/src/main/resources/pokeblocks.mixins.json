@@ -8,6 +8,7 @@
     "PlayerJoinMixin"
   ],
   "client": [
+    "GeoRendererDepthBiasMixin",
     "PokedollParticleMixin",
     "PokedollSprintParticleMixin",
     "PackRepositoryMixin",
