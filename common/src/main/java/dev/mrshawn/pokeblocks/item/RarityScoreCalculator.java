@@ -66,7 +66,9 @@ public class RarityScoreCalculator {
      * Cached sum of all variant weights (no flag exclusions), used for tooltip display.
      * Set to -1 when invalid; reset via {@link #invalidateTotalWeightCache()}.
      */
-    private static double cachedTotalWeight = -1.0;
+    // volatile: written from the server thread (invalidateTotalWeightCache via reload/lifecycle) and read
+    // from the client render thread (tooltip % via PokedollItem.appendHoverText), so publish writes safely.
+    private static volatile double cachedTotalWeight = -1.0;
 
     private static double getEffectiveWeight(String pokemon, Set<ModelFlag> flags, DollRarity rarity) {
         // A gigantic doll is crafted from FLAG_RARITY_DIVISOR (4) copies of its non-gigantic
@@ -114,6 +116,30 @@ public class RarityScoreCalculator {
         }
 
         return count;
+    }
+
+    /**
+     * The resolved rarity tier for a {@code (pokemon, flags)} variant — the same resolution the loot
+     * and score pipeline use: an exact {@code doll_rarity.json} override if present, otherwise the
+     * highest-tier flag after ignored flags are stripped, otherwise {@link DollRarity#COMMON}.
+     * <p>Thin public accessor for the private {@link #resolveRarity}, so the deterministic rarity
+     * resolution can be queried directly (tooltips, the mc-test server-truth provider) without
+     * re-deriving the logic.
+     */
+    public static DollRarity resolvedRarity(String pokemon, Set<ModelFlag> flags) {
+        return resolveRarity(pokemon, flags);
+    }
+
+    /**
+     * The effective loot weight ("rarity score") of a single {@code (pokemon, flags)} variant: the
+     * resolved tier's configurable weight, divided by {@value #FLAG_RARITY_DIVISOR} per extra flag and
+     * by the variant's acquisition divisor, with GIGANTIC variants taking 1/{@value #FLAG_RARITY_DIVISOR}
+     * of their non-gigantic base. This is the deterministic, registry-independent numerator behind
+     * {@link #computeChance}; exposed (the underlying {@link #getEffectiveWeight} is private) so the
+     * exact value can be asserted directly.
+     */
+    public static double effectiveWeight(String pokemon, Set<ModelFlag> flags) {
+        return getEffectiveWeight(pokemon, flags, resolveRarity(pokemon, flags));
     }
 
     /**

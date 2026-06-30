@@ -7,12 +7,11 @@ import com.google.gson.JsonParser;
 import com.google.gson.JsonSyntaxException;
 import dev.mrshawn.pokeblocks.PokeblocksCommon;
 import dev.mrshawn.pokeblocks.config.PokeblocksConfig;
+import dev.mrshawn.pokeblocks.config.PokeblocksConfigFiles;
 import dev.mrshawn.pokeblocks.item.DollRarityOverrides;
 import dev.mrshawn.pokeblocks.pokemon.ModelFlag;
 import net.minecraft.resources.ResourceLocation;
 
-import java.io.InputStream;
-import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.*;
 import java.util.regex.Pattern;
@@ -31,22 +30,7 @@ public class LootGroupConfig {
 	private static Path configPath = null;
 
 	public static void initialize(Path serverDir) {
-		configPath = serverDir.resolve("config").resolve("Pokeblocks").resolve("loot_groups.json");
-
-		try {
-			Files.createDirectories(configPath.getParent());
-
-			if (!Files.exists(configPath)) {
-				try (InputStream is = LootGroupConfig.class.getResourceAsStream("/assets/pokeblocks/loot_groups.json")) {
-					if (is != null) {
-						Files.copy(is, configPath);
-						PokeblocksCommon.LOGGER.info("[Pokeblocks] Copied default loot_groups.json to {}", configPath);
-					}
-				}
-			}
-		} catch (Exception e) {
-			PokeblocksCommon.LOGGER.error("[Pokeblocks] Failed to copy loot_groups.json to config: {}", e.toString());
-		}
+		configPath = PokeblocksConfigFiles.ensureExtracted(serverDir, "loot_groups.json");
 
 		reload();
 	}
@@ -54,14 +38,13 @@ public class LootGroupConfig {
 	public static void reload() {
 		groups.clear();
 
-		if (configPath == null || !Files.exists(configPath)) {
+		String content = PokeblocksConfigFiles.readConfigContent(configPath, "loot_groups.json");
+		if (content == null) {
 			PokeblocksCommon.LOGGER.info("[Pokeblocks] No loot_groups.json found, skipping loot groups");
 			return;
 		}
 
 		try {
-			String content = Files.readString(configPath);
-
 			JsonElement rootEl;
 			try {
 				rootEl = JsonParser.parseString(content);

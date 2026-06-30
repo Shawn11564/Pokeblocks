@@ -2,6 +2,7 @@ package dev.mrshawn.pokeblocks.resourcepack.resources;
 
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
+import dev.mrshawn.pokeblocks.constants.ModSettings;
 import dev.mrshawn.pokeblocks.registry.DecorativeRegistry;
 
 import java.util.LinkedHashMap;
@@ -26,6 +27,9 @@ public class GeneratedResourcePack {
 
         // Figurine
         addBlock(resources, "figurine", blockModel, itemModel);
+
+        // Generic custom-decoration block (single block; specific decoration resolved by NBT id)
+        addBlock(resources, ModSettings.CUSTOM_DECORATION_ID, blockModel, itemModel);
 
         // All decorative blocks
         for (DecorativeRegistry.DecorativeEntry entry : DecorativeRegistry.ALL_ENTRIES) {

@@ -1,0 +1,30 @@
+# yaml-language-server: $schema=https://mc-test.dev/schema/mctest-stepfile.schema.json
+name: pokeblocks-recipes
+# Assert the mod's custom crafting layer: its recipe serializers are registered, and the doll
+# INGREDIENT matcher (the reason custom recipes exist) tells doll variants apart correctly. Dolls are
+# not distinct items — every doll is one pokeblocks:pokedoll item with species + flags in data
+# components — so a plain vanilla ingredient could not distinguish "Applin" from "Shiny Applin".
+# PokeblocksIngredient.doll(...) matches species + the EXACT flag set; these steps pin that contract.
+# (The full shaped/gigantic recipe ROLL needs a live CraftingInput grid and is out of scope here.)
+# Server-truth-only (cap pluginState -> cost-1 server driver, no player join).
+requires:
+  pluginState: true
+target: ${matrix}
+steps:
+  # ── Recipe serializers registered (BuiltInRegistries.RECIPE_SERIALIZER) ──
+  - assertPluginState: { requires: { pluginState: true }, query: "recipe.serializerExists", args: { id: "pokeblocks:crafting_shaped" }, expect: true }
+  - assertPluginState: { requires: { pluginState: true }, query: "recipe.serializerExists", args: { id: "pokeblocks:gigantic_doll" }, expect: true }
+  # Negative control: an unregistered serializer id must report false.
+  - assertPluginState: { requires: { pluginState: true }, query: "recipe.serializerExists", args: { id: "pokeblocks:not_a_recipe" }, expect: false }
+
+  # ── Doll ingredient exact-match semantics (PokeblocksIngredient.doll(...).test(stack)) ──
+  # Same species, both flagless -> match.
+  - assertPluginState: { requires: { pluginState: true }, query: "recipe.dollIngredientMatches", args: { ingredientPokemon: "applin", stackPokemon: "applin" }, expect: true }
+  # A flagless "applin" ingredient must REJECT a Shiny Applin stack (exact flag-set match — the crux).
+  - assertPluginState: { requires: { pluginState: true }, query: "recipe.dollIngredientMatches", args: { ingredientPokemon: "applin", stackPokemon: "applin", stackFlags: ["shiny"] }, expect: false }
+  # A "shiny applin" ingredient matches a Shiny Applin...
+  - assertPluginState: { requires: { pluginState: true }, query: "recipe.dollIngredientMatches", args: { ingredientPokemon: "applin", ingredientFlags: ["shiny"], stackPokemon: "applin", stackFlags: ["shiny"] }, expect: true }
+  # ...but rejects a plain Applin (the flag set must match in BOTH directions).
+  - assertPluginState: { requires: { pluginState: true }, query: "recipe.dollIngredientMatches", args: { ingredientPokemon: "applin", ingredientFlags: ["shiny"], stackPokemon: "applin" }, expect: false }
+  # Wrong species never matches, regardless of flags.
+  - assertPluginState: { requires: { pluginState: true }, query: "recipe.dollIngredientMatches", args: { ingredientPokemon: "applin", stackPokemon: "luvdisc" }, expect: false }

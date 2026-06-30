@@ -19,6 +19,9 @@ minecraft {
 dependencies {
     compileOnly group:'org.spongepowered', name:'mixin', version:'0.8.5'
     implementation "software.bernie.geckolib:geckolib-common-${minecraft_version}:${geckolib_version}"
+    // mc-test server-truth SPI (McTestStateProvider). compileOnly: the matching server-* agent jar
+    // provides the class at runtime; bundling it would break ServiceLoader class identity. From mavenLocal.
+    compileOnly 'io.mctest:mc-test-agent-core:0.1.0'
     testImplementation 'org.junit.jupiter:junit-jupiter:5.10.5'
 }
 

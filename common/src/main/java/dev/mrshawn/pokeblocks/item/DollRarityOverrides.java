@@ -7,7 +7,6 @@ import dev.mrshawn.pokeblocks.PokeblocksLog;
 import dev.mrshawn.pokeblocks.config.PokeblocksConfigFiles;
 import dev.mrshawn.pokeblocks.pokemon.ModelFlag;
 
-import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.*;
 
@@ -32,13 +31,28 @@ public class DollRarityOverrides {
     public static void reload() {
         overrides.clear();
 
-        if (configPath == null || !Files.exists(configPath)) {
+        String content = PokeblocksConfigFiles.readConfigContent(configPath, "doll_rarity.json");
+        if (content == null) {
             PokeblocksLog.LOGGER.info("No doll_rarity.json found, skipping rarity overrides");
-            return;
+        } else {
+            applyContent(content);
+            PokeblocksLog.LOGGER.info("Loaded {} rarity override(s)", overrides.size());
         }
 
+        // Resource packs may contribute override entries; later packs win by key.
+        List<String> packOverrides = PokeblocksConfigFiles.collectPackOverrides(
+                configPath == null ? null : configPath.getParent(), "doll_rarity.json");
+        for (String override : packOverrides) {
+            applyContent(override);
+        }
+        if (!packOverrides.isEmpty()) {
+            PokeblocksLog.LOGGER.debug("Applied {} pack override(s) for {}", packOverrides.size(), "doll_rarity.json");
+        }
+    }
+
+    /** Parses one JSON-array content string into {@link #overrides}, merging by key (does not clear). */
+    private static void applyContent(String content) {
         try {
-            String content = Files.readString(configPath);
             JsonArray array = GSON.fromJson(content, JsonArray.class);
 
             for (JsonElement element : array) {
@@ -68,8 +82,6 @@ public class DollRarityOverrides {
                 String key = buildKey(pokemon, flags);
                 overrides.put(key, rarity);
             }
-
-            PokeblocksLog.LOGGER.info("Loaded {} rarity override(s)", overrides.size());
         } catch (Exception e) {
             PokeblocksLog.LOGGER.error("Failed to load doll_rarity.json", e);
         }

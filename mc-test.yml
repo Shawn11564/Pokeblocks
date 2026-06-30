@@ -1,0 +1,62 @@
+# mc-test.yml — the Pokeblocks (geckolib-examples) test matrix.
+#
+# Pokeblocks is a multiloader GeckoLib mod for MC 1.21.1 (common + fabric + forge + neoforge).
+# These rows test the SERVER-SIDE half of the mod on a real, modded DEDICATED SERVER using
+# mc-test's cost-1 `server` driver (server-truth-only, NO player join — the only way to assert
+# on a Forge/NeoForge server, whose FML handshake a headless bot cannot complete). Each row boots
+# the loader's dedicated server, drops the built Pokeblocks jar + its required runtime deps
+# (GeckoLib, and on Fabric the Fabric API) + the matching server-* truth agent into `mods/`, and
+# the tests assert over MCTP (`truth.assertPluginState`).
+#
+# Run the Fabric lane (runnable today):
+#   node <mc-test>/packages/runner/dist/cli.js run mctests/pokeblocks.modloaded.mctest.yml \
+#        --target pokeblocks-fabric-server-1.21.1 --matrix ./mc-test.yml --out ./mc-test-report
+#
+# The NeoForge/Forge rows HONEST-SKIP `NO_SERVER_AGENT` until their server-* agent jars are built
+# in the mc-test repo (agents/server-neoforge, agents/server-forge) — never a false green.
+version: 1
+
+provision:
+  eulaAccepted: true        # You accept Mojang's EULA by setting this; required to boot a server.
+  bindHost: 127.0.0.1       # Loopback only — offline-mode servers must not be public.
+  portRange: [25700, 25899]
+  cacheDir: ~/.mc-test/cache
+  workDir: .mc-test/run
+
+targets:
+  # ─────────────────────────── Fabric 1.21.1 (RUNNABLE TODAY) ───────────────────────────
+  # agent-server-fabric.jar is built in the mc-test repo, so server-truth assertions go GREEN.
+  - id: pokeblocks-fabric-server-1.21.1
+    loader: fabric
+    mc: "1.21.1"
+    loaderVersion: "0.19.3"  # Fabric loader (stable for 1.21.1); launcher fetched from the meta API.
+    driver: server           # server-truth-only (mod.loaded / assertPluginState), no player join.
+    serverProps:
+      level-type: "minecraft:flat"  # fast, deterministic superflat world (no terrain needed for truth tests)
+    mods:
+      # The System Under Test: the built Pokeblocks Fabric jar (deps are NOT bundled).
+      - { path: ./fabric/build/libs/geckolib-examples-ml-fabric-1.21.1-1.0.0.jar, as: pokeblocks.jar }
+      # Required runtime deps (fabric.mod.json `depends`): GeckoLib + Fabric API. Version ids are
+      # pinned for a reproducible run (resolved + logged by a prior run); drop `version` to float to
+      # the newest matching 1.21.1/fabric.
+      - { modrinth: { project: geckolib,   loader: fabric, gameVersion: "1.21.1", version: "3GjkJptS" }, as: geckolib.jar }     # GeckoLib 4.8.4
+      - { modrinth: { project: fabric-api, loader: fabric, gameVersion: "1.21.1", version: "Lwt6YYHL" }, as: fabric-api.jar }   # Fabric API 0.116.12+1.21.1
+    agents: [ server-fabric ]            # Fabric server-mod truth agent → mods/ (answers assertPluginState).
+    expectMods: [ pokeblocks, geckolib ] # boot-log gate: fail MOD_NOT_LOADED if the loader didn't load them.
+
+  # ─────────────────────── NeoForge 1.21.1 (skips until agent built) ───────────────────────
+  # Pokeblocks' primary loader. HONEST-SKIPS `NO_SERVER_AGENT` until agent-server-neoforge.jar
+  # exists (build it: `gradle -p <mc-test>/agents :server-neoforge:build`). Never a false green.
+  - id: pokeblocks-neoforge-server-1.21.1
+    loader: neoforge
+    mc: "1.21.1"
+    loaderVersion: "21.1.150"  # matches the mod's declared neoforge_version; required for the installer launch.
+    driver: server
+    serverProps:
+      level-type: "minecraft:flat"
+    mods:
+      - { path: ./neoforge/build/libs/geckolib-examples-ml-neoforge-1.21.1-1.0.0.jar, as: pokeblocks.jar }
+      # NeoForge bundles its own API; only GeckoLib is an external runtime dep here.
+      - { modrinth: { project: geckolib, loader: neoforge, gameVersion: "1.21.1" }, as: geckolib.jar }
+    agents: [ server-neoforge ]
+    expectMods: [ pokeblocks, geckolib ]

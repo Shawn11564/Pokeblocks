@@ -4,6 +4,8 @@ import com.google.gson.JsonArray;
 import com.google.gson.JsonParser;
 import dev.mrshawn.pokeblocks.config.ConfigSync;
 import dev.mrshawn.pokeblocks.config.PokeblocksConfig;
+import dev.mrshawn.pokeblocks.item.DollRarityAcquisitionDivisors;
+import dev.mrshawn.pokeblocks.pokemon.ModelFlag;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.io.TempDir;
@@ -12,6 +14,7 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Set;
 
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -169,5 +172,49 @@ class ConfigSyncIntegrationTest {
 
         assertTrue(report.anyChanges(), "dry run should still report what WOULD change");
         assertEquals(liveBefore, read(live), "dry run must not modify the live file");
+    }
+
+    @Test
+    void overwriteModeResetsCustomizationsToDefault() throws Exception {
+        ConfigSync.sync(serverDir, false, false); // fresh install: live == bundled default
+        List<String> defaultContent = read(live);
+
+        // Admin customizes the file.
+        List<String> mine = new ArrayList<>(defaultContent);
+        mine.add("zzcustom mythic");
+        write(live, mine);
+
+        // Switch to overwrite mode and reload settings.
+        Path toml = serverDir.resolve("config").resolve("Pokeblocks").resolve("config.toml");
+        Files.writeString(toml, "[config_sync]\nauto_update_configs = overwrite\n");
+        PokeblocksConfig.reload();
+
+        ConfigSync.SyncReport report = ConfigSync.sync(serverDir, false, false);
+
+        assertEquals(defaultContent, read(live), "overwrite must reset the file to the bundled default");
+        assertFalse(read(live).contains("zzcustom mythic"), "overwrite must discard the admin's custom entry");
+        assertTrue(report.overwritten.contains(FILE), "overwrite should be reported");
+
+        Path backups = serverDir.resolve("config").resolve("Pokeblocks").resolve(".sync").resolve("backups");
+        assertTrue(Files.exists(backups) && Files.list(backups).findAny().isPresent(),
+                "overwrite should back up the previous file first");
+    }
+
+    @Test
+    void hiddenFileIsNotExtractedButDefaultsStillApply() throws Exception {
+        // rarity_acquisition_divisors.json is hidden by default (it is tied to a hardcoded value).
+        Path hidden = serverDir.resolve("config").resolve("Pokeblocks").resolve("rarity_acquisition_divisors.json");
+
+        DollRarityAcquisitionDivisors.initialize(serverDir);
+        assertFalse(Files.exists(hidden), "a hidden-by-default file must not be written into the config folder");
+        assertEquals(12, DollRarityAcquisitionDivisors.getAcquisitionDivisor("substitute", Set.<ModelFlag>of()),
+                "the hidden file's bundled default (substitute divisor 12) must still apply");
+
+        // Opting it in via show_files extracts it for editing.
+        Path toml = serverDir.resolve("config").resolve("Pokeblocks").resolve("config.toml");
+        Files.writeString(toml, "[config_sync]\nshow_files = [\"rarity_acquisition_divisors.json\"]\n");
+        PokeblocksConfig.reload();
+        DollRarityAcquisitionDivisors.initialize(serverDir);
+        assertTrue(Files.exists(hidden), "show_files opt-in should extract the previously hidden file");
     }
 }

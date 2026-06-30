@@ -1,0 +1,3 @@
+# mc-test server-truth SPI: lets the server-* agent resolve Pokeblocks' authoritative state for
+# truth.assertPluginState (discovered via java.util.ServiceLoader on the shared mod classloader).
+dev.mrshawn.pokeblocks.mctest.PokeblocksStateProvider

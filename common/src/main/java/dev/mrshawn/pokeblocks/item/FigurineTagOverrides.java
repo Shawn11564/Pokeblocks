@@ -6,7 +6,6 @@ import com.google.gson.JsonElement;
 import dev.mrshawn.pokeblocks.PokeblocksLog;
 import dev.mrshawn.pokeblocks.config.PokeblocksConfigFiles;
 
-import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.*;
 
@@ -54,13 +53,28 @@ public class FigurineTagOverrides {
     public static void reload() {
         tags.clear();
 
-        if (configPath == null || !Files.exists(configPath)) {
+        String content = PokeblocksConfigFiles.readConfigContent(configPath, OVERRIDES_FILE);
+        if (content == null) {
             PokeblocksLog.LOGGER.info("No {} found, skipping figurine tag overrides", OVERRIDES_FILE);
-            return;
+        } else {
+            applyContent(content);
+            PokeblocksLog.LOGGER.info("Loaded figurine tags for {} figurine(s)", tags.size());
         }
 
+        // Resource packs may contribute additional tag entries; these union with the base.
+        List<String> packOverrides = PokeblocksConfigFiles.collectPackOverrides(
+                configPath == null ? null : configPath.getParent(), OVERRIDES_FILE);
+        for (String override : packOverrides) {
+            applyContent(override);
+        }
+        if (!packOverrides.isEmpty()) {
+            PokeblocksLog.LOGGER.debug("Applied {} pack override(s) for {}", packOverrides.size(), OVERRIDES_FILE);
+        }
+    }
+
+    /** Parses one JSON-array content string into {@link #tags}, unioning tags per figurine (does not clear). */
+    private static void applyContent(String content) {
         try {
-            String content = Files.readString(configPath);
             JsonArray array = GSON.fromJson(content, JsonArray.class);
 
             for (JsonElement element : array) {
@@ -79,8 +93,6 @@ public class FigurineTagOverrides {
                     figurineTags.add(parts[i].toLowerCase());
                 }
             }
-
-            PokeblocksLog.LOGGER.info("Loaded figurine tags for {} figurine(s)", tags.size());
         } catch (Exception e) {
             PokeblocksLog.LOGGER.error("Failed to load {}", OVERRIDES_FILE, e);
         }

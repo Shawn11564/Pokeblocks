@@ -114,6 +114,7 @@ public final class PokeblocksCommon {
 	public static void doRegistrations() {
 		PokemonRegistry.init();
 		FigurineRegistry.init();
+		CustomDecorationRegistry.init();
 		BlockRegistry.init();
 		DecorativeRegistry.init();
 		PokeBlockRegistry.init();

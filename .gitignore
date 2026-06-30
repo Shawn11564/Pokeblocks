@@ -39,10 +39,18 @@ replay_*.log
 *.hprof
 *.jfr
 
+# runtime logs (dev/server runs write these; never version them)
+logs/
+
 # other
 eclipse
 run
 runs
+
+# mc-test runtime output (reports + ephemeral server instances). The TEST SOURCES
+# (mc-test.yml + mctests/**) are intentionally tracked; only the run artifacts are ignored.
+mc-test-report/
+.mc-test/
 
 # personal tools
 auxiliary_tools/

@@ -7,7 +7,6 @@ import dev.mrshawn.pokeblocks.PokeblocksLog;
 import dev.mrshawn.pokeblocks.config.PokeblocksConfigFiles;
 import dev.mrshawn.pokeblocks.pokemon.ModelFlag;
 
-import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.*;
 
@@ -49,13 +48,28 @@ public class DollRarityAcquisitionDivisors {
     public static void reload() {
         divisorsMap.clear();
 
-        if (configPath == null || !Files.exists(configPath)) {
+        String content = PokeblocksConfigFiles.readConfigContent(configPath, "rarity_acquisition_divisors.json");
+        if (content == null) {
             PokeblocksLog.LOGGER.info("No rarity_acquisition_divisors.json found, skipping acquisition divisors");
-            return;
+        } else {
+            applyContent(content);
+            PokeblocksLog.LOGGER.info("Loaded {} acquisition divisor(s)", divisorsMap.size());
         }
 
+        // Resource packs may contribute override entries; later packs win by key.
+        List<String> packOverrides = PokeblocksConfigFiles.collectPackOverrides(
+                configPath == null ? null : configPath.getParent(), "rarity_acquisition_divisors.json");
+        for (String override : packOverrides) {
+            applyContent(override);
+        }
+        if (!packOverrides.isEmpty()) {
+            PokeblocksLog.LOGGER.debug("Applied {} pack override(s) for {}", packOverrides.size(), "rarity_acquisition_divisors.json");
+        }
+    }
+
+    /** Parses one JSON-array content string into {@link #divisorsMap}, merging by key (does not clear). */
+    private static void applyContent(String content) {
         try {
-            String content = Files.readString(configPath);
             JsonArray array = GSON.fromJson(content, JsonArray.class);
 
             for (JsonElement element : array) {
@@ -91,8 +105,6 @@ public class DollRarityAcquisitionDivisors {
                 String key = DollRarityOverrides.buildKey(pokemon, flags);
                 divisorsMap.put(key, divisor);
             }
-
-            PokeblocksLog.LOGGER.info("Loaded {} acquisition divisor(s)", divisorsMap.size());
         } catch (Exception e) {
             PokeblocksLog.LOGGER.error("Failed to load rarity_acquisition_divisors.json", e);
         }

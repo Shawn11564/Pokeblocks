@@ -1,11 +1,15 @@
 package dev.mrshawn.pokeblocks.resourcepack;
 
+import dev.mrshawn.pokeblocks.PokeblocksLog;
+
 import java.io.IOException;
 import java.io.InputStream;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.StandardCopyOption;
 import java.security.MessageDigest;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.TreeMap;
@@ -14,9 +18,32 @@ import java.util.zip.ZipEntry;
 import java.util.zip.ZipFile;
 import java.util.zip.ZipOutputStream;
 
+/**
+ * Builds the served custom resource pack from admin sub-packs under
+ * {@code config/Pokeblocks/resourcepack/} (folders and {@code .zip} files, plus the {@code custom/}
+ * folder which is loaded last so it overrides).
+ *
+ * <p>Two input layouts are accepted inside a sub-pack's {@code assets/} directory:
+ * <ul>
+ *   <li><b>Typed (preferred):</b> {@code assets/<type>/<kind>/<id>.<ext>} where {@code <type>} is
+ *       {@code dolls}, {@code figurines} or {@code decorations} and {@code <kind>} is {@code models},
+ *       {@code textures} or {@code animations}. File names are the bare id (dolls keep flag suffixes,
+ *       e.g. {@code orange_shiny.geo.json}); the type folder supplies the internal naming
+ *       ({@code dolls/} → {@code pokedoll_<id>}, {@code figurines/} → {@code <id>_figurine},
+ *       {@code decorations/} → {@code <id>_decoration}).</li>
+ *   <li><b>Flat (legacy):</b> {@code assets/<kind>/<fullname>} where the file name already carries the
+ *       marker (e.g. {@code pokedoll_orange.geo.json}). Kept for backwards compatibility.</li>
+ * </ul>
+ * Both are remapped to the proper pack paths {@code assets/pokeblocks/<geo|textures|animations>/block/}.
+ */
 public class CustomPackBuilder {
 
 	private static final String PACK_NAME = "pokeblocks_custom_pack.zip";
+
+	/** Type sub-folders in the preferred typed layout; each supplies the internal naming marker. */
+	private static final String[] TYPE_FOLDERS = {"dolls", "figurines", "decorations"};
+	/** Asset-kind sub-folders (used by both the typed and legacy layouts). */
+	private static final String[] KIND_FOLDERS = {"textures", "models", "animations"};
 
 	public static Path findCustomDir(Path gameDir) {
 		Path customDir = gameDir.resolve("config").resolve("Pokeblocks").resolve("resourcepack").resolve("custom");
@@ -71,23 +98,82 @@ public class CustomPackBuilder {
 		return new PackBuildResult(null, modelFileNames, textureFileNames, animationFileNames);
 	}
 
+	/**
+	 * Applies the internal naming marker for a typed-layout file. {@code type} is one of
+	 * {@link #TYPE_FOLDERS}, {@code kind} one of {@link #KIND_FOLDERS}, {@code bareName} the admin's
+	 * bare file (e.g. {@code orange.geo.json}). Returns the internal file name
+	 * (e.g. {@code pokedoll_orange.geo.json}, {@code customfig_figurine_texture.png}), or {@code null}
+	 * if the extension does not match the kind.
+	 */
+	private static String markBareName(String type, String kind, String bareName) {
+		String ext = switch (kind) {
+			case "models" -> ".geo.json";
+			case "animations" -> ".animation.json";
+			case "textures" -> ".png";
+			default -> null;
+		};
+		if (ext == null || !bareName.toLowerCase().endsWith(ext)) return null;
+
+		String base = bareName.substring(0, bareName.length() - ext.length());
+		// Tolerate an already-present "_texture" on texture files so both orange.png and
+		// orange_texture.png resolve to the same internal name.
+		if (kind.equals("textures") && base.toLowerCase().endsWith("_texture")) {
+			base = base.substring(0, base.length() - "_texture".length());
+		}
+
+		String marked = switch (type) {
+			case "dolls" -> "pokedoll_" + base;
+			case "figurines" -> base + "_figurine";
+			case "decorations" -> base + "_decoration";
+			default -> null;
+		};
+		if (marked == null) return null;
+
+		return switch (kind) {
+			case "textures" -> marked + "_texture.png";
+			case "models" -> marked + ".geo.json";
+			case "animations" -> marked + ".animation.json";
+			default -> null;
+		};
+	}
+
+	private static void addByKind(String kind, String name, Set<String> modelFileNames,
+								  Set<String> textureFileNames, Set<String> animationFileNames) {
+		switch (kind) {
+			case "textures" -> textureFileNames.add(name);
+			case "models" -> modelFileNames.add(name);
+			case "animations" -> animationFileNames.add(name);
+		}
+	}
+
 	private static void scanFolderFileNames(Path packDir, Set<String> modelFileNames,
 											Set<String> textureFileNames, Set<String> animationFileNames) throws IOException {
 		Path assetsDir = packDir.resolve("assets");
 		if (!Files.exists(assetsDir)) return;
 
-		for (String folder : new String[]{"textures", "models", "animations"}) {
-			Path dir = assetsDir.resolve(folder);
-			if (!Files.exists(dir)) continue;
+		// Typed layout: assets/<type>/<kind>/<bare>
+		for (String type : TYPE_FOLDERS) {
+			Path typeDir = assetsDir.resolve(type);
+			if (!Files.exists(typeDir)) continue;
+			for (String kind : KIND_FOLDERS) {
+				Path dir = typeDir.resolve(kind);
+				if (!Files.exists(dir)) continue;
+				try (var stream = Files.list(dir)) {
+					stream.filter(Files::isRegularFile).forEach(p -> {
+						String marked = markBareName(type, kind, p.getFileName().toString());
+						if (marked != null) addByKind(kind, marked, modelFileNames, textureFileNames, animationFileNames);
+					});
+				}
+			}
+		}
 
+		// Legacy flat layout: assets/<kind>/<fullname>
+		for (String kind : KIND_FOLDERS) {
+			Path dir = assetsDir.resolve(kind);
+			if (!Files.exists(dir)) continue;
 			try (var stream = Files.list(dir)) {
-				stream.filter(Files::isRegularFile).map(p -> p.getFileName().toString()).forEach(name -> {
-					switch (folder) {
-						case "textures" -> textureFileNames.add(name);
-						case "models" -> modelFileNames.add(name);
-						case "animations" -> animationFileNames.add(name);
-					}
-				});
+				stream.filter(Files::isRegularFile).map(p -> p.getFileName().toString())
+						.forEach(name -> addByKind(kind, name, modelFileNames, textureFileNames, animationFileNames));
 			}
 		}
 	}
@@ -102,11 +188,13 @@ public class CustomPackBuilder {
 				String name = entry.getName();
 				if (!name.startsWith("assets/")) continue;
 				String[] parts = name.split("/");
-				if (parts.length != 3) continue;
-				switch (parts[1]) {
-					case "textures" -> textureFileNames.add(parts[2]);
-					case "models" -> modelFileNames.add(parts[2]);
-					case "animations" -> animationFileNames.add(parts[2]);
+				if (parts.length == 4) {
+					// Typed layout: assets/<type>/<kind>/<bare>
+					String marked = markBareName(parts[1], parts[2], parts[3]);
+					if (marked != null) addByKind(parts[2], marked, modelFileNames, textureFileNames, animationFileNames);
+				} else if (parts.length == 3) {
+					// Legacy flat layout: assets/<kind>/<fullname>
+					addByKind(parts[1], parts[2], modelFileNames, textureFileNames, animationFileNames);
 				}
 			}
 		}
@@ -117,6 +205,8 @@ public class CustomPackBuilder {
 		Path customDir = findCustomDir(gameDir);
 
 		Map<String, byte[]> zipEntries = new TreeMap<>();
+		// packPath -> the distinct packs (in load order) that provided it, for conflict reporting.
+		Map<String, List<String>> providers = new TreeMap<>();
 		Set<String> modelFileNames = new TreeSet<>();
 		Set<String> textureFileNames = new TreeSet<>();
 		Set<String> animationFileNames = new TreeSet<>();
@@ -129,17 +219,18 @@ public class CustomPackBuilder {
 			try (var stream = Files.list(resourcePackDir)) {
 				var packs = stream.filter(p -> {
 					String name = p.getFileName().toString();
-					// Skip the "custom" folder
+					// Skip the "custom" folder (loaded last below so it has the highest priority)
 					if (name.equals("custom")) return false;
 					// Include directories and zip files
 					return Files.isDirectory(p) || name.toLowerCase().endsWith(".zip");
-				}).toList();
+				}).sorted().toList(); // deterministic order -> stable conflict winner and stable pack hash
 
 				for (Path pack : packs) {
+					String packName = pack.getFileName().toString();
 					if (Files.isDirectory(pack)) {
-						loadResourcePackFromFolder(pack, zipEntries, modelFileNames, textureFileNames, animationFileNames);
+						loadResourcePackFromFolder(pack, packName, zipEntries, providers, modelFileNames, textureFileNames, animationFileNames);
 					} else {
-						loadResourcePackFromZip(pack, zipEntries, modelFileNames, textureFileNames, animationFileNames);
+						loadResourcePackFromZip(pack, packName, zipEntries, providers, modelFileNames, textureFileNames, animationFileNames);
 					}
 				}
 			}
@@ -153,15 +244,24 @@ public class CustomPackBuilder {
 		   ========================= */
 
 		if (customDir != null) {
-			loadResourcePackFromFolder(customDir, zipEntries, modelFileNames, textureFileNames, animationFileNames);
+			// Loaded last so the custom/ folder overrides any sub-pack that provides the same file.
+			loadResourcePackFromFolder(customDir, "custom", zipEntries, providers, modelFileNames, textureFileNames, animationFileNames);
+		}
+
+		// Warn about any resource supplied by more than one pack (last loaded wins; custom/ is highest).
+		for (Map.Entry<String, List<String>> e : providers.entrySet()) {
+			List<String> who = e.getValue();
+			if (who.size() > 1) {
+				PokeblocksLog.LOGGER.warn("Resource pack conflict: '{}' is provided by multiple packs {} - using the "
+						+ "version from '{}' (custom/ overrides sub-packs; otherwise the last in alphabetical order wins).",
+						e.getKey(), who, who.get(who.size() - 1));
+			}
 		}
 
 		if (zipEntries.isEmpty()) return null;
 
-		System.out.println("[Pokeblocks] Custom resource pack: "
-				+ modelFileNames.size() + " model(s), "
-				+ textureFileNames.size() + " texture(s), "
-				+ animationFileNames.size() + " animation(s)");
+		PokeblocksLog.LOGGER.info("Custom resource pack: {} model(s), {} texture(s), {} animation(s)",
+				modelFileNames.size(), textureFileNames.size(), animationFileNames.size());
 
 		Path finalZip = gameDir.resolve(PACK_NAME);
 		Path tempZip = gameDir.resolve(PACK_NAME + ".tmp");
@@ -245,36 +345,69 @@ public class CustomPackBuilder {
 		};
 	}
 
-	private static void loadResourcePackFromFolder(Path packDir, Map<String, byte[]> zipEntries,
+	/**
+	 * Records a built pack entry under {@code packPath}. Later (higher-priority) packs overwrite earlier
+	 * ones — "last wins" — and every distinct pack that provides a path is tracked, in load order, so
+	 * {@link #buildResourcePack} can warn about cross-pack conflicts.
+	 */
+	private static void addEntry(Map<String, byte[]> zipEntries, Map<String, List<String>> providers,
+								 String packPath, byte[] bytes, String packName) {
+		zipEntries.put(packPath, bytes); // last wins: later (higher-priority) packs override earlier ones
+		List<String> who = providers.computeIfAbsent(packPath, k -> new ArrayList<>());
+		if (who.isEmpty() || !who.get(who.size() - 1).equals(packName)) {
+			who.add(packName);
+		}
+	}
+
+	private static void loadResourcePackFromFolder(Path packDir, String packName,
+												   Map<String, byte[]> zipEntries, Map<String, List<String>> providers,
 												   Set<String> modelFileNames,
 												   Set<String> textureFileNames,
 												   Set<String> animationFileNames) throws IOException {
-		System.out.println("[Pokeblocks] Loading resource pack from folder: " + packDir);
+		PokeblocksLog.LOGGER.debug("Loading resource pack from folder: {}", packDir);
 		Path assetsDir = packDir.resolve("assets");
 		if (!Files.exists(assetsDir)) return;
 
-		for (String folder : new String[]{"textures", "models", "animations"}) {
-			Path dir = assetsDir.resolve(folder);
-			if (!Files.exists(dir)) continue;
+		// Typed layout: assets/<type>/<kind>/<bare>
+		for (String type : TYPE_FOLDERS) {
+			Path typeDir = assetsDir.resolve(type);
+			if (!Files.exists(typeDir)) continue;
+			for (String kind : KIND_FOLDERS) {
+				Path dir = typeDir.resolve(kind);
+				if (!Files.exists(dir)) continue;
+				try (var stream = Files.list(dir)) {
+					var files = stream.filter(Files::isRegularFile).toList();
+					for (Path path : files) {
+						String marked = markBareName(type, kind, path.getFileName().toString());
+						if (marked == null) continue;
+						String packPath = remapToPackPath(kind, marked, modelFileNames, textureFileNames, animationFileNames);
+						if (packPath != null) addEntry(zipEntries, providers, packPath, Files.readAllBytes(path), packName);
+					}
+				}
+			}
+		}
 
+		// Legacy flat layout: assets/<kind>/<fullname>
+		for (String kind : KIND_FOLDERS) {
+			Path dir = assetsDir.resolve(kind);
+			if (!Files.exists(dir)) continue;
 			try (var stream = Files.list(dir)) {
 				var files = stream.filter(Files::isRegularFile).toList();
 				for (Path path : files) {
 					String name = path.getFileName().toString();
-					String packPath = remapToPackPath(folder, name, modelFileNames, textureFileNames, animationFileNames);
-					if (packPath != null) {
-						zipEntries.putIfAbsent(packPath, Files.readAllBytes(path));
-					}
+					String packPath = remapToPackPath(kind, name, modelFileNames, textureFileNames, animationFileNames);
+					if (packPath != null) addEntry(zipEntries, providers, packPath, Files.readAllBytes(path), packName);
 				}
 			}
 		}
 	}
 
-	private static void loadResourcePackFromZip(Path zipPath, Map<String, byte[]> zipEntries,
+	private static void loadResourcePackFromZip(Path zipPath, String packName,
+												Map<String, byte[]> zipEntries, Map<String, List<String>> providers,
 												Set<String> modelFileNames,
 												Set<String> textureFileNames,
 												Set<String> animationFileNames) throws IOException {
-		System.out.println("[Pokeblocks] Loading resource pack from zip: " + zipPath);
+		PokeblocksLog.LOGGER.debug("Loading resource pack from zip: {}", zipPath);
 		try (ZipFile zipFile = new ZipFile(zipPath.toFile())) {
 			var entries = zipFile.entries();
 			while (entries.hasMoreElements()) {
@@ -284,18 +417,26 @@ public class CustomPackBuilder {
 				String name = entry.getName();
 				if (!name.startsWith("assets/")) continue;
 
-				// Expected format: assets/<textures|models|animations>/filename
+				// Typed layout: assets/<type>/<kind>/<bare>; legacy flat: assets/<kind>/<fullname>
 				String[] parts = name.split("/");
-				if (parts.length != 3) continue;
+				String kind;
+				String fileName;
+				if (parts.length == 4) {
+					kind = parts[2];
+					fileName = markBareName(parts[1], parts[2], parts[3]);
+					if (fileName == null) continue;
+				} else if (parts.length == 3) {
+					kind = parts[1];
+					fileName = parts[2];
+				} else {
+					continue;
+				}
 
-				String folder = parts[1];
-				String fileName = parts[2];
-
-				String packPath = remapToPackPath(folder, fileName, modelFileNames, textureFileNames, animationFileNames);
+				String packPath = remapToPackPath(kind, fileName, modelFileNames, textureFileNames, animationFileNames);
 				if (packPath == null) continue;
 
 				try (InputStream in = zipFile.getInputStream(entry)) {
-					zipEntries.putIfAbsent(packPath, in.readAllBytes());
+					addEntry(zipEntries, providers, packPath, in.readAllBytes(), packName);
 				}
 			}
 		}
@@ -315,7 +456,38 @@ public class CustomPackBuilder {
 
 			return sb.toString();
 		} catch (Exception e) {
-			System.err.println("[Pokeblocks] Failed to compute SHA-1 for " + file + ": " + e);
+			PokeblocksLog.LOGGER.error("Failed to compute SHA-1 for {}", file, e);
+			return "";
+		}
+	}
+
+	/** A cheap fingerprint of the custom-pack inputs (sorted relative path + size + mtime of every file
+	 *  under config/Pokeblocks/resourcepack/), so the zip is only rebuilt when something actually changed.
+	 *  Returns "" when the directory does not exist. */
+	public static String computeInputFingerprint(Path gameDir) {
+		Path resourcePackDir = gameDir.resolve("config").resolve("Pokeblocks").resolve("resourcepack");
+		if (!Files.exists(resourcePackDir)) return "";
+
+		Set<String> lines = new TreeSet<>();
+		try (var walk = Files.walk(resourcePackDir)) {
+			for (Path p : (Iterable<Path>) walk.filter(Files::isRegularFile)::iterator) {
+				String rel = resourcePackDir.relativize(p).toString().replace('\\', '/');
+				lines.add(rel + "|" + Files.size(p) + "|" + Files.getLastModifiedTime(p).toMillis());
+			}
+		} catch (IOException e) {
+			return "";
+		}
+
+		try {
+			MessageDigest digest = MessageDigest.getInstance("SHA-1");
+			digest.update(String.join("\n", lines).getBytes());
+
+			StringBuilder sb = new StringBuilder();
+			for (byte b : digest.digest())
+				sb.append(String.format("%02x", b));
+
+			return sb.toString();
+		} catch (Exception e) {
 			return "";
 		}
 	}

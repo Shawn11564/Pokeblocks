@@ -1,0 +1,35 @@
+# yaml-language-server: $schema=https://mc-test.dev/schema/mctest-stepfile.schema.json
+name: pokeblocks-mod-loaded
+# Prove that a real, modded DEDICATED SERVER actually loaded the Pokeblocks mod and its hard
+# runtime dependency (GeckoLib). This is a SERVER-TRUTH-ONLY test: its only requirement is
+# `pluginState`, which only the cost-1 `server` driver advertises — so it runs with NO player join.
+# That matters because a headless (Mineflayer) bot can connect to a Fabric server but CANNOT
+# complete Forge/NeoForge's FML handshake; asserting over the co-selected server agent (no player)
+# is the only way to verify a Forge/NeoForge server. The SAME unchanged file runs across the
+# fabric/neoforge SERVER rows in mc-test.yml.
+requires:
+  pluginState: true
+target: ${matrix} # filled by the mc-test.yml row selected with --target
+steps:
+  # Pokeblocks itself is reported loaded by the LOADER (FabricLoader.isModLoaded / ModList.isLoaded)
+  # via the loader-provided, SUT-agnostic `mod.loaded` built-in — no cooperation from the mod needed.
+  - assertPluginState:
+      requires: { pluginState: true }
+      query: "mod.loaded"
+      args: { id: "pokeblocks" }
+      expect: true
+  # GeckoLib is a `required` dependency (fabric.mod.json / neoforge.mods.toml). If it weren't on the
+  # server, Pokeblocks would fail to load — so asserting it loaded both proves the dep wiring and
+  # guards the most likely boot failure for a GeckoLib mod on a dedicated server.
+  - assertPluginState:
+      requires: { pluginState: true }
+      query: "mod.loaded"
+      args: { id: "geckolib" }
+      expect: true
+  # Negative control: a mod that does not exist must be reported NOT loaded. This proves the
+  # assertion is real runtime truth, not a vacuous green that says "true" for anything.
+  - assertPluginState:
+      requires: { pluginState: true }
+      query: "mod.loaded"
+      args: { id: "this_mod_does_not_exist" }
+      expect: false

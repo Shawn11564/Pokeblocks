@@ -5,11 +5,15 @@ import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.Blocks;
 
 import java.util.ArrayList;
-import java.util.Comparator;
+import java.util.Arrays;
 import java.util.List;
 
 /**
- * Maps an average RGB color to the closest Minecraft wool color(s).
+ * Matches RGB colors to Minecraft wool swatches.
+ * <p>
+ * Pure color logic with no texture IO: callers classify pixels with {@link #closestIndex} into a
+ * weight bucket per swatch, then rank the buckets with {@link #topWeighted}. The texture-sampling and
+ * caching live in {@link ColorFactory}.
  */
 public class WoolColorMatcher {
 
@@ -35,45 +39,43 @@ public class WoolColorMatcher {
             new WoolEntry(DyeColor.BLACK, Blocks.BLACK_WOOL, 20, 21, 25)
     );
 
-    /**
-     * Returns the closest wool block to the given RGB color.
-     */
-    public static Block getClosestWool(float r, float g, float b) {
-        int ri = (int) (r * 255);
-        int gi = (int) (g * 255);
-        int bi = (int) (b * 255);
-
-        Block closest = Blocks.WHITE_WOOL;
-        double bestDist = Double.MAX_VALUE;
-
-        for (WoolEntry entry : WOOL_COLORS) {
-            double dist = colorDistanceSq(ri, gi, bi, entry.r, entry.g, entry.b);
-            if (dist < bestDist) {
-                bestDist = dist;
-                closest = entry.wool;
-            }
-        }
-
-        return closest;
+    /** Number of known wool swatches; the length a {@link #topWeighted} weight array must have. */
+    public static int paletteSize() {
+        return WOOL_COLORS.size();
     }
 
     /**
-     * Returns the top N closest wool blocks (no duplicates), ordered by closeness.
+     * Index of the wool swatch closest to the given 0–255 RGB triple.
      */
-    public static List<Block> getClosestWools(float r, float g, float b, int count) {
-        int ri = (int) (r * 255);
-        int gi = (int) (g * 255);
-        int bi = (int) (b * 255);
-
-        List<WoolEntry> sorted = new ArrayList<>(WOOL_COLORS);
-        sorted.sort(Comparator.comparingDouble(e -> colorDistanceSq(ri, gi, bi, e.r, e.g, e.b)));
-
-        List<Block> result = new ArrayList<>();
-        for (WoolEntry entry : sorted) {
-            if (result.size() >= count) break;
-            result.add(entry.wool);
+    public static int closestIndex(int r, int g, int b) {
+        int best = 0;
+        double bestDist = Double.MAX_VALUE;
+        for (int i = 0; i < WOOL_COLORS.size(); i++) {
+            WoolEntry entry = WOOL_COLORS.get(i);
+            double dist = colorDistanceSq(r, g, b, entry.r(), entry.g(), entry.b());
+            if (dist < bestDist) {
+                bestDist = dist;
+                best = i;
+            }
         }
+        return best;
+    }
 
+    /**
+     * Ranks swatches by their accumulated weight (descending) and returns up to {@code count} wool
+     * blocks. {@code weights} is indexed by swatch (see {@link #paletteSize}); swatches with no weight
+     * are skipped, so fewer than {@code count} blocks may be returned.
+     */
+    public static List<Block> topWeighted(double[] weights, int count) {
+        Integer[] order = new Integer[weights.length];
+        for (int i = 0; i < order.length; i++) order[i] = i;
+        Arrays.sort(order, (a, b) -> Double.compare(weights[b], weights[a]));
+
+        List<Block> result = new ArrayList<>(Math.min(count, weights.length));
+        for (int i : order) {
+            if (result.size() >= count || weights[i] <= 0.0) break;
+            result.add(WOOL_COLORS.get(i).wool());
+        }
         return result;
     }
 

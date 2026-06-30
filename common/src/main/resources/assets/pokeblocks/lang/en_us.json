@@ -1,9 +1,11 @@
 {
   "block.pokeblocks.pokedoll": "Pokedoll",
   "block.pokeblocks.figurine": "Figurine",
+  "block.pokeblocks.custom_decoration": "Decoration",
 
   "item.pokeblocks.pokedoll": "Pokedoll",
   "item.pokeblocks.figurine": "Figurine",
+  "item.pokeblocks.custom_decoration": "Decoration",
 
   "itemgroup.pokeblocks.regular": "Pokeblocks - Regular",
   "itemgroup.pokeblocks.gigantics": "Pokeblocks - Gigantics",
@@ -26,6 +28,11 @@
   "item.pokeblocks.summer_raid_soul": "Summer Raid Soul",
   "item.pokeblocks.summer_token": "Summer Token",
   "item.pokeblocks.compendium": "Doll Compendium",
+  "item.pokeblocks.figurine_compendium": "Figurine Compendium",
+  "item.pokeblocks.laser_pointer": "Laser Pointer",
+
+  "tooltip.pokeblocks.incomplete": "⚠ Incomplete Feature",
+  "tooltip.pokeblocks.incomplete.detail": "Functionality may not be fully working.",
 
   "subtitles.pokeblocks.pokedoll_squeak": "Pokedoll squeaks"
 }

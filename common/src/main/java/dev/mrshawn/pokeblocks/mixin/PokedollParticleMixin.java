@@ -1,14 +1,8 @@
 package dev.mrshawn.pokeblocks.mixin;
 
-import dev.mrshawn.pokeblocks.block.custom.FigurineBlock;
+import dev.mrshawn.pokeblocks.block.ParticleSourceBlock;
 import dev.mrshawn.pokeblocks.block.custom.PokedollBlock;
-import dev.mrshawn.pokeblocks.block.custom.decorative.DecorativeBlock;
-import dev.mrshawn.pokeblocks.block.entity.custom.DecorativeBlockEntity;
-import dev.mrshawn.pokeblocks.block.entity.custom.FigurineBlockEntity;
 import dev.mrshawn.pokeblocks.block.entity.custom.PokedollBlockEntity;
-import dev.mrshawn.pokeblocks.client.model.block.DecorativeModel;
-import dev.mrshawn.pokeblocks.client.model.block.FigurineModel;
-import dev.mrshawn.pokeblocks.client.model.block.PokedollModel;
 import dev.mrshawn.pokeblocks.utils.ColorFactory;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.particle.ParticleEngine;
@@ -17,6 +11,7 @@ import net.minecraft.core.Direction;
 import net.minecraft.core.particles.DustParticleOptions;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.level.Level;
+import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.phys.AABB;
 import org.joml.Vector3f;
@@ -24,18 +19,21 @@ import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
+import software.bernie.geckolib.animatable.GeoAnimatable;
+import software.bernie.geckolib.model.GeoModel;
+import software.bernie.geckolib.renderer.GeoBlockRenderer;
 
-import java.util.HashMap;
-import java.util.Map;
-import java.util.concurrent.ConcurrentHashMap;
-
+/**
+ * Replaces the missing-texture vanilla break/hit particles for Pokeblocks' entity-rendered GeckoLib blocks
+ * with a coloured dust burst sampled from the block's live texture.
+ * <p>
+ * Both the gate and the texture lookup are <b>generic</b>: any block implementing {@link ParticleSourceBlock}
+ * is handled, and its particle texture is pulled straight from the block entity's registered
+ * {@code GeoBlockRenderer} model — so a new GeckoLib block only needs to implement {@link ParticleSourceBlock},
+ * with no per-type wiring here.
+ */
 @Mixin(ParticleEngine.class)
 public class PokedollParticleMixin {
-
-    private static final Map<String, Vector3f> colorCache = new HashMap<>();
-    private static final PokedollModel particlePokedollModel = new PokedollModel();
-    private static final FigurineModel particleFigurineModel = new FigurineModel();
-    private static final Map<String, DecorativeModel> decorativeModels = new ConcurrentHashMap<>();
 
     /** Amber/honey color used for wax particles, matching {@code PokedollBlock.WAX_PARTICLE_COLOR}. */
     private static final Vector3f WAX_COLOR = new Vector3f(0.95f, 0.75f, 0.2f);
@@ -49,16 +47,14 @@ public class PokedollParticleMixin {
         Level level = Minecraft.getInstance().level;
         if (level == null) return;
 
-        // Gate on block type first — always cancel vanilla for doll blocks so the
-        // missing-texture TerrainParticle can never appear even if the BE is gone.
-        if (!(state.getBlock() instanceof PokedollBlock)
-                && !(state.getBlock() instanceof FigurineBlock)
-                && !(state.getBlock() instanceof DecorativeBlock)) {
+        // Gate on the marker first — always cancel vanilla for our blocks so the missing-texture
+        // TerrainParticle can never appear even if the block entity is already gone.
+        if (!(state.getBlock() instanceof ParticleSourceBlock)) {
             return;
         }
         ci.cancel();
 
-        ResourceLocation textureLoc = resolveTexture(level, pos, state);
+        ResourceLocation textureLoc = resolveTexture(level, pos);
         if (textureLoc == null) return; // Cancelled but silent — better than missing texture
 
         Vector3f color = sampleColor(textureLoc);
@@ -107,14 +103,12 @@ public class PokedollParticleMixin {
 
         BlockState state = level.getBlockState(pos);
 
-        if (!(state.getBlock() instanceof PokedollBlock)
-                && !(state.getBlock() instanceof FigurineBlock)
-                && !(state.getBlock() instanceof DecorativeBlock)) {
+        if (!(state.getBlock() instanceof ParticleSourceBlock)) {
             return;
         }
         ci.cancel();
 
-        ResourceLocation textureLoc = resolveTexture(level, pos, state);
+        ResourceLocation textureLoc = resolveTexture(level, pos);
         if (textureLoc == null) return;
 
         Vector3f color = sampleColor(textureLoc);
@@ -140,31 +134,29 @@ public class PokedollParticleMixin {
     // Shared helpers
     // -----------------------------------------------------------------------
 
-    private static ResourceLocation resolveTexture(Level level, BlockPos pos, BlockState state) {
-        if (state.getBlock() instanceof PokedollBlock) {
-            if (level.getBlockEntity(pos) instanceof PokedollBlockEntity be) {
-                return particlePokedollModel.getTextureResource(be);
-            }
-        } else if (state.getBlock() instanceof FigurineBlock) {
-            if (level.getBlockEntity(pos) instanceof FigurineBlockEntity be) {
-                return particleFigurineModel.getTextureResource(be);
-            }
-        } else if (state.getBlock() instanceof DecorativeBlock) {
-            if (level.getBlockEntity(pos) instanceof DecorativeBlockEntity be) {
-                DecorativeModel model = decorativeModels.computeIfAbsent(
-                        be.getDefinition().id(),
-                        id -> new DecorativeModel(be.getDefinition())
-                );
-                return model.getTextureResource(be);
-            }
+    /**
+     * Resolves the texture to colour the particle from, generically: the block entity's registered renderer
+     * is a {@link GeoBlockRenderer}, so its {@code GeoModel} reports exactly the texture the block renders
+     * with. Returns {@code null} if there's no block entity (e.g. already removed) or no GeckoLib renderer.
+     */
+    private static ResourceLocation resolveTexture(Level level, BlockPos pos) {
+        BlockEntity be = level.getBlockEntity(pos);
+        if (be == null) return null;
+        if (Minecraft.getInstance().getBlockEntityRenderDispatcher().getRenderer(be) instanceof GeoBlockRenderer<?> renderer) {
+            // Raw types: this renderer is parameterized with be's exact type, so the lookup is type-correct
+            // at runtime even though the wildcard erases it at compile time. The cast to GeoAnimatable
+            // satisfies GeoModel<T extends GeoAnimatable>'s erased parameter; every block entity reaching
+            // here is a GeoBlockEntity (rendered by the GeoBlockRenderer above). Use the 2-arg overload —
+            // the 1-arg getTextureResource(T) is deprecated in GeckoLib.
+            @SuppressWarnings({"rawtypes", "unchecked"})
+            ResourceLocation texture = ((GeoModel) renderer.getGeoModel())
+                    .getTextureResource((GeoAnimatable) be, renderer);
+            return texture;
         }
         return null;
     }
 
     private static Vector3f sampleColor(ResourceLocation textureLoc) {
-        return colorCache.computeIfAbsent(
-                textureLoc.toString(),
-                k -> ColorFactory.sampleAverageColor(textureLoc, new Vector3f(0.5f, 0.5f, 0.5f))
-        );
+        return ColorFactory.sampleAverageColorCached(textureLoc, new Vector3f(0.5f, 0.5f, 0.5f));
     }
 }

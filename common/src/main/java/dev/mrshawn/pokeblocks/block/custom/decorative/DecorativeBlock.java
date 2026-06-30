@@ -1,8 +1,11 @@
 package dev.mrshawn.pokeblocks.block.custom.decorative;
 
 import com.mojang.serialization.MapCodec;
+import dev.mrshawn.pokeblocks.block.ParticleSourceBlock;
 import dev.mrshawn.pokeblocks.block.entity.custom.DecorativeBlockEntity;
 import dev.mrshawn.pokeblocks.entity.custom.SeatEntity;
+import dev.mrshawn.pokeblocks.item.PokeblocksItemData;
+import dev.mrshawn.pokeblocks.item.custom.DecorativeItem;
 import dev.mrshawn.pokeblocks.registry.EntityRegistry;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
@@ -20,6 +23,8 @@ import net.minecraft.world.level.LevelReader;
 import net.minecraft.world.level.block.*;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.entity.BlockEntityType;
+import net.minecraft.world.level.storage.loot.LootParams;
+import net.minecraft.world.level.storage.loot.parameters.LootContextParams;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.block.state.StateDefinition;
 import net.minecraft.world.level.block.state.properties.BlockStateProperties;
@@ -32,17 +37,22 @@ import net.minecraft.world.phys.BlockHitResult;
 import net.minecraft.world.phys.shapes.CollisionContext;
 import net.minecraft.world.phys.shapes.VoxelShape;
 
+import java.util.LinkedHashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.function.Supplier;
 
-public class DecorativeBlock extends BaseEntityBlock implements EntityBlock, SimpleWaterloggedBlock {
+public class DecorativeBlock extends BaseEntityBlock implements EntityBlock, SimpleWaterloggedBlock, ParticleSourceBlock {
 	public static final DirectionProperty FACING = BlockStateProperties.HORIZONTAL_FACING;
 	public static final BooleanProperty WATERLOGGED = BlockStateProperties.WATERLOGGED;
 
 	private final Supplier<BlockEntityType<? extends DecorativeBlockEntity>> blockEntityType;
 
 	public DecorativeBlock(Supplier<BlockEntityType<? extends DecorativeBlockEntity>> blockEntityType) {
-		super(Properties.of().noOcclusion());
+		// Match the pokedoll/figurine feel: soft wool break (sound + 0.4 hardness), as every doll/decoration
+		// block did pre-rewrite (FabricBlockSettings.copy(WHITE_WOOL).strength(0.4f)). See PokedollBlock.
+		// noLootTable: drops are built from the block entity in getDrops (NBT-preserving), not a json table.
+		super(Properties.of().sound(SoundType.WOOL).strength(0.4f).noOcclusion().noLootTable());
 		this.blockEntityType = blockEntityType;
 		this.registerDefaultState(this.stateDefinition.any()
 				.setValue(FACING, Direction.NORTH)
@@ -101,6 +111,44 @@ public class DecorativeBlock extends BaseEntityBlock implements EntityBlock, Sim
 		return true;
 	}
 
+	/**
+	 * Mining the block drops the decorative itself with its flags intact (the data-driven decoratives have no
+	 * loot-table json, so the drop is built from the block entity here). For a <b>stackable</b> NBT variant —
+	 * e.g. the eiscue head pile's {@code headCount} — it drops that many single units (each reset to the
+	 * variant default), so breaking a 3-head pile yields 3 heads. Non-stackable variants keep their value.
+	 */
+	@Override
+	protected List<ItemStack> getDrops(BlockState state, LootParams.Builder params) {
+		if (!(params.getOptionalParameter(LootContextParams.BLOCK_ENTITY) instanceof DecorativeBlockEntity be)
+				|| !(asItem() instanceof DecorativeItem item)) {
+			return super.getDrops(state, params);
+		}
+		DecorativeDefinition def = be.getDefinition();
+
+		int count = 1;
+		Map<String, String> dropNbt = new LinkedHashMap<>();
+		for (DecorativeDefinition.NbtVariant variant : def.nbtVariants()) {
+			String current = be.getCustomNbt(variant.nbtKey());
+			if (current == null || current.isEmpty()) current = variant.defaultValue();
+			if (variant.stackable()) {
+				// The stackable variant's value is the pile size; drop that many single units.
+				try {
+					count = Math.max(1, Integer.parseInt(current));
+				} catch (NumberFormatException e) {
+					count = 1;
+				}
+				dropNbt.put(variant.nbtKey(), variant.defaultValue());
+			} else {
+				dropNbt.put(variant.nbtKey(), current);
+			}
+		}
+
+		ItemStack stack = DecorativeItem.createStack(
+				item, PokeblocksItemData.blockEntityId(def.id()), be.getActiveFlags(), dropNbt);
+		stack.setCount(count);
+		return List.of(stack);
+	}
+
 	@Override
 	protected ItemInteractionResult useItemOn(ItemStack stack, BlockState state, Level level, BlockPos pos, Player player, InteractionHand hand, BlockHitResult hit) {
 		if (level.isClientSide()) return ItemInteractionResult.PASS_TO_DEFAULT_BLOCK_INTERACTION;
@@ -114,6 +162,10 @@ public class DecorativeBlock extends BaseEntityBlock implements EntityBlock, Sim
 
 				if (!(stack.getItem() instanceof BlockItem blockItem)) continue;
 				if (blockItem.getBlock() != state.getBlock()) continue;
+				// Same-type only: a shiny head can't be added to a regular pile (and vice-versa), so the
+				// held item's flags must match the pile's. Otherwise a shiny head would silently merge into
+				// a regular pile (or vice-versa).
+				if (!DecorativeItem.getFlagsFromStack(stack).equals(be.getActiveFlags())) continue;
 
 				String current = be.getCustomNbt(variant.nbtKey());
 				if (current == null || current.isEmpty()) current = variant.defaultValue();

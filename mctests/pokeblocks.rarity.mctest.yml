@@ -1,0 +1,79 @@
+# yaml-language-server: $schema=https://mc-test.dev/schema/mctest-stepfile.schema.json
+name: pokeblocks-rarity-engine
+# Assert the mod's CENTRAL mechanic: the rarity engine. Every value here is fully deterministic and
+# registry-INDEPENDENT (it depends only on the bundled rarity configs, which load server-side before
+# the agent answers), so exact equality is safe. The engine is pure: there is no RNG — "acquisition
+# divisors" are fixed config integers, not seeded randomness.
+#
+# The "score" (effective weight) is asserted ×1000 (the SPI scales + rounds) so fractional values like
+# a gigantic substitute's 0.625 are exact integers, sidestepping any float-comparison ambiguity.
+# Server-truth-only (cap pluginState -> cost-1 server driver, no player join).
+requires:
+  pluginState: true
+target: ${matrix}
+steps:
+  # ── Full tier resolution: override -> strip ignored flags -> highest flag -> COMMON fallback ──
+  # (rarity.resolved exercises the WHOLE chain, a superset of statetruth's rarity.override.)
+  - assertPluginState: { requires: { pluginState: true }, query: "rarity.resolved", args: { pokemon: "bulbasaur" }, expect: { equals: "Common" } }
+  # No override for bulbasaur:shiny -> the SHINY flag's intrinsic tier wins.
+  - assertPluginState: { requires: { pluginState: true }, query: "rarity.resolved", args: { pokemon: "bulbasaur", flags: ["shiny"] }, expect: { equals: "Shiny" } }
+  # Override beats flags: "bulbasaur posed rare".
+  - assertPluginState: { requires: { pluginState: true }, query: "rarity.resolved", args: { pokemon: "bulbasaur", flags: ["posed"] }, expect: { equals: "Rare" } }
+  - assertPluginState: { requires: { pluginState: true }, query: "rarity.resolved", args: { pokemon: "calyrex", flags: ["animated"] }, expect: { equals: "Legendary" } }
+  # Ignored-flag interaction: eiscue ignores "noice". With an override key it resolves via the override...
+  - assertPluginState: { requires: { pluginState: true }, query: "rarity.resolved", args: { pokemon: "eiscue", flags: ["noice"] }, expect: { equals: "Rare" } }
+  # ...but with no matching override key, NOICE is stripped and SHINY decides — proving the strip step.
+  - assertPluginState: { requires: { pluginState: true }, query: "rarity.resolved", args: { pokemon: "eiscue", flags: ["noice", "shiny"] }, expect: { equals: "Shiny" } }
+  # Unknown pokemon, no flags -> COMMON fallback (resolution never throws on unregistered names).
+  - assertPluginState: { requires: { pluginState: true }, query: "rarity.resolved", args: { pokemon: "pikachu" }, expect: { equals: "Common" } }
+
+  # ── Effective weight ("rarity score"), ×1000. The deterministic numerator behind the drop chance. ──
+  # bulbasaur (COMMON, weight 500, no penalties) -> 500.000
+  - assertPluginState: { requires: { pluginState: true }, query: "rarity.weightX1000", args: { pokemon: "bulbasaur" }, expect: { equals: 500000 } }
+  # calyrex (EPIC override, weight 70) -> 70.000
+  - assertPluginState: { requires: { pluginState: true }, query: "rarity.weightX1000", args: { pokemon: "calyrex" }, expect: { equals: 70000 } }
+  # substitute (LEGENDARY weight 30) ÷ acquisition divisor 12 (the 1-in-12 pop) -> 2.500
+  - assertPluginState: { requires: { pluginState: true }, query: "rarity.weightX1000", args: { pokemon: "substitute" }, expect: { equals: 2500 } }
+  # gigantic substitute = the WHOLE base substitute (2.5) ÷ 4 craft cost -> 0.625. Guards the bug the
+  # GIGANTIC recursion exists to prevent (a gigantic that silently drops the base's pop penalty).
+  - assertPluginState: { requires: { pluginState: true }, query: "rarity.weightX1000", args: { pokemon: "substitute", flags: ["gigantic"] }, expect: { equals: 625 } }
+  # bulbasaur posed: override RARE (150), and POSED is an EXTRA flag (rarity NONE != RARE) -> ÷4 -> 37.5
+  - assertPluginState: { requires: { pluginState: true }, query: "rarity.weightX1000", args: { pokemon: "bulbasaur", flags: ["posed"] }, expect: { equals: 37500 } }
+  # eiscue noice: override RARE (150); NOICE is IGNORED for eiscue so it adds NO ÷4 penalty -> 150.000
+  - assertPluginState: { requires: { pluginState: true }, query: "rarity.weightX1000", args: { pokemon: "eiscue", flags: ["noice"] }, expect: { equals: 150000 } }
+  # shiny substitute: SHINY tier (weight 5), shiny is the primary (no extra penalty), ÷12 pop -> 0.41666 -> 417
+  - assertPluginState: { requires: { pluginState: true }, query: "rarity.weightX1000", args: { pokemon: "substitute", flags: ["shiny"] }, expect: { equals: 417 } }
+  # gigantic shiny bulbasaur = base shiny bulbasaur (SHINY 5) ÷ 4 -> 1.250
+  - assertPluginState: { requires: { pluginState: true }, query: "rarity.weightX1000", args: { pokemon: "bulbasaur", flags: ["shiny", "gigantic"] }, expect: { equals: 1250 } }
+
+  # ── Tier weights straight from rarity_weights.json (via the live DollRarity.getWeight()) ──
+  - assertPluginState: { requires: { pluginState: true }, query: "rarity.tierWeight", args: { rarity: "common" },    expect: { equals: 500 } }
+  - assertPluginState: { requires: { pluginState: true }, query: "rarity.tierWeight", args: { rarity: "rare" },      expect: { equals: 150 } }
+  - assertPluginState: { requires: { pluginState: true }, query: "rarity.tierWeight", args: { rarity: "legendary" }, expect: { equals: 30 } }
+  # gigantic is weight 0 (excluded from random rolls — it is only craftable).
+  - assertPluginState: { requires: { pluginState: true }, query: "rarity.tierWeight", args: { rarity: "gigantic" }, expect: { equals: 0 } }
+
+  # ── Acquisition divisors (rarity_acquisition_divisors.json) ──
+  - assertPluginState: { requires: { pluginState: true }, query: "rarity.acquisitionDivisor", args: { pokemon: "substitute" }, expect: { equals: 12 } }
+  - assertPluginState: { requires: { pluginState: true }, query: "rarity.acquisitionDivisor", args: { pokemon: "substitute", flags: ["shiny"] }, expect: { equals: 12 } }
+  # No "substitute gigantic" divisor entry — the ÷ comes from the gigantic base recursion, not here -> 1.
+  - assertPluginState: { requires: { pluginState: true }, query: "rarity.acquisitionDivisor", args: { pokemon: "substitute", flags: ["gigantic"] }, expect: { equals: 1 } }
+  - assertPluginState: { requires: { pluginState: true }, query: "rarity.acquisitionDivisor", args: { pokemon: "bulbasaur" }, expect: { equals: 1 } }
+
+  # ── Ignored flags (ignored_rarity_flags.json: only "eiscue noice") ──
+  - assertPluginState: { requires: { pluginState: true }, query: "rarity.flagIgnored", args: { pokemon: "eiscue", flag: "noice" }, expect: true }
+  - assertPluginState: { requires: { pluginState: true }, query: "rarity.flagIgnored", args: { pokemon: "eiscue", flag: "shiny" }, expect: false }
+  - assertPluginState: { requires: { pluginState: true }, query: "rarity.flagIgnored", args: { pokemon: "bulbasaur", flag: "noice" }, expect: false }
+
+  # ── Flag intrinsic tier (extends statetruth's shiny/gigantic with the NONE-tier "" display name, ──
+  #    which is load-bearing: the score calc's primary-flag check relies on most flags being NONE).
+  - assertPluginState: { requires: { pluginState: true }, query: "rarity.flagTier", args: { flag: "netherite" }, expect: { equals: "" } }
+  - assertPluginState: { requires: { pluginState: true }, query: "rarity.flagTier", args: { flag: "posed" }, expect: { equals: "" } }
+
+  # ── Mutual-exclusion conflicts (ModelFlag exclusion groups) ──
+  # MALE and FEMALE share the "gender" group -> a variant can't be both.
+  - assertPluginState: { requires: { pluginState: true }, query: "flag.exclusionConflict", args: { flags: ["male", "female"] }, expect: true }
+  # SHINY and GIGANTIC are in no shared group -> no conflict.
+  - assertPluginState: { requires: { pluginState: true }, query: "flag.exclusionConflict", args: { flags: ["shiny", "gigantic"] }, expect: false }
+  # A single grouped flag alone is never a conflict.
+  - assertPluginState: { requires: { pluginState: true }, query: "flag.exclusionConflict", args: { flags: ["male"] }, expect: false }

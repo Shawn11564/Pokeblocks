@@ -1,5 +1,6 @@
 package dev.mrshawn.pokeblocks.config;
 
+import dev.mrshawn.pokeblocks.PokeblocksLog;
 import dev.mrshawn.pokeblocks.item.DollRarityOverrides;
 import dev.mrshawn.pokeblocks.pokemon.ModelFlag;
 import net.minecraft.resources.ResourceLocation;
@@ -15,8 +16,16 @@ public class PokeblocksConfig {
 	// [eastereggs]
 	private static boolean dollPoppingEnabled = true;
 
+	// [creative] — controls visibility of unfinished content in the creative menu.
+	private static boolean showIncompleteItems = false;
+
 	// [resourcepack]
 	private static boolean kickOnDecline = true;
+	// How the custom pack reaches clients, and the knobs each distribution mode needs.
+	private static PackDistribution packDistribution = PackDistribution.SELF_HOST;
+	private static String remotePackUrl = "";
+	private static String remotePackSha1 = "";
+	private static String selfHostAddress = "";
 
 	// [loot]
 	private static float lootDropChance = 0.33f;
@@ -25,11 +34,15 @@ public class PokeblocksConfig {
 	private static final Set<ModelFlag> excludedLootFlags = EnumSet.noneOf(ModelFlag.class);
 	private static final Set<String> excludedLootDolls = new LinkedHashSet<>();
 
-	// [config_sync] — controls how the bundled default JSON configs are merged into the
-	// server's files on update (see ConfigSync).
-	private static boolean configAutoUpdate = true;
+	// [config_sync] — controls how the bundled default JSON configs are updated into the server's
+	// files on update, and which of them are written to the config folder at all (see ConfigSync).
+	private static ConfigUpdateMode configUpdateMode = ConfigUpdateMode.MERGE;
 	private static boolean configBackupBeforeUpdate = true;
 	private static final Set<String> frozenConfigFiles = new LinkedHashSet<>();
+	// #68 — per-file visibility overrides. show = force-create a hidden-by-default file so it can be
+	// edited; hide = keep a shown-by-default file out of the folder (its bundled default still applies).
+	private static final Set<String> shownConfigFiles = new LinkedHashSet<>();
+	private static final Set<String> hiddenConfigFiles = new LinkedHashSet<>();
 
 	private static Path configPath;
 
@@ -37,8 +50,36 @@ public class PokeblocksConfig {
 		return dollPoppingEnabled;
 	}
 
+	/**
+	 * Whether items flagged as incomplete (see {@link dev.mrshawn.pokeblocks.item.IncompleteFeatureItem})
+	 * are shown in the creative menu. Defaults to {@code false} so unfinished features stay hidden.
+	 */
+	public static boolean isShowIncompleteItems() {
+		return showIncompleteItems;
+	}
+
 	public static boolean isKickOnDecline() {
 		return kickOnDecline;
+	}
+
+	/** How the custom resource pack is distributed to clients: self-hosted (default) or an admin remote URL. */
+	public static PackDistribution getPackDistribution() {
+		return packDistribution;
+	}
+
+	/** The admin-provided pack URL used when {@link #getPackDistribution()} is {@link PackDistribution#REMOTE_URL}. */
+	public static String getRemotePackUrl() {
+		return remotePackUrl;
+	}
+
+	/** Optional SHA-1 of the remote pack; when blank the locally-built pack's hash is used instead. */
+	public static String getRemotePackSha1() {
+		return remotePackSha1;
+	}
+
+	/** Optional host/IP to advertise in the self-hosted pack URL (e.g. a public address); blank = auto-detect. */
+	public static String getSelfHostAddress() {
+		return selfHostAddress;
 	}
 
 	public static float getLootDropChance() {
@@ -61,9 +102,17 @@ public class PokeblocksConfig {
 		return excludedLootDolls;
 	}
 
-	/** Master switch for automatic merging of bundled default configs on startup. */
+	/** How bundled default configs are applied on startup: {@code merge}, {@code overwrite}, or {@code off}. */
+	public static ConfigUpdateMode getConfigUpdateMode() {
+		return configUpdateMode;
+	}
+
+	/**
+	 * Convenience: whether any automatic updating happens at all (i.e. the mode is not
+	 * {@link ConfigUpdateMode#OFF}). Retained for callers that only care about on/off.
+	 */
 	public static boolean isConfigAutoUpdate() {
-		return configAutoUpdate;
+		return configUpdateMode != ConfigUpdateMode.OFF;
 	}
 
 	/** Whether a timestamped backup is taken before a config file is rewritten by a sync. */
@@ -76,6 +125,16 @@ public class PokeblocksConfig {
 		return frozenConfigFiles;
 	}
 
+	/** Files hidden by default that the admin has opted to have written to the config folder (#68). */
+	public static Set<String> getShownConfigFiles() {
+		return shownConfigFiles;
+	}
+
+	/** Files shown by default that the admin has opted to keep out of the config folder (#68). */
+	public static Set<String> getHiddenConfigFiles() {
+		return hiddenConfigFiles;
+	}
+
 	public static void initialize(Path serverDir) {
 		configPath = serverDir.resolve("config").resolve("Pokeblocks").resolve("config.toml");
 
@@ -84,12 +143,12 @@ public class PokeblocksConfig {
 
 			if (!Files.exists(configPath)) {
 				writeDefaults();
-				System.out.println("[Pokeblocks] Created default config.toml at " + configPath);
+				PokeblocksLog.LOGGER.info("Created default config.toml at {}", configPath);
 			} else {
 				patchMissingKeys();
 			}
 		} catch (Exception e) {
-			System.err.println("[Pokeblocks] Failed to create config.toml: " + e);
+			PokeblocksLog.LOGGER.error("Failed to create config.toml", e);
 		}
 
 		reload();
@@ -98,21 +157,31 @@ public class PokeblocksConfig {
 	public static void reload() {
 		// Reset to defaults
 		dollPoppingEnabled = true;
+		showIncompleteItems = false;
 		kickOnDecline = true;
+		packDistribution = PackDistribution.SELF_HOST;
+		remotePackUrl = "";
+		remotePackSha1 = "";
+		selfHostAddress = "";
 		lootDropChance = 0.33f;
 		lootTables.clear();
 		lootTableWildcards.clear();
 		excludedLootFlags.clear();
 		excludedLootFlags.add(ModelFlag.GIGANTIC);
 		excludedLootDolls.clear();
-		configAutoUpdate = true;
+		configUpdateMode = ConfigUpdateMode.MERGE;
 		configBackupBeforeUpdate = true;
 		frozenConfigFiles.clear();
+		shownConfigFiles.clear();
+		hiddenConfigFiles.clear();
 
 		if (configPath == null || !Files.exists(configPath)) return;
 
 		try {
 			String currentCategory = "";
+			// Tracks whether the new `auto_update_configs` key set the mode, so a legacy
+			// `auto_update` boolean elsewhere in the file cannot override it.
+			boolean modeSetByNewKey = false;
 			List<String> lines = Files.readAllLines(configPath);
 
 			for (int i = 0; i < lines.size(); i++) {
@@ -143,9 +212,18 @@ public class PokeblocksConfig {
 							dollPoppingEnabled = parseBoolean(value, true);
 						}
 					}
+					case "creative" -> {
+						if (key.equals("show_incomplete_items")) {
+							showIncompleteItems = parseBoolean(value, false);
+						}
+					}
 					case "resourcepack" -> {
-						if (key.equals("kick_on_decline")) {
-							kickOnDecline = parseBoolean(value, true);
+						switch (key) {
+							case "kick_on_decline" -> kickOnDecline = parseBoolean(value, true);
+							case "distribution" -> packDistribution = PackDistribution.parse(unquote(value), PackDistribution.SELF_HOST);
+							case "remote_url" -> remotePackUrl = unquote(value);
+							case "remote_sha1" -> remotePackSha1 = unquote(value);
+							case "self_host_address" -> selfHostAddress = unquote(value);
 						}
 					}
 					case "loot" -> {
@@ -158,28 +236,36 @@ public class PokeblocksConfig {
 					}
 					case "config_sync" -> {
 						switch (key) {
-							case "auto_update" -> configAutoUpdate = parseBoolean(value, true);
+							case "auto_update_configs" -> {
+								configUpdateMode = ConfigUpdateMode.parse(value, ConfigUpdateMode.MERGE);
+								modeSetByNewKey = true;
+							}
+							// Legacy boolean key — honored only if the new mode key is absent from the file.
+							case "auto_update" -> {
+								if (!modeSetByNewKey) {
+									configUpdateMode = parseBoolean(value, true) ? ConfigUpdateMode.MERGE : ConfigUpdateMode.OFF;
+								}
+							}
 							case "backup_before_update" -> configBackupBeforeUpdate = parseBoolean(value, true);
-							case "frozen_files" -> i = parseFrozenFilesList(lines, i, value);
+							case "frozen_files" -> i = parseStringFileList(lines, i, value, frozenConfigFiles);
+							case "show_files" -> i = parseStringFileList(lines, i, value, shownConfigFiles);
+							case "hide_files" -> i = parseStringFileList(lines, i, value, hiddenConfigFiles);
 						}
 					}
 				}
 			}
 
-			System.out.println("[Pokeblocks] Loaded config:"
-					+ " doll_popping_enabled=" + dollPoppingEnabled
-					+ ", kick_on_decline=" + kickOnDecline
-					+ ", drop_chance=" + lootDropChance
-					+ ", loot_tables=" + lootTables
-					+ ", loot_table_wildcards=" + lootTableWildcards.size()
-					+ ", excluded_flags=" + excludedLootFlags
-					+ ", excluded_dolls=" + excludedLootDolls
-					+ ", config_auto_update=" + configAutoUpdate
-					+ ", config_backup=" + configBackupBeforeUpdate
-					+ ", frozen_config_files=" + frozenConfigFiles);
+			PokeblocksLog.LOGGER.debug("Loaded config: doll_popping_enabled={}, kick_on_decline={}, "
+					+ "pack_distribution={}, remote_url_set={}, self_host_address={}, drop_chance={}, "
+					+ "loot_tables={}, loot_table_wildcards={}, excluded_flags={}, excluded_dolls={}, "
+					+ "config_update_mode={}, config_backup={}, frozen_config_files={}, shown_config_files={}, hidden_config_files={}",
+					dollPoppingEnabled, kickOnDecline, packDistribution.token(), !remotePackUrl.isBlank(),
+					selfHostAddress.isBlank() ? "(auto)" : selfHostAddress, lootDropChance, lootTables, lootTableWildcards.size(),
+					excludedLootFlags, excludedLootDolls, configUpdateMode, configBackupBeforeUpdate, frozenConfigFiles,
+					shownConfigFiles, hiddenConfigFiles);
 
 		} catch (Exception e) {
-			System.err.println("[Pokeblocks] Failed to load config.toml: " + e);
+			PokeblocksLog.LOGGER.error("Failed to load config.toml", e);
 		}
 	}
 
@@ -190,12 +276,85 @@ public class PokeblocksConfig {
 	private record KeyDef(String category, String key, String comment, String defaultValue) {}
 
 	private static final List<KeyDef> ALL_KEYS = List.of(
+			new KeyDef("config_sync", "auto_update_configs",
+					"""
+					# How Pokeblocks updates its bundled config & override files (doll_rarity.json,
+					# rarity_weights.json, loot_groups.json, etc.) when the mod itself updates:
+					#   merge     = (default, recommended) pull in new and changed defaults, but KEEP your
+					#               own custom entries and your deletions. Non-destructive.
+					#   overwrite = replace these files with the mod's defaults on startup, DISCARDING your
+					#               edits. A timestamped backup is taken first (see backup_before_update).
+					#   off       = never touch your files automatically; pull updates yourself afterwards
+					#               with "/pokeblocks config sync".""",
+					"merge"),
+			new KeyDef("config_sync", "backup_before_update",
+					"# Take a timestamped backup (in config/Pokeblocks/.sync/backups/) before a merge or overwrite rewrites a file.",
+					"true"),
+			new KeyDef("config_sync", "frozen_files",
+					"""
+					# Individual config files to exclude from auto-update (merge or overwrite) while the rest keep updating.
+					# Use this for a file you have heavily customized. Example: ["doll_rarity.json"].
+					# Run "/pokeblocks config status" to preview pending changes, "/pokeblocks config sync" to apply.""",
+					"""
+					[
+					]"""),
+			new KeyDef("config_sync", "show_files",
+					"""
+					# Config files that are hidden by default but that you want written into this folder so you
+					# can edit them. To reduce clutter, Pokeblocks keeps niche files tied to hardcoded values out
+					# of the folder by default (e.g. rarity_acquisition_divisors.json, ignored_rarity_flags.json) —
+					# their bundled defaults still apply. List a file here to have it created for editing.
+					# Example: ["rarity_acquisition_divisors.json"].""",
+					"""
+					[
+					]"""),
+			new KeyDef("config_sync", "hide_files",
+					"""
+					# Config files to keep OUT of this folder even though they are shown by default. Their bundled
+					# defaults still apply; this only removes clutter. An already-existing file is left in place.
+					# Example: ["loot_groups.json"].""",
+					"""
+					[
+					]"""),
 			new KeyDef("eastereggs", "doll_popping_enabled",
 					"# Whether dolls can \"pop\" (break into wool and string) when right-clicked too many times quickly.",
 					"true"),
+			new KeyDef("creative", "show_incomplete_items",
+					"""
+					# Whether items whose feature is still unfinished (the laser pointer, the doll compendium and
+					# the figurine compendium) appear in the creative menu. When false (default) they are hidden.
+					# When true they show up but carry a tooltip warning that the feature may not be fully working.""",
+					"false"),
 			new KeyDef("resourcepack", "kick_on_decline",
 					"# Whether to kick players who decline the custom Pokeblocks resource pack.",
 					"true"),
+			new KeyDef("resourcepack", "distribution",
+					"""
+					# How the custom resource pack is delivered to players:
+					#   self_host  = (default) Pokeblocks serves the pack from a small built-in web server and
+					#                tells clients where to download it. Works out of the box on LAN / singleplayer.
+					#                For a PUBLIC server, also set self_host_address below to an address players
+					#                can actually reach (the auto-detected one is usually a LAN-only IP).
+					#   remote_url = advertise your own remote_url instead of self-hosting (e.g. a CDN or web host).
+					#                Set remote_url (and ideally remote_sha1) below.""",
+					"self_host"),
+			new KeyDef("resourcepack", "self_host_address",
+					"""
+					# Host or IP advertised in the self-hosted download URL. Leave blank to auto-detect
+					# (server-ip from server.properties, else a LAN address). Set this to your server's public
+					# address/domain so off-LAN players can download the pack. Only used when distribution = self_host.""",
+					"\"\""),
+			new KeyDef("resourcepack", "remote_url",
+					"""
+					# Direct download URL of the pack .zip when distribution = remote_url
+					# (e.g. "https://cdn.example.com/pokeblocks_pack.zip"). Ignored when self-hosting.""",
+					"\"\""),
+			new KeyDef("resourcepack", "remote_sha1",
+					"""
+					# SHA-1 hash of the file at remote_url. Strongly recommended so clients can verify and cache
+					# the download. If left blank, Pokeblocks uses the hash of the pack it built locally — in which
+					# case you MUST upload that exact built zip to remote_url or clients will reject the download.""",
+					"\"\""),
 			new KeyDef("loot", "drop_chance",
 					"# Chance (0.0 to 1.0) that a Pokedoll appears in a configured loot chest.",
 					"0.33f"),
@@ -257,26 +416,6 @@ public class PokeblocksConfig {
 					"""
 					[
 					  "substitute"
-					]"""),
-			new KeyDef("config_sync", "auto_update",
-					"""
-					# When the mod updates, its bundled default JSON configs (doll_rarity.json,
-					# rarity_weights.json, loot_groups.json, etc.) often gain new entries for new
-					# content. With auto_update = true these new/changed defaults are merged into
-					# your files on startup WITHOUT touching your custom entries or your deletions.
-					# Set to false to freeze every config file — nothing is auto-merged, and you can
-					# pull updates manually later with "/pokeblocks config sync".""",
-					"true"),
-			new KeyDef("config_sync", "backup_before_update",
-					"# Take a timestamped backup (in config/Pokeblocks/.sync/backups/) before a sync rewrites a file.",
-					"true"),
-			new KeyDef("config_sync", "frozen_files",
-					"""
-					# Individual config files to exclude from auto-update while the rest keep updating.
-					# Use this for a file you have heavily customized. Example: ["doll_rarity.json"].
-					# Run "/pokeblocks config status" to preview pending changes, "/pokeblocks config sync" to apply.""",
-					"""
-					[
 					]""")
 	);
 
@@ -327,13 +466,13 @@ public class PokeblocksConfig {
 				for (String commentLine : def.comment().split("\n")) {
 					toInsert.add(commentLine);
 				}
-				toInsert.add(def.key() + " = " + def.defaultValue());
+				toInsert.add(def.key() + " = " + resolveDefaultValue(def, lines));
 
 				lines.addAll(insertIndex, toInsert);
 				existingKeys.get(def.category()).add(def.key());
 				modified = true;
 
-				System.out.println("[Pokeblocks] Added missing config key: [" + def.category() + "] " + def.key());
+				PokeblocksLog.LOGGER.info("Added missing config key: [{}] {}", def.category(), def.key());
 			}
 
 			if (modified) {
@@ -341,8 +480,48 @@ public class PokeblocksConfig {
 			}
 
 		} catch (Exception e) {
-			System.err.println("[Pokeblocks] Failed to patch config.toml: " + e);
+			PokeblocksLog.LOGGER.error("Failed to patch config.toml", e);
 		}
+	}
+
+	/**
+	 * The default value to write when inserting a missing key. Normally {@link KeyDef#defaultValue()},
+	 * but the new {@code auto_update_configs} key is seeded from a legacy {@code [config_sync] auto_update}
+	 * boolean so an admin's earlier on/off choice survives the upgrade.
+	 */
+	private static String resolveDefaultValue(KeyDef def, List<String> lines) {
+		if (def.category().equals("config_sync") && def.key().equals("auto_update_configs")) {
+			Boolean legacy = findLegacyAutoUpdate(lines);
+			if (legacy != null) {
+				String mode = legacy ? "merge" : "off";
+				PokeblocksLog.LOGGER.info("Migrated legacy [config_sync] auto_update={} to auto_update_configs={}; "
+						+ "the old auto_update line is now ignored and can be removed.", legacy, mode);
+				return mode;
+			}
+		}
+		return def.defaultValue();
+	}
+
+	/** Reads a legacy {@code [config_sync] auto_update} boolean from the file, or {@code null} if absent. */
+	private static Boolean findLegacyAutoUpdate(List<String> lines) {
+		boolean inConfigSync = false;
+		for (String rawLine : lines) {
+			String line = rawLine.trim();
+			if (line.startsWith("[") && line.endsWith("]")) {
+				inConfigSync = line.substring(1, line.length() - 1).trim().equalsIgnoreCase("config_sync");
+				continue;
+			}
+			if (!inConfigSync || line.startsWith("#")) continue;
+			int eqIndex = line.indexOf('=');
+			if (eqIndex <= 0) continue;
+			if (!line.substring(0, eqIndex).trim().equalsIgnoreCase("auto_update")) continue;
+			String value = line.substring(eqIndex + 1).trim();
+			int commentIndex = value.indexOf('#');
+			if (commentIndex >= 0) value = value.substring(0, commentIndex).trim();
+			if (value.equalsIgnoreCase("false")) return false;
+			if (value.equalsIgnoreCase("true")) return true;
+		}
+		return null;
 	}
 
 	/**
@@ -406,7 +585,7 @@ public class PokeblocksConfig {
 					if (id != null) {
 						lootTables.add(id);
 					} else {
-						System.err.println("[Pokeblocks] Invalid loot table id: " + cleaned);
+						PokeblocksLog.LOGGER.warn("Invalid loot table id: {}", cleaned);
 					}
 				}
 			}
@@ -449,8 +628,7 @@ public class PokeblocksConfig {
 				if (flag != null) {
 					excludedLootFlags.add(flag);
 				} else {
-					System.err.println("[Pokeblocks] Invalid excluded flag: '" + cleaned
-							+ "'. Valid flags: " + ModelFlag.allTagNames());
+					PokeblocksLog.LOGGER.warn("Invalid excluded flag: '{}'. Valid flags: {}", cleaned, ModelFlag.allTagNames());
 				}
 			}
 		}
@@ -499,7 +677,7 @@ public class PokeblocksConfig {
 				if (flag != null) {
 					flags.add(flag);
 				} else {
-					System.err.println("[Pokeblocks] Unknown flag '" + words[j] + "' in excluded_dolls entry: " + cleaned);
+					PokeblocksLog.LOGGER.warn("Unknown flag '{}' in excluded_dolls entry: {}", words[j], cleaned);
 				}
 			}
 			excludedLootDolls.add(DollRarityOverrides.buildKey(pokemon, flags));
@@ -508,7 +686,8 @@ public class PokeblocksConfig {
 		return i;
 	}
 
-	private static int parseFrozenFilesList(List<String> lines, int startIndex, String firstLineValue) {
+	/** Parses a (possibly multi-line) JSON string array into {@code target}, one file name per entry. */
+	private static int parseStringFileList(List<String> lines, int startIndex, String firstLineValue, Set<String> target) {
 		StringBuilder builder = new StringBuilder(firstLineValue);
 
 		int i = startIndex;
@@ -528,7 +707,7 @@ public class PokeblocksConfig {
 		String inner = full.substring(start + 1, end);
 		String[] entries = inner.split(",");
 
-		frozenConfigFiles.clear();
+		target.clear();
 
 		for (String entry : entries) {
 			String cleaned = entry.trim();
@@ -539,7 +718,7 @@ public class PokeblocksConfig {
 
 			cleaned = cleaned.trim();
 			if (!cleaned.isEmpty()) {
-				frozenConfigFiles.add(cleaned);
+				target.add(cleaned);
 			}
 		}
 
@@ -552,8 +731,9 @@ public class PokeblocksConfig {
 	 * a name with flags (e.g. "substitute shiny") matches only that exact variant.
 	 */
 	public static boolean isDollExcludedFromLoot(String pokemon, Set<ModelFlag> flags) {
-		// Bare pokemon name in the set means all variants of that pokemon are excluded
-		if (excludedLootDolls.contains(pokemon)) return true;
+		// Bare pokemon name in the set means all variants of that pokemon are excluded.
+		// Lowercase to match the canonical keys (buildKey lowercases) and LootGroup.containsDoll.
+		if (excludedLootDolls.contains(pokemon.toLowerCase())) return true;
 		// Check for an exact variant match using the canonical key
 		return excludedLootDolls.contains(DollRarityOverrides.buildKey(pokemon, flags));
 	}
@@ -589,6 +769,20 @@ public class PokeblocksConfig {
 		}
 
 		Files.writeString(configPath, sb.toString());
+	}
+
+	/** Strips a single pair of surrounding single or double quotes from a TOML scalar string value. */
+	private static String unquote(String value) {
+		if (value == null) return "";
+		String v = value.trim();
+		if (v.length() >= 2) {
+			char first = v.charAt(0);
+			char last = v.charAt(v.length() - 1);
+			if ((first == '"' && last == '"') || (first == '\'' && last == '\'')) {
+				return v.substring(1, v.length() - 1);
+			}
+		}
+		return v;
 	}
 
 	private static boolean parseBoolean(String value, boolean defaultValue) {
