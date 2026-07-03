@@ -4,6 +4,7 @@ import com.mojang.serialization.MapCodec;
 import dev.mrshawn.pokeblocks.block.ParticleSourceBlock;
 import dev.mrshawn.pokeblocks.block.entity.custom.FigurineBlockEntity;
 import dev.mrshawn.pokeblocks.registry.BlockEntityRegistry;
+import dev.mrshawn.pokeblocks.shape.DollShapes;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.world.item.ItemStack;
@@ -34,7 +35,8 @@ public class FigurineBlock extends BaseEntityBlock implements EntityBlock, Simpl
 		// Match the pokedoll's feel: soft wool break (sound + 0.4 hardness), as every figurine/doll
 		// block did pre-rewrite (FabricBlockSettings.copy(WHITE_WOOL).strength(0.4f)). See PokedollBlock.
 		// noLootTable: drops are built from the block entity in getDrops (NBT-preserving), not a json table.
-		super(Properties.of().sound(SoundType.WOOL).strength(0.4f).noOcclusion().noLootTable());
+		// dynamicShape: the hitbox depends on the block entity's figurine id (see getShape).
+		super(Properties.of().sound(SoundType.WOOL).strength(0.4f).noOcclusion().noLootTable().dynamicShape());
 		this.registerDefaultState(this.stateDefinition.any()
 				.setValue(FACING, Direction.NORTH)
 				.setValue(WATERLOGGED, false));
@@ -111,9 +113,16 @@ public class FigurineBlock extends BaseEntityBlock implements EntityBlock, Simpl
 		return super.getDrops(state, params);
 	}
 
+	/**
+	 * Hitbox derived from the figurine's own {@code .geo.json} (cached per model + facing + gigantic).
+	 * Falls back to the legacy centered box whenever the block entity or its model isn't available.
+	 */
 	@Override
 	public VoxelShape getShape(BlockState state, BlockGetter world, BlockPos pos, CollisionContext context) {
-		return Block.box(4, 0, 4, 12, 12, 12);
+		if (world.getBlockEntity(pos) instanceof FigurineBlockEntity figurine) {
+			return DollShapes.figurine(figurine, state.getValue(FACING));
+		}
+		return DollShapes.DEFAULT_SHAPE;
 	}
 
 	@Override

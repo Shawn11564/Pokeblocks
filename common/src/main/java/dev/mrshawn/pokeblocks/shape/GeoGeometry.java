@@ -1,0 +1,204 @@
+package dev.mrshawn.pokeblocks.shape;
+
+import com.google.gson.JsonArray;
+import com.google.gson.JsonElement;
+import com.google.gson.JsonObject;
+import com.google.gson.JsonParser;
+
+import java.io.IOException;
+import java.nio.charset.StandardCharsets;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
+
+/**
+ * The geometry of a Bedrock {@code .geo.json} model, flattened to a list of oriented cubes in
+ * <b>render model space</b> — the space GeckoLib's {@code GeoBlockRenderer} draws in after its
+ * {@code translate(0.5, 0, 0.5)} (so model origin = block bottom-center, 1 geo unit = 1/16 block).
+ * <p>
+ * The bake math mirrors GeckoLib 4.8.x {@code BakedModelFactory.Builtin} + {@code RenderUtil} exactly
+ * (bind pose, no animation):
+ * <ul>
+ *   <li>cube vertices: {@code x ∈ [-(originX+sizeX), -originX]/16}, y/z unmirrored, ± inflate/16;</li>
+ *   <li>bone/cube pivots X-negated, /16; rotations {@code (-x, -y, +z)} degrees→radians;</li>
+ *   <li>transform order per bone/cube: {@code T(pivot) · Rz·Ry·Rx · T(-pivot)}, parents outermost;</li>
+ *   <li>{@code mirror} affects UVs only, never geometry.</li>
+ * </ul>
+ */
+public final class GeoGeometry {
+
+	/**
+	 * One cube as an oriented box: {@code modelFromLocal} maps the cube's local axis-aligned bounds
+	 * ({@code lo..hi}, block units) into model space.
+	 */
+	public record OrientedCube(Affine3 modelFromLocal,
+							   double lx0, double ly0, double lz0,
+							   double lx1, double ly1, double lz1) {}
+
+	private final List<OrientedCube> cubes;
+
+	private GeoGeometry(List<OrientedCube> cubes) {
+		this.cubes = List.copyOf(cubes);
+	}
+
+	public List<OrientedCube> cubes() {
+		return cubes;
+	}
+
+	/**
+	 * Parses raw {@code .geo.json} bytes. Throws {@link IOException} on any structural problem
+	 * (missing geometry, no cubes, malformed numbers) — callers treat that as "model unusable" and
+	 * fall back to the legacy fixed hitbox.
+	 */
+	public static GeoGeometry parse(byte[] bytes) throws IOException {
+		try {
+			return parseInternal(new String(bytes, StandardCharsets.UTF_8));
+		} catch (IOException e) {
+			throw e;
+		} catch (Exception e) {
+			throw new IOException("malformed geo json: " + e.getMessage(), e);
+		}
+	}
+
+	private static GeoGeometry parseInternal(String json) throws IOException {
+		JsonObject root = JsonParser.parseString(json).getAsJsonObject();
+		JsonArray geometries = root.getAsJsonArray("minecraft:geometry");
+		if (geometries == null || geometries.isEmpty()) {
+			throw new IOException("no minecraft:geometry entry");
+		}
+
+		JsonObject geometry = geometries.get(0).getAsJsonObject();
+		JsonArray bones = geometry.getAsJsonArray("bones");
+		if (bones == null || bones.isEmpty()) {
+			throw new IOException("geometry has no bones");
+		}
+
+		// Bones reference parents by name in a flat list; index them, then resolve chains on demand.
+		Map<String, JsonObject> bonesByName = new HashMap<>();
+		for (JsonElement element : bones) {
+			JsonObject bone = element.getAsJsonObject();
+			String name = bone.has("name") ? bone.get("name").getAsString() : null;
+			if (name != null) {
+				bonesByName.putIfAbsent(name, bone);
+			}
+		}
+
+		Map<String, Affine3> chains = new HashMap<>();
+		List<OrientedCube> cubes = new ArrayList<>();
+
+		for (JsonElement element : bones) {
+			JsonObject bone = element.getAsJsonObject();
+			JsonArray boneCubes = bone.getAsJsonArray("cubes");
+			if (boneCubes == null || boneCubes.isEmpty()) continue;
+
+			Affine3 chain = chainFor(bone, bonesByName, chains, new HashSet<>());
+			Double boneInflate = optDouble(bone, "inflate");
+
+			for (JsonElement cubeElement : boneCubes) {
+				OrientedCube cube = bakeCube(cubeElement.getAsJsonObject(), chain, boneInflate);
+				if (cube != null) {
+					cubes.add(cube);
+				}
+			}
+		}
+
+		if (cubes.isEmpty()) {
+			throw new IOException("geometry has no cubes");
+		}
+		return new GeoGeometry(cubes);
+	}
+
+	/**
+	 * The composed model-space transform of a bone's chain (root-most parent applied outermost).
+	 * A missing parent, or a parent cycle, is treated as "no parent" rather than failing the model.
+	 */
+	private static Affine3 chainFor(JsonObject bone, Map<String, JsonObject> bonesByName,
+									Map<String, Affine3> memo, Set<String> visiting) {
+		String name = bone.has("name") ? bone.get("name").getAsString() : null;
+		if (name != null) {
+			Affine3 cached = memo.get(name);
+			if (cached != null) return cached;
+		}
+
+		Affine3 parentChain = Affine3.identity();
+		String parentName = bone.has("parent") ? bone.get("parent").getAsString() : null;
+		if (parentName != null && (name == null || visiting.add(name))) {
+			JsonObject parent = bonesByName.get(parentName);
+			if (parent != null && parent != bone) {
+				parentChain = chainFor(parent, bonesByName, memo, visiting);
+			}
+		}
+
+		Affine3 chain = parentChain.mul(pivotRotation(
+				optVec(bone, "pivot"), optVec(bone, "rotation")));
+		if (name != null) {
+			memo.put(name, chain);
+		}
+		return chain;
+	}
+
+	/**
+	 * {@code T(pivot) · Rz·Ry·Rx · T(-pivot)} with GeckoLib's baked pivot ({@code (-x, y, z)/16}) and
+	 * rotation ({@code (-x°, -y°, +z°)} in radians) — identical for bones and cubes.
+	 */
+	private static Affine3 pivotRotation(double[] pivot, double[] rotation) {
+		if (rotation[0] == 0 && rotation[1] == 0 && rotation[2] == 0) {
+			return Affine3.identity();
+		}
+		double px = -pivot[0] / 16.0, py = pivot[1] / 16.0, pz = pivot[2] / 16.0;
+		double rx = Math.toRadians(-rotation[0]);
+		double ry = Math.toRadians(-rotation[1]);
+		double rz = Math.toRadians(rotation[2]);
+		return Affine3.identity()
+				.translate(px, py, pz)
+				.rotateZYX(rz, ry, rx)
+				.translate(-px, -py, -pz);
+	}
+
+	private static OrientedCube bakeCube(JsonObject cube, Affine3 boneChain, Double boneInflate) {
+		double[] origin = optVec(cube, "origin");
+		double[] size = optVec(cube, "size");
+
+		Double cubeInflate = optDouble(cube, "inflate");
+		double inflate = (cubeInflate != null ? cubeInflate : boneInflate != null ? boneInflate : 0) / 16.0;
+
+		// GeckoLib bakes cube X mirrored: [-(ox+sx), -ox]/16. Negative sizes invert an axis, so
+		// normalize with min/max like the vertex math effectively does.
+		double ax = -(origin[0] + size[0]) / 16.0, bx = -origin[0] / 16.0;
+		double ay = origin[1] / 16.0, by = (origin[1] + size[1]) / 16.0;
+		double az = origin[2] / 16.0, bz = (origin[2] + size[2]) / 16.0;
+
+		double lx0 = Math.min(ax, bx) - inflate, lx1 = Math.max(ax, bx) + inflate;
+		double ly0 = Math.min(ay, by) - inflate, ly1 = Math.max(ay, by) + inflate;
+		double lz0 = Math.min(az, bz) - inflate, lz1 = Math.max(az, bz) + inflate;
+
+		// A negative inflate can collapse a cube entirely; skip those.
+		if (lx0 >= lx1 || ly0 >= ly1 || lz0 >= lz1) {
+			return null;
+		}
+
+		Affine3 transform = boneChain.mul(pivotRotation(optVec(cube, "pivot"), optVec(cube, "rotation")));
+		return new OrientedCube(transform, lx0, ly0, lz0, lx1, ly1, lz1);
+	}
+
+	/** Reads a 3-element vector, defaulting missing entries to 0 like GeckoLib's {@code jsonArrayToDoubleArray}. */
+	private static double[] optVec(JsonObject obj, String key) {
+		double[] out = new double[3];
+		JsonElement element = obj.get(key);
+		if (element != null && element.isJsonArray()) {
+			JsonArray array = element.getAsJsonArray();
+			for (int i = 0; i < 3 && i < array.size(); i++) {
+				out[i] = array.get(i).getAsDouble();
+			}
+		}
+		return out;
+	}
+
+	private static Double optDouble(JsonObject obj, String key) {
+		JsonElement element = obj.get(key);
+		return element != null && element.isJsonPrimitive() ? element.getAsDouble() : null;
+	}
+}

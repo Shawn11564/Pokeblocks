@@ -169,8 +169,10 @@ Decorations are **fully data-driven** — there is no registration list. Drop th
 and the decoration is discovered by filename scan. All decorations share one generic
 block/item (`CustomDecorationBlock` / `CustomDecorationItem`); the specific decoration is a
 string id stored on the block entity and resolved by id at render time. The block has
-`FACING` + `WATERLOGGED` states, a wool break sound, 0.4 hardness, and a fixed centered
-shape (`Block.box(4,0,4,12,12,12)`).
+`FACING` + `WATERLOGGED` states, a wool break sound, and 0.4 hardness. Its hitbox is a
+**single box derived automatically from the decoration's `.geo.json`** (rotated to the placed
+facing, sized so it never sticks out past the rendered model on any axis; see `DollShapes`),
+falling back to a centered `Block.box(4,0,4,12,12,12)` when the model can't be resolved.
 
 A new decoration `<id>` is registered only when **both a model and a texture are present**:
 

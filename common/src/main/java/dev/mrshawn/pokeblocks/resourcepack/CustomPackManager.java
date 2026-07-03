@@ -4,6 +4,7 @@ import dev.mrshawn.pokeblocks.PokeblocksCommon;
 import dev.mrshawn.pokeblocks.registry.AssetScanner;
 import dev.mrshawn.pokeblocks.registry.FigurineRegistry;
 import dev.mrshawn.pokeblocks.registry.PokemonRegistry;
+import dev.mrshawn.pokeblocks.shape.DollShapes;
 import net.minecraft.server.MinecraftServer;
 
 import java.nio.file.Files;
@@ -42,6 +43,10 @@ public class CustomPackManager {
 				PokeblocksCommon.LOGGER.info("Custom resource pack inputs unchanged, reusing cached pack {} sha1={}", cachedPack, cachedSha);
 				return;
 			}
+
+			// Pack inputs changed (or first build): any geo-derived hitboxes computed against the old
+			// pack contents (or before the pack existed) must be re-resolved.
+			DollShapes.clearCaches();
 
 			PackBuildResult result = CustomPackBuilder.buildResourcePack(gameDir);
 			if (result != null && Files.exists(result.zipFile())) {

@@ -8,6 +8,8 @@ import dev.mrshawn.pokeblocks.client.renderer.block.FigurineBlockRenderer;
 import dev.mrshawn.pokeblocks.client.renderer.block.PokedollBlockRenderer;
 import dev.mrshawn.pokeblocks.client.renderer.entity.LaserDotRenderer;
 import dev.mrshawn.pokeblocks.registry.*;
+import dev.mrshawn.pokeblocks.shape.DollShapes;
+import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.blockentity.BlockEntityRendererProvider;
 import net.minecraft.client.renderer.entity.EntityRenderer;
 import net.minecraft.client.renderer.entity.EntityRendererProvider;
@@ -23,6 +25,21 @@ public final class PokeblocksClient {
 	private static final boolean DEBUG_SKIP_RENDERING = Boolean.getBoolean("pokedoll.debug.skip_rendering");
 
 	public static void registerRenderers(BiConsumer<BlockEntityType<? extends BlockEntity>, BlockEntityRendererProvider> blockEntityRenderers) {
+		// Give the geo-derived hitbox pipeline access to resource-pack geo files (server-pushed custom
+		// packs and local overrides). Evaluated lazily per lookup, so it's safe to install this early.
+		DollShapes.setClientResourceLookup(path -> {
+			try {
+				var resource = Minecraft.getInstance().getResourceManager()
+						.getResource(PokeblocksAssetResolver.loc(path));
+				if (resource.isEmpty()) return null;
+				try (var in = resource.get().open()) {
+					return in.readAllBytes();
+				}
+			} catch (Exception e) {
+				return null;
+			}
+		});
+
 		if (DEBUG_SKIP_RENDERING) return;
 		blockEntityRenderers.accept(BlockEntityRegistry.POKEDOLL_BLOCK_ENTITY.get(), context -> new PokedollBlockRenderer());
 		blockEntityRenderers.accept(BlockEntityRegistry.FIGURINE_BLOCK_ENTITY.get(), context -> new FigurineBlockRenderer());
@@ -57,6 +74,9 @@ public final class PokeblocksClient {
 		PokeblocksAssetResolver.clearPokemonCache();
 		PokeblocksAssetResolver.clearFigurineCache();
 		PokeblocksAssetResolver.clearDecorationCache();
+		// Geo-derived hitboxes: recompute from the new resources (a doll queried before the server
+		// pack applied would otherwise keep its fallback box).
+		DollShapes.clearCaches();
 		// Texture-derived color samples (wool drops + particle tints) can go stale when a resource pack
 		// swaps textures under the same id.
 		ColorFactory.clearCaches();

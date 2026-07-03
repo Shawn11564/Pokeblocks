@@ -11,6 +11,7 @@ import dev.mrshawn.pokeblocks.item.custom.PokedollItem;
 import dev.mrshawn.pokeblocks.pokemon.ModelFlag;
 import dev.mrshawn.pokeblocks.registry.BlockEntityRegistry;
 import dev.mrshawn.pokeblocks.registry.SoundRegistry;
+import dev.mrshawn.pokeblocks.shape.DollShapes;
 import dev.mrshawn.pokeblocks.utils.ColorFactory;
 import net.minecraft.client.Minecraft;
 import net.minecraft.core.BlockPos;
@@ -72,7 +73,9 @@ public class PokedollBlock extends BaseEntityBlock implements EntityBlock, Simpl
 
 	public PokedollBlock() {
 		// noLootTable: drops are built from the block entity in getDrops (NBT-preserving), not a json table.
-		super(Properties.of().sound(SoundType.WOOL).strength(0.4f).noOcclusion().noLootTable());
+		// dynamicShape: the hitbox depends on the block entity's pokemon/flags (see getShape), so vanilla
+		// must not precompute per-state shape caches from a BE-less EmptyBlockGetter.
+		super(Properties.of().sound(SoundType.WOOL).strength(0.4f).noOcclusion().noLootTable().dynamicShape());
 		this.registerDefaultState(this.stateDefinition.any()
 				.setValue(ROTATION, 0)
 				.setValue(WATERLOGGED, false));
@@ -374,12 +377,17 @@ public class PokedollBlock extends BaseEntityBlock implements EntityBlock, Simpl
 		}
 	}
 
-	/** Centered box, so it stays correct at any of the 16 rotations. */
-	private static final VoxelShape SHAPE = Block.box(4, 0, 4, 12, 12, 12);
-
+	/**
+	 * Hitbox derived from the doll's own {@code .geo.json} (cached per model + rotation + gigantic),
+	 * so each pokemon is targeted/collided at its rendered silhouette instead of a generic box. Falls
+	 * back to the legacy centered box whenever the block entity or its model isn't available.
+	 */
 	@Override
 	public VoxelShape getShape(BlockState state, BlockGetter world, BlockPos pos, CollisionContext context) {
-		return SHAPE;
+		if (world.getBlockEntity(pos) instanceof PokedollBlockEntity pokedoll) {
+			return DollShapes.pokedoll(pokedoll, state.getValue(ROTATION));
+		}
+		return DollShapes.DEFAULT_SHAPE;
 	}
 
 	@Override

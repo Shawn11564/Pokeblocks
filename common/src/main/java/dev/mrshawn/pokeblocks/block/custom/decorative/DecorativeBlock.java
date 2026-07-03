@@ -7,6 +7,7 @@ import dev.mrshawn.pokeblocks.entity.custom.SeatEntity;
 import dev.mrshawn.pokeblocks.item.PokeblocksItemData;
 import dev.mrshawn.pokeblocks.item.custom.DecorativeItem;
 import dev.mrshawn.pokeblocks.registry.EntityRegistry;
+import dev.mrshawn.pokeblocks.shape.DollShapes;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.world.InteractionHand;
@@ -52,7 +53,8 @@ public class DecorativeBlock extends BaseEntityBlock implements EntityBlock, Sim
 		// Match the pokedoll/figurine feel: soft wool break (sound + 0.4 hardness), as every doll/decoration
 		// block did pre-rewrite (FabricBlockSettings.copy(WHITE_WOOL).strength(0.4f)). See PokedollBlock.
 		// noLootTable: drops are built from the block entity in getDrops (NBT-preserving), not a json table.
-		super(Properties.of().sound(SoundType.WOOL).strength(0.4f).noOcclusion().noLootTable());
+		// dynamicShape: the hitbox depends on the block entity's nbt-variant model (see getShape).
+		super(Properties.of().sound(SoundType.WOOL).strength(0.4f).noOcclusion().noLootTable().dynamicShape());
 		this.blockEntityType = blockEntityType;
 		this.registerDefaultState(this.stateDefinition.any()
 				.setValue(FACING, Direction.NORTH)
@@ -101,9 +103,17 @@ public class DecorativeBlock extends BaseEntityBlock implements EntityBlock, Sim
 		return blockEntityType.get().create(pos, state);
 	}
 
+	/**
+	 * Hitbox derived from the decorative's resolved {@code .geo.json} — including nbt-variant models,
+	 * so e.g. a growing eiscue head pile's hitbox follows its 1/2/3-head model. Falls back to the
+	 * legacy centered box whenever the block entity or its model isn't available.
+	 */
 	@Override
 	public VoxelShape getShape(BlockState state, BlockGetter world, BlockPos pos, CollisionContext context) {
-		return Block.box(4, 0, 4, 12, 12, 12);
+		if (world.getBlockEntity(pos) instanceof DecorativeBlockEntity decorative) {
+			return DollShapes.decorative(decorative, state.getValue(FACING));
+		}
+		return DollShapes.DEFAULT_SHAPE;
 	}
 
 	@Override

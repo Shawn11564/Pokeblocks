@@ -84,6 +84,16 @@ If you provide `pokedoll_snorunt_family_animated.geo.json` without the individua
 - **Lowercase**, **underscores** for spaces (`ho_oh`, `mr_mime`).
 - Texture/animation names must match the model name (plus the same flag suffixes) exactly.
 
+## Hitboxes
+
+You don't configure hitboxes — the mod derives each doll's hitbox from its `.geo.json`
+automatically (on both server and client), rotated to how it was placed. It's a **single box
+sized to fit the model**: it never sticks out past the model on any side (it sits at or just
+inside the real surface), and very thin parts (paper-thin decal cubes, 1px fins) are ignored
+rather than padded. Because it's one box, it can't hug a concave or diagonal silhouette — the
+gaps around, say, a thin tail are expected. If a model can't be read, that doll just uses the
+classic centered box.
+
 ## Rarity
 
 Edit `config/Pokeblocks/doll_rarity.json` — a JSON array of `"<name> [flag...] <rarity>"`:

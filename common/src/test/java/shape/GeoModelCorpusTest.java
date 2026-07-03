@@ -1,0 +1,109 @@
+package shape;
+
+import dev.mrshawn.pokeblocks.shape.Affine3;
+import dev.mrshawn.pokeblocks.shape.GeoGeometry;
+import dev.mrshawn.pokeblocks.shape.GeoShapeCompiler;
+import org.junit.jupiter.api.Test;
+
+import java.net.URL;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.util.ArrayList;
+import java.util.List;
+
+import static org.junit.jupiter.api.Assertions.*;
+
+/**
+ * Sweeps every bundled {@code .geo.json} through the hitbox pipeline: all ~120 shipped models must
+ * parse, compile at the cardinal yaws without throwing, and produce a single best-fit box that stays
+ * within the model's extent and within the sampling caps. This is the "no shipped doll can break
+ * getShape" test; it also prints timing so pipeline cost regressions are visible.
+ */
+class GeoModelCorpusTest {
+
+	@Test
+	void everyBundledModelCompilesAtCardinalYaws() throws Exception {
+		URL url = GeoModelCorpusTest.class.getResource("/assets/pokeblocks/geo/block");
+		assertNotNull(url, "bundled geo directory must be on the test classpath");
+		Path dir = Path.of(url.toURI());
+
+		List<Path> files;
+		try (var stream = Files.list(dir)) {
+			files = new ArrayList<>(stream.filter(p -> p.getFileName().toString().endsWith(".geo.json")).toList());
+		}
+		assertTrue(files.size() >= 100, "expected the full bundled corpus, found " + files.size());
+
+		long start = System.nanoTime();
+		int compiled = 0, nullShapes = 0;
+		for (Path file : files) {
+			GeoGeometry geometry;
+			try {
+				geometry = GeoGeometry.parse(Files.readAllBytes(file));
+			} catch (Exception e) {
+				throw new AssertionError(file.getFileName() + " failed to parse: " + e.getMessage(), e);
+			}
+
+			for (double yaw : new double[]{0, 90, 180, 270, -22.5}) {
+				double[] box = GeoShapeCompiler.compile(geometry, yaw);
+				compiled++;
+				if (box == null) {
+					nullShapes++;
+					continue;
+				}
+				assertTrue(box[0] < box[3] && box[1] < box[4] && box[2] < box[5],
+						file.getFileName() + " produced a degenerate box");
+				assertTrue(box[0] >= -1.5 - 1e-9 && box[3] <= 2.5 + 1e-9
+								&& box[1] >= -0.5 - 1e-9 && box[4] <= 3.0 + 1e-9
+								&& box[2] >= -1.5 - 1e-9 && box[5] <= 2.5 + 1e-9,
+						file.getFileName() + " escaped the sampling caps");
+				assertWithinModel(geometry, yaw, box, file.getFileName().toString());
+			}
+		}
+
+		long elapsedMs = (System.nanoTime() - start) / 1_000_000;
+		System.out.printf("[GeoModelCorpusTest] %d models, %d compiles in %d ms (avg %.2f ms), null shapes %d%n",
+				files.size(), compiled, elapsedMs, elapsedMs / (double) compiled, nullShapes);
+
+		// Every shipped model should yield a tangible hitbox at yaw 0 — a wave of nulls would mean the
+		// strict pass broke. (Some rotations of some models may legitimately be null; yaw-0 emptiness
+		// of a shipped doll is a bug in practice.)
+		assertEquals(0, countNullAtYawZero(files), "bundled models with no hitbox at yaw 0");
+	}
+
+	private static int countNullAtYawZero(List<Path> files) throws Exception {
+		int nulls = 0;
+		for (Path file : files) {
+			GeoGeometry geometry = GeoGeometry.parse(Files.readAllBytes(file));
+			if (GeoShapeCompiler.compile(geometry, 0) == null) {
+				System.out.println("[GeoModelCorpusTest] null at yaw 0: " + file.getFileName());
+				nulls++;
+			}
+		}
+		return nulls;
+	}
+
+	/** Asserts the box does not extend past the model's analytic extent on any face (undershoot-only). */
+	private static void assertWithinModel(GeoGeometry geometry, double yawDegrees, double[] box, String name) {
+		Affine3 place = Affine3.identity().translate(0.5, 0, 0.5).rotateY(StrictMath.toRadians(yawDegrees));
+		double minX = Double.MAX_VALUE, minY = Double.MAX_VALUE, minZ = Double.MAX_VALUE;
+		double maxX = -Double.MAX_VALUE, maxY = -Double.MAX_VALUE, maxZ = -Double.MAX_VALUE;
+		double[] point = new double[3];
+		for (GeoGeometry.OrientedCube cube : geometry.cubes()) {
+			Affine3 m = place.mul(cube.modelFromLocal());
+			for (int corner = 0; corner < 8; corner++) {
+				double cx = (corner & 1) == 0 ? cube.lx0() : cube.lx1();
+				double cy = (corner & 2) == 0 ? cube.ly0() : cube.ly1();
+				double cz = (corner & 4) == 0 ? cube.lz0() : cube.lz1();
+				m.transform(cx, cy, cz, point);
+				minX = Math.min(minX, point[0]); maxX = Math.max(maxX, point[0]);
+				minY = Math.min(minY, point[1]); maxY = Math.max(maxY, point[1]);
+				minZ = Math.min(minZ, point[2]); maxZ = Math.max(maxZ, point[2]);
+			}
+		}
+		double slack = 1e-6;
+		assertTrue(box[0] >= minX - slack && box[3] <= maxX + slack
+						&& box[1] >= minY - slack && box[4] <= maxY + slack
+						&& box[2] >= minZ - slack && box[5] <= maxZ + slack,
+				name + " box overshoots the model at yaw " + yawDegrees);
+	}
+}

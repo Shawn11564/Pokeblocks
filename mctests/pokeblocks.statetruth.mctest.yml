@@ -54,6 +54,39 @@ steps:
       query: "pokemon.count"
       expect: { gte: 50 }
 
+  # ── Geo-derived hitboxes: the SERVER-side shape pipeline resolves bundled .geo.json files and
+  # compiles a single best-fit VoxelShape box from them (DollShapes). By design each doll is one box,
+  # so box count no longer distinguishes real from fallback — isDefaultBox does that instead.
+  # Floors/relationships match common/src/test/java/shape/DollShapesTest.
+  - assertPluginState:
+      requires: { pluginState: true }
+      query: "shape.pokedollBoxes"
+      args: { pokemon: "bulbasaur" }
+      expect: { equals: 1 }
+  # bulbasaur's hitbox is really derived from its model, not the one-size-fits-all fallback box.
+  - assertPluginState:
+      requires: { pluginState: true }
+      query: "shape.pokedollIsDefaultBox"
+      args: { pokemon: "bulbasaur" }
+      expect: false
+  # Rotated placement (segment 3 = 67.5°) of an all-rotated-cubes model still derives a real box.
+  - assertPluginState:
+      requires: { pluginState: true }
+      query: "shape.pokedollIsDefaultBox"
+      args: { pokemon: "luvdisc", segment: 3 }
+      expect: false
+  # The gigantic flag scales the (geo-derived) hitbox like the renderer (2x): a gigantic bulbasaur tops 1 block.
+  - assertPluginState:
+      requires: { pluginState: true }
+      query: "shape.pokedollIsDefaultBox"
+      args: { pokemon: "bulbasaur", flags: ["gigantic"] }
+      expect: false
+  - assertPluginState:
+      requires: { pluginState: true }
+      query: "shape.pokedollMaxYx1000"
+      args: { pokemon: "bulbasaur", flags: ["gigantic"] }
+      expect: { gte: 1000 }
+
   # ── Rarity config truth: doll_rarity.json was loaded and resolves to the configured tiers ──
   # Each value below is the literal override in the bundled config, keyed exactly as the mod builds it.
   - assertPluginState:

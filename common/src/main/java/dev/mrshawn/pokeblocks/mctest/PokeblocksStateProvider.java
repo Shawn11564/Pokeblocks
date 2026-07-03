@@ -17,7 +17,9 @@ import dev.mrshawn.pokeblocks.item.loot.LootInjector;
 import dev.mrshawn.pokeblocks.pokemon.ModelFlag;
 import dev.mrshawn.pokeblocks.recipe.PokeblocksIngredient;
 import dev.mrshawn.pokeblocks.registry.PokemonRegistry;
+import dev.mrshawn.pokeblocks.shape.DollShapes;
 import io.mctest.agent.core.McTestStateProvider;
+import net.minecraft.core.Direction;
 import net.minecraft.core.Registry;
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.resources.ResourceLocation;
@@ -122,6 +124,21 @@ public final class PokeblocksStateProvider implements McTestStateProvider {
                     .isDollExcludedFromLoot(requireStr(args, "pokemon"), parseFlags(args.get("flags")));
             // Whether a flag bars a variant from loot ([loot] excluded_flags).
             case "loot.flagExcluded" -> PokeblocksConfig.getExcludedLootFlags().contains(requireFlag(args, "flag"));
+
+            // ── Geo-derived hitboxes: the server-side shape pipeline really resolves bundled .geo.json
+            // files and compiles a single best-fit VoxelShape box from them (DollShapes).
+            // The box count of the compiled shape (a single best-fit box by design, so 1 for a real doll).
+            case "shape.pokedollBoxes" -> DollShapes
+                    .pokedollVariant(requireStr(args, "pokemon"), parseFlags(args.get("flags")), optInt(args, "segment", 0))
+                    .toAabbs().size();
+            // Whether the compiled shape is the generic fallback box rather than a geo-derived one —
+            // the real discriminator now that both real and fallback shapes are a single box.
+            case "shape.pokedollIsDefaultBox" -> DollShapes.isFallbackShape(DollShapes
+                    .pokedollVariant(requireStr(args, "pokemon"), parseFlags(args.get("flags")), optInt(args, "segment", 0)));
+            // The shape's max Y ×1000 (int), e.g. to assert a gigantic doll's hitbox really is scaled up.
+            case "shape.pokedollMaxYx1000" -> scaleX1000(DollShapes
+                    .pokedollVariant(requireStr(args, "pokemon"), parseFlags(args.get("flags")), optInt(args, "segment", 0))
+                    .max(Direction.Axis.Y));
 
             // ── Recipes ──
             // Whether a recipe serializer id is registered (pokeblocks:crafting_shaped / pokeblocks:gigantic_doll).
@@ -258,6 +275,18 @@ public final class PokeblocksStateProvider implements McTestStateProvider {
             names.add(group.name());
         }
         throw new IllegalArgumentException("unknown loot group '" + name + "' (have: " + names + ")");
+    }
+
+    /** Reads an optional integer arg (YAML numbers may arrive as any {@link Number}, or a string). */
+    private static int optInt(Map<String, Object> args, String key, int fallback) {
+        Object value = args == null ? null : args.get(key);
+        if (value == null) return fallback;
+        if (value instanceof Number number) return number.intValue();
+        try {
+            return Integer.parseInt(value.toString());
+        } catch (NumberFormatException e) {
+            throw new IllegalArgumentException("arg '" + key + "' is not an integer: '" + value + "'");
+        }
     }
 
     private static String requireStr(Map<String, Object> args, String key) {
