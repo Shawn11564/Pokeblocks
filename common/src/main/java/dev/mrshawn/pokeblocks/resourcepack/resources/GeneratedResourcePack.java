@@ -66,6 +66,10 @@ public class GeneratedResourcePack {
      * Display transforms for pokedoll items.
      * All hand/ground contexts use scale 0.5; GUI also uses 0.5 with a -8 vertical offset.
      * Gigantic dolls receive additional renderer-based scaling on top of these values.
+     * <p>
+     * Deliberately no {@code head} entry: worn dolls are seated per-model by
+     * {@code PokedollItemRenderer} via {@code HeadFit}, whose math assumes the identity display
+     * transform — adding one here would displace every worn doll.
      */
     private static Map<String, Object> dollItemModelJson() {
         Map<String, Object> json = new LinkedHashMap<>();

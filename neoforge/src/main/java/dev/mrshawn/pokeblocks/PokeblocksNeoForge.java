@@ -4,7 +4,11 @@ import dev.mrshawn.pokeblocks.command.ModCommands;
 import dev.mrshawn.pokeblocks.config.PokeblocksConfig;
 import dev.mrshawn.pokeblocks.item.loot.LootInjector;
 import dev.mrshawn.pokeblocks.resourcepack.CustomPackManager;
+import dev.mrshawn.pokeblocks.resourcepack.sync.ClientPackSync;
+import dev.mrshawn.pokeblocks.resourcepack.sync.PackSyncPayloads;
+import dev.mrshawn.pokeblocks.resourcepack.sync.ServerPackSync;
 import net.minecraft.core.registries.Registries;
+import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.sounds.SoundEvent;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.item.CreativeModeTab;
@@ -22,6 +26,9 @@ import net.neoforged.neoforge.event.LootTableLoadEvent;
 import net.neoforged.neoforge.event.RegisterCommandsEvent;
 import net.neoforged.neoforge.event.server.ServerAboutToStartEvent;
 import net.neoforged.neoforge.event.server.ServerStartedEvent;
+import net.neoforged.neoforge.network.PacketDistributor;
+import net.neoforged.neoforge.network.event.RegisterPayloadHandlersEvent;
+import net.neoforged.neoforge.network.registration.PayloadRegistrar;
 import net.neoforged.neoforge.registries.DeferredRegister;
 
 @Mod(PokeblocksCommon.MOD_ID)
@@ -48,7 +55,28 @@ public final class PokeblocksNeoForge {
 		PokeblocksConfig.initialize(FMLPaths.GAMEDIR.get());
 		CustomPackManager.registerCustomAssets(FMLPaths.GAMEDIR.get());
 
+		modEventBus.addListener(this::registerPayloads);
+		// Delta-pack handshake bridges. The payloads are optional, so a remote side without them
+		// (older Pokeblocks) still connects; hasChannel() gates the manifest send per player.
+		ServerPackSync.setNetworkBridge(
+				player -> player.connection.hasChannel(PackSyncPayloads.ManifestPayload.TYPE),
+				(player, data) -> PacketDistributor.sendToPlayer(player, new PackSyncPayloads.ManifestPayload(data)));
+		ClientPackSync.setRequestSender(data ->
+				PacketDistributor.sendToServer(new PackSyncPayloads.RequestPayload(data)));
+
 		NeoForge.EVENT_BUS.register(this);
+	}
+
+	private void registerPayloads(final RegisterPayloadHandlersEvent event) {
+		PayloadRegistrar registrar = event.registrar(PokeblocksCommon.MOD_ID).optional();
+		registrar.playToClient(PackSyncPayloads.ManifestPayload.TYPE, PackSyncPayloads.ManifestPayload.CODEC,
+				(payload, context) -> ClientPackSync.handleManifest(payload.data()));
+		registrar.playToServer(PackSyncPayloads.RequestPayload.TYPE, PackSyncPayloads.RequestPayload.CODEC,
+				(payload, context) -> {
+					if (context.player() instanceof ServerPlayer player) {
+						ServerPackSync.onPackRequest(player.getServer(), player, payload.data());
+					}
+				});
 	}
 
 	@SubscribeEvent

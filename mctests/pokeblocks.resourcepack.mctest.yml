@@ -1,0 +1,57 @@
+# yaml-language-server: $schema=https://mc-test.dev/schema/mctest-stepfile.schema.json
+name: pokeblocks-resourcepack
+# Assert the SERVED RESOURCE PACK really gets built on a clean dedicated server, and that it bundles
+# the mod's own built-in doll assets (resourcepack.include_builtin_assets defaults to true). This is
+# the server half of the version-skew guarantee: a client running an OLDER Pokeblocks can join a
+# newer server and still receive (and render) dolls added by the newer version, because the server
+# ships them in the pack. It also proves AssetScanner's jar-URI classpath walk works from a real
+# mod jar (not just the exploded test classpath the unit tests use).
+# Server-truth-only (cap `pluginState` → cost-1 `server` driver, no player join); rows without a
+# co-selected server agent honestly SKIP `unmet:[pluginState]`.
+requires:
+  pluginState: true
+target: ${matrix}
+steps:
+  # A clean server (no admin custom assets under config/Pokeblocks/resourcepack/) still builds and
+  # caches a served pack, because the built-in assets are bundled by default.
+  - assertPluginState:
+      requires: { pluginState: true }
+      query: "resourcepack.built"
+      expect: true
+
+  # The pack contains the mod's own geo models (the mod ships ~90 base dolls plus figurines and
+  # decorations; assert a safe floor well below that).
+  - assertPluginState:
+      requires: { pluginState: true }
+      query: "resourcepack.entriesUnder"
+      args: { prefix: "assets/pokeblocks/geo/block/" }
+      expect: { gte: 50 }
+
+  # ...and their textures...
+  - assertPluginState:
+      requires: { pluginState: true }
+      query: "resourcepack.entriesUnder"
+      args: { prefix: "assets/pokeblocks/textures/block/" }
+      expect: { gte: 50 }
+
+  # ...and at least some animations.
+  - assertPluginState:
+      requires: { pluginState: true }
+      query: "resourcepack.entriesUnder"
+      args: { prefix: "assets/pokeblocks/animations/block/" }
+      expect: { gte: 1 }
+
+  # The server's effective display overrides (rarity tiers/weights, figurine names) ride inside
+  # every built pack, so connected clients resolve tooltip/compendium data server-authoritatively.
+  - assertPluginState:
+      requires: { pluginState: true }
+      query: "resourcepack.entriesUnder"
+      args: { prefix: "assets/pokeblocks/server_overrides.json" }
+      expect: { equals: 1 }
+
+  # Negative control: a prefix that doesn't exist counts zero (proves the zip walk is real).
+  - assertPluginState:
+      requires: { pluginState: true }
+      query: "resourcepack.entriesUnder"
+      args: { prefix: "assets/pokeblocks/not_a_real_dir/" }
+      expect: { equals: 0 }

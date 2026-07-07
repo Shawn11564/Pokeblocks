@@ -1,7 +1,10 @@
 package dev.mrshawn.pokeblocks;
 
 import dev.mrshawn.pokeblocks.client.PokeblocksClient;
+import dev.mrshawn.pokeblocks.resourcepack.sync.ClientPackSync;
+import dev.mrshawn.pokeblocks.resourcepack.sync.PackSyncPayloads;
 import net.fabricmc.api.ClientModInitializer;
+import net.fabricmc.fabric.api.client.networking.v1.ClientPlayNetworking;
 import net.fabricmc.fabric.api.client.rendering.v1.EntityRendererRegistry;
 import net.fabricmc.fabric.api.resource.ResourceManagerHelper;
 import net.fabricmc.fabric.api.resource.SimpleSynchronousResourceReloadListener;
@@ -15,6 +18,12 @@ public final class PokeblocksFabricClient implements ClientModInitializer {
     public void onInitializeClient() {
         PokeblocksClient.registerRenderers(BlockEntityRenderers::register);
         PokeblocksClient.registerEntityRenderers(EntityRendererRegistry::register);
+
+        // Delta-pack handshake: answer the server's pack manifest with the entries we're missing.
+        ClientPlayNetworking.registerGlobalReceiver(PackSyncPayloads.ManifestPayload.TYPE, (payload, context) ->
+                ClientPackSync.handleManifest(payload.data()));
+        ClientPackSync.setRequestSender(data ->
+                ClientPlayNetworking.send(new PackSyncPayloads.RequestPayload(data)));
 
         // Re-scan client assets on every resource (re)load. This fires on the initial client resource
         // load (replacing the former one-shot CLIENT_STARTED scan) and again whenever packs change

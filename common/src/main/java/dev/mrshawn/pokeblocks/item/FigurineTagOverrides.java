@@ -98,12 +98,18 @@ public class FigurineTagOverrides {
         }
     }
 
+    /** The tag map to answer from: the server's {@link ServerOverrides} snapshot when active, else local. */
+    private static Map<String, Set<String>> active() {
+        ServerOverrides.Remote remote = ServerOverrides.current();
+        return remote != null ? remote.figurineTags() : tags;
+    }
+
     /**
      * Returns true if the given figurine has the specified tag.
      */
     public static boolean hasTag(String figurineId, String tag) {
         if (figurineId == null || tag == null) return false;
-        Set<String> figurineTags = tags.get(figurineId.toLowerCase());
+        Set<String> figurineTags = active().get(figurineId.toLowerCase());
         return figurineTags != null && figurineTags.contains(tag.toLowerCase());
     }
 
@@ -112,6 +118,18 @@ public class FigurineTagOverrides {
      */
     public static Set<String> getTags(String figurineId) {
         if (figurineId == null) return Collections.emptySet();
-        return tags.getOrDefault(figurineId.toLowerCase(), Collections.emptySet());
+        return active().getOrDefault(figurineId.toLowerCase(), Collections.emptySet());
+    }
+
+    /** The effective local entries as config-format lines ({@code "id tag1 tag2 ..."}), sorted. */
+    public static List<String> exportLines() {
+        List<String> lines = new ArrayList<>();
+        for (Map.Entry<String, Set<String>> e : tags.entrySet()) {
+            List<String> sorted = new ArrayList<>(e.getValue());
+            Collections.sort(sorted);
+            lines.add(e.getKey() + " " + String.join(" ", sorted));
+        }
+        Collections.sort(lines);
+        return lines;
     }
 }

@@ -13,6 +13,7 @@ import dev.mrshawn.pokeblocks.resourcepack.CustomPackManager;
 import net.minecraft.core.Direction;
 import net.minecraft.world.phys.shapes.Shapes;
 import net.minecraft.world.phys.shapes.VoxelShape;
+import org.jetbrains.annotations.Nullable;
 
 import java.io.InputStream;
 import java.nio.file.Files;
@@ -71,6 +72,8 @@ public final class DollShapes {
 	private static final ConcurrentHashMap<String, Optional<GeoGeometry>> GEOMETRY = new ConcurrentHashMap<>();
 	/** Compiled shapes per (geo path, yaw, gigantic). */
 	private static final ConcurrentHashMap<ShapeKey, VoxelShape> SHAPES = new ConcurrentHashMap<>();
+	/** Outer render bounds per geo path (see {@link #modelBounds}). */
+	private static final ConcurrentHashMap<String, double[]> MODEL_BOUNDS = new ConcurrentHashMap<>();
 
 	/** Client-side resource-manager lookup, installed by {@code PokeblocksClient}; null on dedicated servers. */
 	private static volatile Function<String, byte[]> clientResourceLookup;
@@ -143,6 +146,25 @@ public final class DollShapes {
 		return shape(candidates, facingYawDegrees(facing), decorative.isGigantic());
 	}
 
+	/**
+	 * The outer render-space bounding box of one geo model as {@code [x0, y0, z0, x1, y1, z1]}
+	 * (origin at the model's bottom-center, 1.0 = one block), or {@code null} when the model can't
+	 * be found or parsed. Used by the item renderer to seat worn dolls on the player's head.
+	 * <p>
+	 * {@code geoPath} is the asset path below {@code assets/pokeblocks/}, exactly as returned by
+	 * {@code PokeblocksAssetResolver}'s resource locations (e.g.
+	 * {@code geo/block/pokedoll_pikachu.geo.json}), and bytes resolve through the same sources as
+	 * hitboxes (jar → server pack → client resource manager). Cached per path; the returned array is
+	 * shared — callers must not mutate it.
+	 */
+	public static double @Nullable [] modelBounds(String geoPath) {
+		GeoGeometry geometry = GEOMETRY.computeIfAbsent(geoPath, DollShapes::loadGeometry).orElse(null);
+		if (geometry == null) {
+			return null;
+		}
+		return MODEL_BOUNDS.computeIfAbsent(geoPath, path -> geometry.outerBounds());
+	}
+
 	// --- Lifecycle ----------------------------------------------------------------------------------
 
 	/**
@@ -153,6 +175,7 @@ public final class DollShapes {
 	public static void clearCaches() {
 		GEOMETRY.clear();
 		SHAPES.clear();
+		MODEL_BOUNDS.clear();
 	}
 
 	/** Installed once from client init; gives the shape pipeline access to resource-pack geo files. */

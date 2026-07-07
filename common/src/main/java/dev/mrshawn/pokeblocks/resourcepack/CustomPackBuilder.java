@@ -1,9 +1,15 @@
 package dev.mrshawn.pokeblocks.resourcepack;
 
 import dev.mrshawn.pokeblocks.PokeblocksLog;
+import dev.mrshawn.pokeblocks.config.PokeblocksConfig;
+import dev.mrshawn.pokeblocks.item.ServerOverrides;
+import dev.mrshawn.pokeblocks.registry.AssetScanner;
 
+import java.io.ByteArrayOutputStream;
 import java.io.IOException;
+import java.nio.charset.StandardCharsets;
 import java.io.InputStream;
+import java.util.Collection;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.StandardCopyOption;
@@ -14,6 +20,7 @@ import java.util.Map;
 import java.util.Set;
 import java.util.TreeMap;
 import java.util.TreeSet;
+import java.util.stream.Stream;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipFile;
 import java.util.zip.ZipOutputStream;
@@ -201,6 +208,10 @@ public class CustomPackBuilder {
 	}
 
 	public static PackBuildResult buildResourcePack(Path gameDir) throws IOException {
+		return buildResourcePack(gameDir, PokeblocksConfig.isIncludeBuiltinAssets());
+	}
+
+	public static PackBuildResult buildResourcePack(Path gameDir, boolean includeBuiltinAssets) throws IOException {
 		Path resourcePackDir = gameDir.resolve("config").resolve("Pokeblocks").resolve("resourcepack");
 		Path customDir = findCustomDir(gameDir);
 
@@ -210,6 +221,21 @@ public class CustomPackBuilder {
 		Set<String> modelFileNames = new TreeSet<>();
 		Set<String> textureFileNames = new TreeSet<>();
 		Set<String> animationFileNames = new TreeSet<>();
+
+		/* =========================
+		   BUNDLE BUILT-IN MOD ASSETS (optional, lowest priority)
+		   Ships the mod's own doll/figurine/decoration assets in the served pack so clients on an
+		   OLDER mod version still receive dolls added by a newer server (doll-only updates don't
+		   force a client update). Loaded first so every admin sub-pack overrides them; deliberately
+		   kept out of `providers` (overriding a built-in is intentional, not a conflict) and out of
+		   the returned file-name sets (built-ins are already registered by the static classpath scan).
+		   ========================= */
+
+		if (includeBuiltinAssets) {
+			int builtinCount = loadBuiltinAssets(zipEntries);
+			PokeblocksLog.LOGGER.info("Bundled {} built-in asset file(s) into the served pack "
+					+ "(resourcepack.include_builtin_assets = true)", builtinCount);
+		}
 
 		/* =========================
 		   LOAD ADDITIONAL RESOURCE PACKS
@@ -246,6 +272,18 @@ public class CustomPackBuilder {
 		if (customDir != null) {
 			// Loaded last so the custom/ folder overrides any sub-pack that provides the same file.
 			loadResourcePackFromFolder(customDir, "custom", zipEntries, providers, modelFileNames, textureFileNames, animationFileNames);
+		}
+
+		/* =========================
+		   SERVER-EFFECTIVE DISPLAY OVERRIDES
+		   Whenever a pack is served at all, it carries the server's loaded rarity/figurine override
+		   values so connected clients resolve tooltips and compendium data from the SERVER's
+		   configuration instead of their local files. Added directly (not via addEntry) after
+		   everything else so no sub-pack can shadow it.
+		   ========================= */
+
+		if (!zipEntries.isEmpty()) {
+			zipEntries.put(ServerOverrides.PACK_PATH, ServerOverrides.buildJson().getBytes(StandardCharsets.UTF_8));
 		}
 
 		// Warn about any resource supplied by more than one pack (last loaded wins; custom/ is highest).
@@ -317,6 +355,27 @@ public class CustomPackBuilder {
 				textureFileNames,
 				animationFileNames
 		);
+	}
+
+	/**
+	 * Adds the mod's built-in doll-family assets (the same three classpath directories the
+	 * {@code PokemonRegistry}/{@code FigurineRegistry}/{@code CustomDecorationRegistry} startup scans
+	 * read) to {@code zipEntries} under their real pack paths. Returns the number of files added.
+	 */
+	private static int loadBuiltinAssets(Map<String, byte[]> zipEntries) {
+		int count = 0;
+		count += addBuiltinDir(zipEntries, "assets/pokeblocks/geo/block", ".geo.json");
+		count += addBuiltinDir(zipEntries, "assets/pokeblocks/textures/block", ".png");
+		count += addBuiltinDir(zipEntries, "assets/pokeblocks/animations/block", ".animation.json");
+		return count;
+	}
+
+	private static int addBuiltinDir(Map<String, byte[]> zipEntries, String resourceDir, String extension) {
+		Map<String, byte[]> files = AssetScanner.scanClasspathBytes(resourceDir, n -> n.endsWith(extension));
+		for (Map.Entry<String, byte[]> e : files.entrySet()) {
+			zipEntries.put(resourceDir + "/" + e.getKey(), e.getValue());
+		}
+		return files.size();
 	}
 
 	/**
@@ -442,6 +501,74 @@ public class CustomPackBuilder {
 		}
 	}
 
+	/** Zip entries that are pack plumbing rather than content: excluded from the delta manifest and
+	 *  unconditionally copied into every delta zip. */
+	private static final Set<String> ALWAYS_INCLUDED_ENTRIES = Set.of("pack.mcmeta", "pack.png");
+
+	/**
+	 * Hashes every content entry of a built pack zip: path → SHA-1 of the entry bytes.
+	 * {@link #ALWAYS_INCLUDED_ENTRIES} are skipped — they ride in every delta anyway, so listing
+	 * them in the manifest would only waste request bits.
+	 */
+	public static Map<String, byte[]> hashZipEntries(Path zipPath) throws IOException {
+		Map<String, byte[]> hashes = new TreeMap<>();
+		try (ZipFile zipFile = new ZipFile(zipPath.toFile())) {
+			var entries = zipFile.entries();
+			while (entries.hasMoreElements()) {
+				ZipEntry entry = entries.nextElement();
+				if (entry.isDirectory() || ALWAYS_INCLUDED_ENTRIES.contains(entry.getName())) continue;
+				try (InputStream in = zipFile.getInputStream(entry)) {
+					hashes.put(entry.getName(), sha1(in.readAllBytes()));
+				}
+			}
+		}
+		return hashes;
+	}
+
+	/**
+	 * Builds an in-memory delta zip containing only {@code paths} (plus pack.mcmeta/pack.png),
+	 * copied from the full built pack. Entry order and timestamps are deterministic, so the same
+	 * subset always hashes identically and the vanilla client's UUID-keyed download cache holds.
+	 */
+	public static byte[] buildSubsetZip(Path fullZip, Collection<String> paths) throws IOException {
+		Set<String> wanted = new TreeSet<>(paths);
+		ByteArrayOutputStream bytes = new ByteArrayOutputStream();
+		try (ZipFile zipFile = new ZipFile(fullZip.toFile());
+			 ZipOutputStream zip = new ZipOutputStream(bytes)) {
+			// TreeSet order = deterministic; plumbing entries first, then the requested subset.
+			Set<String> toCopy = new TreeSet<>(ALWAYS_INCLUDED_ENTRIES);
+			toCopy.addAll(wanted);
+			for (String name : toCopy) {
+				ZipEntry source = zipFile.getEntry(name);
+				if (source == null) continue; // e.g. no pack.png in the full pack, or a stale request path
+				ZipEntry entry = new ZipEntry(name);
+				entry.setTime(0L);
+				zip.putNextEntry(entry);
+				try (InputStream in = zipFile.getInputStream(source)) {
+					in.transferTo(zip);
+				}
+				zip.closeEntry();
+			}
+		}
+		return bytes.toByteArray();
+	}
+
+	/** SHA-1 of a byte array (raw digest bytes). */
+	public static byte[] sha1(byte[] bytes) {
+		try {
+			return MessageDigest.getInstance("SHA-1").digest(bytes);
+		} catch (Exception e) {
+			throw new IllegalStateException("JVM without SHA-1", e); // mandated by the JCA spec
+		}
+	}
+
+	/** SHA-1 of a byte array as lowercase hex. */
+	public static String computeSHA1(byte[] bytes) {
+		StringBuilder sb = new StringBuilder();
+		for (byte b : sha1(bytes)) sb.append(String.format("%02x", b));
+		return sb.toString();
+	}
+
 	public static String computeSHA1(Path file) {
 		try (InputStream in = Files.newInputStream(file)) {
 			MessageDigest digest = MessageDigest.getInstance("SHA-1");
@@ -461,15 +588,26 @@ public class CustomPackBuilder {
 		}
 	}
 
-	/** A cheap fingerprint of the custom-pack inputs (sorted relative path + size + mtime of every file
-	 *  under config/Pokeblocks/resourcepack/), so the zip is only rebuilt when something actually changed.
-	 *  Returns "" when the directory does not exist. */
 	public static String computeInputFingerprint(Path gameDir) {
+		return computeInputFingerprint(gameDir, PokeblocksConfig.isIncludeBuiltinAssets());
+	}
+
+	/** A cheap fingerprint of the custom-pack inputs (sorted relative path + size + mtime of every file
+	 *  under config/Pokeblocks/resourcepack/, plus whether built-in assets are bundled), so the zip is
+	 *  only rebuilt when something actually changed. Built-in assets themselves aren't fingerprinted:
+	 *  they live in the mod jar, which cannot change without a JVM restart — and the in-memory cache
+	 *  this fingerprint guards doesn't survive a restart anyway.
+	 *  Returns "" when the directory does not exist and built-ins are off. */
+	public static String computeInputFingerprint(Path gameDir, boolean includeBuiltinAssets) {
 		Path resourcePackDir = gameDir.resolve("config").resolve("Pokeblocks").resolve("resourcepack");
-		if (!Files.exists(resourcePackDir)) return "";
+		if (!Files.exists(resourcePackDir) && !includeBuiltinAssets) return "";
 
 		Set<String> lines = new TreeSet<>();
-		try (var walk = Files.walk(resourcePackDir)) {
+		lines.add("include_builtin_assets|" + includeBuiltinAssets);
+		// The served pack embeds the server's effective display overrides; config edits to them
+		// (doll_rarity.json etc.) must re-hash the pack so clients re-download the new values.
+		lines.add("server_overrides|" + ServerOverrides.buildJson());
+		try (var walk = Files.exists(resourcePackDir) ? Files.walk(resourcePackDir) : Stream.<Path>empty()) {
 			for (Path p : (Iterable<Path>) walk.filter(Files::isRegularFile)::iterator) {
 				String rel = resourcePackDir.relativize(p).toString().replace('\\', '/');
 				lines.add(rel + "|" + Files.size(p) + "|" + Files.getLastModifiedTime(p).toMillis());

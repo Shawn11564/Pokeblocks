@@ -1,6 +1,6 @@
 package dev.mrshawn.pokeblocks.mixin;
 
-import dev.mrshawn.pokeblocks.resourcepack.ResourcePackServer;
+import dev.mrshawn.pokeblocks.resourcepack.sync.ServerPackSync;
 import net.minecraft.network.Connection;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.server.network.CommonListenerCookie;
@@ -21,7 +21,8 @@ public abstract class PlayerJoinMixin {
 										 CommonListenerCookie cookie, CallbackInfo ci) {
 		var server = player.getServer();
 		if (server == null) return;
-		// Resolve self-host vs. remote-URL distribution and send. No-op when there's no pack to send.
-		ResourcePackServer.pushTo(server, player);
+		// Negotiates a per-client delta pack when the client supports it, else pushes the full pack
+		// (resolving self-host vs. remote-URL distribution). No-op when there's no pack to send.
+		ServerPackSync.onPlayerJoin(server, player);
 	}
 }

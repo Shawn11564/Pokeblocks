@@ -1,6 +1,9 @@
 package dev.mrshawn.pokeblocks.client;
 
+import dev.mrshawn.pokeblocks.PokeblocksCommon;
+import dev.mrshawn.pokeblocks.PokeblocksLog;
 import dev.mrshawn.pokeblocks.client.model.PokeblocksAssetResolver;
+import dev.mrshawn.pokeblocks.item.ServerOverrides;
 import dev.mrshawn.pokeblocks.utils.ColorFactory;
 import dev.mrshawn.pokeblocks.client.renderer.block.CustomDecorationBlockRenderer;
 import dev.mrshawn.pokeblocks.client.renderer.block.DecorativeBlockRenderer;
@@ -19,6 +22,7 @@ import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.entity.BlockEntityType;
 
+import java.nio.charset.StandardCharsets;
 import java.util.function.BiConsumer;
 
 public final class PokeblocksClient {
@@ -83,5 +87,29 @@ public final class PokeblocksClient {
 		PokemonRegistry.scanAndRegisterFromResources();
 		FigurineRegistry.scanAndRegisterFromResources();
 		CustomDecorationRegistry.scanAndRegisterFromResources();
+		applyServerOverrides();
+	}
+
+	/**
+	 * Applies (or clears) the server-effective display overrides that ride inside the served pack
+	 * (see {@link ServerOverrides#PACK_PATH}). Present while a server pack is applied → tooltips and
+	 * compendium data resolve from the SERVER's rarity/name configuration; the pack's removal on
+	 * disconnect triggers another reload, the entry disappears, and local values take over again.
+	 */
+	private static void applyServerOverrides() {
+		try {
+			var resource = Minecraft.getInstance().getResourceManager()
+					.getResource(ResourceLocation.fromNamespaceAndPath(PokeblocksCommon.MOD_ID, "server_overrides.json"));
+			if (resource.isEmpty()) {
+				ServerOverrides.clear();
+				return;
+			}
+			try (var in = resource.get().open()) {
+				ServerOverrides.applyJson(new String(in.readAllBytes(), StandardCharsets.UTF_8));
+			}
+		} catch (Exception e) {
+			PokeblocksLog.LOGGER.error("Failed to apply server display overrides from the resource pack", e);
+			ServerOverrides.clear();
+		}
 	}
 }

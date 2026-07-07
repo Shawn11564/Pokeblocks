@@ -45,8 +45,10 @@ public enum DollRarity {
 	}
 
 	public int getWeight() {
-		// Use configurable weight if available, otherwise fall back to hardcoded default
-		if (RarityWeightConfig.isInitialized()) {
+		// A server override snapshot (multiplayer client) takes precedence even when the local
+		// weight config was never initialized — pure clients don't run the server lifecycle.
+		// Otherwise use the configured weight if available, falling back to the hardcoded default.
+		if (ServerOverrides.current() != null || RarityWeightConfig.isInitialized()) {
 			return RarityWeightConfig.getWeight(this);
 		}
 		return weight;

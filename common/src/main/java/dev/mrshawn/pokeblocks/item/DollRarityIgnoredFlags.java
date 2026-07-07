@@ -118,19 +118,44 @@ public class DollRarityIgnoredFlags {
      * Returns the set of flags that should be ignored in rarity weight calculations
      * for the given pokemon — the union of all blanket (global) flags and any flags
      * configured specifically for this pokemon. Returns an empty set if none apply.
+     * Answers from the server's {@link ServerOverrides} snapshot when one is active.
      */
     public static Set<ModelFlag> getIgnoredFlags(String pokemon) {
-        Set<ModelFlag> specific = ignoredFlagsMap.get(pokemon.toLowerCase());
+        ServerOverrides.Remote remote = ServerOverrides.current();
+        Map<String, Set<ModelFlag>> byPokemon = remote != null ? remote.ignoredFlagsByPokemon() : ignoredFlagsMap;
+        Set<ModelFlag> global = remote != null ? remote.ignoredFlagsGlobal() : globalIgnoredFlags;
+
+        Set<ModelFlag> specific = byPokemon.get(pokemon.toLowerCase());
 
         if (specific == null || specific.isEmpty()) {
-            return globalIgnoredFlags.isEmpty() ? Collections.emptySet() : globalIgnoredFlags;
+            return global.isEmpty() ? Collections.emptySet() : global;
         }
-        if (globalIgnoredFlags.isEmpty()) {
+        if (global.isEmpty()) {
             return specific;
         }
 
-        EnumSet<ModelFlag> union = EnumSet.copyOf(globalIgnoredFlags);
+        EnumSet<ModelFlag> union = EnumSet.copyOf(global);
         union.addAll(specific);
         return union;
+    }
+
+    /**
+     * The effective local entries as config-format lines — blanket flags as single tokens,
+     * pokemon-specific rules as {@code "pokemon flag ..."} — sorted for a stable export.
+     */
+    public static List<String> exportLines() {
+        List<String> lines = new ArrayList<>();
+        for (ModelFlag flag : globalIgnoredFlags) {
+            lines.add(flag.getTagName());
+        }
+        for (Map.Entry<String, Set<ModelFlag>> e : ignoredFlagsMap.entrySet()) {
+            StringBuilder sb = new StringBuilder(e.getKey());
+            List<ModelFlag> sorted = new ArrayList<>(e.getValue());
+            sorted.sort(Comparator.comparingInt(ModelFlag::getSortOrder));
+            for (ModelFlag flag : sorted) sb.append(' ').append(flag.getTagName());
+            lines.add(sb.toString());
+        }
+        Collections.sort(lines);
+        return lines;
     }
 }

@@ -18,6 +18,9 @@ import java.net.*;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.util.Collections;
+import java.util.LinkedHashMap;
+import java.util.Map;
 import java.util.Optional;
 import java.util.UUID;
 import java.util.concurrent.Executors;
@@ -26,9 +29,23 @@ public final class ResourcePackServer {
 	private static HttpServer server;
 	private static Path servedFile;
 	private static String url;
+	/** The host:port base of the running self-host server (e.g. "http://1.2.3.4:8123"), for delta URLs. */
+	private static String urlBase;
 	/** Last remote-mode log line emitted; remote distribution is re-evaluated on every push (incl. each join),
 	 *  so we only log a given guidance/warning message when it changes rather than once per player. */
 	private static String lastRemoteLog;
+
+	/** Per-client delta zips served from memory at {@code /pokeblocks_delta/<sha>.zip}, keyed by their
+	 *  SHA-1 hex. Bounded LRU — deltas are small subsets and identical installs share entries. */
+	private static final int DELTA_SERVE_MAX = 64;
+	private static final Map<String, byte[]> servedDeltas = Collections.synchronizedMap(
+			new LinkedHashMap<>(16, 0.75f, true) {
+				@Override
+				protected boolean removeEldestEntry(Map.Entry<String, byte[]> eldest) {
+					return size() > DELTA_SERVE_MAX;
+				}
+			});
+	private static final String DELTA_PATH_PREFIX = "/pokeblocks_delta/";
 
 	private ResourcePackServer() {}
 
@@ -94,6 +111,35 @@ public final class ResourcePackServer {
 			}
 		});
 
+		// Per-client delta packs, served from memory (see ServerPackSync). 404 for unknown/evicted
+		// hashes — the join-time handshake always re-registers the delta before advertising its URL.
+		server.createContext(DELTA_PATH_PREFIX, exchange -> {
+			try {
+				if (!"GET".equalsIgnoreCase(exchange.getRequestMethod())) {
+					exchange.sendResponseHeaders(405, -1);
+					return;
+				}
+				String requestPath = exchange.getRequestURI().getPath();
+				String sha = requestPath.substring(DELTA_PATH_PREFIX.length()).replace(".zip", "");
+				byte[] bytes = servedDeltas.get(sha);
+				if (bytes == null) {
+					exchange.sendResponseHeaders(404, -1);
+					return;
+				}
+				Headers h = exchange.getResponseHeaders();
+				h.add("Content-Type", "application/zip");
+				h.add("ETag", "\"" + sha + "\"");
+				exchange.sendResponseHeaders(200, bytes.length);
+				try (OutputStream os = exchange.getResponseBody()) {
+					os.write(bytes);
+				}
+			} catch (IOException ex) {
+				exchange.sendResponseHeaders(500, -1);
+			} finally {
+				exchange.close();
+			}
+		});
+
 		server.start();
 
 		int port = server.getAddress().getPort();
@@ -116,9 +162,26 @@ public final class ResourcePackServer {
 			hostForUrl = "127.0.0.1";
 		}
 
-		url = URI.create("http://" + hostForUrl + ":" + port + path).toString();
+		urlBase = "http://" + hostForUrl + ":" + port;
+		url = URI.create(urlBase + path).toString();
 		PokeblocksLog.LOGGER.info("Resource pack server started at: {}", url);
 		return url;
+	}
+
+	/**
+	 * Registers an in-memory delta zip for HTTP serving and returns its download URL. Requires
+	 * self-host distribution with a built full pack (the same server instance serves both).
+	 */
+	public static synchronized String serveDelta(MinecraftServer mcServer, String sha, byte[] bytes) throws IOException {
+		// Ensure the HTTP server is up (idempotent for the unchanged full pack).
+		start(mcServer, CustomPackManager.getCachedPack());
+		servedDeltas.put(sha, bytes);
+		return URI.create(urlBase + DELTA_PATH_PREFIX + sha + ".zip").toString();
+	}
+
+	/** Pushes an arbitrary pack URL+sha to one player, honoring {@code kick_on_decline}. */
+	public static void pushPack(ServerPlayer player, String packUrl, String sha) {
+		player.connection.send(packet(new PackPush(packUrl, sha)));
 	}
 
 	private static String getUsableAddress() {
@@ -149,6 +212,8 @@ public final class ResourcePackServer {
 			server = null;
 			servedFile = null;
 			url = null;
+			urlBase = null;
+			servedDeltas.clear();
 		}
 	}
 

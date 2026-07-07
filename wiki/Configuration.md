@@ -291,8 +291,11 @@ restart) to have it created.
 These live in the same file and are documented in detail on their own pages:
 
 - **`[eastereggs]`** — `doll_popping_enabled` (default `true`).
-- **`[resourcepack]`** — `kick_on_decline` (default `true`), `distribution` =
-  `self_host | remote_url` (default `self_host`), `self_host_address`, `remote_url`, `remote_sha1`.
+- **`[resourcepack]`** — `kick_on_decline` (default `true`), `include_builtin_assets` (default `true`;
+  bundles the mod's own doll assets into the served pack so outdated clients still see dolls added by
+  newer server-side mod updates), `delta_serving` (default `true`; joining players negotiate a small
+  per-player pack holding only what their install is missing), `distribution` = `self_host | remote_url`
+  (default `self_host`), `self_host_address`, `remote_url`, `remote_sha1`.
   See [Resource Packs](Resource-Packs).
 - **`[loot]`** — `drop_chance` (default `0.33`), `loot_tables`, `excluded_flags`
   (defaults `gigantic`, `noice`), `excluded_dolls` (default `substitute`).

@@ -21,6 +21,8 @@ public class PokeblocksConfig {
 
 	// [resourcepack]
 	private static boolean kickOnDecline = true;
+	private static boolean includeBuiltinAssets = true;
+	private static boolean deltaServing = true;
 	// How the custom pack reaches clients, and the knobs each distribution mode needs.
 	private static PackDistribution packDistribution = PackDistribution.SELF_HOST;
 	private static String remotePackUrl = "";
@@ -60,6 +62,24 @@ public class PokeblocksConfig {
 
 	public static boolean isKickOnDecline() {
 		return kickOnDecline;
+	}
+
+	/**
+	 * Whether the served pack also bundles the mod's own built-in doll/figurine/decoration assets, so
+	 * clients running an older Pokeblocks than the server still receive (and can render) dolls that
+	 * were added to the mod after their version. See the {@code include_builtin_assets} config comment.
+	 */
+	public static boolean isIncludeBuiltinAssets() {
+		return includeBuiltinAssets;
+	}
+
+	/**
+	 * Whether joins negotiate a per-client DELTA pack (only the entries the client can't resolve
+	 * locally) instead of always pushing the full pack. Requires self-host distribution and a
+	 * delta-capable client; everything else falls back to the full pack automatically.
+	 */
+	public static boolean isDeltaServing() {
+		return deltaServing;
 	}
 
 	/** How the custom resource pack is distributed to clients: self-hosted (default) or an admin remote URL. */
@@ -159,6 +179,8 @@ public class PokeblocksConfig {
 		dollPoppingEnabled = true;
 		showIncompleteItems = false;
 		kickOnDecline = true;
+		includeBuiltinAssets = true;
+		deltaServing = true;
 		packDistribution = PackDistribution.SELF_HOST;
 		remotePackUrl = "";
 		remotePackSha1 = "";
@@ -220,6 +242,8 @@ public class PokeblocksConfig {
 					case "resourcepack" -> {
 						switch (key) {
 							case "kick_on_decline" -> kickOnDecline = parseBoolean(value, true);
+							case "include_builtin_assets" -> includeBuiltinAssets = parseBoolean(value, true);
+							case "delta_serving" -> deltaServing = parseBoolean(value, true);
 							case "distribution" -> packDistribution = PackDistribution.parse(unquote(value), PackDistribution.SELF_HOST);
 							case "remote_url" -> remotePackUrl = unquote(value);
 							case "remote_sha1" -> remotePackSha1 = unquote(value);
@@ -255,11 +279,11 @@ public class PokeblocksConfig {
 				}
 			}
 
-			PokeblocksLog.LOGGER.debug("Loaded config: doll_popping_enabled={}, kick_on_decline={}, "
+			PokeblocksLog.LOGGER.debug("Loaded config: doll_popping_enabled={}, kick_on_decline={}, include_builtin_assets={}, "
 					+ "pack_distribution={}, remote_url_set={}, self_host_address={}, drop_chance={}, "
 					+ "loot_tables={}, loot_table_wildcards={}, excluded_flags={}, excluded_dolls={}, "
 					+ "config_update_mode={}, config_backup={}, frozen_config_files={}, shown_config_files={}, hidden_config_files={}",
-					dollPoppingEnabled, kickOnDecline, packDistribution.token(), !remotePackUrl.isBlank(),
+					dollPoppingEnabled, kickOnDecline, includeBuiltinAssets, packDistribution.token(), !remotePackUrl.isBlank(),
 					selfHostAddress.isBlank() ? "(auto)" : selfHostAddress, lootDropChance, lootTables, lootTableWildcards.size(),
 					excludedLootFlags, excludedLootDolls, configUpdateMode, configBackupBeforeUpdate, frozenConfigFiles,
 					shownConfigFiles, hiddenConfigFiles);
@@ -327,6 +351,24 @@ public class PokeblocksConfig {
 					"false"),
 			new KeyDef("resourcepack", "kick_on_decline",
 					"# Whether to kick players who decline the custom Pokeblocks resource pack.",
+					"true"),
+			new KeyDef("resourcepack", "include_builtin_assets",
+					"""
+					# Whether the served pack also bundles the doll/figurine/decoration assets that ship inside
+					# the Pokeblocks mod itself, in addition to any admin-added custom assets. With this on
+					# (default), players whose Pokeblocks is OLDER than the server's still see dolls added by a
+					# newer mod update - the server supplies the missing models/textures via the pack, so client
+					# updates are optional for releases that only add dolls. (Updates that add new blocks, items
+					# or features still require a matching client update.) With this off, only admin custom
+					# assets are served, and players need the server's mod version to see newly added dolls.""",
+					"true"),
+			new KeyDef("resourcepack", "delta_serving",
+					"""
+					# Whether joining players with a delta-capable Pokeblocks negotiate a SMALL per-player pack
+					# holding only what their install is missing (new dolls, admin custom assets, the server's
+					# rarity/name overrides) instead of downloading the full pack. Players whose game can't
+					# negotiate (older mod versions) automatically get the full pack instead. Only applies when
+					# distribution = self_host; remote_url always advertises the full remote zip.""",
 					"true"),
 			new KeyDef("resourcepack", "distribution",
 					"""

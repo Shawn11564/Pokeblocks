@@ -7,6 +7,8 @@ import dev.mrshawn.pokeblocks.PokeblocksLog;
 import dev.mrshawn.pokeblocks.config.PokeblocksConfigFiles;
 
 import java.nio.file.Path;
+import java.util.ArrayList;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -88,9 +90,22 @@ public class FigurineDescriptionOverrides {
 
 	/**
 	 * Returns the description override for a figurine, or null if none exists.
+	 * Answers from the server's {@link ServerOverrides} snapshot when one is active.
 	 */
 	public static String getOverride(String figurineId) {
 		if (figurineId == null) return null;
+		ServerOverrides.Remote remote = ServerOverrides.current();
+		if (remote != null) return remote.figurineDescriptions().get(figurineId.toLowerCase());
 		return overrides.get(figurineId.toLowerCase());
+	}
+
+	/** The effective local entries as config-format lines ({@code "id description text"}), sorted. */
+	public static List<String> exportLines() {
+		List<String> lines = new ArrayList<>();
+		for (Map.Entry<String, String> e : overrides.entrySet()) {
+			lines.add(e.getKey() + " " + e.getValue());
+		}
+		Collections.sort(lines);
+		return lines;
 	}
 }

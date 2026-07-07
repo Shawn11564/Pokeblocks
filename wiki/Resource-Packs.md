@@ -20,15 +20,72 @@ The built pack always advertises a **content-derived UUID** so the vanilla clien
 
 On `onServerAboutToStart`, Pokeblocks builds and caches the merged pack:
 
-- Every sub-pack under `config/Pokeblocks/resourcepack/` is scanned and merged into `<serverDir>/pokeblocks_custom_pack.zip`.
+- When `include_builtin_assets` is on (the default), the mod's own bundled doll/figurine/decoration assets (`assets/pokeblocks/{geo,textures,animations}/block/`) are loaded **first**, at the lowest priority — see [Doll-only mod updates](#doll-only-mod-updates-outdated-clients-still-see-new-dolls) below for why.
+- Every sub-pack under `config/Pokeblocks/resourcepack/` is scanned and merged into `<serverDir>/pokeblocks_custom_pack.zip`. Sub-packs always override the built-in assets, so admin retextures of built-in dolls keep working.
 - The merged `pack.mcmeta` is written with **`pack_format` 26** and description **`Pokeblocks Custom Dolls`**.
 - Sub-packs are loaded in **alphabetical order** for a deterministic, stable hash. The `custom/` folder is loaded **last**, so it overrides all other sub-packs.
-- Cross-pack file conflicts are logged during the build.
+- Cross-pack file conflicts are logged during the build (overriding a built-in asset is intentional and not logged as a conflict).
 - All zip entries are written with a fixed timestamp (`setTime(0L)`) so the same inputs always produce the same hash.
 
 ### Rebuild-skip (stable hash across restarts)
 
-Before rebuilding, Pokeblocks computes an **input fingerprint** — a SHA-1 over the sorted `relative-path|size|mtime` of every file under `config/Pokeblocks/resourcepack/`. If the cached zip still exists and the fingerprint matches the previously cached one, **the build is skipped** and the existing cached pack and SHA are reused. This keeps the served pack's SHA (and therefore its UUID and ETag) stable across restarts when nothing has changed.
+Before rebuilding, Pokeblocks computes an **input fingerprint** — a SHA-1 over the sorted `relative-path|size|mtime` of every file under `config/Pokeblocks/resourcepack/`, plus the `include_builtin_assets` setting. If the cached zip still exists and the fingerprint matches the previously cached one, **the build is skipped** and the existing cached pack and SHA are reused. This keeps the served pack's SHA (and therefore its UUID and ETag) stable across restarts when nothing has changed.
+
+---
+
+## Doll-only mod updates (outdated clients still see new dolls)
+
+Dolls, figurines and generic decorations are **data-driven**: they are not individual blocks or items, so a mod update that only adds new dolls adds **no new registry entries and no new network payloads**. That means a client running an **older Pokeblocks version can still join** a server running a newer one — and, thanks to `include_builtin_assets`, still **see** the new dolls:
+
+```toml
+[resourcepack]
+include_builtin_assets = true   # default
+```
+
+**How it works:**
+
+1. The server bundles its own built-in doll assets (models, textures, animations) into the served pack, alongside any admin custom assets.
+2. On join, every client receives the pack through the vanilla server-resource-pack mechanism.
+3. When the pack applies, the client re-scans its resources (the same reload path used for admin custom packs) and registers any dolls it didn't know about — new dolls render in-world, in item form, in the compendium, and get correct geo-derived hitboxes, without a client update.
+
+**The workflow for a doll-only release:** update the mod on the server, restart it, done. Players on the previous version join as usual; the (re)built pack carries the new dolls to them. Players who update their client get identical behavior — the served assets simply match what their jar already has.
+
+**Limits — when clients still must update:**
+
+- Updates that add new **blocks, items, entities, sounds or other registry entries** (e.g. new *decorative* furniture blocks, which are individually registered) still require the matching client version — the loaders' registry sync will refuse older clients.
+- Clients older than the version that introduced this feature don't have the resource re-scan wiring and can't benefit retroactively.
+- Cosmetic metadata that lives in server config (rarity overrides, figurine display names) is applied server-side; an outdated client derives display names from the doll id and computes rarity from flags, which can differ slightly from the server's overrides in tooltips.
+
+Turning `include_builtin_assets` **off** restores the old behavior: only admin custom assets are served (the pack is skipped entirely when there are none), and players need the server's mod version to see newly added dolls. Note that with it **on**, a server with no custom assets now serves a pack where it previously served none — players see the vanilla resource-pack prompt (and are kicked on decline if `kick_on_decline = true`).
+
+---
+
+## Delta serving (players download only what they're missing)
+
+```toml
+[resourcepack]
+delta_serving = true   # default; only applies when distribution = self_host
+```
+
+With built-in assets bundled, the full pack is mostly stuff an up-to-date player already has. Delta serving fixes that with a tiny handshake on join:
+
+1. The server sends delta-capable clients a **pack manifest** — every served zip entry with its SHA-1 — over an **optional** custom payload channel (`pokeblocks:pack_manifest` / `pokeblocks:pack_request`; a `pokeblocks:pack_sync` channel on Forge).
+2. The client hashes the doll assets its own mod jar can already resolve, diffs, and answers with a **bitset** ("I need entries 3, 17, …") — a few bytes regardless of how many assets the mod grows.
+3. The server builds a **subset zip** with exactly those entries (LRU-cached — identical installs share one delta), serves it from the same built-in HTTP server under `/pokeblocks_delta/<sha>.zip`, and pushes that per-player URL through the ordinary vanilla pack packet.
+
+In practice: an up-to-date player downloads only the admin custom assets and the server-overrides document (typically a few KiB); an outdated player additionally gets just the dolls their version is missing.
+
+**Fallbacks — the full pack is always a correct superset, so anything unusual falls back to it:** clients whose Pokeblocks predates the handshake (the channel is optional, so they still join fine), `distribution = remote_url` (a static remote zip can't be tailored), a manifest/request race with a concurrent `/pokeblocks resourcepack rebuild`, a client that never answers (10s timeout), or any error while building/serving a delta.
+
+---
+
+## Server-authoritative display values (`server_overrides.json`)
+
+Every built pack also carries `assets/pokeblocks/server_overrides.json` — a snapshot of the server's **effective** display configuration: `doll_rarity` overrides, `rarity_weights`, `rarity_acquisition_divisors`, `ignored_rarity_flags`, and the figurine `names`/`descriptions`/`tags`. The sections use the same line formats as the config files they mirror, so you can read a served pack's values directly.
+
+When the pack applies on a client, the mod parses this file and answers **all** rarity/name lookups from it — tooltips, compendium rarity tiers, drop-chance percentages and figurine names now show the *server's* configuration, not whatever the player's local files say (including *absence*: an override the server doesn't have resolves as absent on the client, even if a local file defines one). When the pack is removed on disconnect, the resource reload drops the snapshot and local values take over again.
+
+Because the pack's input fingerprint hashes this document, editing `doll_rarity.json` (or any of the mirrored files) and running `/pokeblocks resourcepack rebuild` re-hashes the pack and re-syncs every online player.
 
 ### Sub-pack layout
 

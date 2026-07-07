@@ -147,9 +147,17 @@ public class RarityWeightConfig {
     }
     
     /**
-     * Gets the weight for a specific rarity
+     * Gets the weight for a specific rarity. Answers from the server's {@link ServerOverrides}
+     * snapshot when one is active (multiplayer client), else the locally-loaded config.
      */
     public static int getWeight(DollRarity rarity) {
+        ServerOverrides.Remote remote = ServerOverrides.current();
+        if (remote != null) return remote.rarityWeights().getOrDefault(rarity, rarity.getDefaultWeight());
+        return weights.getOrDefault(rarity, rarity.getDefaultWeight());
+    }
+
+    /** The effective LOCAL weight for a rarity, ignoring any remote snapshot — used by the server-side export. */
+    public static int getLocalWeight(DollRarity rarity) {
         return weights.getOrDefault(rarity, rarity.getDefaultWeight());
     }
     

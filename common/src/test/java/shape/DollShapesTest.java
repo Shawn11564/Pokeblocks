@@ -89,6 +89,29 @@ class DollShapesTest {
 	}
 
 	@Test
+	void modelBoundsExposeTheOuterRenderBox() {
+		double[] bounds = DollShapes.modelBounds("geo/block/pokedoll_bulbasaur.geo.json");
+		assertNotNull(bounds, "bundled model must yield outer bounds");
+
+		// Model space: origin at bottom-center, so the footprint straddles zero and has real extent.
+		assertTrue(bounds[0] < 0 && bounds[3] > 0, "footprint straddles the origin on x");
+		assertTrue(bounds[2] < 0 && bounds[5] > 0, "footprint straddles the origin on z");
+		assertTrue(bounds[4] > bounds[1], "has height");
+
+		// Over-approximation: contains the strict yaw-0 hitbox (block space is model space + (0.5, 0, 0.5)).
+		AABB hitbox = DollShapes.pokedollVariant("bulbasaur", NO_FLAGS, 0).bounds();
+		assertTrue(bounds[0] <= hitbox.minX - 0.5 + 1e-9 && bounds[3] >= hitbox.maxX - 0.5 - 1e-9
+						&& bounds[1] <= hitbox.minY + 1e-9 && bounds[4] >= hitbox.maxY - 1e-9
+						&& bounds[2] <= hitbox.minZ - 0.5 + 1e-9 && bounds[5] >= hitbox.maxZ - 0.5 - 1e-9,
+				"outer render bounds must contain the strict hitbox");
+
+		assertSame(bounds, DollShapes.modelBounds("geo/block/pokedoll_bulbasaur.geo.json"),
+				"bounds are cached per path");
+		assertNull(DollShapes.modelBounds("geo/block/pokedoll_definitely_missing.geo.json"),
+				"unresolvable models report null so the renderer falls back");
+	}
+
+	@Test
 	void shapesAreCachedPerModelRotationAndScale() {
 		assertSame(DollShapes.pokedollVariant("eevee", NO_FLAGS, 5),
 				DollShapes.pokedollVariant("eevee", NO_FLAGS, 5),

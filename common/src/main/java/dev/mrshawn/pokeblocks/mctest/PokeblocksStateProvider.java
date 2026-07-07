@@ -17,6 +17,7 @@ import dev.mrshawn.pokeblocks.item.loot.LootInjector;
 import dev.mrshawn.pokeblocks.pokemon.ModelFlag;
 import dev.mrshawn.pokeblocks.recipe.PokeblocksIngredient;
 import dev.mrshawn.pokeblocks.registry.PokemonRegistry;
+import dev.mrshawn.pokeblocks.resourcepack.CustomPackManager;
 import dev.mrshawn.pokeblocks.shape.DollShapes;
 import io.mctest.agent.core.McTestStateProvider;
 import net.minecraft.core.Direction;
@@ -31,6 +32,7 @@ import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 import java.util.Set;
+import java.util.zip.ZipFile;
 
 /**
  * Pokeblocks' implementation of the mc-test server-truth SPI ({@link McTestStateProvider}). It lets
@@ -153,6 +155,15 @@ public final class PokeblocksStateProvider implements McTestStateProvider {
                 yield ingredient.test(stack);
             }
 
+            // ── Served resource pack: built at server pre-start (CustomPackManager.buildAndCache) ──
+            // Whether the served pack zip was built and still exists on disk. A clean server builds one
+            // even with no admin custom assets, because include_builtin_assets defaults to true.
+            case "resourcepack.built" -> CustomPackManager.hasPack();
+            // The number of zip entries under a path prefix in the built pack (0 when no pack was built).
+            // Entries under assets/pokeblocks/geo/block/ prove the built-in doll assets were bundled —
+            // the version-skew guarantee that outdated clients still receive newly added dolls.
+            case "resourcepack.entriesUnder" -> countPackEntriesUnder(requireStr(args, "prefix"));
+
             // ── Config truth (the bundled defaults a clean server boots with) ──
             case "config.dollPopping" -> PokeblocksConfig.isDollPoppingEnabled();
             case "config.lootDropChanceX1000" -> scaleX1000(PokeblocksConfig.getLootDropChance());
@@ -179,6 +190,16 @@ public final class PokeblocksStateProvider implements McTestStateProvider {
     private static boolean registryContains(Registry<?> registry, String id) {
         ResourceLocation rl = ResourceLocation.tryParse(id);
         return rl != null && registry.containsKey(rl);
+    }
+
+    /** Counts non-directory entries under {@code prefix} in the built served pack (0 when no pack). */
+    private static int countPackEntriesUnder(String prefix) throws Exception {
+        if (!CustomPackManager.hasPack()) {
+            return 0;
+        }
+        try (ZipFile zip = new ZipFile(CustomPackManager.getCachedPack().toFile())) {
+            return (int) zip.stream().filter(e -> !e.isDirectory() && e.getName().startsWith(prefix)).count();
+        }
     }
 
     /**

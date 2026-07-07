@@ -6,6 +6,7 @@ import dev.mrshawn.pokeblocks.PokeblocksLog;
 import dev.mrshawn.pokeblocks.resourcepack.CustomPackBuilder;
 import dev.mrshawn.pokeblocks.resourcepack.CustomPackManager;
 import dev.mrshawn.pokeblocks.resourcepack.ResourcePackServer;
+import dev.mrshawn.pokeblocks.resourcepack.sync.ServerPackSync;
 import net.minecraft.commands.CommandSourceStack;
 import net.minecraft.commands.Commands;
 import net.minecraft.network.chat.Component;
@@ -72,14 +73,16 @@ public class ResourcePackCMD {
 			// then re-push to everyone online. Honors the [resourcepack] config.
 			ResourcePackServer.PackPush push = ResourcePackServer.prepare(server);
 			if (push == null) {
-				src.sendFailure(Component.literal("Nothing to distribute: either no custom resources were found to "
-						+ "build, or distribution = remote_url without a usable remote_url/remote_sha1 "
-						+ "(see the [resourcepack] section of config.toml)."));
+				src.sendFailure(Component.literal("Nothing to distribute: no custom resources were found and "
+						+ "include_builtin_assets is off, or distribution = remote_url without a usable "
+						+ "remote_url/remote_sha1 (see the [resourcepack] section of config.toml)."));
 				return 0;
 			}
 
 			src.sendSuccess(() -> Component.literal("Distributing resource pack from: " + push.url()), false);
-			ResourcePackServer.pushToAll(server);
+			// Re-runs the join-time negotiation per player: delta-capable clients get a fresh delta
+			// against the rebuilt pack, everyone else gets the full pack re-pushed.
+			ServerPackSync.renegotiateAll(server);
 			src.sendSuccess(() -> Component.literal("Re-sent the pack to connected players."), false);
 
 			return 1;

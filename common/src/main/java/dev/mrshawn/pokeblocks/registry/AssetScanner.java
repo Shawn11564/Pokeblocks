@@ -9,7 +9,9 @@ import java.net.URI;
 import java.net.URL;
 import java.nio.file.*;
 import java.util.Collections;
+import java.util.Map;
 import java.util.Set;
+import java.util.TreeMap;
 import java.util.TreeSet;
 import java.util.function.Predicate;
 import java.util.stream.Stream;
@@ -61,6 +63,25 @@ public final class AssetScanner {
 			}
 		} catch (Exception e) {
 			LOGGER.error("Failed to scan classpath directory '{}'", resourceDir, e);
+		}
+		return output;
+	}
+
+	/**
+	 * Like {@link #scanClasspath}, but also reads each matching file, returning bare file name → bytes.
+	 * Used to bundle the mod's built-in assets into the served resource pack, so clients on an older
+	 * mod version can still receive dolls added by a newer server. Returns an empty map if the
+	 * directory is absent or unreadable; individual unreadable files are skipped with a log line.
+	 */
+	public static Map<String, byte[]> scanClasspathBytes(String resourceDir, Predicate<String> nameFilter) {
+		Map<String, byte[]> output = new TreeMap<>();
+		for (String name : scanClasspath(resourceDir, nameFilter)) {
+			try (var in = AssetScanner.class.getClassLoader().getResourceAsStream(resourceDir + "/" + name)) {
+				if (in == null) continue;
+				output.put(name, in.readAllBytes());
+			} catch (Exception e) {
+				LOGGER.warn("Failed to read built-in asset '{}/{}'", resourceDir, name, e);
+			}
 		}
 		return output;
 	}

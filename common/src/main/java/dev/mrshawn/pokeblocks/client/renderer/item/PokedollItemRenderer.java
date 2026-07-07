@@ -4,6 +4,8 @@ import com.mojang.blaze3d.vertex.PoseStack;
 import dev.mrshawn.pokeblocks.client.model.item.PokedollItemModel;
 import dev.mrshawn.pokeblocks.item.custom.PokedollItem;
 import dev.mrshawn.pokeblocks.pokemon.ModelFlag;
+import dev.mrshawn.pokeblocks.shape.DollShapes;
+import dev.mrshawn.pokeblocks.shape.HeadFit;
 import net.minecraft.client.renderer.MultiBufferSource;
 import net.minecraft.world.item.ItemDisplayContext;
 import net.minecraft.world.item.ItemStack;
@@ -63,7 +65,19 @@ public class PokedollItemRenderer extends GeoItemRenderer<PokedollItem> {
                                     PokedollItem animatable, BakedGeoModel model, boolean isReRender,
                                     float partialTick, int packedLight, int packedOverlay) {
         Set<ModelFlag> flags = PokedollItem.getFlagsFromStack(this.currentItemStack);
-        if (flags.contains(ModelFlag.GIGANTIC)) {
+        boolean gigantic = flags.contains(ModelFlag.GIGANTIC);
+        if (currentTransformType == ItemDisplayContext.HEAD) {
+            // Worn on a head: seat the doll on top instead of leaving its origin buried mid-head.
+            // The ops compose against GeckoLib's (0.5, 0.51, 0.5) post-translate, which only runs
+            // on the initial render — so only apply them then.
+            if (!isReRender) {
+                double[] bounds = DollShapes.modelBounds(this.model.getModelResource(animatable).getPath());
+                float[] ops = HeadFit.headPoseOps(bounds, gigantic);
+                poseStack.translate(ops[0], ops[1], ops[2]);
+                poseStack.scale(ops[3], ops[3], ops[3]);
+                poseStack.translate(ops[4], ops[5], ops[6]);
+            }
+        } else if (gigantic) {
             float scale = currentTransformType == ItemDisplayContext.GUI ? (GIGANTIC_INVENTORY_SCALE / 0.5f) : (GIGANTIC_HELD_SCALE / 0.5f);
             // Translate up by half the scale increase before scaling so the model's base stays
             // at the same level and it grows upward, matching vanilla block item behaviour.

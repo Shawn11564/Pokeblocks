@@ -116,6 +116,18 @@ public class DollRarityAcquisitionDivisors {
      */
     public static int getAcquisitionDivisor(String pokemon, Set<ModelFlag> flags) {
         String key = DollRarityOverrides.buildKey(pokemon, flags);
+        ServerOverrides.Remote remote = ServerOverrides.current();
+        if (remote != null) return remote.acquisitionDivisors().getOrDefault(key, 1);
         return divisorsMap.getOrDefault(key, 1);
+    }
+
+    /** The effective local entries as config-format lines ({@code "pokemon [flag ...] divisor"}), sorted. */
+    public static List<String> exportLines() {
+        List<String> lines = new ArrayList<>();
+        for (Map.Entry<String, Integer> e : divisorsMap.entrySet()) {
+            lines.add(e.getKey().replace(':', ' ') + " " + e.getValue());
+        }
+        Collections.sort(lines);
+        return lines;
     }
 }

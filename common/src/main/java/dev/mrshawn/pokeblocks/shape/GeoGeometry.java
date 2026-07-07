@@ -49,6 +49,34 @@ public final class GeoGeometry {
 	}
 
 	/**
+	 * The outer axis-aligned bounding box of the whole model in render model space (origin at the
+	 * model's bottom-center, 1.0 = one block — the space the renderer draws in before any placement
+	 * transform), as {@code [x0, y0, z0, x1, y1, z1]}.
+	 * <p>
+	 * Unlike {@link GeoShapeCompiler#compile} this is an <b>over</b>-approximation: every cube's
+	 * rotated corners are inside it, so it contains everything the model renders. Use it for render
+	 * fitting (centering, seating, size caps), never for hitboxes. Always a valid box —
+	 * {@link #parse} rejects cube-less geometry.
+	 */
+	public double[] outerBounds() {
+		double minX = Double.MAX_VALUE, minY = Double.MAX_VALUE, minZ = Double.MAX_VALUE;
+		double maxX = -Double.MAX_VALUE, maxY = -Double.MAX_VALUE, maxZ = -Double.MAX_VALUE;
+		double[] point = new double[3];
+		for (OrientedCube cube : cubes) {
+			for (int corner = 0; corner < 8; corner++) {
+				double cx = (corner & 1) == 0 ? cube.lx0() : cube.lx1();
+				double cy = (corner & 2) == 0 ? cube.ly0() : cube.ly1();
+				double cz = (corner & 4) == 0 ? cube.lz0() : cube.lz1();
+				cube.modelFromLocal().transform(cx, cy, cz, point);
+				minX = Math.min(minX, point[0]); maxX = Math.max(maxX, point[0]);
+				minY = Math.min(minY, point[1]); maxY = Math.max(maxY, point[1]);
+				minZ = Math.min(minZ, point[2]); maxZ = Math.max(maxZ, point[2]);
+			}
+		}
+		return new double[]{minX, minY, minZ, maxX, maxY, maxZ};
+	}
+
+	/**
 	 * Parses raw {@code .geo.json} bytes. Throws {@link IOException} on any structural problem
 	 * (missing geometry, no cubes, malformed numbers) — callers treat that as "model unusable" and
 	 * fall back to the legacy fixed hitbox.

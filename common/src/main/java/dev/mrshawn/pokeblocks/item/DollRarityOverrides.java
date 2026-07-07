@@ -99,6 +99,22 @@ public class DollRarityOverrides {
 
     public static DollRarity getOverride(String pokemon, Set<ModelFlag> activeFlags) {
         String key = buildKey(pokemon, activeFlags);
+        ServerOverrides.Remote remote = ServerOverrides.current();
+        if (remote != null) return remote.dollRarity().get(key);
         return overrides.get(key);
+    }
+
+    /**
+     * The effective local override entries as config-format lines ({@code "pokemon [flag ...] rarity"}),
+     * sorted for a stable export. Used by {@link ServerOverrides#buildJson()}; intentionally reads the
+     * local map (never the remote snapshot) — the server exports its own state.
+     */
+    public static List<String> exportLines() {
+        List<String> lines = new ArrayList<>();
+        for (Map.Entry<String, DollRarity> e : overrides.entrySet()) {
+            lines.add(e.getKey().replace(':', ' ') + " " + e.getValue().name().toLowerCase());
+        }
+        Collections.sort(lines);
+        return lines;
     }
 }
