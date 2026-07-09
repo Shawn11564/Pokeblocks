@@ -1,0 +1,33 @@
+{
+	"format_version": "1.8.0",
+	"animations": {
+		"animation.idle": {
+			"loop": true,
+			"bones": {
+				"pokedoll_sinistea": {
+					"scale": {
+						"vector": [0.6, 0.6, 0.6]
+					}
+				},
+				"tea_droplet": {
+					"rotation": {
+						"vector": [14.5107, 43.0796, 20.7535]
+					},
+					"position": {
+						"vector": [1.39012, -0.25882, 0.02409]
+					}
+				},
+				"right_pinky": {
+					"rotation": {
+						"vector": [20.941, -40.7895, -30.3612]
+					}
+				},
+				"tea_droplet_tip": {
+					"rotation": {
+						"vector": [0, 0, 47.5]
+					}
+				}
+			}
+		}
+	}
+}
