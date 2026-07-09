@@ -3,6 +3,7 @@ package dev.mrshawn.pokeblocks.item;
 import dev.mrshawn.pokeblocks.PokeblocksCommon;
 import dev.mrshawn.pokeblocks.block.custom.decorative.DecorativeDefinition;
 import dev.mrshawn.pokeblocks.constants.ModSettings;
+import dev.mrshawn.pokeblocks.pokemon.FigurineFlag;
 import dev.mrshawn.pokeblocks.pokemon.ModelFlag;
 import net.minecraft.core.component.DataComponents;
 import net.minecraft.nbt.CompoundTag;
@@ -65,11 +66,22 @@ public final class PokeblocksItemData {
 		return tag;
 	}
 
-	/** Builds the canonical figurine tag: {@code {id, figurine, <true flags>}}. */
+	/** Builds the canonical figurine tag: {@code {id, figurine, <true flags>}} with no figurine flags. */
 	public static CompoundTag figurineTag(String figurine, Collection<ModelFlag> activeFlags) {
+		return figurineTag(figurine, activeFlags, null);
+	}
+
+	/**
+	 * Builds the canonical figurine tag: {@code {id, figurine, <true flags>}}. Doll {@link ModelFlag}s
+	 * (only {@link ModelFlag#GIGANTIC} applies to figurines, for scale) and {@link FigurineFlag}s (the
+	 * model/texture variant, e.g. {@code devoured}) share the compound — their tag-names never collide.
+	 */
+	public static CompoundTag figurineTag(String figurine, Collection<ModelFlag> activeFlags,
+										  Collection<FigurineFlag> figurineFlags) {
 		CompoundTag tag = base(blockEntityId(ModSettings.FIGURINE_ID));
 		tag.putString(KEY_FIGURINE, figurine == null || figurine.isEmpty() ? ModSettings.DEFAULT_FIGURINE : figurine);
 		writeFlags(tag, activeFlags);
+		writeFigurineFlags(tag, figurineFlags);
 		return tag;
 	}
 
@@ -132,6 +144,13 @@ public final class PokeblocksItemData {
 		}
 	}
 
+	private static void writeFigurineFlags(CompoundTag tag, Collection<FigurineFlag> figurineFlags) {
+		if (figurineFlags == null) return;
+		for (FigurineFlag flag : figurineFlags) {
+			tag.putBoolean(flag.getTagName(), true);
+		}
+	}
+
 	// --- Readers -------------------------------------------------------------
 
 	/** Reads a string key from the stack's {@code BLOCK_ENTITY_DATA}, or {@code fallback} if absent/empty. */
@@ -150,6 +169,20 @@ public final class PokeblocksItemData {
 		CompoundTag tag = tagOf(stack);
 		if (tag != null) {
 			for (ModelFlag flag : ModelFlag.values()) {
+				if (tag.contains(flag.getTagName()) && tag.getBoolean(flag.getTagName())) {
+					flags.add(flag);
+				}
+			}
+		}
+		return flags;
+	}
+
+	/** Reads the set of figurine flags stored as {@code true} on the stack. */
+	public static Set<FigurineFlag> readActiveFigurineFlags(ItemStack stack) {
+		EnumSet<FigurineFlag> flags = EnumSet.noneOf(FigurineFlag.class);
+		CompoundTag tag = tagOf(stack);
+		if (tag != null) {
+			for (FigurineFlag flag : FigurineFlag.values()) {
 				if (tag.contains(flag.getTagName()) && tag.getBoolean(flag.getTagName())) {
 					flags.add(flag);
 				}

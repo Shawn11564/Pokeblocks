@@ -3,10 +3,13 @@ package dev.mrshawn.pokeblocks.item.custom;
 import dev.mrshawn.pokeblocks.client.renderer.item.FigurineItemRenderer;
 import dev.mrshawn.pokeblocks.compendium.CompendiumKind;
 import dev.mrshawn.pokeblocks.compendium.CompendiumProgressTracker;
+import dev.mrshawn.pokeblocks.compendium.CompendiumVariantKey;
 import dev.mrshawn.pokeblocks.constants.ModSettings;
 import dev.mrshawn.pokeblocks.item.FigurineNameOverrides;
 import dev.mrshawn.pokeblocks.item.FigurineTagOverrides;
 import dev.mrshawn.pokeblocks.item.PokeblocksItemData;
+import dev.mrshawn.pokeblocks.pokemon.FigurineFlag;
+import dev.mrshawn.pokeblocks.registry.FigurineRegistry;
 import dev.mrshawn.pokeblocks.registry.ItemRegistry;
 import net.minecraft.ChatFormatting;
 import net.minecraft.client.renderer.BlockEntityWithoutLevelRenderer;
@@ -25,7 +28,14 @@ import software.bernie.geckolib.animatable.instance.AnimatableInstanceCache;
 import software.bernie.geckolib.animation.AnimatableManager;
 import software.bernie.geckolib.util.GeckoLibUtil;
 
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collection;
+import java.util.Comparator;
+import java.util.EnumSet;
 import java.util.List;
+import java.util.Set;
+import java.util.TreeSet;
 import java.util.function.Consumer;
 
 public class FigurineItem extends BlockItem implements GeoItem {
@@ -61,28 +71,53 @@ public class FigurineItem extends BlockItem implements GeoItem {
 	@SuppressWarnings({"override.param.invalid", "override.return.invalid"})
 	public Component getName(ItemStack stack) {
 		String figurine = getFigurineFromStack(stack);
-		return Component.literal(buildDisplayName(figurine)).withStyle(ChatFormatting.WHITE);
+		Set<FigurineFlag> flags = getFigurineFlagsFromStack(stack);
+		return Component.literal(buildDisplayName(figurine, flags)).withStyle(ChatFormatting.WHITE);
 	}
 
 	/**
-	 * Builds display name in format: [Figurine Name] Figurine
-	 * Uses name override if one exists, otherwise capitalizes and formats the id.
+	 * Builds display name in format: [Flag...] [Figurine Name] Figurine, e.g. {@code Devoured Amongsans1015 Figurine}.
+	 * Uses the base name override if one exists, otherwise capitalizes and formats the id; flag prefixes are
+	 * applied on top of either (mirroring the doll {@code Shiny Bulbasaur Pokedoll} convention).
 	 */
-	private static String buildDisplayName(String figurine) {
+	private static String buildDisplayName(String figurine, Set<FigurineFlag> flags) {
 		String id = figurine == null || figurine.isEmpty() ? ModSettings.DEFAULT_FIGURINE : figurine;
+
+		StringBuilder sb = new StringBuilder();
+		List<FigurineFlag> sorted = new ArrayList<>(flags);
+		sorted.sort(Comparator.comparingInt(FigurineFlag::getSortOrder));
+		for (FigurineFlag flag : sorted) {
+			sb.append(flag.getDisplayName()).append(" ");
+		}
 
 		String override = FigurineNameOverrides.getOverride(id);
 		if (override != null) {
-			return override + " Figurine";
+			sb.append(override);
+		} else {
+			// Default: capitalize first letter and replace underscores with spaces
+			sb.append(id.substring(0, 1).toUpperCase()).append(id.substring(1).replace("_", " "));
 		}
 
-		// Default: capitalize first letter and replace underscores with spaces
-		String formattedName = id.substring(0, 1).toUpperCase() + id.substring(1).replace("_", " ");
-		return formattedName + " Figurine";
+		sb.append(" Figurine");
+		return sb.toString().trim().replaceAll("\\s+", " ");
 	}
 
 	public static String getFigurineFromStack(ItemStack stack) {
 		return PokeblocksItemData.readString(stack, PokeblocksItemData.KEY_FIGURINE, ModSettings.DEFAULT_FIGURINE);
+	}
+
+	/** The active model/texture variant flags stored on the stack (e.g. {@code devoured}). */
+	public static Set<FigurineFlag> getFigurineFlagsFromStack(ItemStack stack) {
+		return PokeblocksItemData.readActiveFigurineFlags(stack);
+	}
+
+	/** The canonical compendium progress key of a figurine stack: base id + sorted flag names. */
+	public static String compendiumKey(ItemStack stack) {
+		List<String> flagNames = new ArrayList<>();
+		for (FigurineFlag flag : getFigurineFlagsFromStack(stack)) {
+			flagNames.add(flag.getTagName());
+		}
+		return CompendiumVariantKey.of(getFigurineFromStack(stack), flagNames);
 	}
 
 	@Override
@@ -91,7 +126,7 @@ public class FigurineItem extends BlockItem implements GeoItem {
 		// server-side latch, so the throttled cadence is invisible).
 		if (!level.isClientSide && entity instanceof ServerPlayer player
 				&& entity.tickCount % CompendiumProgressTracker.RECORD_INTERVAL_TICKS == 0) {
-			CompendiumProgressTracker.record(player, CompendiumKind.FIGURINE, getFigurineFromStack(stack));
+			CompendiumProgressTracker.record(player, CompendiumKind.FIGURINE, compendiumKey(stack));
 		}
 	}
 
@@ -106,9 +141,44 @@ public class FigurineItem extends BlockItem implements GeoItem {
 	}
 
 	public static ItemStack createFigurine(String figurine) {
+		return createFigurine(figurine, Set.of());
+	}
+
+	public static ItemStack createFigurine(String figurine, FigurineFlag... flags) {
+		return createFigurine(figurine, flags.length == 0 ? Set.of() : EnumSet.copyOf(Arrays.asList(flags)));
+	}
+
+	public static ItemStack createFigurine(String figurine, Collection<FigurineFlag> flags) {
 		ItemStack stack = new ItemStack(ItemRegistry.FIGURINE_ITEM.get());
-		// Figurines carry no active flags by default; PokeblocksItemData writes the canonical minimal form.
-		PokeblocksItemData.apply(stack, PokeblocksItemData.figurineTag(figurine, List.of()));
+		// Figurines carry no doll flags by default; only the model/texture variant flags. PokeblocksItemData
+		// writes the canonical minimal form (only true flags are stored).
+		PokeblocksItemData.apply(stack, PokeblocksItemData.figurineTag(figurine, List.of(), flags));
 		return stack;
+	}
+
+	/**
+	 * Every valid variant of a figurine — its base form first, then each flag combination the figurine
+	 * ships (see {@link FigurineRegistry#variantsOf}), in a stable order (fewer flags first, then by
+	 * sorted flag names). Used to populate the creative tab and the figurine compendium's variant strip.
+	 */
+	public static List<ItemStack> getAllMutations(String figurine) {
+		List<ItemStack> mutations = new ArrayList<>();
+		mutations.add(createFigurine(figurine));
+
+		List<Set<FigurineFlag>> combos = new ArrayList<>(FigurineRegistry.variantsOf(figurine));
+		combos.sort(Comparator
+				.comparingInt((Set<FigurineFlag> c) -> c.size())
+				.thenComparing(FigurineItem::flagKey));
+		for (Set<FigurineFlag> combo : combos) {
+			mutations.add(createFigurine(figurine, combo));
+		}
+		return mutations;
+	}
+
+	/** A stable, order-independent string key for a flag combination (sorted tag names). */
+	private static String flagKey(Set<FigurineFlag> flags) {
+		TreeSet<String> names = new TreeSet<>();
+		for (FigurineFlag flag : flags) names.add(flag.getTagName());
+		return String.join(",", names);
 	}
 }

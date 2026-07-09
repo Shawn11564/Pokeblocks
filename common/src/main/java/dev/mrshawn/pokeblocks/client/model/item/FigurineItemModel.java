@@ -3,6 +3,7 @@ package dev.mrshawn.pokeblocks.client.model.item;
 import dev.mrshawn.pokeblocks.client.model.PokeblocksAssetResolver;
 import dev.mrshawn.pokeblocks.constants.ModSettings;
 import dev.mrshawn.pokeblocks.item.custom.FigurineItem;
+import dev.mrshawn.pokeblocks.pokemon.FigurineFlag;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.RenderType;
 import net.minecraft.resources.ResourceLocation;
@@ -10,6 +11,8 @@ import net.minecraft.server.packs.resources.ResourceManager;
 import net.minecraft.world.item.ItemStack;
 import software.bernie.geckolib.cache.object.BakedGeoModel;
 import software.bernie.geckolib.model.GeoModel;
+
+import java.util.Set;
 
 public class FigurineItemModel extends GeoModel<FigurineItem> {
 	private ItemStack currentStack = ItemStack.EMPTY;
@@ -24,6 +27,11 @@ public class FigurineItemModel extends GeoModel<FigurineItem> {
 		return PokeblocksAssetResolver.validatedFigurine(rm, id);
 	}
 
+	/** The active variant flags for the current stack. */
+	private Set<FigurineFlag> flags() {
+		return currentStack.isEmpty() ? Set.of() : FigurineItem.getFigurineFlagsFromStack(currentStack);
+	}
+
 	@Override
 	public BakedGeoModel getBakedModel(ResourceLocation location) {
 		try {
@@ -36,13 +44,13 @@ public class FigurineItemModel extends GeoModel<FigurineItem> {
 	@Override
 	public ResourceLocation getModelResource(FigurineItem animatable) {
 		ResourceManager rm = Minecraft.getInstance().getResourceManager();
-		return PokeblocksAssetResolver.figurineModel(figurine(rm));
+		return PokeblocksAssetResolver.figurineModel(rm, figurine(rm), flags());
 	}
 
 	@Override
 	public ResourceLocation getTextureResource(FigurineItem animatable) {
 		ResourceManager rm = Minecraft.getInstance().getResourceManager();
-		return PokeblocksAssetResolver.figurineTexture(rm, figurine(rm));
+		return PokeblocksAssetResolver.figurineTexture(rm, figurine(rm), flags());
 	}
 
 	@Override

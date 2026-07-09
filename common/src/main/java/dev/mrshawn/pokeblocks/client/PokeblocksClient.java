@@ -111,7 +111,10 @@ public final class PokeblocksClient {
 				return;
 			}
 			try (var in = resource.get().open()) {
-				ServerOverrides.applyJson(new String(in.readAllBytes(), StandardCharsets.UTF_8));
+				// Bounded read: this file comes from the (possibly hostile) server pack, so cap the
+				// allocation here. One byte over the limit is enough for applyJson to detect and reject.
+				byte[] bytes = in.readNBytes(ServerOverrides.MAX_JSON_CHARS + 1);
+				ServerOverrides.applyJson(new String(bytes, StandardCharsets.UTF_8));
 			}
 		} catch (Exception e) {
 			PokeblocksLog.LOGGER.error("Failed to apply server display overrides from the resource pack", e);

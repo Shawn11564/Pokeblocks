@@ -15,6 +15,12 @@ jar {
     }
 }
 
+repositories {
+    // Trinkets (optional accessory-slot integration) + its Cardinal Components transitive deps.
+    maven { url = 'https://maven.terraformersmc.com/releases' }
+    maven { url = 'https://maven.ladysnake.org/releases' }
+}
+
 dependencies {
     minecraft "com.mojang:minecraft:${minecraft_version}"
 	mappings loom.layered() {
@@ -24,6 +30,11 @@ dependencies {
     modImplementation "net.fabricmc:fabric-loader:${fabric_loader_version}"
     modImplementation "net.fabricmc.fabric-api:fabric-api:${fabric_version}"
     modImplementation "software.bernie.geckolib:geckolib-fabric-${minecraft_version}:${geckolib_version}"
+    // Trinkets: optional at runtime. Present on the compile + dev-run classpath (pulls its Cardinal
+    // Components transitives) so the head-slot can be tested in dev; NOT bundled into the shipped jar,
+    // and declared optional in fabric.mod.json. The integration code is guarded by an isModLoaded check.
+    modCompileOnly "dev.emi:trinkets:${trinkets_version}"
+    modLocalRuntime "dev.emi:trinkets:${trinkets_version}"
     annotationProcessor "org.spongepowered:mixin:0.8.5:processor"
     compileOnly project(":common")
     // mc-test server-truth SPI — this module recompiles common's sources (incl. PokeblocksStateProvider),

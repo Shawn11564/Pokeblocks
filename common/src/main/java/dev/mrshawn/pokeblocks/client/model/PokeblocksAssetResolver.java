@@ -3,7 +3,10 @@ package dev.mrshawn.pokeblocks.client.model;
 import dev.mrshawn.pokeblocks.PokeblocksCommon;
 import dev.mrshawn.pokeblocks.client.renderer.animation.AnimationResolver;
 import dev.mrshawn.pokeblocks.constants.ModSettings;
+import dev.mrshawn.pokeblocks.pokemon.FigurineFlag;
 import dev.mrshawn.pokeblocks.pokemon.ModelFlag;
+import dev.mrshawn.pokeblocks.pokemon.PokemonData;
+import dev.mrshawn.pokeblocks.registry.PokemonRegistry;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.packs.resources.ResourceManager;
 
@@ -67,6 +70,7 @@ public final class PokeblocksAssetResolver {
 	 */
 	private static final Map<String, ResourceLocation> RESOLVED_POKEDOLL_MODELS = new HashMap<>();
 	private static final Map<String, ResourceLocation> RESOLVED_POKEDOLL_ANIMATIONS = new HashMap<>();
+	private static final Map<String, ResourceLocation> RESOLVED_FIGURINE_MODELS = new HashMap<>();
 	private static final Map<String, ResourceLocation> RESOLVED_FIGURINE_TEXTURES = new HashMap<>();
 	private static final Map<String, ResourceLocation> RESOLVED_DECORATION_TEXTURES = new HashMap<>();
 	private static final Map<String, ResourceLocation> RESOLVED_DECORATION_ANIMATIONS = new HashMap<>();
@@ -119,15 +123,32 @@ public final class PokeblocksAssetResolver {
 
 	// --- Pokedoll ------------------------------------------------------------
 
-	/** Returns {@code pokemon} if its base model exists (cached), else the default pokemon. */
+	/**
+	 * Returns {@code pokemon} if it resolves to a real doll (cached), else the default pokemon.
+	 * A normal doll has a flagless base model; a variant-only doll (e.g. sinistea) has none, so we
+	 * also accept a pokemon whose registered flags include at least one variant model on disk.
+	 */
 	public static String validatedPokemon(ResourceManager rm, String pokemon) {
 		if (pokemon == null || pokemon.isEmpty()) return ModSettings.DEFAULT_POKEMON;
 		if (VALIDATED_POKEMON.contains(pokemon)) return pokemon;
-		if (exists(rm, GEO + "pokedoll_" + pokemon + ".geo.json")) {
+		if (exists(rm, GEO + "pokedoll_" + pokemon + ".geo.json") || hasVariantModel(rm, pokemon)) {
 			VALIDATED_POKEMON.add(pokemon);
 			return pokemon;
 		}
 		return ModSettings.DEFAULT_POKEMON;
+	}
+
+	/** Whether any registered flag-variant model file exists on disk for {@code pokemon}. */
+	private static boolean hasVariantModel(ResourceManager rm, String pokemon) {
+		PokemonData data = PokemonRegistry.getPokemonData(pokemon);
+		if (data == null) return false;
+		for (Map.Entry<ModelFlag, Boolean> entry : data.modelFlags().entrySet()) {
+			if (!Boolean.TRUE.equals(entry.getValue())) continue;
+			String modelSuffix = entry.getKey().getModelSuffix();
+			if (modelSuffix.isEmpty()) continue;
+			if (exists(rm, GEO + "pokedoll_" + pokemon + modelSuffix + ".geo.json")) return true;
+		}
+		return false;
 	}
 
 	/** Clears the pokedoll validation/missing-model caches (e.g. on resource reload). */
@@ -143,6 +164,7 @@ public final class PokeblocksAssetResolver {
 	public static void clearFigurineCache() {
 		VALIDATED_FIGURINES.clear();
 		VALIDATED_FIGURINES.add(ModSettings.DEFAULT_FIGURINE);
+		RESOLVED_FIGURINE_MODELS.clear();
 		RESOLVED_FIGURINE_TEXTURES.clear();
 	}
 
@@ -277,18 +299,68 @@ public final class PokeblocksAssetResolver {
 		return ModSettings.DEFAULT_FIGURINE;
 	}
 
-	/** The figurine model path {@code geo/block/<figurine>_figurine.geo.json}. */
+	/** The base figurine model path {@code geo/block/<figurine>_figurine.geo.json} (no flag variant). */
 	public static ResourceLocation figurineModel(String figurine) {
 		return loc(GEO + figurine + "_figurine.geo.json");
 	}
 
-	/** Resolves a figurine texture, falling back to the default figurine texture. */
-	public static ResourceLocation figurineTexture(ResourceManager rm, String figurine) {
-		ResourceLocation cached = RESOLVED_FIGURINE_TEXTURES.get(figurine);
+	/**
+	 * Builds the model/texture file suffix for {@code flags}, ascending by sort order to match the
+	 * {@code <id><suffix>_figurine.geo.json} naming convention (e.g. {@code _devoured}).
+	 */
+	public static String figurineModelSuffix(Collection<FigurineFlag> flags) {
+		if (flags == null || flags.isEmpty()) return "";
+		List<FigurineFlag> sorted = new ArrayList<>(flags);
+		sorted.sort(Comparator.comparingInt(FigurineFlag::getSortOrder));
+		StringBuilder suffix = new StringBuilder();
+		for (FigurineFlag flag : sorted) suffix.append(flag.getModelSuffix());
+		return suffix.toString();
+	}
+
+	/**
+	 * The variant model {@code geo/block/<figurine><suffix>_figurine.geo.json} for {@code flags} if it
+	 * exists, else the base figurine model. Cached like the pokedoll models.
+	 */
+	public static ResourceLocation figurineModel(ResourceManager rm, String figurine, Collection<FigurineFlag> flags) {
+		String suffix = figurineModelSuffix(flags);
+		if (suffix.isEmpty()) return figurineModel(figurine);
+
+		String key = figurine + "|" + suffix;
+		ResourceLocation cached = RESOLVED_FIGURINE_MODELS.get(key);
 		if (cached != null) return cached;
-		ResourceLocation found = textureFromBase(rm, TEX + figurine + "_figurine");
+
+		ResourceLocation base = figurineModel(figurine);
+		String variantPath = GEO + figurine + suffix + "_figurine.geo.json";
+		try {
+			ResourceLocation result = rm.getResource(loc(variantPath)).isPresent() ? loc(variantPath) : base;
+			RESOLVED_FIGURINE_MODELS.put(key, result);
+			return result;
+		} catch (Exception ignored) {
+			// transient error — fall back to base but don't cache, so we retry next frame
+			return base;
+		}
+	}
+
+	/** Resolves a base figurine texture (no flag variant), falling back to the default figurine texture. */
+	public static ResourceLocation figurineTexture(ResourceManager rm, String figurine) {
+		return figurineTexture(rm, figurine, null);
+	}
+
+	/**
+	 * Resolves a figurine texture for {@code flags} — {@code <figurine><suffix>_figurine} then the base
+	 * {@code <figurine>_figurine}, finally the default figurine texture. Cached; only changes on reload.
+	 */
+	public static ResourceLocation figurineTexture(ResourceManager rm, String figurine, Collection<FigurineFlag> flags) {
+		String suffix = figurineModelSuffix(flags);
+		String key = figurine + "|" + suffix;
+		ResourceLocation cached = RESOLVED_FIGURINE_TEXTURES.get(key);
+		if (cached != null) return cached;
+
+		ResourceLocation found = null;
+		if (!suffix.isEmpty()) found = textureFromBase(rm, TEX + figurine + suffix + "_figurine");
+		if (found == null) found = textureFromBase(rm, TEX + figurine + "_figurine");
 		if (found == null) found = loc(TEX + ModSettings.DEFAULT_FIGURINE + "_figurine_texture.png");
-		RESOLVED_FIGURINE_TEXTURES.put(figurine, found);
+		RESOLVED_FIGURINE_TEXTURES.put(key, found);
 		return found;
 	}
 

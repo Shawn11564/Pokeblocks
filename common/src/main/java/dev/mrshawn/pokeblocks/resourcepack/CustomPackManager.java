@@ -122,20 +122,34 @@ public class CustomPackManager {
 	 * served to a client that already has everything else. Built zips are LRU-cached by requested
 	 * path set — players with identical installs share one delta. {@code null} when no pack exists.
 	 */
-	public static synchronized DeltaPack deltaFor(Collection<String> paths) {
-		if (!hasPack()) return null;
-		try {
-			String key = CustomPackBuilder.computeSHA1(
-					(cachedSha + "\n" + String.join("\n", new TreeSet<>(paths))).getBytes(StandardCharsets.UTF_8));
+	public static DeltaPack deltaFor(Collection<String> paths) {
+		final Path pack;
+		final String sha;
+		final String key;
+		synchronized (CustomPackManager.class) {
+			if (!hasPack()) return null;
+			pack = cachedPack;
+			sha = cachedSha;
+			key = CustomPackBuilder.computeSHA1(
+					(sha + "\n" + String.join("\n", new TreeSet<>(paths))).getBytes(StandardCharsets.UTF_8));
 			DeltaPack cached = deltaCache.get(key);
 			if (cached != null) return cached;
-
-			byte[] zip = CustomPackBuilder.buildSubsetZip(cachedPack, paths);
+		}
+		// Build OUTSIDE the lock: reading + re-zipping the full pack is the expensive part and must not
+		// hold the monitor that main-thread callers of the other synchronized methods (currentManifest
+		// on a concurrent join) need. Two racing builders may duplicate work, but each result is a
+		// correct, self-consistent (bytes, sha) pair and the cache converges.
+		try {
+			byte[] zip = CustomPackBuilder.buildSubsetZip(pack, paths);
 			DeltaPack delta = new DeltaPack(CustomPackBuilder.computeSHA1(zip), zip);
-			deltaCache.put(key, delta);
+			synchronized (CustomPackManager.class) {
+				// Only cache if the pack hasn't been rebuilt under us — a rebuild clears deltaCache and
+				// bumps cachedSha, so caching against the now-stale key would leak a superseded delta.
+				if (sha != null && sha.equals(cachedSha)) deltaCache.put(key, delta);
+			}
 			return delta;
 		} catch (Exception e) {
-			PokeblocksCommon.LOGGER.error("Failed to build delta pack from {}", cachedPack, e);
+			PokeblocksCommon.LOGGER.error("Failed to build delta pack from {}", pack, e);
 			return null;
 		}
 	}

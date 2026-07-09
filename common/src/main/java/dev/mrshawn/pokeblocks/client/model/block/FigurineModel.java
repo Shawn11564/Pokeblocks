@@ -29,13 +29,15 @@ public class FigurineModel extends DefaultedBlockGeoModel<FigurineBlockEntity> {
     @Override
     public ResourceLocation getModelResource(FigurineBlockEntity animatable) {
         ResourceManager rm = Minecraft.getInstance().getResourceManager();
-        return PokeblocksAssetResolver.figurineModel(PokeblocksAssetResolver.validatedFigurine(rm, animatable.getFigurine()));
+        String figurine = PokeblocksAssetResolver.validatedFigurine(rm, animatable.getFigurine());
+        return PokeblocksAssetResolver.figurineModel(rm, figurine, animatable.getFigurineFlags());
     }
 
     @Override
     public ResourceLocation getTextureResource(FigurineBlockEntity animatable) {
         ResourceManager rm = Minecraft.getInstance().getResourceManager();
-        return PokeblocksAssetResolver.figurineTexture(rm, PokeblocksAssetResolver.validatedFigurine(rm, animatable.getFigurine()));
+        String figurine = PokeblocksAssetResolver.validatedFigurine(rm, animatable.getFigurine());
+        return PokeblocksAssetResolver.figurineTexture(rm, figurine, animatable.getFigurineFlags());
     }
 
     @Override

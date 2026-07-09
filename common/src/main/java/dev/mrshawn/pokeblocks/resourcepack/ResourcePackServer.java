@@ -23,11 +23,17 @@ import java.util.LinkedHashMap;
 import java.util.Map;
 import java.util.Optional;
 import java.util.UUID;
+import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
 public final class ResourcePackServer {
 	private static HttpServer server;
-	private static Path servedFile;
+	/** Volatile: written under the class monitor in {@link #start}/{@link #stop}, read unsynchronized
+	 *  by the HTTP worker threads serving the full pack. */
+	private static volatile Path servedFile;
+	/** The bounded worker pool backing {@link #server}; shut down in {@link #stop} (the JDK HTTP server
+	 *  does not shut down a user-supplied executor itself). */
+	private static ExecutorService httpExecutor;
 	private static String url;
 	/** The host:port base of the running self-host server (e.g. "http://1.2.3.4:8123"), for delta URLs. */
 	private static String urlBase;
@@ -66,9 +72,21 @@ public final class ResourcePackServer {
 		// bind to all interfaces so clients can reach it; advertise localhost address for URL
 		InetAddress bindAddr = InetAddress.getByName("0.0.0.0");
 
+		// Best-effort request/response time caps (set before the server class loads its config), so a
+		// client that stalls mid-transfer is eventually dropped rather than pinning a worker forever.
+		setHttpTimeouts();
+
 		// pick ephemeral port
 		server = HttpServer.create(new InetSocketAddress(bindAddr, 0), 0);
-		server.setExecutor(Executors.newSingleThreadExecutor());
+		// Bounded daemon pool, NOT a single thread: a slow or stalled downloader can occupy at most one
+		// worker, so it cannot starve pack delivery for every other client. Daemon threads so the pool
+		// never blocks JVM shutdown; shut down explicitly in stop().
+		httpExecutor = Executors.newFixedThreadPool(4, r -> {
+			Thread t = new Thread(r, "pokeblocks-pack-http");
+			t.setDaemon(true);
+			return t;
+		});
+		server.setExecutor(httpExecutor);
 
 		// context path
 		String path = "/pokeblocks_custom_pack.zip";
@@ -80,6 +98,14 @@ public final class ResourcePackServer {
 				try {
 					if (!"GET".equalsIgnoreCase(exchange.getRequestMethod())) {
 						exchange.sendResponseHeaders(405, -1);
+						return;
+					}
+
+					// Capture once: the field is volatile and can be nulled/replaced by a concurrent
+					// stop()/rebuild while this worker runs.
+					Path file = servedFile;
+					if (file == null || !Files.exists(file)) {
+						exchange.sendResponseHeaders(404, -1);
 						return;
 					}
 
@@ -96,15 +122,16 @@ public final class ResourcePackServer {
 					h.add("Cache-Control", "max-age=0, must-revalidate");
 					h.add("Last-Modified", java.time.format.DateTimeFormatter.RFC_1123_DATE_TIME.format(
 							java.time.ZonedDateTime.ofInstant(
-									java.time.Instant.ofEpochMilli(Files.getLastModifiedTime(servedFile).toMillis()),
+									java.time.Instant.ofEpochMilli(Files.getLastModifiedTime(file).toMillis()),
 									java.time.ZoneOffset.UTC)));
-					long size = Files.size(servedFile);
+					long size = Files.size(file);
 					exchange.sendResponseHeaders(200, size);
 					try (OutputStream os = exchange.getResponseBody()) {
-						Files.copy(servedFile, os);
+						Files.copy(file, os);
 					}
 				} catch (IOException ex) {
-					exchange.sendResponseHeaders(500, -1);
+					// Headers may already be committed mid-stream; sending 500 can itself throw — ignore.
+					try { exchange.sendResponseHeaders(500, -1); } catch (IOException ignored) {}
 				} finally {
 					exchange.close();
 				}
@@ -214,6 +241,34 @@ public final class ResourcePackServer {
 			url = null;
 			urlBase = null;
 			servedDeltas.clear();
+		}
+		// The JDK HTTP server does not shut down a user-supplied executor; do it here so restarts
+		// (e.g. switching distribution modes) don't leak worker threads.
+		if (httpExecutor != null) {
+			httpExecutor.shutdownNow();
+			httpExecutor = null;
+		}
+	}
+
+	/**
+	 * Applies generous request/response time caps to the built-in HTTP server via the documented
+	 * {@code sun.net.httpserver} system properties — the only timeout knob the JDK server exposes.
+	 * Set only when unset, so an admin/JVM override wins, and best-effort: the properties are read once
+	 * when the server's config class first loads, so if another component already started a JDK HTTP
+	 * server these have no effect. The bounded worker pool is the primary anti-starvation measure; these
+	 * are a backstop against a fully-stalled socket. Values are large enough for a big pack on a slow
+	 * link (requests are tiny GETs; the response cap only kills a download that has effectively stopped).
+	 */
+	private static void setHttpTimeouts() {
+		trySetProperty("sun.net.httpserver.maxReqTime", "30");
+		trySetProperty("sun.net.httpserver.maxRspTime", "300");
+	}
+
+	private static void trySetProperty(String key, String value) {
+		try {
+			if (System.getProperty(key) == null) System.setProperty(key, value);
+		} catch (SecurityException ignored) {
+			// A restrictive SecurityManager can deny this; the bounded pool still bounds starvation.
 		}
 	}
 

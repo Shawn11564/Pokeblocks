@@ -84,10 +84,17 @@ public final class PokemonRegistry {
 			String name = entry.getKey();
 			Set<ModelFlag> detectedFlags = entry.getValue();
 
-			// Validate base model exists
+			// A normal doll ships a flagless base model. A variant-only doll (e.g. sinistea, which ships
+			// only pokedoll_sinistea_antique/_phony and no pokedoll_sinistea.geo.json) has none — register
+			// it anyway so it loads as a base doll whose flag variants each use their own model. The
+			// flagless combo is naturally excluded downstream (no base texture -> isValidCombination drops
+			// it). Only skip a name with no usable model at all (shouldn't happen: keys come from models).
 			if (!hasBaseModel(modelFiles, name)) {
-				LOGGER.warn("Skipping pokemon '{}': missing base model (expected pokedoll_{}.geo.json)", name, name);
-				continue;
+				if (!hasAnyVariantModel(modelFiles, name)) {
+					LOGGER.warn("Skipping pokemon '{}': no models found", name);
+					continue;
+				}
+				LOGGER.info("Pokemon '{}': no flagless base model — registering as a variant-only doll", name);
 			}
 
 			Set<Set<ModelFlag>> texCombos = validTexCombos.getOrDefault(name, Collections.emptySet());
@@ -221,6 +228,16 @@ public final class PokemonRegistry {
 			if (!m.matches()) return false;
 			ParseResult r = parseSuffixes(m.group(1));
 			return r.name().equalsIgnoreCase(name) && r.flags().isEmpty();
+		});
+	}
+
+	/** Whether a flag-variant geo model (e.g. {@code pokedoll_sinistea_antique.geo.json}) exists for {@code name}. */
+	private static boolean hasAnyVariantModel(Set<String> modelFiles, String name) {
+		return modelFiles.stream().anyMatch(f -> {
+			Matcher m = MODEL_PATTERN.matcher(f);
+			if (!m.matches()) return false;
+			ParseResult r = parseSuffixes(m.group(1));
+			return r.name().equalsIgnoreCase(name) && !r.flags().isEmpty();
 		});
 	}
 

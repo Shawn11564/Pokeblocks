@@ -28,7 +28,9 @@ public enum ModelFlag {
 	SPIKY("spiky", "_spiky", "_spiky", 7, DollRarity.NONE, null),
 	EARED("eared",  "_eared", "_eared", 8, DollRarity.NONE, null),
 	MALE("male", "_male", "", 9, DollRarity.NONE, "gender"),
-	FEMALE("female",  "_female", "", 10, DollRarity.NONE, "gender");
+	FEMALE("female",  "_female", "", 10, DollRarity.NONE, "gender"),
+	PHONY("phony", "_phony", "_phony", 11, DollRarity.NONE, "antique"),
+	ANTIQUE("antique", "_antique", "_antique", 12, DollRarity.NONE, "antique"),;
 
 	private final String tagName;
 	private final String textureSuffix;

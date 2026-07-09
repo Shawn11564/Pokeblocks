@@ -41,10 +41,14 @@ python tools/doll_uploader.py batch.zip --pr-mode gh       # override config for
 It will:
 1. Classify every model/texture/animation as a pokedoll or figurine (anything else is
    reported as unrecognized — e.g. decorative blocks that need Java changes).
-2. Validate each doll has a base model + texture (in the batch or already in the repo).
+2. Validate each doll has a base model + texture (in the batch or already in the repo). When a
+   set of variant files has **no flagless base** (e.g. `sinistea` ships only `_antique` and
+   `_phony`), it **asks** whether to register them as one base doll with flag variants (the
+   usual answer, when each variant has its own model) or to skip and handle it manually.
 3. **Prompt** for the rarity of each new doll and each non-auto variant. Shiny and gigantic
    variants are skipped — they resolve automatically and need no entry.
-4. Prompt for figurine display names (and optional tags like `cobblemon_team`).
+4. Prompt for figurine display names (and optional tags like `cobblemon_team`). Figurine flag
+   variants (e.g. `amongsans1015_devoured`) are attached to the base figurine automatically.
 5. Print a full plan; on confirmation, copy files and append entries to
    `doll_rarity.json` / `figurine_names.json` / `figurine_tags.json`.
 6. Run the configured PR step.
@@ -75,7 +79,12 @@ CLI flags `--pr-mode` and `--branch` override the config for a single run.
 
 ### Maintenance
 
-The `FLAGS` table and `parse_suffixes` in `doll_uploader.py` mirror
-`common/src/main/java/dev/mrshawn/pokeblocks/pokemon/ModelFlag.java` and
-`PokemonRegistry.parseSuffixes`. **If you change the flag enum or the suffix-parsing logic
-in Java, update the tool to match** and run `python tools/doll_uploader.py --self-test`.
+The flag tables are **read live at startup** from
+`common/.../pokemon/ModelFlag.java` and `common/.../pokemon/FigurineFlag.java`, so adding a
+flag to those enums is picked up automatically — no edit to the tool needed. The startup line
+and `--self-test` print which source was used (`ModelFlag.java` vs the baked-in fallback that
+kicks in only when the tool is run outside a checkout).
+
+`parse_suffixes` still mirrors `PokemonRegistry.parseSuffixes` /
+`FigurineRegistry.parseSuffixes`. **If you change that suffix-parsing logic in Java** (not just
+add a flag), update the tool to match and run `python tools/doll_uploader.py --self-test`.

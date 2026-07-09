@@ -120,10 +120,13 @@ public final class DollShapes {
 		double yaw = -22.5 * (rotationSegment & 15);
 		String suffix = PokeblocksAssetResolver.pokedollModelSuffix(flags);
 
-		// Mirror the renderer's validatedPokemon: a pokemon "exists" when its base geo resolves.
-		String validated = pokemon != null && SAFE_ID.matcher(pokemon).matches()
-				&& geometryFor("geo/block/pokedoll_" + pokemon + ".geo.json", GeoPose.EMPTY, "") != null
-				? pokemon : ModSettings.DEFAULT_POKEMON;
+		// Mirror the renderer's validatedPokemon: a pokemon "exists" when its base geo resolves, or —
+		// for a variant-only doll (e.g. sinistea, no flagless base) — when the flag-suffixed variant does.
+		boolean known = pokemon != null && SAFE_ID.matcher(pokemon).matches()
+				&& (geometryFor("geo/block/pokedoll_" + pokemon + ".geo.json", GeoPose.EMPTY, "") != null
+					|| (!suffix.isEmpty()
+						&& geometryFor("geo/block/pokedoll_" + pokemon + suffix + ".geo.json", GeoPose.EMPTY, "") != null));
+		String validated = known ? pokemon : ModSettings.DEFAULT_POKEMON;
 
 		List<String> candidates = new ArrayList<>(3);
 		if (!suffix.isEmpty()) {
@@ -139,9 +142,14 @@ public final class DollShapes {
 
 	/** Shape for a figurine facing the given horizontal direction. Figurines never animate. */
 	public static VoxelShape figurine(FigurineBlockEntity figurine, Direction facing) {
-		List<String> candidates = new ArrayList<>(2);
+		List<String> candidates = new ArrayList<>(3);
 		String id = figurine.getFigurine();
 		if (id != null && SAFE_ID.matcher(id).matches()) {
+			// Prefer the active variant model (e.g. _devoured), falling back to the base figurine geo.
+			String suffix = PokeblocksAssetResolver.figurineModelSuffix(figurine.getFigurineFlags());
+			if (!suffix.isEmpty()) {
+				candidates.add("geo/block/" + id + suffix + "_figurine.geo.json");
+			}
 			candidates.add("geo/block/" + id + "_figurine.geo.json");
 		}
 		candidates.add("geo/block/" + ModSettings.DEFAULT_FIGURINE + "_figurine.geo.json");

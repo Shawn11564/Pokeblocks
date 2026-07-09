@@ -2,6 +2,7 @@ package dev.mrshawn.pokeblocks.block.entity.custom;
 
 import dev.mrshawn.pokeblocks.constants.ModSettings;
 import dev.mrshawn.pokeblocks.item.PokeblocksItemData;
+import dev.mrshawn.pokeblocks.pokemon.FigurineFlag;
 import dev.mrshawn.pokeblocks.pokemon.ModelFlag;
 import dev.mrshawn.pokeblocks.registry.BlockEntityRegistry;
 import net.minecraft.core.BlockPos;
@@ -24,6 +25,7 @@ import java.util.Set;
 public class FigurineBlockEntity extends BlockEntity implements GeoBlockEntity {
 	private final AnimatableInstanceCache cache = GeckoLibUtil.createInstanceCache(this);
 	private String figurine = ModSettings.DEFAULT_FIGURINE;
+	private Set<FigurineFlag> figurineFlags = EnumSet.noneOf(FigurineFlag.class);
 	private boolean gigantic = false;
 
 	public FigurineBlockEntity(BlockPos pos, BlockState state) {
@@ -52,6 +54,18 @@ public class FigurineBlockEntity extends BlockEntity implements GeoBlockEntity {
 		return this.figurine;
 	}
 
+	public void setFigurineFlags(Set<FigurineFlag> flags) {
+		this.figurineFlags = flags == null || flags.isEmpty() ? EnumSet.noneOf(FigurineFlag.class) : EnumSet.copyOf(flags);
+		setChanged();
+		if (this.level != null && !this.level.isClientSide()) {
+			this.level.sendBlockUpdated(this.worldPosition, this.getBlockState(), this.getBlockState(), 3);
+		}
+	}
+
+	public Set<FigurineFlag> getFigurineFlags() {
+		return this.figurineFlags;
+	}
+
 	public void setGigantic(boolean gigantic) {
 		this.gigantic = gigantic;
 		setChanged();
@@ -74,7 +88,7 @@ public class FigurineBlockEntity extends BlockEntity implements GeoBlockEntity {
 	public void saveToItem(ItemStack stack, HolderLookup.Provider registries) {
 		Set<ModelFlag> activeFlags = EnumSet.noneOf(ModelFlag.class);
 		if (this.gigantic) activeFlags.add(ModelFlag.GIGANTIC);
-		PokeblocksItemData.apply(stack, PokeblocksItemData.figurineTag(this.figurine, activeFlags));
+		PokeblocksItemData.apply(stack, PokeblocksItemData.figurineTag(this.figurine, activeFlags, this.figurineFlags));
 	}
 
 	@Override
@@ -82,6 +96,7 @@ public class FigurineBlockEntity extends BlockEntity implements GeoBlockEntity {
 		super.saveAdditional(tag, registries);
 		tag.putString("figurine", this.figurine);
 		tag.putBoolean("gigantic", this.gigantic);
+		writeFigurineFlags(tag);
 	}
 
 	@Override
@@ -96,6 +111,7 @@ public class FigurineBlockEntity extends BlockEntity implements GeoBlockEntity {
 		if (tag.contains("gigantic")) {
 			this.gigantic = tag.getBoolean("gigantic");
 		}
+		readFigurineFlags(tag);
 	}
 
 	@Override
@@ -103,7 +119,28 @@ public class FigurineBlockEntity extends BlockEntity implements GeoBlockEntity {
 		CompoundTag tag = super.getUpdateTag(registries);
 		tag.putString("figurine", this.figurine);
 		tag.putBoolean("gigantic", this.gigantic);
+		writeFigurineFlags(tag);
 		return tag;
+	}
+
+	/**
+	 * Figurine flags are stored as individual boolean keys (only the active ones), matching the item's
+	 * {@code BLOCK_ENTITY_DATA} format so a placed figurine's variant survives item → block-entity copy.
+	 */
+	private void writeFigurineFlags(CompoundTag tag) {
+		for (FigurineFlag flag : this.figurineFlags) {
+			tag.putBoolean(flag.getTagName(), true);
+		}
+	}
+
+	private void readFigurineFlags(CompoundTag tag) {
+		Set<FigurineFlag> flags = EnumSet.noneOf(FigurineFlag.class);
+		for (FigurineFlag flag : FigurineFlag.values()) {
+			if (tag.contains(flag.getTagName()) && tag.getBoolean(flag.getTagName())) {
+				flags.add(flag);
+			}
+		}
+		this.figurineFlags = flags;
 	}
 
 	@Override

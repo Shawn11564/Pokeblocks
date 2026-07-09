@@ -26,5 +26,8 @@
         "minecraft": "${minecraft_version}",
         "java": ">=21",
         "geckolib": ">=${geckolib_version}"
+    },
+    "suggests": {
+        "trinkets": "*"
     }
 }

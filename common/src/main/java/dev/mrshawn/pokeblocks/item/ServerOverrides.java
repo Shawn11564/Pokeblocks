@@ -47,6 +47,14 @@ public final class ServerOverrides {
 	private static final Gson GSON = new GsonBuilder().setPrettyPrinting().create();
 	private static final int FORMAT = 1;
 
+	/**
+	 * Hard cap on the size of a server's override document. It rides inside the resource pack, so a
+	 * malicious server controls its contents entirely; this bounds how much we allocate while parsing
+	 * it on the client. Far above any real server's overrides (the whole doll roster is a few hundred
+	 * KiB of lines at most). The pack reader ({@code PokeblocksClient}) caps its read to this too.
+	 */
+	public static final int MAX_JSON_CHARS = 4 * 1024 * 1024;
+
 	private static volatile Remote remote = null;
 
 	private ServerOverrides() {}
@@ -112,8 +120,15 @@ public final class ServerOverrides {
 	 * A malformed document logs and leaves the previous state untouched.
 	 */
 	public static void applyJson(String json) {
+		if (json == null) return;
+		if (json.length() > MAX_JSON_CHARS) {
+			PokeblocksLog.LOGGER.error("[ServerOverrides] server_overrides.json is {} chars (> {} cap); ignoring it "
+					+ "and keeping previous state", json.length(), MAX_JSON_CHARS);
+			return;
+		}
 		try {
 			JsonObject root = GSON.fromJson(json, JsonObject.class);
+			if (root == null) return; // "null"/empty document — leave the current snapshot in place
 
 			Map<String, DollRarity> dollRarity = new HashMap<>();
 			for (String line : lines(root, "doll_rarity")) parseDollRarityLine(line, dollRarity);
@@ -160,8 +175,12 @@ public final class ServerOverrides {
 							+ "{} ignored-flag, {} figurine-name entr{}",
 					dollRarity.size(), divisors.size(), ignoredByPokemon.size() + ignoredGlobal.size(),
 					names.size(), names.size() == 1 ? "y" : "ies");
-		} catch (Exception e) {
-			PokeblocksLog.LOGGER.error("[ServerOverrides] Failed to parse server_overrides.json; keeping previous state", e);
+		} catch (Throwable t) {
+			// Untrusted server data: a malformed or deliberately pathological document (deeply nested →
+			// StackOverflowError, enormous → OutOfMemoryError — neither is an Exception) must not escape
+			// into the client resource-reload thread. Catch Throwable so any such input simply leaves
+			// the previous snapshot in place, exactly like an ordinary parse failure.
+			PokeblocksLog.LOGGER.error("[ServerOverrides] Failed to parse server_overrides.json; keeping previous state", t);
 		}
 	}
 

@@ -120,7 +120,7 @@ public enum CompendiumType {
 
 		@Override
 		public List<ItemStack> variantsOf(String id) {
-			return List.of();
+			return FigurineItem.getAllMutations(id);
 		}
 
 		@Override
@@ -130,7 +130,7 @@ public enum CompendiumType {
 
 		@Override
 		public String progressKeyOf(ItemStack stack) {
-			return idOf(stack);
+			return FigurineItem.compendiumKey(stack);
 		}
 
 		@Override

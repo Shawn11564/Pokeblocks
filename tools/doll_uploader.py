@@ -15,8 +15,13 @@ Drop in a received zip (or an already-extracted folder) whose root holds
 This is a dev-side tool that edits the repo's *source* assets under
 common/src/main/resources/assets/pokeblocks/ so the new dolls ship in a PR.
 
-See tools/README.md for usage. The FLAGS table below mirrors ModelFlag.java and
-the parsing mirrors PokemonRegistry.parseSuffixes — keep them in sync.
+See tools/README.md for usage. The flag tables are read live from ModelFlag.java
+and FigurineFlag.java at startup (so they can't drift), and the parsing mirrors
+PokemonRegistry.parseSuffixes / FigurineRegistry.parseSuffixes.
+
+When a group of variant files has no flagless base (e.g. sinistea only ships
+antique + phony), the tool detects it and asks whether to register them as one
+base doll with flag variants (the usual answer) or handle it manually.
 """
 from __future__ import annotations
 
@@ -58,21 +63,84 @@ RARITIES = ["none", "common", "uncommon", "rare", "epic", "legendary", "shiny", 
 
 
 # --------------------------------------------------------------------------- #
-# Model flags — MUST stay in sync with
-# common/.../pokemon/ModelFlag.java
+# Model / figurine flags.
+#
+# The flag tables below are DERIVED AT RUNTIME from the mod's own enum source
+# (ModelFlag.java / FigurineFlag.java) so the uploader can never drift out of
+# sync with the game. If those files can't be read/parsed (e.g. the tool is run
+# outside a checkout) we fall back to the baked-in tables, which are only a
+# best-effort snapshot. `python doll_uploader.py --self-test` prints the source.
 # --------------------------------------------------------------------------- #
+MODELFLAG_JAVA = REPO_ROOT / "common" / "src" / "main" / "java" / "dev" / "mrshawn" / "pokeblocks" / "pokemon" / "ModelFlag.java"
+FIGURINEFLAG_JAVA = REPO_ROOT / "common" / "src" / "main" / "java" / "dev" / "mrshawn" / "pokeblocks" / "pokemon" / "FigurineFlag.java"
+
+
 @dataclass(frozen=True)
 class Flag:
     tag: str
     texture_suffix: str
     model_suffix: str
     sort_order: int
-    auto_rarity: str | None      # rarity resolved automatically without an entry
+    auto_rarity: str | None      # rarity resolved automatically without an entry (dolls only)
     exclusion_group: str | None
 
 
-# Declaration order matches ModelFlag.values() — parse_suffixes relies on it.
-FLAGS: list[Flag] = [
+# ModelFlag constant:  NAME("tag", "texSuffix", "modelSuffix", sortOrder, DollRarity.X, null|"group"),
+_MODELFLAG_RE = re.compile(
+    r'^\s*[A-Z][A-Z0-9_]*\(\s*'
+    r'"([^"]*)"\s*,\s*'          # tag
+    r'"([^"]*)"\s*,\s*'          # texture suffix
+    r'"([^"]*)"\s*,\s*'          # model suffix
+    r'(-?\d+)\s*,\s*'            # sort order
+    r'DollRarity\.(\w+)\s*,\s*'  # rarity
+    r'(null|"[^"]*")\s*\)',      # exclusion group
+    re.MULTILINE,
+)
+# FigurineFlag constant:  NAME("tag", "texSuffix", "modelSuffix", sortOrder, null|"group"),
+_FIGFLAG_RE = re.compile(
+    r'^\s*[A-Z][A-Z0-9_]*\(\s*'
+    r'"([^"]*)"\s*,\s*'          # tag
+    r'"([^"]*)"\s*,\s*'          # texture suffix
+    r'"([^"]*)"\s*,\s*'          # model suffix
+    r'(-?\d+)\s*,\s*'            # sort order
+    r'(null|"[^"]*")\s*\)',      # exclusion group
+    re.MULTILINE,
+)
+
+
+def _excl(token: str) -> str | None:
+    return None if token == "null" else token.strip('"')
+
+
+def _load_model_flags(path: Path) -> list[Flag] | None:
+    """Parse ModelFlag.java's enum constants (declaration order == values() order)."""
+    try:
+        text = path.read_text(encoding="utf-8")
+    except OSError:
+        return None
+    flags = [
+        Flag(tag, tex, mod, int(order),
+             None if rarity.upper() == "NONE" else rarity.lower(), _excl(excl))
+        for tag, tex, mod, order, rarity, excl in (m.groups() for m in _MODELFLAG_RE.finditer(text))
+    ]
+    return flags or None
+
+
+def _load_fig_flags(path: Path) -> list[Flag] | None:
+    """Parse FigurineFlag.java's enum constants (figurines have no auto-rarity)."""
+    try:
+        text = path.read_text(encoding="utf-8")
+    except OSError:
+        return None
+    flags = [
+        Flag(tag, tex, mod, int(order), None, _excl(excl))
+        for tag, tex, mod, order, excl in (m.groups() for m in _FIGFLAG_RE.finditer(text))
+    ]
+    return flags or None
+
+
+# Baked-in fallbacks — a best-effort snapshot; the live source above wins when present.
+_FALLBACK_FLAGS: list[Flag] = [
     Flag("gigantic", "", "", -1, "gigantic", None),
     Flag("shiny", "_shiny", "", 0, "shiny", None),
     Flag("family", "_family", "_family", 1, None, None),
@@ -85,8 +153,23 @@ FLAGS: list[Flag] = [
     Flag("eared", "_eared", "_eared", 8, None, None),
     Flag("male", "_male", "", 9, None, "gender"),
     Flag("female", "_female", "", 10, None, "gender"),
+    Flag("phony", "_phony", "_phony", 11, None, "antique"),
+    Flag("antique", "_antique", "_antique", 12, None, "antique"),
 ]
+_FALLBACK_FIG_FLAGS: list[Flag] = [
+    Flag("devoured", "_devoured", "_devoured", 0, None, None),
+]
+
+_loaded_model = _load_model_flags(MODELFLAG_JAVA)
+_loaded_fig = _load_fig_flags(FIGURINEFLAG_JAVA)
+
+FLAGS: list[Flag] = _loaded_model or _FALLBACK_FLAGS
+FIG_FLAGS: list[Flag] = _loaded_fig or _FALLBACK_FIG_FLAGS
+FLAGS_SOURCE = "ModelFlag.java" if _loaded_model else "baked-in fallback"
+FIG_FLAGS_SOURCE = "FigurineFlag.java" if _loaded_fig else "baked-in fallback"
+
 FLAG_BY_TAG = {f.tag: f for f in FLAGS}
+FIG_FLAG_BY_TAG = {f.tag: f for f in FIG_FLAGS}
 
 
 def parse_suffixes(body: str) -> tuple[str, set[Flag]]:
@@ -115,6 +198,33 @@ def parse_suffixes(body: str) -> tuple[str, set[Flag]]:
             if mod and mod != tex and low.endswith(mod):
                 flags.add(flag)
                 remaining = remaining[: -len(mod)]
+                found = True
+                break
+    return remaining.lower(), flags
+
+
+def parse_fig_suffixes(body: str) -> tuple[str, set[Flag]]:
+    """Port of FigurineRegistry.parseSuffixes — strips figurine-flag suffixes.
+
+    ``body`` is the part before ``_figurine`` (a trailing ``_texture`` is already
+    consumed by the figurine texture regex). Returns (base_id, {fig_flags}).
+    """
+    flags: set[Flag] = set()
+    remaining = body
+    found = True
+    while found:
+        found = False
+        low = remaining.lower()
+        for flag in FIG_FLAGS:
+            tex, mod = flag.texture_suffix, flag.model_suffix
+            if mod and low.endswith(mod):
+                flags.add(flag)
+                remaining = remaining[: -len(mod)]
+                found = True
+                break
+            if tex and tex != mod and low.endswith(tex):
+                flags.add(flag)
+                remaining = remaining[: -len(tex)]
                 found = True
                 break
     return remaining.lower(), flags
@@ -158,13 +268,17 @@ def classify(src: Path) -> Asset | None:
     if not fn.lower().startswith("pokedoll_"):
         m = RE_FIG_MODEL.match(fn)
         if m:
-            return Asset(src, "fig-model", m.group(1).lower(), set(),
-                         f"{m.group(1).lower()}_figurine.geo.json", GEO_DIR)
+            body = m.group(1).lower()
+            base, flags = parse_fig_suffixes(body)
+            # dest keeps the full variant filename; name is the base figurine id.
+            return Asset(src, "fig-model", base, flags,
+                         f"{body}_figurine.geo.json", GEO_DIR)
         m = RE_FIG_TEX.match(fn)
         if m:
-            fid = m.group(1).lower()
-            return Asset(src, "fig-tex", fid, set(),
-                         f"{fid}_figurine_texture.png", TEX_DIR)
+            body = m.group(1).lower()
+            base, flags = parse_fig_suffixes(body)
+            return Asset(src, "fig-tex", base, flags,
+                         f"{body}_figurine_texture.png", TEX_DIR)
 
     m = RE_DOLL_MODEL.match(fn)
     if m:
@@ -271,10 +385,61 @@ class Plan:
     warnings: list[str] = field(default_factory=list)
     doll_names: set[str] = field(default_factory=set)
     figurine_ids: set[str] = field(default_factory=set)
+    # name -> sorted variant flag tags, for dolls registered without a flagless base model.
+    no_base_dolls: dict[str, list[str]] = field(default_factory=dict)
 
 
 def gather_files(root: Path) -> list[Path]:
     return [p for p in sorted(root.rglob("*")) if p.is_file()]
+
+
+def resolve_no_base(name: str, group: list[Asset], dry_run: bool) -> str:
+    """Decide how to handle a doll group that has no flagless base model.
+
+    Returns "merge" (register as one base doll whose flag variants each use their
+    own model) or "skip" (leave for manual handling). The recommendation, and the
+    non-interactive/dry-run default, is "merge" when every variant has its own
+    model file — the case the mod is set up for.
+    """
+    model_flagsets = {frozenset(a.flags) for a in group if a.kind == "doll-model"}
+    tex_flagsets = {frozenset(a.flags) for a in group if a.kind == "doll-tex"}
+    variant_labels = sorted(
+        ", ".join(t.tag for t in sorted_flags(set(fs))) or "(flagless)" for fs in model_flagsets)
+
+    # "Each file has its own geo" == every texture variant is backed by a model whose flags
+    # are a subset of it (the model gives the geometry; extra texture-only flags like shiny
+    # just re-skin it). Uses flag SETS from the actual files, so it's robust even if a flag's
+    # model-suffix in the Java is out of step with its filename.
+    each_has_model = bool(model_flagsets) and all(
+        any(ms <= tc for ms in model_flagsets) for tc in tex_flagsets)
+    orphan_tex = sorted(
+        ", ".join(t.tag for t in sorted_flags(set(tc)))
+        for tc in tex_flagsets if not any(ms <= tc for ms in model_flagsets))
+
+    print(f"\n  Doll '{name}' has NO flagless base model (pokedoll_{name}.geo.json).")
+    print(f"    Variant models present: {', '.join(variant_labels) or '(none)'}")
+    if orphan_tex:
+        print(f"    ! Texture variants with no matching model: {'; '.join(orphan_tex)} -- verify before merging.")
+
+    recommended = "merge" if each_has_model else "skip"
+    if dry_run or not sys.stdin.isatty():
+        print(f"    -> defaulting to '{recommended}'"
+              + (" (register as one base doll with flag variants)." if recommended == "merge"
+                 else " (skip; handle manually)."))
+        return recommended
+
+    print("    How should this be handled?")
+    print(f"      [1] Register as ONE base doll '{name}' with these flag variants"
+          + (" (recommended)." if recommended == "merge" else "."))
+    print("      [2] Skip this doll for now (handle manually).")
+    default = "1" if recommended == "merge" else "2"
+    while True:
+        resp = ask("    Choose [1/2]", default).strip().lower()
+        if resp in ("1", "merge"):
+            return "merge"
+        if resp in ("2", "skip"):
+            return "skip"
+        print("      Enter 1 or 2.")
 
 
 def repo_has_base_model(name: str) -> bool:
@@ -307,6 +472,8 @@ def build_plan(src_root: Path, dry_run: bool) -> Plan:
     fig_assets = [a for a in assets if a.kind.startswith("fig")]
 
     doll_names = sorted({a.name for a in doll_assets})
+    names_without_base: set[str] = set()
+    skipped_names: set[str] = set()
     for name in doll_names:
         group = [a for a in doll_assets if a.name == name]
         models = [a for a in group if a.kind == "doll-model"]
@@ -314,10 +481,22 @@ def build_plan(src_root: Path, dry_run: bool) -> Plan:
 
         has_base_model = any(not a.flags for a in models) or repo_has_base_model(name)
         has_base_tex = any(not a.flags for a in texes) or repo_has_base_texture(name)
+
         if not has_base_model:
+            names_without_base.add(name)
+            handling = resolve_no_base(name, group, dry_run)
+            if handling == "skip":
+                skipped_names.add(name)
+                plan.warnings.append(
+                    f"Doll '{name}': skipped — no flagless base model; you chose to handle it manually.")
+                continue
+            # merge: register as one base doll whose variants each use their own model.
+            plan.no_base_dolls[name] = sorted({t.tag for a in group for t in a.flags})
             plan.warnings.append(
-                f"Doll '{name}': no base model (pokedoll_{name}.geo.json) in batch or repo — it will NOT load.")
-        if not has_base_tex:
+                f"Doll '{name}': no flagless base model — registering as a base doll whose variants "
+                f"({', '.join(plan.no_base_dolls[name])}) each use their own model. Requires the mod's "
+                f"PokemonRegistry to accept variant-only dolls (a doll with no pokedoll_{name}.geo.json).")
+        elif not has_base_tex:
             plan.warnings.append(
                 f"Doll '{name}': no base texture (pokedoll_{name}_texture.png) in batch or repo.")
 
@@ -329,6 +508,10 @@ def build_plan(src_root: Path, dry_run: bool) -> Plan:
                     f"Folder name suggests '{h}' but files parse as '{name}' — verify the pokemon name.")
 
         plan.doll_names.add(name)
+
+    # Drop skipped dolls from the placement/rarity passes entirely.
+    if skipped_names:
+        doll_assets = [a for a in doll_assets if a.name not in skipped_names]
 
     # --- Schedule file copies ---------------------------------------------- #
     for a in doll_assets + fig_assets:
@@ -350,7 +533,10 @@ def build_plan(src_root: Path, dry_run: bool) -> Plan:
         for a in doll_assets:
             if a.name == name:
                 combos.add(frozenset(a.flags))
-        combos.add(frozenset())  # base always
+        # A flagless base variant exists for normal dolls, but NOT for variant-only
+        # dolls (e.g. sinistea) — don't invent a base rarity entry the game never sees.
+        if name not in names_without_base:
+            combos.add(frozenset())
         for combo in sorted(combos, key=lambda c: (len(c), sorted(f.sort_order for f in c))):
             cset = set(combo)
             # Skip auto-resolved variants (shiny / gigantic need no entry).
@@ -376,15 +562,24 @@ def build_plan(src_root: Path, dry_run: bool) -> Plan:
 
     for fid in fig_ids:
         plan.figurine_ids.add(fid)
-        # Validate figurine has both model + texture (in batch or repo).
-        has_model = any(a.kind == "fig-model" and a.name == fid for a in fig_assets) or \
+        # A figurine variant (e.g. amongsans1015_devoured) attaches to a flagless base
+        # figurine, so validate the BASE model/texture specifically — a variant alone
+        # won't register (mirrors FigurineRegistry, which requires a flagless base).
+        has_base_model = any(a.kind == "fig-model" and a.name == fid and not a.flags for a in fig_assets) or \
             (GEO_DIR / f"{fid}_figurine.geo.json").exists()
-        has_tex = any(a.kind == "fig-tex" and a.name == fid for a in fig_assets) or \
+        has_base_tex = any(a.kind == "fig-tex" and a.name == fid and not a.flags for a in fig_assets) or \
             (TEX_DIR / f"{fid}_figurine_texture.png").exists() or (TEX_DIR / f"{fid}_figurine.png").exists()
-        if not has_model:
-            plan.warnings.append(f"Figurine '{fid}': missing model {fid}_figurine.geo.json.")
-        if not has_tex:
-            plan.warnings.append(f"Figurine '{fid}': missing texture {fid}_figurine_texture.png — it will NOT load.")
+        variant_tags = sorted({t.tag for a in fig_assets if a.name == fid for t in a.flags})
+        if variant_tags:
+            plan.warnings.append(
+                f"Figurine '{fid}': variant(s) {', '.join(variant_tags)} detected — these attach to the "
+                f"base figurine and inherit its name with a flag prefix (e.g. 'Devoured {fid}').")
+        if not has_base_model:
+            plan.warnings.append(
+                f"Figurine '{fid}': no base model {fid}_figurine.geo.json — a variant needs a base "
+                f"figurine to attach to; it will NOT load.")
+        if not has_base_tex:
+            plan.warnings.append(f"Figurine '{fid}': missing base texture {fid}_figurine_texture.png — it will NOT load.")
 
         if fid not in have_names:
             default_name = "_".join(w.capitalize() for w in fid.split("_"))
@@ -417,6 +612,11 @@ def print_summary(plan: Plan) -> None:
 
     print(f"\nDolls detected: {', '.join(sorted(plan.doll_names)) or '(none)'}")
     print(f"Figurines detected: {', '.join(sorted(plan.figurine_ids)) or '(none)'}")
+
+    if plan.no_base_dolls:
+        print("\nVariant-only dolls (no flagless base — registered as a base doll with flag variants):")
+        for name, tags in sorted(plan.no_base_dolls.items()):
+            print(f"  {name}: {', '.join(tags)}")
 
     print(f"\nFiles to place ({len(plan.copies)}):")
     for src, dest in plan.copies:
@@ -634,6 +834,8 @@ def do_gh(plan: Plan, changed: list[Path], cfg: dict) -> None:
 # Self-test
 # --------------------------------------------------------------------------- #
 def self_test() -> int:
+    print(f"Flag source: {len(FLAGS)} model ({FLAGS_SOURCE}), {len(FIG_FLAGS)} figurine ({FIG_FLAGS_SOURCE})")
+
     cases = [
         ("pokedoll_pichu_spiky_eared.png", "pichu", {"spiky", "eared"}),
         ("pokedoll_absol_shiny_texture.png", "absol", {"shiny"}),
@@ -643,6 +845,9 @@ def self_test() -> int:
         ("pokedoll_snorunt_family_animated.geo.json", "snorunt", {"family", "animated"}),
         ("pokedoll_eevee_texture.png", "eevee", set()),
         ("pokedoll_marshadow_zenith.geo.json", "marshadow", {"zenith"}),
+        # Variant-only doll: the antique/phony suffixes must strip to the base 'sinistea'.
+        ("pokedoll_sinistea_antique.geo.json", "sinistea", {"antique"}),
+        ("pokedoll_sinistea_phony_shiny_texture.png", "sinistea", {"phony", "shiny"}),
     ]
     ok = True
     for fn, exp_name, exp_tags in cases:
@@ -655,9 +860,17 @@ def self_test() -> int:
             ok = False
         print(f"  [{status}] {fn} -> name={name!r} flags={sorted(tags)} (expected {exp_name!r} {sorted(exp_tags)})")
 
+    # Flag tables were sourced (from the mod when in a checkout, else the fallback).
+    assert "antique" in FLAG_BY_TAG and "phony" in FLAG_BY_TAG, "antique/phony must be known model flags"
+    assert "devoured" in FIG_FLAG_BY_TAG, "devoured must be a known figurine flag"
+
     # Classification smoke checks.
     fig = classify(Path("doncheadle_figurine.geo.json"))
-    assert fig and fig.kind == "fig-model" and fig.name == "doncheadle", "figurine model classify"
+    assert fig and fig.kind == "fig-model" and fig.name == "doncheadle" and not fig.flags, "figurine model classify"
+    fig_v = classify(Path("amongsans1015_devoured_figurine.geo.json"))
+    assert fig_v and fig_v.kind == "fig-model" and fig_v.name == "amongsans1015" \
+        and {f.tag for f in fig_v.flags} == {"devoured"} \
+        and fig_v.dest_name == "amongsans1015_devoured_figurine.geo.json", "figurine variant classify"
     tex = classify(Path("pokedoll_pikachu_shiny.png"))
     assert tex and tex.dest_name == "pokedoll_pikachu_shiny_texture.png", "texture normalization"
     print("  [ok ] classification smoke checks")
@@ -669,6 +882,14 @@ def self_test() -> int:
 # Main
 # --------------------------------------------------------------------------- #
 def main() -> int:
+    # The Windows console defaults to cp1252, which mangles the em-dashes/arrows in our
+    # output. Best-effort switch to UTF-8; harmless if the stream doesn't support it.
+    for stream in (sys.stdout, sys.stderr):
+        try:
+            stream.reconfigure(encoding="utf-8")  # type: ignore[attr-defined]
+        except Exception:  # noqa: BLE001
+            pass
+
     ap = argparse.ArgumentParser(description="Pokeblocks doll/figurine asset uploader.")
     ap.add_argument("source", nargs="?", help="Path to the received .zip or an extracted folder.")
     ap.add_argument("--pr-mode", choices=["manual", "gh"], help="Override config pr_mode.")
@@ -685,6 +906,10 @@ def main() -> int:
     if not ASSETS.exists():
         print(f"ERROR: assets dir not found at {ASSETS} — run this from within the repo.")
         return 2
+
+    print(f"Flags: {len(FLAGS)} model ({FLAGS_SOURCE}), {len(FIG_FLAGS)} figurine ({FIG_FLAGS_SOURCE}).")
+    if FLAGS_SOURCE.startswith("baked-in"):
+        print(f"  ! Could not read {MODELFLAG_JAVA.name}; using the baked-in snapshot, which may be stale.")
 
     cfg = load_config()
     if args.pr_mode:

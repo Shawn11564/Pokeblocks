@@ -98,6 +98,38 @@ class ServerOverridesTest {
 	}
 
 	@Test
+	void oversizedDocumentIsRejectedAndKeepsPreviousState() {
+		ServerOverrides.applyJson("{\"format\":1,\"doll_rarity\":[\"testmon legendary\"]}");
+		// A hostile server pack could carry an enormous override document; it must be dropped by the
+		// size guard before we allocate a parse tree, leaving the active snapshot intact.
+		String huge = "{\"doll_rarity\":[" + "\"a b\",".repeat(ServerOverrides.MAX_JSON_CHARS / 3) + "\"c d\"]}";
+		assertTrue(huge.length() > ServerOverrides.MAX_JSON_CHARS);
+		ServerOverrides.applyJson(huge);
+		assertNotNull(ServerOverrides.current(), "an oversized document must not wipe the active snapshot");
+		assertEquals(DollRarity.LEGENDARY, DollRarityOverrides.getOverride("testmon", EnumSet.noneOf(ModelFlag.class)));
+	}
+
+	@Test
+	void deeplyNestedDocumentIsContainedAndKeepsPreviousState() {
+		ServerOverrides.applyJson("{\"format\":1,\"doll_rarity\":[\"testmon legendary\"]}");
+		// Deeply nested JSON makes a recursive-descent parser overflow the stack (a StackOverflowError,
+		// which is NOT an Exception). applyJson must catch it and keep the previous snapshot rather than
+		// letting it escape into the client's resource-reload thread.
+		String nested = "[".repeat(50_000) + "]".repeat(50_000);
+		assertDoesNotThrow(() -> ServerOverrides.applyJson(nested));
+		assertNotNull(ServerOverrides.current(), "a pathological document must not wipe the active snapshot");
+		assertEquals(DollRarity.LEGENDARY, DollRarityOverrides.getOverride("testmon", EnumSet.noneOf(ModelFlag.class)));
+	}
+
+	@Test
+	void nullLiteralDocumentKeepsPreviousState() {
+		ServerOverrides.applyJson("{\"format\":1,\"doll_rarity\":[\"testmon legendary\"]}");
+		ServerOverrides.applyJson("null"); // parses to a null tree — must be a no-op, not a wipe/NPE
+		assertNotNull(ServerOverrides.current(), "a null document must not wipe the active snapshot");
+		assertEquals(DollRarity.LEGENDARY, DollRarityOverrides.getOverride("testmon", EnumSet.noneOf(ModelFlag.class)));
+	}
+
+	@Test
 	void exportRoundtripsThroughApply() {
 		// Load the real bundled defaults into the holders (extracted into a throwaway server dir),
 		// export them the way the pack builder does, then parse the export like a client would.

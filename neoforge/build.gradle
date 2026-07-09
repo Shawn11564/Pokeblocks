@@ -31,10 +31,21 @@ runs {
 
 sourceSets.main.resources { srcDir 'src/generated/resources' }
 
+repositories {
+    // Curios (optional accessory-slot integration). NeoForge-only on 1.21.1.
+    maven { url = 'https://maven.theillusivec4.top/' }
+}
+
 dependencies {
     implementation "net.neoforged:neoforge:${neoforge_version}"
     implementation "software.bernie.geckolib:geckolib-neoforge-${minecraft_version}:${geckolib_version}"
     compileOnly project(":common")
+    // Curios: optional at runtime. The -api classifier is enough to compile the integration; the
+    // full jar is added to the dev runtime only (localRuntime) so the head-slot can be tested in-dev
+    // without forcing Curios on end users (the code is guarded behind a ModList curios check, and the
+    // mod is declared an optional dependency in neoforge.mods.toml).
+    compileOnly "top.theillusivec4.curios:curios-neoforge:${curios_version}:api"
+    runtimeOnly "top.theillusivec4.curios:curios-neoforge:${curios_version}"
     // mc-test server-truth SPI — this module recompiles common's sources (incl. PokeblocksStateProvider),
     // so it needs the interface on its compile classpath. Provided by the agent at runtime; never bundled.
     // testCompileOnly too: the `source(project(":common")…allSource)` rule below feeds common's main

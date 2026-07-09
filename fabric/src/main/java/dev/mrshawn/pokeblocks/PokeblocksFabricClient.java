@@ -3,11 +3,13 @@ package dev.mrshawn.pokeblocks;
 import dev.mrshawn.pokeblocks.client.PokeblocksClient;
 import dev.mrshawn.pokeblocks.compendium.ClientCompendiumSync;
 import dev.mrshawn.pokeblocks.compendium.CompendiumSyncPayloads;
+import dev.mrshawn.pokeblocks.integration.trinkets.TrinketsIntegration;
 import dev.mrshawn.pokeblocks.phone.ClientDigSites;
 import dev.mrshawn.pokeblocks.phone.PhonePayloads;
 import dev.mrshawn.pokeblocks.resourcepack.sync.ClientPackSync;
 import dev.mrshawn.pokeblocks.resourcepack.sync.PackSyncPayloads;
 import net.fabricmc.api.ClientModInitializer;
+import net.fabricmc.loader.api.FabricLoader;
 import net.fabricmc.fabric.api.client.networking.v1.ClientPlayNetworking;
 import net.fabricmc.fabric.api.client.rendering.v1.EntityRendererRegistry;
 import net.fabricmc.fabric.api.resource.ResourceManagerHelper;
@@ -22,6 +24,13 @@ public final class PokeblocksFabricClient implements ClientModInitializer {
     public void onInitializeClient() {
         PokeblocksClient.registerRenderers(BlockEntityRenderers::register);
         PokeblocksClient.registerEntityRenderers(EntityRendererRegistry::register);
+
+        // Optional Trinkets support: register the doll's head-slot renderer only when Trinkets is
+        // installed. The isModLoaded() guard keeps the Trinkets-referencing TrinketsIntegration class
+        // from being linked when the mod is absent, so this stays load-safe on a Trinkets-less install.
+        if (FabricLoader.getInstance().isModLoaded("trinkets")) {
+            TrinketsIntegration.registerRenderers();
+        }
 
         // Delta-pack handshake: answer the server's pack manifest with the entries we're missing.
         ClientPlayNetworking.registerGlobalReceiver(PackSyncPayloads.ManifestPayload.TYPE, (payload, context) ->

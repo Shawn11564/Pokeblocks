@@ -14,6 +14,8 @@ import java.util.List;
 import java.util.Map;
 import java.util.UUID;
 import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
 import java.util.function.BiConsumer;
 import java.util.function.Predicate;
 
@@ -44,6 +46,18 @@ public final class ServerPackSync {
 
 	/** Players we've sent a manifest and are awaiting a request from, → fallback deadline (ms). */
 	private static final Map<UUID, Long> pending = new ConcurrentHashMap<>();
+
+	/**
+	 * Building a delta reads the full pack off disk, re-zips a subset and SHA-1s it — potentially tens
+	 * of MiB of work. That must never run on the server thread (it would stall ticks), so accepted
+	 * requests are handed to this small daemon pool. Bounded so a mass rejoin can't spawn unbounded
+	 * threads; identical installs share a cached delta, so the real build count stays tiny.
+	 */
+	private static final ExecutorService DELTA_BUILDER = Executors.newFixedThreadPool(2, r -> {
+		Thread t = new Thread(r, "pokeblocks-pack-delta");
+		t.setDaemon(true);
+		return t;
+	});
 
 	private ServerPackSync() {}
 
@@ -79,9 +93,31 @@ public final class ServerPackSync {
 		}
 	}
 
-	/** Handles the client's {@link PackRequest} (already on the server thread). */
+	/**
+	 * Handles the client's {@link PackRequest}. Called on the server thread; it does only cheap
+	 * validation here and hands the expensive delta build to {@link #DELTA_BUILDER}, so a hostile or
+	 * unlucky client can never stall the tick loop.
+	 */
 	public static void onPackRequest(MinecraftServer server, ServerPlayer player, byte[] data) {
-		pending.remove(player.getUUID());
+		// Rate-limit: honor a request only from a player we actually sent a manifest to and are still
+		// awaiting. A client legitimately answers each manifest exactly once, so dropping everything
+		// else here — before any disk/CPU/zip work — blocks the "spam distinct bitsets to force
+		// repeated delta builds" amplification. A rebuild re-arms the gate via renegotiateAll → onPlayerJoin.
+		if (pending.remove(player.getUUID()) == null) {
+			PokeblocksLog.LOGGER.debug("[PackSync] Ignoring an unsolicited/duplicate pack request from {}",
+					player.getName().getString());
+			return;
+		}
+		DELTA_BUILDER.execute(() -> buildAndServeDelta(server, player, data));
+	}
+
+	/**
+	 * Off the server thread: turns an accepted {@link PackRequest} into a served delta, falling back to
+	 * the full-pack push on a fingerprint race or any error. Everything it touches
+	 * ({@link CustomPackManager}'s synchronized calls, {@link ResourcePackServer#serveDelta}, and the
+	 * Netty packet send) is safe to call off the main thread.
+	 */
+	private static void buildAndServeDelta(MinecraftServer server, ServerPlayer player, byte[] data) {
 		try {
 			PackRequest request = PackRequest.decode(data);
 			PackManifest manifest = CustomPackManager.currentManifest();

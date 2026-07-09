@@ -86,9 +86,11 @@ public final class ItemGroupRegistry {
 			.title(Component.translatable("itemgroup." + PokeblocksCommon.MOD_ID + ".misc"))
 			.icon(() -> FigurineItem.createFigurine("doncheadle"))
 			.displayItems((enabledFeatures, entries) -> {
-				// Figurines
+				// Figurines — the base form plus each flag variant (e.g. devoured)
 				for (String figurine : FigurineRegistry.ALL_FIGURINES) {
-					entries.accept(FigurineItem.createFigurine(figurine));
+					for (ItemStack variant : FigurineItem.getAllMutations(figurine)) {
+						entries.accept(variant);
+					}
 				}
 				// Custom decorations (generic data-driven block) — one stack per discovered id.
 				// The seeded default id is a fallback placeholder, not a real decoration, so it's skipped.
