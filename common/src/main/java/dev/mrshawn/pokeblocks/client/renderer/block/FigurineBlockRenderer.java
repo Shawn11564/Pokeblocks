@@ -5,9 +5,8 @@ import dev.mrshawn.pokeblocks.block.entity.custom.FigurineBlockEntity;
 import dev.mrshawn.pokeblocks.client.model.block.FigurineModel;
 import dev.mrshawn.pokeblocks.constants.ModSettings;
 import software.bernie.geckolib.cache.object.BakedGeoModel;
-import software.bernie.geckolib.renderer.GeoBlockRenderer;
 
-public class FigurineBlockRenderer extends GeoBlockRenderer<FigurineBlockEntity> {
+public class FigurineBlockRenderer extends CullAwareGeoBlockRenderer<FigurineBlockEntity> {
 	public FigurineBlockRenderer() {
 		super(new FigurineModel());
 	}

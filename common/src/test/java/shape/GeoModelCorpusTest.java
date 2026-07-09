@@ -2,6 +2,7 @@ package shape;
 
 import dev.mrshawn.pokeblocks.shape.Affine3;
 import dev.mrshawn.pokeblocks.shape.GeoGeometry;
+import dev.mrshawn.pokeblocks.shape.GeoPose;
 import dev.mrshawn.pokeblocks.shape.GeoShapeCompiler;
 import org.junit.jupiter.api.Test;
 
@@ -132,6 +133,81 @@ class GeoModelCorpusTest {
 			}
 		}
 		return new double[]{minX, minY, minZ, maxX, maxY, maxZ};
+	}
+
+	/**
+	 * Every bundled idle animation, baked onto the geo it poses, must still voxelize cleanly: the
+	 * strict box stays inside the <b>posed</b> analytic extent at every yaw, the posed outer bounds
+	 * agree with the posed sweep, and yaw 0 still yields a real box (a sitting chikorita has a
+	 * hitbox too). This is the corpus guard for pose baking — a sign/order mistake in the pose
+	 * overlay shows up here across all ~34 shipped poses at once.
+	 */
+	@Test
+	void everyBundledPoseBakesAndCompilesConsistently() throws Exception {
+		URL animUrl = GeoModelCorpusTest.class.getResource("/assets/pokeblocks/animations/block");
+		URL geoUrl = GeoModelCorpusTest.class.getResource("/assets/pokeblocks/geo/block");
+		assertNotNull(animUrl);
+		assertNotNull(geoUrl);
+		Path animDir = Path.of(animUrl.toURI());
+		Path geoDir = Path.of(geoUrl.toURI());
+
+		List<Path> animations;
+		try (var stream = Files.list(animDir)) {
+			animations = new ArrayList<>(stream
+					.filter(p -> p.getFileName().toString().endsWith(".animation.json")).toList());
+		}
+
+		int posed = 0;
+		for (Path animation : animations) {
+			String name = animation.getFileName().toString();
+			GeoPose pose = GeoPose.parse(Files.readAllBytes(animation));
+			if (pose.isEmpty()) continue; // empty.animation.json (and any future molang-only file)
+
+			Path geoFile = geoForAnimation(geoDir, name);
+			assertNotNull(geoFile, name + " poses no bundled geo model");
+			GeoGeometry geometry = GeoGeometry.parse(Files.readAllBytes(geoFile), pose);
+			posed++;
+
+			for (double yaw : new double[]{0, 90, -22.5}) {
+				double[] box = GeoShapeCompiler.compile(geometry, yaw);
+				if (box == null) {
+					assertNotEquals(0.0, yaw, name + " posed model lost its hitbox at yaw 0");
+					continue;
+				}
+				double[] swept = sweepCorners(geometry, yaw);
+				assertTrue(box[0] >= swept[0] - 1e-6 && box[3] <= swept[3] + 1e-6
+								&& box[1] >= swept[1] - 1e-6 && box[4] <= swept[4] + 1e-6
+								&& box[2] >= swept[2] - 1e-6 && box[5] <= swept[5] + 1e-6,
+						name + " strict box escapes the posed model at yaw " + yaw);
+			}
+
+			double[] outer = geometry.outerBounds();
+			double[] swept0 = sweepCorners(geometry, 0);
+			for (int i = 0; i < 6; i++) {
+				double shift = (i % 3 == 1) ? 0 : 0.5;
+				assertEquals(swept0[i], outer[i] + shift, 1e-9, name + " posed outer bounds disagree with the sweep");
+			}
+		}
+
+		// The corpus ships ~34 poses; a naming-convention break that silently skipped them all
+		// would otherwise turn this test into a no-op.
+		assertTrue(posed >= 30, "expected the full posed corpus, found " + posed);
+	}
+
+	/**
+	 * The geo a bundled animation poses: the exact basename, else trailing {@code _segment}s
+	 * stripped one at a time (pokedoll_chikorita_posed.animation.json poses
+	 * pokedoll_chikorita.geo.json — variant animations may share the base geo).
+	 */
+	private static Path geoForAnimation(Path geoDir, String animationFileName) {
+		String base = animationFileName.substring(0, animationFileName.length() - ".animation.json".length());
+		while (true) {
+			Path candidate = geoDir.resolve(base + ".geo.json");
+			if (Files.exists(candidate)) return candidate;
+			int cut = base.lastIndexOf('_');
+			if (cut < 0) return null;
+			base = base.substring(0, cut);
+		}
 	}
 
 	private static int countNullAtYawZero(List<Path> files) throws Exception {

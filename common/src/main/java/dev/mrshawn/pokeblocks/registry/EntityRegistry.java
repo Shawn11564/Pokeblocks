@@ -3,6 +3,7 @@ package dev.mrshawn.pokeblocks.registry;
 import dev.mrshawn.pokeblocks.PokeblocksCommon;
 import dev.mrshawn.pokeblocks.entity.custom.LaserDotEntity;
 import dev.mrshawn.pokeblocks.entity.custom.SeatEntity;
+import dev.mrshawn.pokeblocks.entity.custom.ThrownPokedollEntity;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.MobCategory;
 
@@ -15,6 +16,7 @@ public final class EntityRegistry {
 
     private static final String SEAT_ID = "seat";
     private static final String LASER_DOT_ID = "laser_dot";
+    private static final String THROWN_POKEDOLL_ID = "thrown_pokedoll";
 
     public static final Supplier<EntityType<SeatEntity>> SEAT_ENTITY = PokeblocksCommon.COMMON_PLATFORM.registerEntity(
             SEAT_ID,
@@ -40,5 +42,19 @@ public final class EntityRegistry {
                     .noSave()
                     .fireImmune()
                     .build(LASER_DOT_ID)
+    );
+
+    /**
+     * A pokedoll in flight after right-clicking a throwable doll (doll + snowball recipe). Sized and
+     * tracked exactly like a vanilla snowball; the doll stack rides the entity's synched item, and
+     * impact handling (place / drop / head-equip) lives in {@link ThrownPokedollEntity}.
+     */
+    public static final Supplier<EntityType<ThrownPokedollEntity>> THROWN_POKEDOLL_ENTITY = PokeblocksCommon.COMMON_PLATFORM.registerEntity(
+            THROWN_POKEDOLL_ID,
+            () -> EntityType.Builder.<ThrownPokedollEntity>of(ThrownPokedollEntity::new, MobCategory.MISC)
+                    .sized(0.25f, 0.25f)
+                    .clientTrackingRange(4)
+                    .updateInterval(10)
+                    .build(THROWN_POKEDOLL_ID)
     );
 }

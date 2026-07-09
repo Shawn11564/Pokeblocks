@@ -7,6 +7,7 @@ import dev.mrshawn.pokeblocks.item.ServerOverrides;
 import dev.mrshawn.pokeblocks.utils.ColorFactory;
 import dev.mrshawn.pokeblocks.client.renderer.block.CustomDecorationBlockRenderer;
 import dev.mrshawn.pokeblocks.client.renderer.block.DecorativeBlockRenderer;
+import dev.mrshawn.pokeblocks.client.renderer.block.DigSiteBlockRenderer;
 import dev.mrshawn.pokeblocks.client.renderer.block.FigurineBlockRenderer;
 import dev.mrshawn.pokeblocks.client.renderer.block.PokedollBlockRenderer;
 import dev.mrshawn.pokeblocks.client.renderer.entity.LaserDotRenderer;
@@ -16,6 +17,7 @@ import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.blockentity.BlockEntityRendererProvider;
 import net.minecraft.client.renderer.entity.EntityRenderer;
 import net.minecraft.client.renderer.entity.EntityRendererProvider;
+import net.minecraft.client.renderer.entity.ThrownItemRenderer;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.EntityType;
@@ -48,6 +50,7 @@ public final class PokeblocksClient {
 		blockEntityRenderers.accept(BlockEntityRegistry.POKEDOLL_BLOCK_ENTITY.get(), context -> new PokedollBlockRenderer());
 		blockEntityRenderers.accept(BlockEntityRegistry.FIGURINE_BLOCK_ENTITY.get(), context -> new FigurineBlockRenderer());
 		blockEntityRenderers.accept(BlockEntityRegistry.CUSTOM_DECORATION_BLOCK_ENTITY.get(), context -> new CustomDecorationBlockRenderer());
+		blockEntityRenderers.accept(BlockEntityRegistry.DIG_SITE_BLOCK_ENTITY.get(), DigSiteBlockRenderer::new);
 
 		for (DecorativeRegistry.DecorativeEntry entry : DecorativeRegistry.ALL_ENTRIES) {
 			blockEntityRenderers.accept(entry.blockEntityType().get(),
@@ -63,6 +66,9 @@ public final class PokeblocksClient {
 			}
 		});
 		entityRenderers.accept(EntityRegistry.LASER_DOT_ENTITY.get(), LaserDotRenderer::new);
+		// Vanilla snowball-style renderer: draws the entity's synched item stack, which routes through
+		// the pokedoll's GeckoLib item renderer — so the actual 3D doll model tumbles through the air.
+		entityRenderers.accept(EntityRegistry.THROWN_POKEDOLL_ENTITY.get(), ThrownItemRenderer::new);
 	}
 
 	/**

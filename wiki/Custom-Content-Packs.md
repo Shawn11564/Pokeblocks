@@ -174,6 +174,14 @@ string id stored on the block entity and resolved by id at render time. The bloc
 facing, sized so it never sticks out past the rendered model on any axis; see `DollShapes`),
 falling back to a centered `Block.box(4,0,4,12,12,12)` when the model can't be resolved.
 
+> [!NOTE]
+> The same applies to pokedolls — and if a doll ships an `animation.json` whose
+> `animation.idle` is a **static pose** (constant bone rotations/positions/scales, the way most
+> bundled dolls sit, crouch or tuck their limbs), that pose is baked into the hitbox too, so the
+> box matches the posed silhouette rather than the model's authored bind pose. Bones hidden with
+> `scale: 0` are excluded. Time-varying channels (keyframe timelines, molang expressions) are
+> ignored for hitbox purposes and evaluate at the bind pose.
+
 A new decoration `<id>` is registered only when **both a model and a texture are present**:
 
 ```

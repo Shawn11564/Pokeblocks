@@ -211,3 +211,228 @@ the report for Shawn.
 - `./gradlew :fabric:compileJava :forge:compileJava :neoforge:compileJava` → **exit 0** (all loaders re-source
   common; only pre-existing forge-deprecation / mixin-mapping / `unchecked` notes, none from these changes).
 - `./gradlew :common:compileJava` → re-verified **exit 0** after the three safe review fixes above.
+
+---
+
+## Compendium finalization pass (2026-07-08)
+
+Both compendium books were taken from POC to shippable: server-side per-player collection persistence
+(+ optional sync payload), the two near-verbatim screen stacks merged behind `CompendiumType`, textured
+GUI (panel / slots / arrows / book spread) and original 16x16 item icons, recipes, localization, and the
+`IncompleteFeatureItem` gate removed from both books (laser pointer stays gated). The `[HIGH-reuse]`
+figurine-compendium duplication finding in PROJECT_REVIEW.md is resolved by this pass.
+
+### Assumption — "collected" = has ever carried the item (per player, per world)
+
+- **Location:** `common/.../compendium/CompendiumProgressStore.java`, recorded from
+  `PokedollItem#inventoryTick` / `FigurineItem#inventoryTick` (1s cadence), stored as a `SavedData`
+  file `data/pokeblocks_compendium.dat` on the overworld, keyed by player UUID.
+- **Value set:** discovery latches on first carry and never un-records; dolls collect **species**
+  (variant flags ignored), figurines collect ids. Client shows synced-progress ∪ current inventory.
+- **Reasoning:** the POC's own comments called inventory-scanning "the cheap, no-persistence path" and
+  named per-player saved data as the real design. Species-level (not per-variant) matches the POC's
+  `getPokemonFromStack(...).toLowerCase()` keying. The inventory-scan union keeps the book working
+  against servers too old to send the payload (same graceful-degradation stance as pack sync).
+- **Confidence:** high for the mechanism (unit-tested codec/NBT/latch); the *policy* (should shinies be
+  separate entries?) is a design call Shawn may want to revisit.
+- **Needs human:** in-game pass on all 3 loaders; decide whether shiny/gigantic variants deserve their
+  own compendium entries later.
+
+### Assumption — recipes: book+wool (doll) / book+quartz (figurine)
+
+- **Location:** `common/src/main/resources/data/pokeblocks/recipe/compendium.json`,
+  `figurine_compendium.json` (vanilla `crafting_shapeless`).
+- **Value set:** Doll Compendium = `minecraft:book` + `#minecraft:wool`; Figurine Compendium =
+  `minecraft:book` + `minecraft:quartz`.
+- **Reasoning:** no prior recipes existed (items were creative-only behind `show_incomplete_items`).
+  Wool = plush theme; quartz = display/ornament theme. Cheap on purpose — the books are trackers, not
+  rewards. Trivial to rebalance by editing the JSON.
+- **Confidence:** medium (pure taste). **Needs human:** confirm ingredients/cost.
+
+### Assumption — Forge sync channel is separate from `pack_sync`
+
+- **Location:** `forge/.../PokeblocksForge.java` → `compendium_sync` optional channel, v1.
+- **Value set:** new optional channel rather than a third payload on the existing `pack_sync` channel.
+- **Reasoning:** old-client/new-server joins are an explicitly supported flow (doll-only update skew);
+  adding payload types to an existing Forge channel risks member-list mismatches against older builds,
+  while a whole missing channel is exactly what `.optional()` tolerates. Fabric/NeoForge register the
+  payload individually (inherently optional per-payload) so nothing changes for them.
+- **Confidence:** high. **Needs human:** cross-version join smoke test alongside the pack handshake.
+
+### Judgment call — index screen adapts rows/columns to the window
+
+- **Location:** `common/.../client/screen/CompendiumScreen.java` → `init()`.
+- **Value set:** columns `clamp((width-24)/44, 4..7)`, rows `clamp((height-93)/44, 2..4)` (the POC was a
+  fixed 7×4 that overflowed 320×240 GUI-scale setups).
+- **Reasoning:** the textured panel + Done button need ~93px of vertical chrome; at the common 480×270
+  logical size this still yields the POC's 7×4. Verified against a pixel-exact PIL mock of the layout.
+- **Confidence:** high, but it is new layout code. **Needs human:** eyeball at GUI scale 1–4.
+
+### Play-test feedback round (2026-07-08, same day)
+
+Shawn's first pass surfaced seven changes, all applied:
+
+- **Combee render fix + representative variants** — the index/detail no longer builds bare no-flag
+  stacks; each species is represented by its least-flagged **valid** variant from
+  `PokedollItem.getAllMutations` (Combee has no base texture — gender is mandatory — so it now shows
+  its male form). Ordering rule: non-gigantic before gigantic, non-shiny before shiny, fewer flags
+  first, canonical key as the final tiebreak.
+- **Per-variant tracking** — progress keys upgraded from bare species to
+  `CompendiumVariantKey` (`"species flag1 flag2"`, flags lower-case + alphabetical; bare species ==
+  the no-flag variant, so day-old playtest data reads as "base variant found" and self-heals on the
+  next carry). Doll detail pages list every valid variant as clickable mini-slots, silhouetted until
+  that exact variant is carried; the selected variant drives the big render + status line.
+- **Found/Missing filter** — cycling chip (All → Found → Missing) in the index footer.
+- **Vanilla-grey buttons removed** — Done/Back replaced by a themed leather close pad (panel
+  top-right / book cover corner); chips + pads come from the same generator script.
+- **`E` closes** like vanilla containers (index: unless the search box is focused; detail: closes
+  the whole book, while `ESC` steps back to the index).
+- **Drag-to-inspect** — dragging the left page steers yaw/pitch (clamped ±80°); ~2.5s after release
+  the pitch eases home and the auto-spin resumes from the manual angle (`DollSpin.snapTo`).
+  **Needs human:** the pitch drag *direction* is a sign guess (GUI y-flip) — flip
+  `DRAG_SENSITIVITY` on the pitch axis if dragging down tilts the wrong way.
+- **Figurine "Hide Box"** — every figurine geo names its display case bone `box`;
+  `FigurineItemRenderer.HIDE_BOX` + a `renderRecursively` override skip that subtree (stateless — no
+  bone mutation), toggled by a chip on discovered figurine pages only.
+
+Verification: all 4 modules compile; `:common:test` green (11 compendium tests). Still needs an
+in-game pass (drag feel/pitch sign, variant strip with >10 variants, box-hide on every figurine).
+
+---
+
+## Pokedoll Phone feature (2026-07-08)
+
+New, fully-realized feature (not a card): a craftable **Pokedoll Phone** that occasionally rings
+(buzzing sound + lit inventory texture), opens an accept/hang-up call screen when picked up, and on
+accept scatters dig sites around the player that resolve into junk or a rarity-rolled buried doll
+(guaranteed within 3 digs). New `phone` package (payloads/codec/calls/quest store/manager/rules),
+`DigSiteBlock` (+4 stage models over vanilla dirt/mud textures), `PokedollPhoneItem`, call screen
+reusing the compendium panel/chips/doll-render stack, PIL-generated textures
+(`tools/gen_phone_assets.py`) and an ffmpeg-synthesized `phone_buzz.ogg`.
+
+### Assumption — lit texture rides vanilla `custom_model_data`, not a modded predicate
+
+- **Location:** `models/item/pokedoll_phone.json` (override) + `PokedollPhoneItem` (sets/clears
+  `DataComponents.CUSTOM_MODEL_DATA` on ring start/end).
+- **Value set:** `custom_model_data == 1` selects `pokedoll_phone_on`.
+- **Reasoning:** `ItemProperties.register` is **private** in vanilla 1.21.1; calling it from common
+  would lean on loader-specific AWs/ATs at runtime. The server already mutates the stack at ring
+  transitions, so the vanilla generic predicate needs zero client registration on any loader.
+- **Confidence:** high (compiles + wire-format identical everywhere). Quirk: a phone dropped into a
+  chest mid-ring keeps its lit texture until next carried (no inventoryTick to expire it).
+- **Needs human:** in-game check that the texture flips in inventory within ~1s of ring start/end.
+
+### Assumption — ring cadence / quest shape defaults (all configurable under `[phone]`)
+
+- **Value set:** `enabled=true`, `average_call_interval_minutes=15`, `ring_seconds=30` (spec),
+  `dig_sites=6` (spec), `site_radius=32`, `guaranteed_attempts=3` (spec); plus hardcoded 1-min
+  initial grace, 2-min post-call cooldown, 60s accept/hang-up decision window.
+- **Reasoning:** spec fixed 30s/6 sites/3 attempts; the interval/radius are taste values placed in
+  config so Shawn can retune without code. One ring roll per second (`1/(avg*60)` per check) gives a
+  memoryless average matching the configured interval.
+- **Confidence:** medium (feel values). **Needs human:** pacing play-test.
+
+### Assumption — guarantee = pre-rolled winning dig index stored on the quest
+
+- **Location:** `DigQuestManager.startQuest` (`targetAttempt = 1 + rand(min(3, siteCount))`),
+  `DigQuestRules.shouldFindDoll` (attempts ≥ target OR last remaining site).
+- **Reasoning:** rolling the winning *attempt number* up front makes the guarantee unconditional on
+  WHICH mounds the player digs, survives restarts inside the SavedData, and stays unit-testable. The
+  "last remaining site" clause covers externally destroyed sites.
+- **Confidence:** high (unit-tested).
+
+### Assumption — dig sites are unbreakable air-cell mounds; external removal shrinks the quest
+
+- **Location:** `DigSiteBlock` (`strength(-1, 3.6e6)`, `pushReaction(BLOCK)`, no BlockItem, no loot),
+  placed only into an AIR cell above `{grass_block, dirt, coarse_dirt, podzol, mycelium, rooted_dirt}`
+  (heightmap surface, world-border + 5-block spacing checks), `onRemove` → quest update.
+- **Reasoning:** the spec demands existing blocks are never destroyed/overwritten, so the mound
+  occupies air and the soil below is untouched. Unbreakable + piston-proof keeps the minigame from
+  being mined apart; /setblock-or-support-loss removals shrink the quest (last one fails it) instead
+  of leaving orphans, and a mound whose quest is gone self-removes on interaction.
+- **Confidence:** high for placement safety; medium for the "right-click to dig" interaction reading
+  as intuitive (vs. left-click mining). **Needs human:** dig feel; whether stages should need more
+  clicks or a shovel.
+
+### Assumption — buried doll roll reuses the LOOT pipeline's exclusions; caller is uniform species
+
+- **Location:** `PhoneCalls.pickBuriedDollKey` (weighted over
+  `RarityScoreCalculator.computeAllVariants(getExcludedLootFlags())`, skipping NONE-rarity,
+  zero-weight and `excluded_dolls` entries), `PhoneCalls.pickCallerKey` (uniform species,
+  least-flagged VALID representative — the compendium's Combee rule).
+- **Reasoning:** "already established doll rarity" == the loot weighting; reusing its exclusions
+  keeps gigantic/noice/substitute policy in one place. The caller is cosmetic, so uniform species
+  gives variety; the least-flagged-valid representative avoids broken bare stacks (Combee).
+- **Confidence:** high. **Needs human:** confirm gigantic dolls should stay un-buriable (they are,
+  via the default `excluded_flags`).
+
+### Assumption — Forge gets a third optional channel `phone_sync`
+
+- **Location:** `forge/.../PokeblocksForge.java`.
+- **Value set:** own `.optional()` channel (S2C dig sites, C2S call response) — mirroring the
+  documented `compendium_sync` reasoning: never append payloads to an existing Forge channel that
+  old clients negotiate by member list. Fabric/NeoForge register the payloads individually.
+  Phones deliberately never ring for players whose client lacks the payloads (`canSendTo` gate).
+- **Confidence:** high. **Needs human:** cross-version join smoke test.
+
+### Judgment call — client tick via a common client mixin, not per-loader events
+
+- **Location:** `mixin/PhoneClientTickMixin` (`Minecraft#tick` TAIL → `DigSiteParticles.tick`),
+  registered in the mixin config's `client` array.
+- **Reasoning:** the repo's established pattern (`ServerTickMixin`, `PlayerJoinMixin`) — one hook for
+  all three loaders instead of three ClientTickEvent registrations. Particles: gold dust shimmer
+  every 3 ticks + END_ROD beacon every 40, ≤96 blocks, purely cosmetic.
+- **Confidence:** high.
+
+### Verification performed (this pass)
+
+- `./gradlew :common:compileJava` / `:fabric:compileJava` / `:forge:compileJava` /
+  `:neoforge:compileJava` → **exit 0** (only pre-existing warnings).
+- `./gradlew :common:test` → green, including 15 new phone tests (store NBT round-trip, payload
+  codec round-trip, variant-key round-trip, weighted-pick bands, dig guarantee incl. forced-last).
+- mc-test registry assertions added (`pokedoll_phone` item, `dig_site` block, `dig_site` item
+  negative control). **NOT play-tested in-game.**
+
+## Pokedoll Phone play-test round 1 (2026-07-08)
+
+Play-test feedback: the reveal doll rendered in the mound's corner and stayed mostly buried at the
+final stage; sites should re-cover themselves like vanilla archaeology; chat messages should not
+call dolls "... Pokedoll".
+
+### Fix — reveal item centred and seated by its own model bounds
+
+- **Location:** `DigSiteBlockRenderer` (rewritten), `DigSiteBlock.surfaceHeight`,
+  `DigSiteBlockEntity.easeRenderY`.
+- **Reasoning:** the old renderer compensated for GeckoLib's `(0.5, 0.51, 0.5)` post-translate but
+  missed vanilla `ItemRenderer`'s `(-0.5, -0.5, -0.5)` pre-translate that cancels it (the exact
+  cancellation `HeadFit.headPoseOps` documents) — so the doll's origin landed at 0.25/0.25, the
+  corner. Now: centred at 0.5/0.5, stable position-hashed yaw, and seated so a per-stage fraction
+  of the item's OWN idle-pose height (`DollShapes.modelBounds`, gigantic ×1.5 accounted) shows
+  above the mound surface: `EMERGE_FRACTION = {-0.15, 0.25, 0.55, 0.85}` (tucked under → head
+  peeking → mostly out). Height changes ease over ~1s (client-only state on the block entity) so
+  scoops and refills read as rising/sinking, not teleporting.
+- **Confidence:** high on the centring math (mirrors HeadFit's documented offsets); medium on the
+  emerge fractions + ease rate reading well. **Needs human:** re-play-test the reveal.
+
+### Fix — mounds slowly re-cover themselves (vanilla brushable reset)
+
+- **Location:** `DigSiteBlock.tick` + `COVER_GRACE_TICKS=100`, `COVER_INTERVAL_TICKS=60`;
+  scheduled from `DigQuestManager.tryDig` (guarded by `hasScheduledTick`), last-scoop time on
+  `DigSiteBlockEntity` (transient, like vanilla `BrushableBlockEntity`'s cooldowns).
+- **Reasoning:** vanilla-archaeology parity via scheduled ticks (zero idle cost): 5s untouched →
+  one stage refills every 3s with dirt place-sound + particles, fully buried again ~14s after
+  abandonment. The reveal item is deliberately NOT cleared at stage 0 so the sink animation plays
+  out; every scoop refreshes it anyway. Decay only lowers STAGE — quest resolution still happens
+  solely on the final scoop, and a pending tick on a removed mound no-ops (block mismatch).
+- **Confidence:** high mechanically; timing values are taste. **Needs human:** pacing feel.
+
+### Fix — phone messages drop the "Pokedoll" word
+
+- **Location:** `PhoneCalls.dollName` now uses `PokedollItem.displayName(stack, false)` (the
+  call screen's existing suffix-free path) instead of `getHoverName()`.
+- **Confidence:** high.
+
+### Verification performed (this pass)
+
+- `./gradlew :common:compileJava :fabric:compileJava :forge:compileJava :neoforge:compileJava
+  :common:test` → **exit 0**, tests green (only pre-existing warnings). **NOT play-tested yet.**

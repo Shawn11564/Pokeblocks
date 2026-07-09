@@ -1,5 +1,7 @@
 package dev.mrshawn.pokeblocks.mixin;
 
+import dev.mrshawn.pokeblocks.compendium.CompendiumProgressTracker;
+import dev.mrshawn.pokeblocks.phone.DigQuestManager;
 import dev.mrshawn.pokeblocks.resourcepack.sync.ServerPackSync;
 import net.minecraft.network.Connection;
 import net.minecraft.server.level.ServerPlayer;
@@ -24,5 +26,10 @@ public abstract class PlayerJoinMixin {
 		// Negotiates a per-client delta pack when the client supports it, else pushes the full pack
 		// (resolving self-host vs. remote-URL distribution). No-op when there's no pack to send.
 		ServerPackSync.onPlayerJoin(server, player);
+		// Sends the player's compendium discoveries; no-op for clients without the payload.
+		CompendiumProgressTracker.syncTo(player);
+		// Sends the player's active phone dig sites (or an explicit clear, so a stale set from a
+		// previous world never lingers); no-op for clients without the payload.
+		DigQuestManager.syncTo(player);
 	}
 }

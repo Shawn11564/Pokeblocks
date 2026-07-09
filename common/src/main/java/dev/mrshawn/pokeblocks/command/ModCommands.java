@@ -15,5 +15,6 @@ public class ModCommands {
 		ReloadLootGroupsCMD.register(dispatcher);
 		IntableSearchCMD.register(dispatcher);
 		ConfigSyncCMD.register(dispatcher);
+		PhoneRingCMD.register(dispatcher);
     }
 }

@@ -6,13 +6,16 @@
   "compatibilityLevel": "JAVA_17",
   "mixins": [
     "PlayerJoinMixin",
-    "ServerTickMixin"
+    "ServerTickMixin",
+    "UseItemOnDistanceMixin"
   ],
   "client": [
     "PokedollParticleMixin",
     "PokedollSprintParticleMixin",
     "PackRepositoryMixin",
-    "CreativePickBlockMixin"
+    "CreativePickBlockMixin",
+    "PickBlockCloneDataMixin",
+    "PhoneClientTickMixin"
   ],
   "injectors": {
     "defaultRequire": 1

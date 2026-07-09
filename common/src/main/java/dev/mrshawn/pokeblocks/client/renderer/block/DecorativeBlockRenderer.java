@@ -6,9 +6,8 @@ import dev.mrshawn.pokeblocks.block.entity.custom.DecorativeBlockEntity;
 import dev.mrshawn.pokeblocks.client.model.block.DecorativeModel;
 import dev.mrshawn.pokeblocks.constants.ModSettings;
 import software.bernie.geckolib.cache.object.BakedGeoModel;
-import software.bernie.geckolib.renderer.GeoBlockRenderer;
 
-public class DecorativeBlockRenderer extends GeoBlockRenderer<DecorativeBlockEntity> {
+public class DecorativeBlockRenderer extends CullAwareGeoBlockRenderer<DecorativeBlockEntity> {
 	public DecorativeBlockRenderer(DecorativeDefinition definition) {
 		super(new DecorativeModel(definition));
 	}

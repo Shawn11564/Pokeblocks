@@ -4,6 +4,7 @@ import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.math.Axis;
 import dev.mrshawn.pokeblocks.shape.Affine3;
 import dev.mrshawn.pokeblocks.shape.GeoGeometry;
+import dev.mrshawn.pokeblocks.shape.GeoPose;
 import org.joml.Quaternionf;
 import org.joml.Vector4f;
 import org.junit.jupiter.api.Test;
@@ -19,13 +20,20 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
  * {@code RenderUtil}) call sequence on a real {@link PoseStack} (JOML underneath), and asserts that
  * {@link GeoGeometry}/{@link Affine3} place every cube corner at the same model-space position.
  * If GeckoLib's mirroring, rotation signs, rotation order or pivot handling were misread anywhere,
- * corners land in different places and this fails.
+ * corners land in different places and this fails. The posed test does the same with a static
+ * {@code animation.idle} pose applied — the reference replays {@code AnimationProcessor} semantics
+ * (rotation added to the bind pose, position/scale replacing it, keyframe constants baked as
+ * {@code (toRadians(-x), toRadians(-y), toRadians(+z))}) through the full
+ * {@code RenderUtil.prepMatrixForBone} sequence.
  */
 class GeoTransformParityTest {
 
 	/** Bone chain (outermost first) with raw JSON pivots/rotations, then one cube's raw JSON data. */
 	private record RawCube(double[][] bonePivots, double[][] boneRotations,
 						   double[] origin, double[] size, double[] pivot, double[] rotation, double inflate) {}
+
+	/** One bone's raw pose channels (JSON units), null channel = not posed. */
+	private record RawPose(double[] rotation, double[] position, double[] scale) {}
 
 	// Mirrors the synthetic geo json below, bone chain resolved manually (root → child).
 	private static final RawCube CUBE_A = new RawCube(
@@ -56,6 +64,19 @@ class GeoTransformParityTest {
 			}
 			""";
 
+	// The synthetic pose exercises every channel: additive rotation, X-negated position offset,
+	// non-uniform scale about the pivot, and pose inheritance through the root→child chain.
+	private static final RawPose ROOT_POSE = new RawPose(
+			new double[]{5, -10, 15}, new double[]{1, -2, 3}, new double[]{0.5, 2, 1.25});
+	private static final RawPose CHILD_POSE = new RawPose(new double[]{-25, 0, 40}, null, null);
+
+	private static final String POSE_JSON = """
+			{"animations": {"animation.idle": {"loop": true, "bones": {
+				"root": {"rotation": [5, -10, 15], "position": [1, -2, 3], "scale": [0.5, 2, 1.25]},
+				"child": {"rotation": [-25, 0, 40]}
+			}}}}
+			""";
+
 	@Test
 	void cornersMatchGeckolibRenderMathAtAllYaws() throws Exception {
 		GeoGeometry geometry = GeoGeometry.parse(GEO_JSON.getBytes(StandardCharsets.UTF_8));
@@ -66,13 +87,29 @@ class GeoTransformParityTest {
 		// 0 = north placement; -67.5 = pokedoll rotation segment 3; 90/180/270 = figurine facings.
 		for (double yaw : new double[]{0, -67.5, 90, 180, 270}) {
 			for (int i = 0; i < raw.length; i++) {
-				compareAllCorners(raw[i], cubes.get(i), yaw);
+				compareAllCorners(raw[i], null, cubes.get(i), yaw);
 			}
 		}
 	}
 
-	private static void compareAllCorners(RawCube raw, GeoGeometry.OrientedCube baked, double yawDegrees) {
-		PoseStack reference = geckolibPoseStack(raw, yawDegrees);
+	@Test
+	void posedCornersMatchGeckolibRenderMathAtAllYaws() throws Exception {
+		GeoPose pose = GeoPose.parse(POSE_JSON.getBytes(StandardCharsets.UTF_8));
+		GeoGeometry geometry = GeoGeometry.parse(GEO_JSON.getBytes(StandardCharsets.UTF_8), pose);
+		List<GeoGeometry.OrientedCube> cubes = geometry.cubes();
+		assertEquals(3, cubes.size(), "the pose scales nothing to zero, so no cube is culled");
+
+		RawCube[] raw = {CUBE_A, CUBE_B, CUBE_C};
+		RawPose[][] poses = {{ROOT_POSE}, {ROOT_POSE}, {ROOT_POSE, CHILD_POSE}};
+		for (double yaw : new double[]{0, -67.5, 180}) {
+			for (int i = 0; i < raw.length; i++) {
+				compareAllCorners(raw[i], poses[i], cubes.get(i), yaw);
+			}
+		}
+	}
+
+	private static void compareAllCorners(RawCube raw, RawPose[] bonePoses, GeoGeometry.OrientedCube baked, double yawDegrees) {
+		PoseStack reference = geckolibPoseStack(raw, bonePoses, yawDegrees);
 		Affine3 actual = Affine3.identity()
 				.translate(0.5, 0, 0.5)
 				.rotateY(StrictMath.toRadians(yawDegrees))
@@ -114,8 +151,11 @@ class GeoTransformParityTest {
 	 * {@code GeoBlockRenderer.preRender} (translate 0.5,0,0.5) → {@code rotateBlock} (Axis.YP by yaw)
 	 * → per bone {@code RenderUtil.prepMatrixForBone} → per cube {@code GeoRenderer.renderCube}'s
 	 * pivot/rotate/unpivot — using GeckoLib's baked values (X-negated pivots, (-x,-y,+z) rotations).
+	 * With a pose, each bone additionally replays {@code translateMatrixToBone} (the animation's
+	 * position offset, X negated), the pose rotation added onto the bind rotation, and
+	 * {@code scaleMatrixForBone} between rotation and un-pivot.
 	 */
-	private static PoseStack geckolibPoseStack(RawCube raw, double yawDegrees) {
+	private static PoseStack geckolibPoseStack(RawCube raw, RawPose[] bonePoses, double yawDegrees) {
 		PoseStack pose = new PoseStack();
 		pose.translate(0.5, 0, 0.5);
 		pose.mulPose(Axis.YP.rotationDegrees((float) yawDegrees));
@@ -123,14 +163,24 @@ class GeoTransformParityTest {
 		for (int b = 0; b < raw.bonePivots.length; b++) {
 			double[] p = raw.bonePivots[b];
 			double[] r = raw.boneRotations[b];
-			float bakedRotX = (float) Math.toRadians(-r[0]);
-			float bakedRotY = (float) Math.toRadians(-r[1]);
-			float bakedRotZ = (float) Math.toRadians(r[2]);
+			RawPose bonePose = bonePoses != null ? bonePoses[b] : null;
+			double[] animRot = bonePose != null && bonePose.rotation() != null ? bonePose.rotation() : new double[3];
+			float bakedRotX = (float) Math.toRadians(-(r[0] + animRot[0]));
+			float bakedRotY = (float) Math.toRadians(-(r[1] + animRot[1]));
+			float bakedRotZ = (float) Math.toRadians(r[2] + animRot[2]);
 
+			if (bonePose != null && bonePose.position() != null) { // translateMatrixToBone
+				double[] o = bonePose.position();
+				pose.translate(-o[0] / 16f, o[1] / 16f, o[2] / 16f);
+			}
 			pose.translate(-p[0] / 16f, p[1] / 16f, p[2] / 16f); // translateToPivotPoint(bone)
 			if (bakedRotZ != 0) pose.mulPose(Axis.ZP.rotation(bakedRotZ)); // rotateMatrixAroundBone
 			if (bakedRotY != 0) pose.mulPose(Axis.YP.rotation(bakedRotY));
 			if (bakedRotX != 0) pose.mulPose(Axis.XP.rotation(bakedRotX));
+			if (bonePose != null && bonePose.scale() != null) { // scaleMatrixForBone
+				double[] s = bonePose.scale();
+				pose.scale((float) s[0], (float) s[1], (float) s[2]);
+			}
 			pose.translate(p[0] / 16f, -p[1] / 16f, -p[2] / 16f); // translateAwayFromPivotPoint(bone)
 		}
 

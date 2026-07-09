@@ -30,9 +30,53 @@
   "item.pokeblocks.compendium": "Doll Compendium",
   "item.pokeblocks.figurine_compendium": "Figurine Compendium",
   "item.pokeblocks.laser_pointer": "Laser Pointer",
+  "item.pokeblocks.pokedoll_phone": "Pokedoll Phone",
+
+  "block.pokeblocks.dig_site": "Dig Site",
+
+  "tooltip.pokeblocks.pokedoll_phone": "Sometimes a doll calls with a favor...",
+  "tooltip.pokeblocks.pokedoll_phone.detail": "Right-click while it buzzes to pick up.",
+
+  "screen.pokeblocks.phone.title": "Incoming Call",
+  "screen.pokeblocks.phone.call_text": "I buried my favorite doll somewhere near you... but I forgot where! Could you dig it up for me?",
+  "screen.pokeblocks.phone.accept": "Accept",
+  "screen.pokeblocks.phone.hangup": "Hang Up",
+
+  "message.pokeblocks.phone.ringing": "Your Pokedoll Phone is buzzing!",
+  "message.pokeblocks.phone.missed_call": "Missed call...",
+  "message.pokeblocks.phone.no_calls": "No new calls.",
+  "message.pokeblocks.phone.call_ended": "The call already ended.",
+  "message.pokeblocks.phone.hung_up": "You hung up.",
+  "message.pokeblocks.phone.no_sites": "There's no good digging ground nearby — the call fizzled out.",
+  "message.pokeblocks.phone.quest_started": "%s buried a doll nearby! %s dig sites appeared — follow the sparkles and right-click to dig.",
+  "message.pokeblocks.phone.dug_junk": "Just junk... %s dig site(s) left.",
+  "message.pokeblocks.phone.dug_doll": "You dug up %s! %s is overjoyed.",
+  "message.pokeblocks.phone.quest_failed": "All the dig sites were destroyed — the buried doll is lost...",
+  "message.pokeblocks.phone.not_your_site": "This dig site isn't yours.",
+  "message.pokeblocks.phone.reminder": "%s is still waiting for you to find the buried doll — %s dig site(s) left.",
 
   "tooltip.pokeblocks.incomplete": "⚠ Incomplete Feature",
   "tooltip.pokeblocks.incomplete.detail": "Functionality may not be fully working.",
 
-  "subtitles.pokeblocks.pokedoll_squeak": "Pokedoll squeaks"
+  "tooltip.pokeblocks.compendium.doll": "Records every doll you have ever collected.",
+  "tooltip.pokeblocks.compendium.figurine": "Records every figurine you have ever collected.",
+
+  "screen.pokeblocks.compendium.search": "Search",
+  "screen.pokeblocks.compendium.page": "Page %s / %s",
+  "screen.pokeblocks.compendium.unknown": "???",
+  "screen.pokeblocks.compendium.collected": "Collected",
+  "screen.pokeblocks.compendium.undiscovered": "Not yet collected",
+  "screen.pokeblocks.compendium.filter.all": "All",
+  "screen.pokeblocks.compendium.filter.found": "Found",
+  "screen.pokeblocks.compendium.filter.missing": "Missing",
+  "screen.pokeblocks.compendium.variants": "Variants",
+  "screen.pokeblocks.compendium.hide_box": "Hide Box",
+  "screen.pokeblocks.compendium.show_box": "Show Box",
+  "screen.pokeblocks.compendium.locked.doll": "You haven't collected this doll yet. Its silhouette hints at who it might be...",
+  "screen.pokeblocks.compendium.locked.figurine": "You haven't collected this figurine yet. Its silhouette hints at who it might be...",
+  "screen.pokeblocks.compendium.description.doll": "Not much is known about this doll.",
+  "screen.pokeblocks.compendium.description.figurine": "A collectible figurine.",
+
+  "subtitles.pokeblocks.pokedoll_squeak": "Pokedoll squeaks",
+  "subtitles.pokeblocks.phone_buzz": "Pokedoll Phone buzzes"
 }

@@ -46,7 +46,10 @@ The multiloader rewrite is structurally sound and broadly faithful to pre-rewrit
 
 ## Reuse / duplication
 
-### [HIGH] Figurine compendium screen package is a near-verbatim copy of the doll compendium package
+### [HIGH] ✅ RESOLVED — Figurine compendium screen package is a near-verbatim copy of the doll compendium package
+> **Resolved** during compendium finalization: the five `FigurineCompendium*` classes were deleted and both
+> collections now share one `CompendiumScreen`/`CompendiumDetailScreen`/`CompendiumRender`/`CompendiumCollection`
+> stack parameterized by the `CompendiumType` enum (DOLLS / FIGURINES).
 - **File:** [`common/src/main/java/dev/mrshawn/pokeblocks/client/screen/FigurineCompendiumScreen.java:22-188`](common/src/main/java/dev/mrshawn/pokeblocks/client/screen/FigurineCompendiumScreen.java)
 - **What's wrong:** `FigurineCompendiumScreen`, `FigurineCompendiumDetailScreen`, `FigurineCompendiumRender`, `FigurineCompendiumCollection` and `FigurineCompendiumClientHooks` are wholesale copies of the doll `Compendium*` package (added as a copy in commit `904777a`). `FigurineCompendiumScreen` vs `CompendiumScreen` are ~95% identical: same `COLUMNS`/`ROWS`/`PER_PAGE`/`CELL`/`ITEM_SCALE`/`CELL_BG`/`CELL_BG_HOVER`/`CELL_BORDER` constants, identical `init()` grid+nav layout, identical `render()` loop, identical `mouseClicked()`/`cellIndexAt()`/`changePage()`/`updateNavState()`/`pageCount()`, identical `renderBlurredBackground()`/`isPauseScreen()`. The two `*Render` helpers (`renderDoll` vs `renderFigurine`) are byte-identical except which renderer's `SILHOUETTE` flag they toggle; the two `*Collection` classes differ only by the `instanceof` type and the key-extractor call. Real differences are only the backing list (`PokedollItem` species vs `FigurineItem` ids), the silhouette helper, and the detail screen's body text (figurine adds a genuine `FigurineDescriptionOverrides` lookup + default).
 - **Recommended fix:** Extract a generic paged "collectible compendium" screen/detail/render/collection abstraction parameterized over (a) the base `ItemStack` list, (b) the silhouette-flag toggle, (c) the title, (d) the detail body-text provider; doll and figurine become thin configurations. At minimum, merge the two identical `*Render` helpers and `*Collection` classes.

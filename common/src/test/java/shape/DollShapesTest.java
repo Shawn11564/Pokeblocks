@@ -90,7 +90,7 @@ class DollShapesTest {
 
 	@Test
 	void modelBoundsExposeTheOuterRenderBox() {
-		double[] bounds = DollShapes.modelBounds("geo/block/pokedoll_bulbasaur.geo.json");
+		double[] bounds = DollShapes.modelBounds("geo/block/pokedoll_bulbasaur.geo.json", null);
 		assertNotNull(bounds, "bundled model must yield outer bounds");
 
 		// Model space: origin at bottom-center, so the footprint straddles zero and has real extent.
@@ -105,10 +105,56 @@ class DollShapesTest {
 						&& bounds[2] <= hitbox.minZ - 0.5 + 1e-9 && bounds[5] >= hitbox.maxZ - 0.5 - 1e-9,
 				"outer render bounds must contain the strict hitbox");
 
-		assertSame(bounds, DollShapes.modelBounds("geo/block/pokedoll_bulbasaur.geo.json"),
+		assertSame(bounds, DollShapes.modelBounds("geo/block/pokedoll_bulbasaur.geo.json", null),
 				"bounds are cached per path");
-		assertNull(DollShapes.modelBounds("geo/block/pokedoll_definitely_missing.geo.json"),
+		assertNull(DollShapes.modelBounds("geo/block/pokedoll_definitely_missing.geo.json", null),
 				"unresolvable models report null so the renderer falls back");
+	}
+
+	@Test
+	void modelBoundsBakeTheIdlePose() {
+		String geo = "geo/block/pokedoll_chikorita.geo.json";
+		double[] bind = DollShapes.modelBounds(geo, null);
+		double[] posed = DollShapes.modelBounds(geo, "animations/block/pokedoll_chikorita.animation.json");
+		assertNotNull(bind);
+		assertNotNull(posed);
+
+		// Bind pose stands 32px tall with 54px of outstretched neck whips; the idle pose folds the
+		// legs (~15px tall) and hides the whips via scale 0 (~12px wide).
+		assertEquals(2.0, bind[4], 0.01, "bind chikorita is two blocks tall");
+		assertTrue(posed[4] < 1.0, "posed chikorita sits low, got maxY=" + posed[4]);
+		assertTrue(posed[3] - posed[0] < 1.0,
+				"hidden neck whips must not widen the posed bounds, got " + (posed[3] - posed[0]));
+
+		// The renderer's empty-animation fallback and a missing file both mean "bind pose" — and
+		// share the bind cache entry.
+		assertSame(bind, DollShapes.modelBounds(geo, "animations/block/empty.animation.json"));
+		assertSame(bind, DollShapes.modelBounds(geo, "animations/block/no_such.animation.json"));
+	}
+
+	@Test
+	void poseAnimationsShrinkTheHitboxToTheRenderedSilhouette() {
+		// Chikorita's idle is a static pose: body dropped, legs folded under, neck whips scaled to 0.
+		VoxelShape posed = DollShapes.pokedollVariant("chikorita", NO_FLAGS, 0);
+		assertFalse(DollShapes.isFallbackShape(posed));
+
+		AABB box = posed.bounds();
+		assertTrue(box.maxY < 1.0, "sitting chikorita stays under a block, got maxY=" + box.maxY);
+		assertTrue(box.getXsize() < 1.0, "whips are hidden, got Xsize=" + box.getXsize());
+		// Floor context for the mc-test assertion (shape.pokedollMaxYx1000 lte 1000 for chikorita).
+		System.out.printf("[DollShapesTest] posed chikorita bounds=%s (maxY=%.4f, Xsize=%.4f)%n",
+				box, box.maxY, box.getXsize());
+	}
+
+	@Test
+	void posedVariantAnimationDiffersOnTheSameGeoFile() {
+		// Chikorita has no _posed geo — only a _posed animation. The two dolls render differently
+		// from the same geo file, so their shapes must differ too (pose is part of the cache key).
+		VoxelShape base = DollShapes.pokedollVariant("chikorita", NO_FLAGS, 0);
+		VoxelShape posed = DollShapes.pokedollVariant("chikorita", EnumSet.of(ModelFlag.POSED), 0);
+		assertFalse(DollShapes.isFallbackShape(posed));
+		assertNotEquals(base.bounds(), posed.bounds(),
+				"the posed variant holds a different pose on the same geo");
 	}
 
 	@Test
@@ -136,6 +182,38 @@ class DollShapesTest {
 		assertEquals(n.getZsize(), e.getXsize(), 1e-6);
 		assertEquals(n.getXsize(), w.getZsize(), 1e-6);
 		assertEquals(n.getZsize(), w.getXsize(), 1e-6);
+	}
+
+	@Test
+	void headPileStagesGrowWithTheHeadCount() {
+		// Regression: the stage-1 geo used to carry the full pile's bones textured transparent, so a
+		// single placed head got the whole 3-head pile's hitbox (and its gigantic variant pushed every
+		// clickable face outside the server's use-item distance guard).
+		AABB one = compiledBlockGeoBounds("eiscue_head_pile_1");
+		AABB two = compiledBlockGeoBounds("eiscue_head_pile_2");
+		AABB three = compiledBlockGeoBounds("eiscue_head_pile_3");
+
+		// Stage 1 is one centered 10px head (plus beak): well inside the block on every axis.
+		assertTrue(one.getXsize() <= 10 / 16.0 + 1e-9, "single head footprint on x, got Xsize=" + one.getXsize());
+		assertTrue(one.maxY <= 9 / 16.0 + 1e-9, "single head height, got maxY=" + one.maxY);
+
+		// The pile then grows: the second head widens the footprint, the third stacks on top.
+		assertTrue(two.getXsize() > one.getXsize() + 0.2, "two heads are wider than one");
+		assertTrue(three.maxY > one.maxY + 0.4, "the third head stacks on top of the pile");
+	}
+
+	/** Compiles a bundled block geo at yaw 0, like an unrotated placed decorative. */
+	private static AABB compiledBlockGeoBounds(String name) {
+		try (var in = DollShapesTest.class.getResourceAsStream(
+				"/assets/pokeblocks/geo/block/" + name + ".geo.json")) {
+			assertNotNull(in, "bundled geo should exist: " + name);
+			GeoGeometry geometry = GeoGeometry.parse(in.readAllBytes());
+			double[] box = GeoShapeCompiler.compile(geometry, 0);
+			assertNotNull(box);
+			return new AABB(box[0], box[1], box[2], box[3], box[4], box[5]);
+		} catch (Exception e) {
+			throw new AssertionError(e);
+		}
 	}
 
 	/** Compiles a bundled figurine model at a facing, mirroring DollShapes' facing→yaw mapping. */

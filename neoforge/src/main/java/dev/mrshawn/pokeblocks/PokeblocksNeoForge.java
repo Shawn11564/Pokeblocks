@@ -1,8 +1,15 @@
 package dev.mrshawn.pokeblocks;
 
 import dev.mrshawn.pokeblocks.command.ModCommands;
+import dev.mrshawn.pokeblocks.compendium.ClientCompendiumSync;
+import dev.mrshawn.pokeblocks.compendium.CompendiumProgressTracker;
+import dev.mrshawn.pokeblocks.compendium.CompendiumSyncPayloads;
 import dev.mrshawn.pokeblocks.config.PokeblocksConfig;
+import dev.mrshawn.pokeblocks.interaction.PokeblocksDispenseBehaviors;
 import dev.mrshawn.pokeblocks.item.loot.LootInjector;
+import dev.mrshawn.pokeblocks.phone.ClientDigSites;
+import dev.mrshawn.pokeblocks.phone.PhoneCalls;
+import dev.mrshawn.pokeblocks.phone.PhonePayloads;
 import dev.mrshawn.pokeblocks.resourcepack.CustomPackManager;
 import dev.mrshawn.pokeblocks.resourcepack.sync.ClientPackSync;
 import dev.mrshawn.pokeblocks.resourcepack.sync.PackSyncPayloads;
@@ -20,6 +27,7 @@ import net.minecraft.world.level.storage.loot.LootPool;
 import net.neoforged.bus.api.IEventBus;
 import net.neoforged.bus.api.SubscribeEvent;
 import net.neoforged.fml.common.Mod;
+import net.neoforged.fml.event.lifecycle.FMLCommonSetupEvent;
 import net.neoforged.fml.loading.FMLPaths;
 import net.neoforged.neoforge.common.NeoForge;
 import net.neoforged.neoforge.event.LootTableLoadEvent;
@@ -55,6 +63,11 @@ public final class PokeblocksNeoForge {
 		PokeblocksConfig.initialize(FMLPaths.GAMEDIR.get());
 		CustomPackManager.registerCustomAssets(FMLPaths.GAMEDIR.get());
 
+		// Deferred to common setup: the dispenser registry is not thread-safe and the doll item
+		// supplier only resolves after the registry events; enqueueWork puts us on the main thread.
+		modEventBus.addListener((FMLCommonSetupEvent event) ->
+				event.enqueueWork(PokeblocksDispenseBehaviors::register));
+
 		modEventBus.addListener(this::registerPayloads);
 		// Delta-pack handshake bridges. The payloads are optional, so a remote side without them
 		// (older Pokeblocks) still connects; hasChannel() gates the manifest send per player.
@@ -63,6 +76,14 @@ public final class PokeblocksNeoForge {
 				(player, data) -> PacketDistributor.sendToPlayer(player, new PackSyncPayloads.ManifestPayload(data)));
 		ClientPackSync.setRequestSender(data ->
 				PacketDistributor.sendToServer(new PackSyncPayloads.RequestPayload(data)));
+		CompendiumProgressTracker.setNetworkBridge(
+				player -> player.connection.hasChannel(CompendiumSyncPayloads.ProgressPayload.TYPE),
+				(player, data) -> PacketDistributor.sendToPlayer(player, new CompendiumSyncPayloads.ProgressPayload(data)));
+		PhoneCalls.setNetworkBridge(
+				player -> player.connection.hasChannel(PhonePayloads.DigSitesPayload.TYPE),
+				(player, data) -> PacketDistributor.sendToPlayer(player, new PhonePayloads.DigSitesPayload(data)));
+		ClientDigSites.setResponseSender(data ->
+				PacketDistributor.sendToServer(new PhonePayloads.CallResponsePayload(data)));
 
 		NeoForge.EVENT_BUS.register(this);
 	}
@@ -75,6 +96,17 @@ public final class PokeblocksNeoForge {
 				(payload, context) -> {
 					if (context.player() instanceof ServerPlayer player) {
 						ServerPackSync.onPackRequest(player.getServer(), player, payload.data());
+					}
+				});
+		registrar.playToClient(CompendiumSyncPayloads.ProgressPayload.TYPE, CompendiumSyncPayloads.ProgressPayload.CODEC,
+				(payload, context) -> ClientCompendiumSync.handleProgress(payload.data()));
+		// Pokedoll Phone: dig-site sync down, call answers up. Optional like the rest.
+		registrar.playToClient(PhonePayloads.DigSitesPayload.TYPE, PhonePayloads.DigSitesPayload.CODEC,
+				(payload, context) -> ClientDigSites.handleDigSites(payload.data()));
+		registrar.playToServer(PhonePayloads.CallResponsePayload.TYPE, PhonePayloads.CallResponsePayload.CODEC,
+				(payload, context) -> {
+					if (context.player() instanceof ServerPlayer player) {
+						PhoneCalls.handleCallResponse(player.getServer(), player, payload.data());
 					}
 				});
 	}

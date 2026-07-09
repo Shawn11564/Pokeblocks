@@ -111,10 +111,11 @@ public final class ItemGroupRegistry {
 				for (Supplier<net.minecraft.world.item.Item> item : ItemRegistry.MISC_ITEMS) {
 					entries.accept(new ItemStack(item.get()));
 				}
-				// POC doll compendium book
-				acceptIfShown(entries, new ItemStack(ItemRegistry.COMPENDIUM_ITEM.get()));
-				// Figurine compendium book
-				acceptIfShown(entries, new ItemStack(ItemRegistry.FIGURINE_COMPENDIUM_ITEM.get()));
+				// Compendium books
+				entries.accept(new ItemStack(ItemRegistry.COMPENDIUM_ITEM.get()));
+				entries.accept(new ItemStack(ItemRegistry.FIGURINE_COMPENDIUM_ITEM.get()));
+				// Pokedoll Phone
+				entries.accept(new ItemStack(ItemRegistry.POKEDOLL_PHONE_ITEM.get()));
 				// Laser pointer (incomplete feature)
 				acceptIfShown(entries, new ItemStack(ItemRegistry.LASER_POINTER_ITEM.get()));
 			})

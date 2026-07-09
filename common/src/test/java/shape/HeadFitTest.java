@@ -104,6 +104,35 @@ class HeadFitTest {
 				"a deliberately floating model hovers above the head like it does above its block");
 	}
 
+	// --- Base-anchored gigantic scale (inventory / hand / ground / frame contexts) --------------------
+
+	@Test
+	void anchoredScaleKeepsEveryDollBaseAtTheSameHeight() {
+		// 1.4 = gigantic inventory factor (0.7/0.5), 1.5 = gigantic held factor (0.75/0.5).
+		for (float scale : new float[]{1.4f, 1.5f}) {
+			float[] ops = HeadFit.anchoredScaleOps(scale);
+
+			// The geo origin (the doll's base) lands exactly where a regular doll's does —
+			// GeckoLib's model-centering point — so slot baselines match across sizes.
+			double[] base = applyAnchoredOps(ops, 0, 0, 0);
+			assertEquals(0.5, base[0], EPS);
+			assertEquals(0.51, base[1], EPS);
+			assertEquals(0.5, base[2], EPS);
+
+			// And the model grows by the factor around that point: up and sideways-symmetric.
+			assertEquals(0.51 + scale, applyAnchoredOps(ops, 0, 1, 0)[1], EPS, "grows upward");
+			assertEquals(0.5 + 0.25 * scale, applyAnchoredOps(ops, 0.25, 0, 0)[0], EPS, "grows sideways");
+			assertEquals(0.5 - 0.25 * scale, applyAnchoredOps(ops, 0, 0, -0.25)[2], EPS);
+		}
+	}
+
+	/** GeckoLib's (0.5, 0.51, 0.5) post-translate (innermost), then the renderer's scale → translate. */
+	private static double[] applyAnchoredOps(float[] ops, double x, double y, double z) {
+		x += 0.5; y += 0.51; z += 0.5;
+		x *= ops[3]; y *= ops[3]; z *= ops[3];
+		return new double[]{x + ops[0], y + ops[1], z + ops[2]};
+	}
+
 	/**
 	 * Runs a geo-space point through the full HEAD-context matrix chain: GeckoLib's post-translate
 	 * (innermost), the renderer's translate → scale → translate ops, then vanilla ItemRenderer's

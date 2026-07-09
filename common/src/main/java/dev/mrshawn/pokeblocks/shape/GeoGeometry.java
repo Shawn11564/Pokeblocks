@@ -19,16 +19,31 @@ import java.util.Set;
  * <b>render model space</b> — the space GeckoLib's {@code GeoBlockRenderer} draws in after its
  * {@code translate(0.5, 0, 0.5)} (so model origin = block bottom-center, 1 geo unit = 1/16 block).
  * <p>
- * The bake math mirrors GeckoLib 4.8.x {@code BakedModelFactory.Builtin} + {@code RenderUtil} exactly
- * (bind pose, no animation):
+ * The bake math mirrors GeckoLib 4.8.x {@code BakedModelFactory.Builtin} + {@code RenderUtil} exactly:
  * <ul>
  *   <li>cube vertices: {@code x ∈ [-(originX+sizeX), -originX]/16}, y/z unmirrored, ± inflate/16;</li>
  *   <li>bone/cube pivots X-negated, /16; rotations {@code (-x, -y, +z)} degrees→radians;</li>
  *   <li>transform order per bone/cube: {@code T(pivot) · Rz·Ry·Rx · T(-pivot)}, parents outermost;</li>
  *   <li>{@code mirror} affects UVs only, never geometry.</li>
  * </ul>
+ * A static {@link GeoPose} (the held {@code animation.idle} most dolls pose with) can be baked in
+ * via {@link #parse(byte[], GeoPose)}, mirroring how GeckoLib applies animations at render time
+ * ({@code AnimationProcessor} + {@code RenderUtil.prepMatrixForBone}):
+ * <ul>
+ *   <li>per posed bone: {@code T(-posX, posY, posZ)/16 · T(pivot) · Rz·Ry·Rx · S(scale) · T(-pivot)}
+ *       — position <i>replaces</i> (bind offset is zero), X-negated like all X handling;</li>
+ *   <li>pose rotation <i>adds</i> to the bind rotation, same {@code (-x, -y, +z)} signs;</li>
+ *   <li>a bone chain collapsed by pose scale (determinant ≈ 0, e.g. chikorita hiding its neck whips
+ *       with {@code scale: 0}) renders as nothing, so its cubes are culled from the geometry.</li>
+ * </ul>
  */
 public final class GeoGeometry {
+
+	/**
+	 * Chains with |determinant| below this render as nothing (any real pose scale is far larger:
+	 * even 0.01³ = 1e-6) and would make the voxelizer's inverse singular — their cubes are culled.
+	 */
+	private static final double DEGENERATE_DET = 1.0e-9;
 
 	/**
 	 * One cube as an oriented box: {@code modelFromLocal} maps the cube's local axis-aligned bounds
@@ -77,13 +92,18 @@ public final class GeoGeometry {
 	}
 
 	/**
-	 * Parses raw {@code .geo.json} bytes. Throws {@link IOException} on any structural problem
-	 * (missing geometry, no cubes, malformed numbers) — callers treat that as "model unusable" and
-	 * fall back to the legacy fixed hitbox.
+	 * Parses raw {@code .geo.json} bytes in the bind pose. Throws {@link IOException} on any
+	 * structural problem (missing geometry, no cubes, malformed numbers) — callers treat that as
+	 * "model unusable" and fall back to the legacy fixed hitbox.
 	 */
 	public static GeoGeometry parse(byte[] bytes) throws IOException {
+		return parse(bytes, GeoPose.EMPTY);
+	}
+
+	/** Parses raw {@code .geo.json} bytes with {@code pose} baked into the bone chains. */
+	public static GeoGeometry parse(byte[] bytes, GeoPose pose) throws IOException {
 		try {
-			return parseInternal(new String(bytes, StandardCharsets.UTF_8));
+			return parseInternal(new String(bytes, StandardCharsets.UTF_8), pose);
 		} catch (IOException e) {
 			throw e;
 		} catch (Exception e) {
@@ -91,7 +111,7 @@ public final class GeoGeometry {
 		}
 	}
 
-	private static GeoGeometry parseInternal(String json) throws IOException {
+	private static GeoGeometry parseInternal(String json, GeoPose pose) throws IOException {
 		JsonObject root = JsonParser.parseString(json).getAsJsonObject();
 		JsonArray geometries = root.getAsJsonArray("minecraft:geometry");
 		if (geometries == null || geometries.isEmpty()) {
@@ -122,7 +142,10 @@ public final class GeoGeometry {
 			JsonArray boneCubes = bone.getAsJsonArray("cubes");
 			if (boneCubes == null || boneCubes.isEmpty()) continue;
 
-			Affine3 chain = chainFor(bone, bonesByName, chains, new HashSet<>());
+			Affine3 chain = chainFor(bone, bonesByName, chains, new HashSet<>(), pose);
+			// A chain collapsed by pose scale renders as nothing — cull its cubes (also keeps the
+			// voxelizer's per-cube inverse well-defined).
+			if (StrictMath.abs(chain.determinant()) < DEGENERATE_DET) continue;
 			Double boneInflate = optDouble(bone, "inflate");
 
 			for (JsonElement cubeElement : boneCubes) {
@@ -144,7 +167,7 @@ public final class GeoGeometry {
 	 * A missing parent, or a parent cycle, is treated as "no parent" rather than failing the model.
 	 */
 	private static Affine3 chainFor(JsonObject bone, Map<String, JsonObject> bonesByName,
-									Map<String, Affine3> memo, Set<String> visiting) {
+									Map<String, Affine3> memo, Set<String> visiting, GeoPose pose) {
 		String name = bone.has("name") ? bone.get("name").getAsString() : null;
 		if (name != null) {
 			Affine3 cached = memo.get(name);
@@ -156,16 +179,49 @@ public final class GeoGeometry {
 		if (parentName != null && (name == null || visiting.add(name))) {
 			JsonObject parent = bonesByName.get(parentName);
 			if (parent != null && parent != bone) {
-				parentChain = chainFor(parent, bonesByName, memo, visiting);
+				parentChain = chainFor(parent, bonesByName, memo, visiting, pose);
 			}
 		}
 
-		Affine3 chain = parentChain.mul(pivotRotation(
-				optVec(bone, "pivot"), optVec(bone, "rotation")));
+		Affine3 chain = parentChain.mul(boneLocal(bone, name != null ? pose.bone(name) : null));
 		if (name != null) {
 			memo.put(name, chain);
 		}
 		return chain;
+	}
+
+	/**
+	 * A bone's local transform: the bind {@code T(pivot) · Rz·Ry·Rx · T(-pivot)} with an optional
+	 * pose overlay applied exactly like GeckoLib's {@code RenderUtil.prepMatrixForBone} —
+	 * {@code T(-posX, posY, posZ)/16} outermost ({@code translateMatrixToBone}), pose rotation
+	 * added to the bind rotation, pose scale about the pivot after rotation.
+	 */
+	private static Affine3 boneLocal(JsonObject bone, GeoPose.BonePose bonePose) {
+		double[] pivot = optVec(bone, "pivot");
+		double[] bindRotation = optVec(bone, "rotation");
+		if (bonePose == null) {
+			return pivotRotation(pivot, bindRotation);
+		}
+
+		double[] poseRotation = bonePose.rotationDeg();
+		double[] posePosition = bonePose.positionPx();
+		double[] poseScale = bonePose.scale();
+
+		double rotX = bindRotation[0] + (poseRotation != null ? poseRotation[0] : 0);
+		double rotY = bindRotation[1] + (poseRotation != null ? poseRotation[1] : 0);
+		double rotZ = bindRotation[2] + (poseRotation != null ? poseRotation[2] : 0);
+
+		double px = -pivot[0] / 16.0, py = pivot[1] / 16.0, pz = pivot[2] / 16.0;
+		Affine3 local = Affine3.identity();
+		if (posePosition != null) {
+			local = local.translate(-posePosition[0] / 16.0, posePosition[1] / 16.0, posePosition[2] / 16.0);
+		}
+		local = local.translate(px, py, pz)
+				.rotateZYX(Math.toRadians(rotZ), Math.toRadians(-rotY), Math.toRadians(-rotX));
+		if (poseScale != null) {
+			local = local.scale(poseScale[0], poseScale[1], poseScale[2]);
+		}
+		return local.translate(-px, -py, -pz);
 	}
 
 	/**

@@ -7,5 +7,14 @@
         "stream": false
       }
     ]
+  },
+  "phone_buzz": {
+    "subtitle": "subtitles.pokeblocks.phone_buzz",
+    "sounds": [
+      {
+        "name": "pokeblocks:phone_buzz",
+        "stream": false
+      }
+    ]
   }
 }

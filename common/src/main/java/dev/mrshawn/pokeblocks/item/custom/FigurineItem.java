@@ -1,6 +1,8 @@
 package dev.mrshawn.pokeblocks.item.custom;
 
 import dev.mrshawn.pokeblocks.client.renderer.item.FigurineItemRenderer;
+import dev.mrshawn.pokeblocks.compendium.CompendiumKind;
+import dev.mrshawn.pokeblocks.compendium.CompendiumProgressTracker;
 import dev.mrshawn.pokeblocks.constants.ModSettings;
 import dev.mrshawn.pokeblocks.item.FigurineNameOverrides;
 import dev.mrshawn.pokeblocks.item.FigurineTagOverrides;
@@ -9,10 +11,13 @@ import dev.mrshawn.pokeblocks.registry.ItemRegistry;
 import net.minecraft.ChatFormatting;
 import net.minecraft.client.renderer.BlockEntityWithoutLevelRenderer;
 import net.minecraft.network.chat.Component;
+import net.minecraft.server.level.ServerPlayer;
+import net.minecraft.world.entity.Entity;
 import net.minecraft.world.item.BlockItem;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.TooltipFlag;
+import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.Block;
 import software.bernie.geckolib.animatable.GeoItem;
 import software.bernie.geckolib.animatable.client.GeoRenderProvider;
@@ -78,6 +83,16 @@ public class FigurineItem extends BlockItem implements GeoItem {
 
 	public static String getFigurineFromStack(ItemStack stack) {
 		return PokeblocksItemData.readString(stack, PokeblocksItemData.KEY_FIGURINE, ModSettings.DEFAULT_FIGURINE);
+	}
+
+	@Override
+	public void inventoryTick(ItemStack stack, Level level, Entity entity, int slotId, boolean isSelected) {
+		// Carrying a figurine marks it discovered in the player's compendium progress (a one-shot
+		// server-side latch, so the throttled cadence is invisible).
+		if (!level.isClientSide && entity instanceof ServerPlayer player
+				&& entity.tickCount % CompendiumProgressTracker.RECORD_INTERVAL_TICKS == 0) {
+			CompendiumProgressTracker.record(player, CompendiumKind.FIGURINE, getFigurineFromStack(stack));
+		}
 	}
 
 	@Override

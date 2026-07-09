@@ -16,6 +16,11 @@ public final class SoundRegistry {
 			() -> SoundEvent.createVariableRangeEvent(ResourceLocation.fromNamespaceAndPath("pokeblocks", "pokedoll_squeak"))
 	);
 
+	public static final Supplier<SoundEvent> PHONE_BUZZ = registerSound(
+			"phone_buzz",
+			() -> SoundEvent.createVariableRangeEvent(ResourceLocation.fromNamespaceAndPath("pokeblocks", "phone_buzz"))
+	);
+
 	private static Supplier<SoundEvent> registerSound(String id, Supplier<SoundEvent> sound) {
 		return PokeblocksCommon.COMMON_PLATFORM.registerSound(id, sound);
 	}

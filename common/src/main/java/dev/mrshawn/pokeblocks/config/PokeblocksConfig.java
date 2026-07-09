@@ -29,6 +29,14 @@ public class PokeblocksConfig {
 	private static String remotePackSha1 = "";
 	private static String selfHostAddress = "";
 
+	// [phone] — the Pokedoll Phone's ring cadence and dig-site quest shape.
+	private static boolean phoneEnabled = true;
+	private static int phoneAverageCallIntervalMinutes = 15;
+	private static int phoneRingSeconds = 30;
+	private static int phoneDigSites = 6;
+	private static int phoneSiteRadius = 32;
+	private static int phoneGuaranteedAttempts = 3;
+
 	// [loot]
 	private static float lootDropChance = 0.33f;
 	private static final Set<ResourceLocation> lootTables = new HashSet<>();
@@ -100,6 +108,36 @@ public class PokeblocksConfig {
 	/** Optional host/IP to advertise in the self-hosted pack URL (e.g. a public address); blank = auto-detect. */
 	public static String getSelfHostAddress() {
 		return selfHostAddress;
+	}
+
+	/** Whether Pokedoll Phones ring at all (existing quests still resolve when off). */
+	public static boolean isPhoneEnabled() {
+		return phoneEnabled;
+	}
+
+	/** Average minutes between calls while a phone sits in an inventory. */
+	public static int getPhoneAverageCallIntervalMinutes() {
+		return phoneAverageCallIntervalMinutes;
+	}
+
+	/** How long a call rings before it counts as missed. */
+	public static int getPhoneRingSeconds() {
+		return phoneRingSeconds;
+	}
+
+	/** How many dig sites an accepted call scatters around the player. */
+	public static int getPhoneDigSites() {
+		return phoneDigSites;
+	}
+
+	/** Radius (blocks) around the player the dig sites spawn in. */
+	public static int getPhoneSiteRadius() {
+		return phoneSiteRadius;
+	}
+
+	/** The buried doll is guaranteed within this many fully-dug sites. */
+	public static int getPhoneGuaranteedAttempts() {
+		return phoneGuaranteedAttempts;
 	}
 
 	public static float getLootDropChance() {
@@ -185,6 +223,12 @@ public class PokeblocksConfig {
 		remotePackUrl = "";
 		remotePackSha1 = "";
 		selfHostAddress = "";
+		phoneEnabled = true;
+		phoneAverageCallIntervalMinutes = 15;
+		phoneRingSeconds = 30;
+		phoneDigSites = 6;
+		phoneSiteRadius = 32;
+		phoneGuaranteedAttempts = 3;
 		lootDropChance = 0.33f;
 		lootTables.clear();
 		lootTableWildcards.clear();
@@ -248,6 +292,16 @@ public class PokeblocksConfig {
 							case "remote_url" -> remotePackUrl = unquote(value);
 							case "remote_sha1" -> remotePackSha1 = unquote(value);
 							case "self_host_address" -> selfHostAddress = unquote(value);
+						}
+					}
+					case "phone" -> {
+						switch (key) {
+							case "enabled" -> phoneEnabled = parseBoolean(value, true);
+							case "average_call_interval_minutes" -> phoneAverageCallIntervalMinutes = parsePositiveInt(value, 15);
+							case "ring_seconds" -> phoneRingSeconds = parsePositiveInt(value, 30);
+							case "dig_sites" -> phoneDigSites = parsePositiveInt(value, 6);
+							case "site_radius" -> phoneSiteRadius = parsePositiveInt(value, 64);
+							case "guaranteed_attempts" -> phoneGuaranteedAttempts = parsePositiveInt(value, 5);
 						}
 					}
 					case "loot" -> {
@@ -349,6 +403,32 @@ public class PokeblocksConfig {
 					# the figurine compendium) appear in the creative menu. When false (default) they are hidden.
 					# When true they show up but carry a tooltip warning that the feature may not be fully working.""",
 					"false"),
+			new KeyDef("phone", "enabled",
+					"""
+					# Whether Pokedoll Phones ring at all. When false a phone never starts a new call;
+					# an already-active dig quest still finishes normally.""",
+					"true"),
+			new KeyDef("phone", "average_call_interval_minutes",
+					"""
+					# Roughly how many minutes pass, on average, between calls while a Pokedoll Phone sits
+					# in someone's inventory. Calls arrive randomly around this average.""",
+					"15"),
+			new KeyDef("phone", "ring_seconds",
+					"# How long an incoming call rings (and the phone buzzes) before it counts as missed.",
+					"30"),
+			new KeyDef("phone", "dig_sites",
+					"# How many dig sites an accepted call scatters around the player.",
+					"6"),
+			new KeyDef("phone", "site_radius",
+					"""
+					# Radius in blocks around the player that dig sites can appear in. Sites only spawn in
+					# open air above grass/dirt-type ground and never replace existing blocks.""",
+					"32"),
+			new KeyDef("phone", "guaranteed_attempts",
+					"""
+					# The buried doll is guaranteed to turn up within this many fully-dug sites (the winning
+					# site index is rolled when the quest starts). The other sites yield junk.""",
+					"3"),
 			new KeyDef("resourcepack", "kick_on_decline",
 					"# Whether to kick players who decline the custom Pokeblocks resource pack.",
 					"true"),
@@ -837,6 +917,16 @@ public class PokeblocksConfig {
 	private static float parseFloat(String value, float defaultValue) {
 		try {
 			return Float.parseFloat(value);
+		} catch (NumberFormatException e) {
+			return defaultValue;
+		}
+	}
+
+	/** Parses a strictly-positive int, falling back to the default for junk or non-positive values. */
+	private static int parsePositiveInt(String value, int defaultValue) {
+		try {
+			int parsed = Integer.parseInt(value.trim());
+			return parsed > 0 ? parsed : defaultValue;
 		} catch (NumberFormatException e) {
 			return defaultValue;
 		}

@@ -1,6 +1,10 @@
 package dev.mrshawn.pokeblocks;
 
 import dev.mrshawn.pokeblocks.client.PokeblocksClient;
+import dev.mrshawn.pokeblocks.compendium.ClientCompendiumSync;
+import dev.mrshawn.pokeblocks.compendium.CompendiumSyncPayloads;
+import dev.mrshawn.pokeblocks.phone.ClientDigSites;
+import dev.mrshawn.pokeblocks.phone.PhonePayloads;
 import dev.mrshawn.pokeblocks.resourcepack.sync.ClientPackSync;
 import dev.mrshawn.pokeblocks.resourcepack.sync.PackSyncPayloads;
 import net.fabricmc.api.ClientModInitializer;
@@ -24,6 +28,16 @@ public final class PokeblocksFabricClient implements ClientModInitializer {
                 ClientPackSync.handleManifest(payload.data()));
         ClientPackSync.setRequestSender(data ->
                 ClientPlayNetworking.send(new PackSyncPayloads.RequestPayload(data)));
+
+        // Compendium progress snapshots fill in the collection screens' silhouettes.
+        ClientPlayNetworking.registerGlobalReceiver(CompendiumSyncPayloads.ProgressPayload.TYPE, (payload, context) ->
+                ClientCompendiumSync.handleProgress(payload.data()));
+
+        // Pokedoll Phone: dig-site markers down, the call answer back up.
+        ClientPlayNetworking.registerGlobalReceiver(PhonePayloads.DigSitesPayload.TYPE, (payload, context) ->
+                ClientDigSites.handleDigSites(payload.data()));
+        ClientDigSites.setResponseSender(data ->
+                ClientPlayNetworking.send(new PhonePayloads.CallResponsePayload(data)));
 
         // Re-scan client assets on every resource (re)load. This fires on the initial client resource
         // load (replacing the former one-shot CLIENT_STARTED scan) and again whenever packs change

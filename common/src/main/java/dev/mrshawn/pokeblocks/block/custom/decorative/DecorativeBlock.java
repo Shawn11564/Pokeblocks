@@ -122,6 +122,21 @@ public class DecorativeBlock extends BaseEntityBlock implements EntityBlock, Sim
 	}
 
 	/**
+	 * Pick-block (middle-click): copy the decorative's variant so a plain middle-click in creative gives
+	 * the exact variant (shiny/gigantic/...) instead of the flagless default. Reuses
+	 * {@link DecorativeBlockEntity#saveToItem}, the canonical pick-block tag writer — which resets
+	 * stackable NBT variants, so picking any stage of an eiscue head pile gives the single head item.
+	 */
+	@Override
+	public ItemStack getCloneItemStack(LevelReader level, BlockPos pos, BlockState state) {
+		ItemStack stack = super.getCloneItemStack(level, pos, state);
+		if (level instanceof Level lvl && lvl.getBlockEntity(pos) instanceof DecorativeBlockEntity decorative) {
+			decorative.saveToItem(stack, lvl.registryAccess());
+		}
+		return stack;
+	}
+
+	/**
 	 * Mining the block drops the decorative itself with its flags intact (the data-driven decoratives have no
 	 * loot-table json, so the drop is built from the block entity here). For a <b>stackable</b> NBT variant —
 	 * e.g. the eiscue head pile's {@code headCount} — it drops that many single units (each reset to the

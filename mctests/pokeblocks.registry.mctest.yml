@@ -31,6 +31,12 @@ steps:
   - assertPluginState: { requires: { pluginState: true }, query: "block.exists", args: { id: "pokeblocks:pokeblock_bulbasaur" }, expect: true }
   - assertPluginState: { requires: { pluginState: true }, query: "item.exists",  args: { id: "pokeblocks:pokeblock_shiny_squirtle" }, expect: true }
 
+  # ── Pokedoll Phone (ItemRegistry/BlockRegistry/SoundRegistry): the ringing phone + its dig-site mound ──
+  - assertPluginState: { requires: { pluginState: true }, query: "item.exists", args: { id: "pokeblocks:pokedoll_phone" }, expect: true }
+  - assertPluginState: { requires: { pluginState: true }, query: "block.exists", args: { id: "pokeblocks:dig_site" }, expect: true }
+  # The dig site deliberately has NO item form (it only exists as part of an active quest).
+  - assertPluginState: { requires: { pluginState: true }, query: "item.exists", args: { id: "pokeblocks:dig_site" }, expect: false }
+
   # ── Misc items (ItemRegistry.MISC_ITEM_IDS): plain re-added items the data fixer migrates onto ──
   - assertPluginState: { requires: { pluginState: true }, query: "item.exists", args: { id: "pokeblocks:poke_coin" }, expect: true }
   - assertPluginState: { requires: { pluginState: true }, query: "item.exists", args: { id: "pokeblocks:radiant_voucher" }, expect: true }

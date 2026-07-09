@@ -5,10 +5,9 @@ import dev.mrshawn.pokeblocks.block.entity.custom.CustomDecorationBlockEntity;
 import dev.mrshawn.pokeblocks.client.model.block.CustomDecorationModel;
 import dev.mrshawn.pokeblocks.constants.ModSettings;
 import software.bernie.geckolib.cache.object.BakedGeoModel;
-import software.bernie.geckolib.renderer.GeoBlockRenderer;
 
 /** Block renderer for the generic custom-decoration block. Mirrors {@code FigurineBlockRenderer}. */
-public class CustomDecorationBlockRenderer extends GeoBlockRenderer<CustomDecorationBlockEntity> {
+public class CustomDecorationBlockRenderer extends CullAwareGeoBlockRenderer<CustomDecorationBlockEntity> {
 	public CustomDecorationBlockRenderer() {
 		super(new CustomDecorationModel());
 	}

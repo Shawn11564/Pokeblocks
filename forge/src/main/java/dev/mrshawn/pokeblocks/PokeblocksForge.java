@@ -1,8 +1,15 @@
 package dev.mrshawn.pokeblocks;
 
 import dev.mrshawn.pokeblocks.command.ModCommands;
+import dev.mrshawn.pokeblocks.compendium.ClientCompendiumSync;
+import dev.mrshawn.pokeblocks.compendium.CompendiumProgressTracker;
+import dev.mrshawn.pokeblocks.compendium.CompendiumSyncPayloads;
 import dev.mrshawn.pokeblocks.config.PokeblocksConfig;
+import dev.mrshawn.pokeblocks.interaction.PokeblocksDispenseBehaviors;
 import dev.mrshawn.pokeblocks.item.loot.LootInjector;
+import dev.mrshawn.pokeblocks.phone.ClientDigSites;
+import dev.mrshawn.pokeblocks.phone.PhoneCalls;
+import dev.mrshawn.pokeblocks.phone.PhonePayloads;
 import dev.mrshawn.pokeblocks.resourcepack.CustomPackManager;
 import dev.mrshawn.pokeblocks.resourcepack.sync.ClientPackSync;
 import dev.mrshawn.pokeblocks.resourcepack.sync.PackSyncPayloads;
@@ -28,6 +35,7 @@ import net.minecraftforge.event.server.ServerStartedEvent;
 import net.minecraftforge.eventbus.api.IEventBus;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.Mod;
+import net.minecraftforge.fml.event.lifecycle.FMLCommonSetupEvent;
 import net.minecraftforge.fml.javafmlmod.FMLJavaModLoadingContext;
 import net.minecraftforge.fml.loading.FMLPaths;
 import net.minecraftforge.network.Channel;
@@ -56,6 +64,28 @@ public final class PokeblocksForge {
 					.play();
 	public static Channel<CustomPacketPayload> PACK_SYNC_CHANNEL;
 
+	// Compendium progress sync gets its own optional channel (rather than a new payload on
+	// pack_sync) so older Pokeblocks clients — which negotiate pack_sync v1 by member list — keep
+	// joining untouched. Absence on either side is fine; presence is checked before each send.
+	private static final PayloadProtocol<RegistryFriendlyByteBuf, CustomPacketPayload> COMPENDIUM_SYNC_BUILDER =
+			ChannelBuilder.named(ResourceLocation.fromNamespaceAndPath(PokeblocksCommon.MOD_ID, "compendium_sync"))
+					.networkProtocolVersion(1)
+					.optional()
+					.payloadChannel()
+					.play();
+	public static Channel<CustomPacketPayload> COMPENDIUM_SYNC_CHANNEL;
+
+	// Pokedoll Phone traffic (dig-site sync + call answers) gets its own optional channel for the
+	// same reason the compendium did: older clients negotiate the existing channels by member list,
+	// so new payloads must never be appended to them.
+	private static final PayloadProtocol<RegistryFriendlyByteBuf, CustomPacketPayload> PHONE_SYNC_BUILDER =
+			ChannelBuilder.named(ResourceLocation.fromNamespaceAndPath(PokeblocksCommon.MOD_ID, "phone_sync"))
+					.networkProtocolVersion(1)
+					.optional()
+					.payloadChannel()
+					.play();
+	public static Channel<CustomPacketPayload> PHONE_SYNC_CHANNEL;
+
 	/**
 	 * Adapts a payload codec written against {@link net.minecraft.network.FriendlyByteBuf} to the
 	 * {@link RegistryFriendlyByteBuf} the Forge payload channel is parameterized with. Safe because
@@ -81,6 +111,11 @@ public final class PokeblocksForge {
 
 		PokeblocksCommon.doRegistrations();
 
+		// Deferred to common setup: the dispenser registry is not thread-safe and the doll item
+		// supplier only resolves after the registry events; enqueueWork puts us on the main thread.
+		modEventBus.addListener((FMLCommonSetupEvent event) ->
+				event.enqueueWork(PokeblocksDispenseBehaviors::register));
+
 		PokeblocksConfig.initialize(FMLPaths.GAMEDIR.get());
 		CustomPackManager.registerCustomAssets(FMLPaths.GAMEDIR.get());
 
@@ -104,6 +139,41 @@ public final class PokeblocksForge {
 				(player, data) -> PACK_SYNC_CHANNEL.send(new PackSyncPayloads.ManifestPayload(data), PacketDistributor.PLAYER.with(player)));
 		ClientPackSync.setRequestSender(data ->
 				PACK_SYNC_CHANNEL.send(new PackSyncPayloads.RequestPayload(data), PacketDistributor.SERVER.noArg()));
+
+		COMPENDIUM_SYNC_BUILDER.clientbound().addMain(CompendiumSyncPayloads.ProgressPayload.TYPE,
+				regCodec(CompendiumSyncPayloads.ProgressPayload.CODEC),
+				(payload, context) -> {
+					ClientCompendiumSync.handleProgress(payload.data());
+					context.setPacketHandled(true);
+				});
+		COMPENDIUM_SYNC_CHANNEL = COMPENDIUM_SYNC_BUILDER.bidirectional().build();
+
+		CompendiumProgressTracker.setNetworkBridge(
+				player -> COMPENDIUM_SYNC_CHANNEL.isRemotePresent(player.connection.getConnection()),
+				(player, data) -> COMPENDIUM_SYNC_CHANNEL.send(new CompendiumSyncPayloads.ProgressPayload(data), PacketDistributor.PLAYER.with(player)));
+
+		PHONE_SYNC_BUILDER.clientbound().addMain(PhonePayloads.DigSitesPayload.TYPE,
+				regCodec(PhonePayloads.DigSitesPayload.CODEC),
+				(payload, context) -> {
+					ClientDigSites.handleDigSites(payload.data());
+					context.setPacketHandled(true);
+				});
+		PHONE_SYNC_BUILDER.serverbound().addMain(PhonePayloads.CallResponsePayload.TYPE,
+				regCodec(PhonePayloads.CallResponsePayload.CODEC),
+				(payload, context) -> {
+					ServerPlayer sender = context.getSender();
+					if (sender != null) {
+						PhoneCalls.handleCallResponse(sender.getServer(), sender, payload.data());
+					}
+					context.setPacketHandled(true);
+				});
+		PHONE_SYNC_CHANNEL = PHONE_SYNC_BUILDER.bidirectional().build();
+
+		PhoneCalls.setNetworkBridge(
+				player -> PHONE_SYNC_CHANNEL.isRemotePresent(player.connection.getConnection()),
+				(player, data) -> PHONE_SYNC_CHANNEL.send(new PhonePayloads.DigSitesPayload(data), PacketDistributor.PLAYER.with(player)));
+		ClientDigSites.setResponseSender(data ->
+				PHONE_SYNC_CHANNEL.send(new PhonePayloads.CallResponsePayload(data), PacketDistributor.SERVER.noArg()));
 
 		MinecraftForge.EVENT_BUS.register(this);
 	}

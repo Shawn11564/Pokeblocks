@@ -99,12 +99,19 @@ public class DecorativeBlockEntity extends BlockEntity implements GeoBlockEntity
      * Writes the canonical minimal item tag on pick-block: the block-entity id, the active flags only,
      * and any non-default custom-nbt values — matching {@link dev.mrshawn.pokeblocks.item.custom.DecorativeItem#createStack}
      * (via {@link PokeblocksItemData}) so a picked decorative stacks with a given or looted one.
+     * <p>
+     * Stackable variants (the eiscue head pile's {@code headCount}) are reset to their default: the item
+     * always represents a single unit — picking a 3-head pile gives the same one-head item mining it drops.
      */
     @Override
     public void saveToItem(ItemStack stack, HolderLookup.Provider registries) {
+        Map<String, String> itemNbt = new HashMap<>(customNbt);
+        for (DecorativeDefinition.NbtVariant variant : definition.nbtVariants()) {
+            if (variant.stackable()) itemNbt.put(variant.nbtKey(), variant.defaultValue());
+        }
         String blockEntityId = PokeblocksItemData.blockEntityId(definition.id());
         PokeblocksItemData.apply(stack,
-                PokeblocksItemData.decorativeTag(blockEntityId, getActiveFlags(), customNbt, definition));
+                PokeblocksItemData.decorativeTag(blockEntityId, getActiveFlags(), itemNbt, definition));
     }
 
     private void syncToClient() {

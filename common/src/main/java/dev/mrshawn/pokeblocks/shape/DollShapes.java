@@ -35,6 +35,11 @@ import java.util.zip.ZipFile;
  * would use for its block entity and returns a cached {@link VoxelShape} compiled from it by
  * {@link GeoShapeCompiler} — a <b>single</b> best-fit box that never extends past the rendered
  * model on any axis, rotated to the placed orientation, and scaled for gigantic variants.
+ * <p>
+ * Dolls that hold a static {@code animation.idle} pose (most bundled animations are poses, not
+ * motion — e.g. chikorita renders sitting with folded legs, half its bind-pose height) get that
+ * pose baked in first ({@link GeoPose}), resolved by the same variant→base animation fallback the
+ * renderer uses, so shapes match what's on screen rather than the authored bind pose.
  *
  * <h2>Performance</h2>
  * Everything expensive happens at most once per (geo file, yaw, gigantic) key: compilation is lazy
@@ -68,17 +73,26 @@ public final class DollShapes {
 	/** Ids are asset file-name fragments; anything else can't have a model and must use the default doll. */
 	private static final Pattern SAFE_ID = Pattern.compile("[a-z0-9_.\\-]+");
 
-	/** Parsed geometry per geo asset path ({@code Optional.empty()} caches "missing/broken" too). */
-	private static final ConcurrentHashMap<String, Optional<GeoGeometry>> GEOMETRY = new ConcurrentHashMap<>();
-	/** Compiled shapes per (geo path, yaw, gigantic). */
+	/**
+	 * Parsed geometry per (geo asset path, pose source). {@code poseKey} is the animation asset
+	 * path whose static idle pose is baked into the bone chains, or {@code ""} for the bind pose —
+	 * the same geo can carry different poses (e.g. chikorita's posed variant is its base geo with a
+	 * different animation file). {@code Optional.empty()} caches "missing/broken" too.
+	 */
+	private static final ConcurrentHashMap<GeometryKey, Optional<GeoGeometry>> GEOMETRY = new ConcurrentHashMap<>();
+	/** Parsed static idle poses per animation asset path ({@code Optional.empty()} = file missing). */
+	private static final ConcurrentHashMap<String, Optional<GeoPose>> POSES = new ConcurrentHashMap<>();
+	/** Compiled shapes per (geo path, pose, yaw, gigantic). */
 	private static final ConcurrentHashMap<ShapeKey, VoxelShape> SHAPES = new ConcurrentHashMap<>();
-	/** Outer render bounds per geo path (see {@link #modelBounds}). */
-	private static final ConcurrentHashMap<String, double[]> MODEL_BOUNDS = new ConcurrentHashMap<>();
+	/** Outer render bounds per (geo path, pose) (see {@link #modelBounds}). */
+	private static final ConcurrentHashMap<GeometryKey, double[]> MODEL_BOUNDS = new ConcurrentHashMap<>();
 
 	/** Client-side resource-manager lookup, installed by {@code PokeblocksClient}; null on dedicated servers. */
 	private static volatile Function<String, byte[]> clientResourceLookup;
 
-	private record ShapeKey(String path, int yawDeciDegrees, boolean gigantic) {}
+	private record GeometryKey(String geoPath, String poseKey) {}
+
+	private record ShapeKey(String path, String poseKey, int yawDeciDegrees, boolean gigantic) {}
 
 	private DollShapes() {}
 
@@ -95,27 +109,35 @@ public final class DollShapes {
 
 	/**
 	 * Shape for a pokedoll variant without needing a block entity (also used by the mc-test state
-	 * provider). Resolution mirrors {@code PokedollModel}: flag-suffixed variant model, then the base
-	 * model, then the default (substitute) doll.
+	 * provider). Resolution mirrors the renderer ({@code PokeblocksAssetResolver} +
+	 * {@code PokedollModel}): a pokemon whose base geo doesn't resolve renders wholesale as the
+	 * substitute doll (geo <b>and</b> idle pose); otherwise the flag-suffixed variant model falls
+	 * back to the base model, and — independently — the flag-suffixed idle animation falls back to
+	 * the base one (chikorita's posed variant is its base geo with a different pose).
 	 */
 	public static VoxelShape pokedollVariant(String pokemon, Set<ModelFlag> flags, int rotationSegment) {
 		// The renderer rotates by -convertToDegrees(segment) (see PokedollBlockRenderer.rotateBlock).
 		double yaw = -22.5 * (rotationSegment & 15);
+		String suffix = PokeblocksAssetResolver.pokedollModelSuffix(flags);
+
+		// Mirror the renderer's validatedPokemon: a pokemon "exists" when its base geo resolves.
+		String validated = pokemon != null && SAFE_ID.matcher(pokemon).matches()
+				&& geometryFor("geo/block/pokedoll_" + pokemon + ".geo.json", GeoPose.EMPTY, "") != null
+				? pokemon : ModSettings.DEFAULT_POKEMON;
 
 		List<String> candidates = new ArrayList<>(3);
-		if (pokemon != null && SAFE_ID.matcher(pokemon).matches()) {
-			String suffix = PokeblocksAssetResolver.pokedollModelSuffix(flags);
-			if (!suffix.isEmpty()) {
-				candidates.add("geo/block/pokedoll_" + pokemon + suffix + ".geo.json");
-			}
-			candidates.add("geo/block/pokedoll_" + pokemon + ".geo.json");
+		if (!suffix.isEmpty()) {
+			candidates.add("geo/block/pokedoll_" + validated + suffix + ".geo.json");
 		}
-		candidates.add("geo/block/pokedoll_" + ModSettings.DEFAULT_POKEMON + ".geo.json");
+		candidates.add("geo/block/pokedoll_" + validated + ".geo.json");
+		if (!validated.equals(ModSettings.DEFAULT_POKEMON)) {
+			candidates.add("geo/block/pokedoll_" + ModSettings.DEFAULT_POKEMON + ".geo.json");
+		}
 
-		return shape(candidates, yaw, flags.contains(ModelFlag.GIGANTIC));
+		return shape(candidates, pokedollAnimPath(validated, suffix), yaw, flags.contains(ModelFlag.GIGANTIC));
 	}
 
-	/** Shape for a figurine facing the given horizontal direction. */
+	/** Shape for a figurine facing the given horizontal direction. Figurines never animate. */
 	public static VoxelShape figurine(FigurineBlockEntity figurine, Direction facing) {
 		List<String> candidates = new ArrayList<>(2);
 		String id = figurine.getFigurine();
@@ -123,10 +145,10 @@ public final class DollShapes {
 			candidates.add("geo/block/" + id + "_figurine.geo.json");
 		}
 		candidates.add("geo/block/" + ModSettings.DEFAULT_FIGURINE + "_figurine.geo.json");
-		return shape(candidates, facingYawDegrees(facing), figurine.isGigantic());
+		return shape(candidates, null, facingYawDegrees(facing), figurine.isGigantic());
 	}
 
-	/** Shape for a data-driven custom decoration facing the given horizontal direction. */
+	/** Shape for a data-driven custom decoration. Custom decorations never animate. */
 	public static VoxelShape customDecoration(CustomDecorationBlockEntity decoration, Direction facing) {
 		List<String> candidates = new ArrayList<>(2);
 		String id = decoration.getDecoration();
@@ -134,7 +156,7 @@ public final class DollShapes {
 			candidates.add("geo/block/" + id + "_decoration.geo.json");
 		}
 		candidates.add("geo/block/" + ModSettings.DEFAULT_DECORATION + "_decoration.geo.json");
-		return shape(candidates, facingYawDegrees(facing), decoration.isGigantic());
+		return shape(candidates, null, facingYawDegrees(facing), decoration.isGigantic());
 	}
 
 	/** Shape for a built-in decorative (head piles, cushions, ...) with its nbt-variant model resolved. */
@@ -143,7 +165,10 @@ public final class DollShapes {
 		List<String> candidates = new ArrayList<>(2);
 		candidates.add(definition.modelPath(decorative.getActiveFlags(), decorative.getNbtLookup()));
 		candidates.add("geo/block/" + definition.modelPrefix() + ".geo.json");
-		return shape(candidates, facingYawDegrees(facing), decorative.isGigantic());
+		// Mirrors DecorativeModel.getAnimationResource: animated decoratives (e.g. the magikarp
+		// fishbowl) hold their idle pose like pokedolls do.
+		String animPath = definition.hasAnimation() ? definition.animationPath(decorative.getNbtLookup()) : null;
+		return shape(candidates, animPath, facingYawDegrees(facing), decorative.isGigantic());
 	}
 
 	/**
@@ -151,18 +176,22 @@ public final class DollShapes {
 	 * (origin at the model's bottom-center, 1.0 = one block), or {@code null} when the model can't
 	 * be found or parsed. Used by the item renderer to seat worn dolls on the player's head.
 	 * <p>
-	 * {@code geoPath} is the asset path below {@code assets/pokeblocks/}, exactly as returned by
-	 * {@code PokeblocksAssetResolver}'s resource locations (e.g.
-	 * {@code geo/block/pokedoll_pikachu.geo.json}), and bytes resolve through the same sources as
-	 * hitboxes (jar → server pack → client resource manager). Cached per path; the returned array is
-	 * shared — callers must not mutate it.
+	 * Both paths are asset paths below {@code assets/pokeblocks/}, exactly as returned by the
+	 * renderer's model class (e.g. {@code geo/block/pokedoll_pikachu.geo.json} and
+	 * {@code animations/block/pokedoll_pikachu.animation.json}); bytes resolve through the same
+	 * sources as hitboxes (jar → server pack → client resource manager). {@code animPath} is the
+	 * animation whose static idle pose the model renders in — pass what the renderer resolved
+	 * (the {@code empty.animation.json} fallback poses nothing) or {@code null} for the bind pose.
+	 * Cached; the returned array is shared — callers must not mutate it.
 	 */
-	public static double @Nullable [] modelBounds(String geoPath) {
-		GeoGeometry geometry = GEOMETRY.computeIfAbsent(geoPath, DollShapes::loadGeometry).orElse(null);
+	public static double @Nullable [] modelBounds(String geoPath, @Nullable String animPath) {
+		GeoPose pose = resolvePose(animPath);
+		String poseKey = pose.isEmpty() ? "" : animPath;
+		GeoGeometry geometry = geometryFor(geoPath, pose, poseKey);
 		if (geometry == null) {
 			return null;
 		}
-		return MODEL_BOUNDS.computeIfAbsent(geoPath, path -> geometry.outerBounds());
+		return MODEL_BOUNDS.computeIfAbsent(new GeometryKey(geoPath, poseKey), key -> geometry.outerBounds());
 	}
 
 	// --- Lifecycle ----------------------------------------------------------------------------------
@@ -174,6 +203,7 @@ public final class DollShapes {
 	 */
 	public static void clearCaches() {
 		GEOMETRY.clear();
+		POSES.clear();
 		SHAPES.clear();
 		MODEL_BOUNDS.clear();
 	}
@@ -207,16 +237,52 @@ public final class DollShapes {
 		};
 	}
 
-	private static VoxelShape shape(List<String> candidatePaths, double yawDegrees, boolean gigantic) {
+	/**
+	 * First existing idle animation for a pokedoll, mirroring the renderer's
+	 * {@code PokeblocksAssetResolver.pokedollAnimation}: the flag-suffixed variant, then the base
+	 * animation, else {@code null} (no pose — the controller wouldn't play anything either).
+	 */
+	private static String pokedollAnimPath(String pokemon, String suffix) {
+		if (!suffix.isEmpty()) {
+			String variant = "animations/block/pokedoll_" + pokemon + suffix + ".animation.json";
+			if (POSES.computeIfAbsent(variant, DollShapes::loadPose).isPresent()) return variant;
+		}
+		String base = "animations/block/pokedoll_" + pokemon + ".animation.json";
+		return POSES.computeIfAbsent(base, DollShapes::loadPose).isPresent() ? base : null;
+	}
+
+	private static VoxelShape shape(List<String> candidatePaths, String animPath, double yawDegrees, boolean gigantic) {
+		GeoPose pose = resolvePose(animPath);
+		// Poseless animations key like "no animation" so identical geometry isn't cached twice.
+		String poseKey = pose.isEmpty() ? "" : animPath;
+
 		for (String path : candidatePaths) {
-			GeoGeometry geometry = GEOMETRY.computeIfAbsent(path, DollShapes::loadGeometry).orElse(null);
+			GeoGeometry geometry = geometryFor(path, pose, poseKey);
 			if (geometry == null) continue;
 
 			int yawDeci = Math.floorMod((int) Math.round(yawDegrees * 10), 3600);
-			return SHAPES.computeIfAbsent(new ShapeKey(path, yawDeci, gigantic),
+			return SHAPES.computeIfAbsent(new ShapeKey(path, poseKey, yawDeci, gigantic),
 					key -> buildShape(geometry, yawDegrees, gigantic));
 		}
 		return gigantic ? DEFAULT_SHAPE_GIGANTIC : DEFAULT_SHAPE;
+	}
+
+	/**
+	 * The cached geometry of {@code geoPath} with {@code pose} baked in ({@code poseKey} is the
+	 * pose's cache identity: its animation path, or {@code ""} for the bind pose), or {@code null}
+	 * when the geo is missing/broken.
+	 * <p>
+	 * A pose whose bone names don't match this geometry naturally bakes as bind pose — the same
+	 * thing GeckoLib does at render time when a fallback model plays another model's animation.
+	 */
+	private static GeoGeometry geometryFor(String geoPath, GeoPose pose, String poseKey) {
+		return GEOMETRY.computeIfAbsent(new GeometryKey(geoPath, poseKey),
+				key -> loadGeometry(geoPath, pose)).orElse(null);
+	}
+
+	private static GeoPose resolvePose(String animPath) {
+		if (animPath == null) return GeoPose.EMPTY;
+		return POSES.computeIfAbsent(animPath, DollShapes::loadPose).orElse(GeoPose.EMPTY);
 	}
 
 	private static VoxelShape buildShape(GeoGeometry geometry, double yawDegrees, boolean gigantic) {
@@ -234,18 +300,38 @@ public final class DollShapes {
 		return Shapes.box(box[0], box[1], box[2], box[3], box[4], box[5]);
 	}
 
-	private static Optional<GeoGeometry> loadGeometry(String path) {
+	private static Optional<GeoGeometry> loadGeometry(String path, GeoPose pose) {
 		byte[] bytes = loadBytes(path);
 		if (bytes == null) {
 			return Optional.empty();
 		}
 		try {
-			return Optional.of(GeoGeometry.parse(bytes));
+			return Optional.of(GeoGeometry.parse(bytes, pose));
 		} catch (Exception e) {
 			// Cached as empty, so this logs once per (re)load rather than once per shape query.
 			PokeblocksLog.LOGGER.warn("Could not derive a hitbox from '{}' ({}); using the default doll hitbox.",
 					path, e.getMessage());
 			return Optional.empty();
+		}
+	}
+
+	/**
+	 * Loads the static idle pose of one animation file. {@code Optional.empty()} means the file
+	 * doesn't exist (resolution falls through to the next candidate, like the renderer); a file
+	 * that exists but is broken or poses nothing yields {@link GeoPose#EMPTY} — it still "wins"
+	 * resolution, exactly like the renderer would pick it and then render the bind pose.
+	 */
+	private static Optional<GeoPose> loadPose(String path) {
+		byte[] bytes = loadBytes(path);
+		if (bytes == null) {
+			return Optional.empty();
+		}
+		try {
+			return Optional.of(GeoPose.parse(bytes));
+		} catch (Exception e) {
+			PokeblocksLog.LOGGER.warn("Could not derive a pose from '{}' ({}); using the bind pose.",
+					path, e.getMessage());
+			return Optional.of(GeoPose.EMPTY);
 		}
 	}
 

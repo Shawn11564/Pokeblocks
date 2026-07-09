@@ -1,6 +1,6 @@
 {
   "parent": "item/generated",
   "textures": {
-    "layer0": "minecraft:item/enchanted_book"
+    "layer0": "pokeblocks:item/compendium_texture"
   }
 }

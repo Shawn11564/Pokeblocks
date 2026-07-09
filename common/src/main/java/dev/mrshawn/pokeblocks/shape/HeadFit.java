@@ -4,7 +4,8 @@ import org.jetbrains.annotations.Nullable;
 
 /**
  * Pure math for seating a worn pokedoll on a player's head, shared by the item renderer and unit
- * tests. Everything here works in vanilla's <b>head display space</b> — the space
+ * tests (plus {@link #anchoredScaleOps}, the base-anchored gigantic scale the renderer uses in
+ * every other item context). Everything here works in vanilla's <b>head display space</b> — the space
  * {@code CustomHeadLayer.translateToHead} leaves the {@code PoseStack} in for
  * {@code ItemDisplayContext.HEAD} (1.21.1: {@code translate(0, -0.25, 0)}, {@code rotY(180°)},
  * {@code scale(0.625, -0.625, -0.625)}):
@@ -113,5 +114,21 @@ public final class HeadFit {
 				VANILLA_ITEM_OFFSET, VANILLA_ITEM_OFFSET + SEAT_Y, VANILLA_ITEM_OFFSET,
 				fit.scale(),
 				-GECKOLIB_OFFSET_XZ, -fit.anchorY() - GECKOLIB_OFFSET_Y, -GECKOLIB_OFFSET_XZ};
+	}
+
+	/**
+	 * Pose ops ({@code [tx, ty, tz, scale]}: translate → uniform scale) for growing a doll in the
+	 * non-HEAD item contexts (inventory, hand, ground, item frame) <b>about its base</b>: composed
+	 * against GeckoLib's upcoming {@code translate(0.5, 0.51, 0.5)} so the geo origin lands at
+	 * exactly the point it has at scale 1. Every doll then starts at the same height in its
+	 * slot/hand — a gigantic doll just renders bigger around that shared baseline, instead of the
+	 * scale dragging the model-centering translate with it and lifting the doll off it.
+	 */
+	public static float[] anchoredScaleOps(float scale) {
+		return new float[]{
+				GECKOLIB_OFFSET_XZ * (1f - scale),
+				GECKOLIB_OFFSET_Y * (1f - scale),
+				GECKOLIB_OFFSET_XZ * (1f - scale),
+				scale};
 	}
 }

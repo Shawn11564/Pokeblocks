@@ -64,25 +64,30 @@ public class PokedollItemRenderer extends GeoItemRenderer<PokedollItem> {
     public void scaleModelForRender(float widthScale, float heightScale, PoseStack poseStack,
                                     PokedollItem animatable, BakedGeoModel model, boolean isReRender,
                                     float partialTick, int packedLight, int packedOverlay) {
-        Set<ModelFlag> flags = PokedollItem.getFlagsFromStack(this.currentItemStack);
-        boolean gigantic = flags.contains(ModelFlag.GIGANTIC);
-        if (currentTransformType == ItemDisplayContext.HEAD) {
-            // Worn on a head: seat the doll on top instead of leaving its origin buried mid-head.
-            // The ops compose against GeckoLib's (0.5, 0.51, 0.5) post-translate, which only runs
-            // on the initial render — so only apply them then.
-            if (!isReRender) {
-                double[] bounds = DollShapes.modelBounds(this.model.getModelResource(animatable).getPath());
+        // Both branches compose against GeckoLib's (0.5, 0.51, 0.5) post-translate, which only
+        // runs on the initial render — re-renders (render layers) must not re-apply them.
+        if (!isReRender) {
+            Set<ModelFlag> flags = PokedollItem.getFlagsFromStack(this.currentItemStack);
+            boolean gigantic = flags.contains(ModelFlag.GIGANTIC);
+            if (currentTransformType == ItemDisplayContext.HEAD) {
+                // Worn on a head: seat the doll on top instead of leaving its origin buried
+                // mid-head. Bounds of the model as it renders: the resolved geo in the static pose
+                // of the resolved idle animation (the empty.animation.json fallback poses nothing).
+                double[] bounds = DollShapes.modelBounds(
+                        this.model.getModelResource(animatable).getPath(),
+                        this.model.getAnimationResource(animatable).getPath());
                 float[] ops = HeadFit.headPoseOps(bounds, gigantic);
                 poseStack.translate(ops[0], ops[1], ops[2]);
                 poseStack.scale(ops[3], ops[3], ops[3]);
                 poseStack.translate(ops[4], ops[5], ops[6]);
+            } else if (gigantic) {
+                float scale = currentTransformType == ItemDisplayContext.GUI ? (GIGANTIC_INVENTORY_SCALE / 0.5f) : (GIGANTIC_HELD_SCALE / 0.5f);
+                // Grow the doll about its base so it starts at the same height in the slot/hand
+                // as a regular doll and just renders bigger.
+                float[] ops = HeadFit.anchoredScaleOps(scale);
+                poseStack.translate(ops[0], ops[1], ops[2]);
+                poseStack.scale(ops[3], ops[3], ops[3]);
             }
-        } else if (gigantic) {
-            float scale = currentTransformType == ItemDisplayContext.GUI ? (GIGANTIC_INVENTORY_SCALE / 0.5f) : (GIGANTIC_HELD_SCALE / 0.5f);
-            // Translate up by half the scale increase before scaling so the model's base stays
-            // at the same level and it grows upward, matching vanilla block item behaviour.
-            poseStack.translate(0, 0.5 * (scale - 1f), 0);
-            poseStack.scale(scale, scale, scale);
         }
         super.scaleModelForRender(widthScale, heightScale, poseStack, animatable, model, isReRender, partialTick, packedLight, packedOverlay);
     }

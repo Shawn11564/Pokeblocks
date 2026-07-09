@@ -75,6 +75,14 @@ public final class Affine3 {
 		return mul(rotationY(angleRad));
 	}
 
+	/** Post-multiplies an axis scale, like {@code PoseStack.scale} (GeckoLib's {@code scaleMatrixForBone}). */
+	public Affine3 scale(double x, double y, double z) {
+		return new Affine3(
+				m00 * x, m01 * y, m02 * z, m03,
+				m10 * x, m11 * y, m12 * z, m13,
+				m20 * x, m21 * y, m22 * z, m23);
+	}
+
 	private static Affine3 rotationX(double a) {
 		if (a == 0) return IDENTITY;
 		double c = StrictMath.cos(a), s = StrictMath.sin(a);
@@ -102,12 +110,21 @@ public final class Affine3 {
 				0, 0, 1, 0);
 	}
 
-	/** General affine inverse (3x3 adjugate + back-transformed translation). */
-	public Affine3 invert() {
-		double det = m00 * (m11 * m22 - m12 * m21)
+	/**
+	 * Determinant of the 3x3 linear part — the signed volume scale of the transform. Rotations and
+	 * translations keep it at ±1; an animation-pose scale multiplies it, so a (near-)zero value
+	 * means the transform collapses space and cannot be inverted (e.g. a bone hidden via
+	 * {@code scale: 0}).
+	 */
+	public double determinant() {
+		return m00 * (m11 * m22 - m12 * m21)
 				- m01 * (m10 * m22 - m12 * m20)
 				+ m02 * (m10 * m21 - m11 * m20);
-		double id = 1.0 / det;
+	}
+
+	/** General affine inverse (3x3 adjugate + back-transformed translation). */
+	public Affine3 invert() {
+		double id = 1.0 / determinant();
 
 		double i00 = (m11 * m22 - m12 * m21) * id;
 		double i01 = (m02 * m21 - m01 * m22) * id;

@@ -86,6 +86,18 @@ steps:
       query: "shape.pokedollMaxYx1000"
       args: { pokemon: "bulbasaur", flags: ["gigantic"] }
       expect: { gte: 1000 }
+  # Idle-pose baking: chikorita's animation.idle folds it into a sitting pose (~15px tall, whips
+  # hidden) while its bind pose stands 32px. Without pose baking maxY lands near 2000.
+  - assertPluginState:
+      requires: { pluginState: true }
+      query: "shape.pokedollIsDefaultBox"
+      args: { pokemon: "chikorita" }
+      expect: false
+  - assertPluginState:
+      requires: { pluginState: true }
+      query: "shape.pokedollMaxYx1000"
+      args: { pokemon: "chikorita" }
+      expect: { lte: 1000 }
 
   # ── Rarity config truth: doll_rarity.json was loaded and resolves to the configured tiers ──
   # Each value below is the literal override in the bundled config, keyed exactly as the mod builds it.
@@ -121,3 +133,67 @@ steps:
       query: "rarity.flagTier"
       args: { flag: "gigantic" }
       expect: { equals: "Gigantic" }
+
+  # ── Throwable dolls: doll + snowball → one-throw doll (recipe + projectile registration truth) ──
+  - assertPluginState:
+      requires: { pluginState: true }
+      query: "recipe.serializerExists"
+      args: { id: "pokeblocks:throwable_doll" }
+      expect: true
+  - assertPluginState:
+      requires: { pluginState: true }
+      query: "entity.exists"
+      args: { id: "pokeblocks:thrown_pokedoll" }
+      expect: true
+  # The dynamic recipe matches exactly one doll + one snowball...
+  - assertPluginState:
+      requires: { pluginState: true }
+      query: "throwable.recipeMatches"
+      args: { pokemon: "bulbasaur" }
+      expect: true
+  # ...rejects any other companion item...
+  - assertPluginState:
+      requires: { pluginState: true }
+      query: "throwable.recipeMatches"
+      args: { pokemon: "bulbasaur", second: "minecraft:stone" }
+      expect: false
+  # ...rejects a doll with no snowball at all...
+  - assertPluginState:
+      requires: { pluginState: true }
+      query: "throwable.recipeMatches"
+      args: { pokemon: "bulbasaur", second: "none" }
+      expect: false
+  # ...and never re-marks an already-throwable doll (no snowball sink).
+  - assertPluginState:
+      requires: { pluginState: true }
+      query: "throwable.recipeMatches"
+      args: { pokemon: "bulbasaur", dollThrowable: true }
+      expect: false
+  # Assembly marks the output throwable while preserving the doll's identity (species + flags).
+  - assertPluginState:
+      requires: { pluginState: true }
+      query: "throwable.assembledIsThrowable"
+      args: { pokemon: "bulbasaur", flags: ["shiny"] }
+      expect: true
+  - assertPluginState:
+      requires: { pluginState: true }
+      query: "throwable.assembledSpecies"
+      args: { pokemon: "bulbasaur", flags: ["shiny"] }
+      expect: { equals: "bulbasaur" }
+  - assertPluginState:
+      requires: { pluginState: true }
+      query: "throwable.assembledHasFlag"
+      args: { pokemon: "bulbasaur", flags: ["shiny"], flag: "shiny" }
+      expect: true
+  # Landing strips the marker back to the exact plain doll (stack-identical), so placed, dropped
+  # and head-equipped dolls stack with never-thrown dolls again.
+  - assertPluginState:
+      requires: { pluginState: true }
+      query: "throwable.stripRestoresPlain"
+      args: { pokemon: "bulbasaur", flags: ["shiny"] }
+      expect: true
+  # The gated dispenser behavior is installed (throwable dolls launch; plain dolls just eject).
+  - assertPluginState:
+      requires: { pluginState: true }
+      query: "throwable.dispenseBehaviorRegistered"
+      expect: true

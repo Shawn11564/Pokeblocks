@@ -8,6 +8,7 @@ import dev.mrshawn.pokeblocks.item.custom.FigurineCompendiumItem;
 import dev.mrshawn.pokeblocks.item.custom.FigurineItem;
 import dev.mrshawn.pokeblocks.item.custom.LaserPointerItem;
 import dev.mrshawn.pokeblocks.item.custom.PokedollItem;
+import dev.mrshawn.pokeblocks.item.custom.PokedollPhoneItem;
 import net.minecraft.world.item.BlockItem;
 import net.minecraft.world.item.Item;
 
@@ -24,7 +25,7 @@ public final class ItemRegistry {
 	public static final Supplier<BlockItem> FIGURINE_ITEM = registerItem("figurine", () -> new FigurineItem(BlockRegistry.FIGURINE_BLOCK.get(), new Item.Properties()));
 	public static final Supplier<BlockItem> CUSTOM_DECORATION_ITEM = registerItem(ModSettings.CUSTOM_DECORATION_ID, () -> new CustomDecorationItem(BlockRegistry.CUSTOM_DECORATION_BLOCK.get(), new Item.Properties()));
 
-	/** POC doll compendium book — opens a screen of 3D doll silhouettes. */
+	/** Doll compendium book — browses every doll as a 3D render, silhouetted until collected. */
 	public static final Supplier<Item> COMPENDIUM_ITEM = registerItem("compendium", () -> new CompendiumItem(new Item.Properties().stacksTo(1)));
 
 	/** Figurine compendium book — opens a screen of 3D figurine silhouettes with per-entry descriptions. */
@@ -32,6 +33,9 @@ public final class ItemRegistry {
 
 	/** Hand-held laser pointer — projects a coloured beam and draws nearby dolls' gaze to the dot. */
 	public static final Supplier<Item> LASER_POINTER_ITEM = registerItem("laser_pointer", () -> new LaserPointerItem(new Item.Properties().stacksTo(1)));
+
+	/** Pokedoll Phone — occasionally rings with a doll asking you to dig up its buried favorite. */
+	public static final Supplier<Item> POKEDOLL_PHONE_ITEM = registerItem("pokedoll_phone", () -> new PokedollPhoneItem(new Item.Properties().stacksTo(1)));
 
 	/**
 	 * Plain misc items re-added from the pre-rewrite mod (poke coin, vouchers, etc.). They have no

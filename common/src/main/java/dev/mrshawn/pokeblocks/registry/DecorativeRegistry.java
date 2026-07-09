@@ -25,9 +25,11 @@ public final class DecorativeRegistry {
 	private static final Set<ModelFlag> SHINY_AND_GIGANTIC = EnumSet.of(ModelFlag.SHINY, ModelFlag.GIGANTIC);
 
 	public static final DecorativeEntry APPLIN_BASKET = register("applin_basket", "Applin Basket", SHINY_ONLY, false);
+	// Registry id stays "eiscue_head_pile" (worlds/inventories/datafixers reference it); only the
+	// display name says "Eiscue Head" — the item always represents a single head, piles only exist placed.
 	public static final DecorativeEntry EISCUE_HEAD_PILE = register(
 			"eiscue_head_pile",
-			"Eiscue Head Pile",
+			"Eiscue Head",
 			SHINY_AND_GIGANTIC,
 			false,
 			List.of(new DecorativeDefinition.NbtVariant(

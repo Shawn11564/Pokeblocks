@@ -2,25 +2,45 @@ package dev.mrshawn.pokeblocks.item.custom;
 
 import dev.mrshawn.pokeblocks.client.renderer.animation.AnimationResolver;
 import dev.mrshawn.pokeblocks.client.renderer.item.PokedollItemRenderer;
+import dev.mrshawn.pokeblocks.compendium.CompendiumKind;
+import dev.mrshawn.pokeblocks.compendium.CompendiumProgressTracker;
+import dev.mrshawn.pokeblocks.compendium.CompendiumVariantKey;
 import dev.mrshawn.pokeblocks.constants.ModSettings;
+import dev.mrshawn.pokeblocks.entity.custom.ThrownPokedollEntity;
 import dev.mrshawn.pokeblocks.item.DollRarity;
 import dev.mrshawn.pokeblocks.item.PokeblocksItemData;
 import dev.mrshawn.pokeblocks.item.RarityScoreCalculator;
+import dev.mrshawn.pokeblocks.item.ThrowableDolls;
 import dev.mrshawn.pokeblocks.pokemon.ModelFlag;
 import dev.mrshawn.pokeblocks.pokemon.PokemonData;
 import dev.mrshawn.pokeblocks.registry.ItemRegistry;
 import dev.mrshawn.pokeblocks.registry.PokemonRegistry;
 import net.minecraft.ChatFormatting;
 import net.minecraft.client.renderer.BlockEntityWithoutLevelRenderer;
+import net.minecraft.core.Direction;
+import net.minecraft.core.Position;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.MutableComponent;
 import net.minecraft.network.chat.Style;
 import net.minecraft.network.chat.TextColor;
+import net.minecraft.server.level.ServerPlayer;
+import net.minecraft.sounds.SoundEvents;
+import net.minecraft.sounds.SoundSource;
+import net.minecraft.stats.Stats;
+import net.minecraft.world.InteractionHand;
+import net.minecraft.world.InteractionResult;
+import net.minecraft.world.InteractionResultHolder;
+import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.EquipmentSlot;
+import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.entity.projectile.Projectile;
 import net.minecraft.world.item.BlockItem;
 import net.minecraft.world.item.Equipable;
 import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.item.ProjectileItem;
 import net.minecraft.world.item.TooltipFlag;
+import net.minecraft.world.item.context.UseOnContext;
+import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.Block;
 import software.bernie.geckolib.animatable.GeoItem;
 import software.bernie.geckolib.animatable.client.GeoRenderProvider;
@@ -35,7 +55,7 @@ import software.bernie.geckolib.util.GeckoLibUtil;
 import java.util.*;
 import java.util.function.Consumer;
 
-public class PokedollItem extends BlockItem implements GeoItem, Equipable {
+public class PokedollItem extends BlockItem implements GeoItem, Equipable, ProjectileItem {
 
 	private final AnimatableInstanceCache cache = GeckoLibUtil.createInstanceCache(this);
 
@@ -92,13 +112,19 @@ public class PokedollItem extends BlockItem implements GeoItem, Equipable {
 	public Component getName(ItemStack stack) {
 		String pokemon = getPokemonFromStack(stack);
 		Set<ModelFlag> flags = getFlagsFromStack(stack);
-		return Component.literal(buildDisplayName(pokemon, flags)).withStyle(ChatFormatting.WHITE);
+		String name = buildDisplayName(pokemon, flags);
+		if (ThrowableDolls.isThrowable(stack)) name = "Throwable " + name;
+		return Component.literal(name).withStyle(ChatFormatting.WHITE);
 	}
 
 	@Override
 	public void appendHoverText(ItemStack stack, TooltipContext tooltipContext, List<Component> tooltip, TooltipFlag flag) {
 		String pokemon = getPokemonFromStack(stack);
 		Set<ModelFlag> activeFlags = getFlagsFromStack(stack);
+
+		if (ThrowableDolls.isThrowable(stack)) {
+			tooltip.add(Component.literal("Right-click to throw").withStyle(ChatFormatting.AQUA));
+		}
 
 		DollRarity rarity = DollRarity.getRarity(stack);
 		if (rarity != null && rarity != DollRarity.NONE) {
@@ -115,6 +141,75 @@ public class PokedollItem extends BlockItem implements GeoItem, Equipable {
 	@Override
 	public EquipmentSlot getEquipmentSlot() {
 		return EquipmentSlot.HEAD;
+	}
+
+	/**
+	 * A throwable doll (see {@link ThrowableDolls}) never places by clicking a block — returning
+	 * PASS lets the interaction pipeline fall through to {@link #use}, which throws it instead.
+	 */
+	@Override
+	public InteractionResult useOn(UseOnContext context) {
+		if (ThrowableDolls.isThrowable(context.getItemInHand())) return InteractionResult.PASS;
+		return super.useOn(context);
+	}
+
+	/**
+	 * Right-click: a throwable doll is thrown exactly like a snowball ({@code SnowballItem#use}),
+	 * carrying the full doll stack on the projectile; a plain doll keeps the vanilla
+	 * {@link Equipable} behaviour (equips onto the head).
+	 */
+	@Override
+	public InteractionResultHolder<ItemStack> use(Level level, Player player, InteractionHand hand) {
+		ItemStack stack = player.getItemInHand(hand);
+		if (!ThrowableDolls.isThrowable(stack)) {
+			return super.use(level, player, hand);
+		}
+
+		level.playSound(null, player.getX(), player.getY(), player.getZ(), SoundEvents.SNOWBALL_THROW,
+				SoundSource.NEUTRAL, 0.5f, 0.4f / (level.getRandom().nextFloat() * 0.4f + 0.8f));
+		if (!level.isClientSide) {
+			ThrownPokedollEntity thrown = new ThrownPokedollEntity(level, player);
+			thrown.setItem(stack);
+			thrown.shootFromRotation(player, player.getXRot(), player.getYRot(), 0.0f, 1.5f, 1.0f);
+			level.addFreshEntity(thrown);
+		}
+		player.awardStat(Stats.ITEM_USED.get(this));
+		stack.consume(1, player);
+		return InteractionResultHolder.sidedSuccess(stack, level.isClientSide());
+	}
+
+	/**
+	 * Dispenser support, mirroring {@code SnowballItem}: the default {@link ProjectileItem} dispense
+	 * config is exactly the snowball's launch. Only ever invoked for throwable dolls —
+	 * {@link dev.mrshawn.pokeblocks.interaction.PokeblocksDispenseBehaviors} gates on the marker and
+	 * ejects plain dolls like any other item.
+	 */
+	@Override
+	public Projectile asProjectile(Level level, Position pos, ItemStack stack, Direction direction) {
+		ThrownPokedollEntity thrown = new ThrownPokedollEntity(level, pos.x(), pos.y(), pos.z());
+		thrown.setItem(stack);
+		return thrown;
+	}
+
+	@Override
+	public void inventoryTick(ItemStack stack, Level level, Entity entity, int slotId, boolean isSelected) {
+		// Carrying a doll marks this exact variant discovered in the player's compendium progress
+		// (a one-shot server-side latch, so the throttled cadence is invisible). The key carries
+		// the active flags, so the compendium can show per-variant completion; species-level
+		// "collected" derives from any variant key of that species.
+		if (!level.isClientSide && entity instanceof ServerPlayer player
+				&& entity.tickCount % CompendiumProgressTracker.RECORD_INTERVAL_TICKS == 0) {
+			CompendiumProgressTracker.record(player, CompendiumKind.DOLL, compendiumKey(stack));
+		}
+	}
+
+	/** The canonical compendium progress key of a doll stack: species + sorted flag names. */
+	public static String compendiumKey(ItemStack stack) {
+		List<String> flagNames = new ArrayList<>();
+		for (ModelFlag flag : getFlagsFromStack(stack)) {
+			flagNames.add(flag.getTagName());
+		}
+		return CompendiumVariantKey.of(getPokemonFromStack(stack), flagNames);
 	}
 
 	/**
@@ -185,9 +280,24 @@ public class PokedollItem extends BlockItem implements GeoItem, Equipable {
 	}
 
 	/**
-	 * Builds display name in format: [Shiny] [Gigantic] [Pokemon] [other flags] Pokedoll
+	 * The doll's display name as a component, read from the same stack data the model uses (so the
+	 * name can never disagree with the rendered doll). Pass {@code includeSuffix = false} to drop the
+	 * trailing "Pokedoll" word — e.g. the phone call screen shows just "Shiny Bulbasaur".
 	 */
+	public static Component displayName(ItemStack stack, boolean includeSuffix) {
+		return Component.literal(buildDisplayName(getPokemonFromStack(stack), getFlagsFromStack(stack), includeSuffix));
+	}
+
 	private static String buildDisplayName(String pokemon, Set<ModelFlag> flags) {
+		return buildDisplayName(pokemon, flags, true);
+	}
+
+	/**
+	 * Builds display name in format: [Shiny] [Gigantic] [Pokemon] [other flags] [Pokedoll].
+	 *
+	 * @param includeSuffix whether to append the trailing "Pokedoll" word
+	 */
+	private static String buildDisplayName(String pokemon, Set<ModelFlag> flags, boolean includeSuffix) {
 		StringBuilder sb = new StringBuilder();
 
 		List<ModelFlag> sorted = new ArrayList<>(flags);
@@ -211,8 +321,11 @@ public class PokedollItem extends BlockItem implements GeoItem, Equipable {
 			}
 		}
 
-		sb.append("Pokedoll");
-		return sb.toString();
+		if (includeSuffix) {
+			sb.append("Pokedoll");
+		}
+		// Collapse any doubled/trailing spaces (e.g. when the suffix is omitted).
+		return sb.toString().trim().replaceAll("\\s+", " ");
 	}
 
 	private static boolean isPrefixFlag(ModelFlag flag) {

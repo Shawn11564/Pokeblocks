@@ -1,0 +1,9 @@
+{
+  "parent": "item/generated",
+  "textures": {
+    "layer0": "pokeblocks:item/pokedoll_phone"
+  },
+  "overrides": [
+    { "predicate": { "custom_model_data": 1 }, "model": "pokeblocks:item/pokedoll_phone_on" }
+  ]
+}

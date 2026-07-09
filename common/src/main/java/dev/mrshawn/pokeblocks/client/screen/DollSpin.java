@@ -33,4 +33,10 @@ public final class DollSpin {
     public float yaw() {
         return yaw;
     }
+
+    /** Adopts an externally-controlled angle (e.g. after a manual drag) so the spin resumes from it. */
+    public void snapTo(float yaw) {
+        this.yaw = Mth.wrapDegrees(yaw);
+        this.speed = BASE_SPEED;
+    }
 }

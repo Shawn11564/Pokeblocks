@@ -16,12 +16,11 @@ import net.minecraft.util.Mth;
 import net.minecraft.world.level.block.state.properties.RotationSegment;
 import net.minecraft.world.phys.Vec3;
 import software.bernie.geckolib.cache.object.BakedGeoModel;
-import software.bernie.geckolib.renderer.GeoBlockRenderer;
 
 import java.util.HashMap;
 import java.util.Map;
 
-public class PokedollBlockRenderer extends GeoBlockRenderer<PokedollBlockEntity> {
+public class PokedollBlockRenderer extends CullAwareGeoBlockRenderer<PokedollBlockEntity> {
 
 	/** Roughly settles to its target after this many seconds (exponential ease, ~95% there). */
 	private static final float TURN_SECONDS = 10f;

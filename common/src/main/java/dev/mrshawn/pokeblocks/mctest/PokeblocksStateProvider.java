@@ -10,12 +10,15 @@ import dev.mrshawn.pokeblocks.item.FigurineDescriptionOverrides;
 import dev.mrshawn.pokeblocks.item.FigurineNameOverrides;
 import dev.mrshawn.pokeblocks.item.FigurineTagOverrides;
 import dev.mrshawn.pokeblocks.item.RarityScoreCalculator;
+import dev.mrshawn.pokeblocks.item.ThrowableDolls;
 import dev.mrshawn.pokeblocks.item.custom.PokedollItem;
 import dev.mrshawn.pokeblocks.item.loot.LootGroup;
 import dev.mrshawn.pokeblocks.item.loot.LootGroupConfig;
 import dev.mrshawn.pokeblocks.item.loot.LootInjector;
 import dev.mrshawn.pokeblocks.pokemon.ModelFlag;
 import dev.mrshawn.pokeblocks.recipe.PokeblocksIngredient;
+import dev.mrshawn.pokeblocks.recipe.ThrowableDollRecipe;
+import dev.mrshawn.pokeblocks.registry.ItemRegistry;
 import dev.mrshawn.pokeblocks.registry.PokemonRegistry;
 import dev.mrshawn.pokeblocks.resourcepack.CustomPackManager;
 import dev.mrshawn.pokeblocks.shape.DollShapes;
@@ -25,6 +28,9 @@ import net.minecraft.core.Registry;
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.item.Items;
+import net.minecraft.world.item.crafting.CraftingInput;
+import net.minecraft.world.level.block.DispenserBlock;
 
 import java.util.ArrayList;
 import java.util.EnumSet;
@@ -155,6 +161,29 @@ public final class PokeblocksStateProvider implements McTestStateProvider {
                 yield ingredient.test(stack);
             }
 
+            // ── Throwable dolls: the doll + snowball recipe really converts, marks and round-trips ──
+            // Whether the throwable-doll recipe matches a grid of one doll (already throwable when
+            // dollThrowable is true) plus a second item ("minecraft:snowball" by default, any item id,
+            // or "none" for an empty slot).
+            case "throwable.recipeMatches" -> new ThrowableDollRecipe().matches(throwableCraftInput(args), null);
+            // The assembled doll+snowball result carries the throwable marker...
+            case "throwable.assembledIsThrowable" -> ThrowableDolls.isThrowable(assembleThrowable(args));
+            // ...preserves the input doll's species...
+            case "throwable.assembledSpecies" -> PokedollItem.getPokemonFromStack(assembleThrowable(args));
+            // ...and keeps its flags (asserted one flag at a time via the standard flag arg).
+            case "throwable.assembledHasFlag" -> PokedollItem
+                    .getFlagsFromStack(assembleThrowable(args)).contains(requireFlag(args, "flag"));
+            // makeThrowable -> strip yields a stack byte-identical to the plain doll — the guarantee
+            // that a landed (placed/dropped/worn) doll stacks with never-thrown dolls again.
+            case "throwable.stripRestoresPlain" -> {
+                ItemStack plain = dollStack(args);
+                yield ItemStack.matches(plain, ThrowableDolls.strip(ThrowableDolls.makeThrowable(plain)));
+            }
+            // The gated dispenser behavior is installed for the doll item (PokeblocksDispenseBehaviors:
+            // throwable dolls launch as projectiles, plain dolls eject like any other item).
+            case "throwable.dispenseBehaviorRegistered" -> DispenserBlock.DISPENSER_REGISTRY
+                    .containsKey(ItemRegistry.POKEDOLL_ITEM.get());
+
             // ── Served resource pack: built at server pre-start (CustomPackManager.buildAndCache) ──
             // Whether the served pack zip was built and still exists on disk. A clean server builds one
             // even with no admin custom assets, because include_builtin_assets defaults to true.
@@ -190,6 +219,46 @@ public final class PokeblocksStateProvider implements McTestStateProvider {
     private static boolean registryContains(Registry<?> registry, String id) {
         ResourceLocation rl = ResourceLocation.tryParse(id);
         return rl != null && registry.containsKey(rl);
+    }
+
+    /** Builds the doll stack described by the standard {@code pokemon} + {@code flags} args. */
+    private static ItemStack dollStack(Map<String, Object> args) {
+        return PokedollItem.createPokedoll(requireStr(args, "pokemon"),
+                parseFlags(args.get("flags")).toArray(new ModelFlag[0]));
+    }
+
+    /**
+     * Builds the 2-slot crafting grid for the {@code throwable.*} queries: the doll from
+     * {@code pokemon}/{@code flags} (pre-marked when {@code dollThrowable} is true) plus a second
+     * item — {@code minecraft:snowball} when the {@code second} arg is absent, any item id, or
+     * {@code "none"} for an empty slot.
+     */
+    private static CraftingInput throwableCraftInput(Map<String, Object> args) {
+        ItemStack doll = dollStack(args);
+        if (optBool(args, "dollThrowable")) {
+            doll = ThrowableDolls.makeThrowable(doll);
+        }
+        Object second = args == null ? null : args.get("second");
+        ItemStack other;
+        if (second == null) {
+            other = new ItemStack(Items.SNOWBALL);
+        } else if ("none".equals(second.toString())) {
+            other = ItemStack.EMPTY;
+        } else {
+            other = new ItemStack(BuiltInRegistries.ITEM.get(requireRl(args, "second")));
+        }
+        return CraftingInput.of(2, 1, List.of(doll, other));
+    }
+
+    /** The assembled output of the doll+snowball grid, via the recipe's real assemble path. */
+    private static ItemStack assembleThrowable(Map<String, Object> args) {
+        return new ThrowableDollRecipe().assemble(throwableCraftInput(args), null);
+    }
+
+    /** Reads an optional boolean arg (absent -> false; YAML booleans may arrive as strings). */
+    private static boolean optBool(Map<String, Object> args, String key) {
+        Object value = args == null ? null : args.get(key);
+        return value != null && Boolean.parseBoolean(value.toString());
     }
 
     /** Counts non-directory entries under {@code prefix} in the built served pack (0 when no pack). */

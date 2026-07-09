@@ -1,6 +1,6 @@
 {
   "parent": "item/generated",
   "textures": {
-    "layer0": "minecraft:item/knowledge_book"
+    "layer0": "pokeblocks:item/figurine_compendium_texture"
   }
 }

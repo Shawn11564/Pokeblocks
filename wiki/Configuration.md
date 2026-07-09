@@ -240,8 +240,9 @@ A JSON array of `"id Display Name"` entries giving figurines custom display name
 
 ### `figurine_descriptions.json`
 
-A JSON array of `"id description text"` entries (split on the first whitespace). Missing entries fall
-back to a generic blurb.
+A JSON array of `"id description text"` entries (split on the first whitespace). Shown on the
+figurine's detail page in the [Figurine Compendium](Compendiums); missing entries fall back to a
+generic blurb.
 
 ### `figurine_tags.json`
 
