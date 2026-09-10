@@ -1,0 +1,22 @@
+// Compile-only stand-in for `io.mctest:mc-test-agent-core`.
+//
+// Pokeblocks implements mc-test's server-truth SPI (see PokeblocksStateProvider), which needs the
+// McTestStateProvider interface on the COMPILE classpath only: at runtime the mc-test server agent
+// supplies the real class, and this project's jar is never bundled into a loader jar (every consumer
+// depends on it as `compileOnly`, so it stays off the runtime and shadow/jarJar classpaths).
+//
+// The real artifact only ever exists in a local `mavenLocal()` install of the mc-test repo, so CI —
+// which has no ~/.m2 — could not resolve it and `:common:compileJava` failed. Vendoring the one
+// interface Pokeblocks implements keeps the build self-contained and reproducible everywhere.
+//
+// KEEP IN SYNC: if mc-test ever changes McTestStateProvider, update the source here to match. A
+// mismatch cannot be caught by this build (the interface is never linked here at runtime) — it shows
+// up as a ServiceLoader/AbstractMethodError failure in an actual `mc-test` run.
+
+base {
+    archivesName = "pokeblocks-mctest-spi"
+}
+
+tasks.withType(AbstractArchiveTask).configureEach {
+    archiveVersion = "${version}-${minecraft_version}"
+}

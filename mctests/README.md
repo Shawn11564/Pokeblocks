@@ -58,8 +58,8 @@ engine + the `server-fabric` / `server-neoforge` truth agents, builds the Pokebl
 - to **GitHub Pages** at <https://shawn11564.github.io/Pokeblocks/> (best-effort).
 
 The Fabric lane runs green; the NeoForge lane honest-skips `NO_SERVER_AGENT` (see below) — never a
-false green. The workflow publishes the `compileOnly` SPI (`mc-test-agent-core:0.1.0`) to mavenLocal
-*before* the Pokeblocks build, so it resolves with no extra config.
+false green. Nothing has to be published for the build to resolve: the one SPI interface Pokeblocks
+compiles against is vendored in this repo (see below).
 
 **One-time, to serve the report on Pages:** repo **Settings → Pages → Build and deployment → Source:
 "GitHub Actions"**. Until then the run still passes and the report stays available as the artifact.
@@ -73,9 +73,13 @@ Regenerate this workflow any time with the runner's `init-ci` command:
 Pokeblocks' implementation of mc-test's `io.mctest.agent.core.McTestStateProvider`. The co-selected
 `server-fabric` agent discovers it via `java.util.ServiceLoader` (registration:
 [`META-INF/services/io.mctest.agent.core.McTestStateProvider`](../common/src/main/resources/META-INF/services/io.mctest.agent.core.McTestStateProvider)).
-The SPI is a **`compileOnly`** dependency (`io.mctest:mc-test-agent-core`, from mavenLocal) — the agent
-provides the class at runtime; it must **never be bundled** (that would break ServiceLoader class
-identity). The provider only **reads** state and returns primitives; it's dormant when no agent is present.
+The SPI is a **`compileOnly`** dependency — the agent provides the class at runtime; it must **never be
+bundled** (that would break ServiceLoader class identity). Because `io.mctest:mc-test-agent-core` is only
+ever installed into a local `mavenLocal()` (nothing publishes it publicly, so CI could not resolve it), the
+single interface the mod implements is vendored as the [`:mctest-spi`](../mctest-spi) subproject, which every
+module depends on as `compileOnly` and no jar bundles. **Keep it in sync** if mc-test ever changes
+`McTestStateProvider` — a mismatch only shows up in a real `mc-test` run. The provider only **reads** state
+and returns primitives; it's dormant when no agent is present.
 
 Query reference (add cases here as the mod grows). Numbers are plain ints; fractional values are
 scaled `×1000` and rounded so they assert as exact integers (the agent's `equals` predicate compares

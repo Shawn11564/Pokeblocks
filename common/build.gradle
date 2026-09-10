@@ -25,8 +25,9 @@ dependencies {
     compileOnly group:'org.spongepowered', name:'mixin', version:'0.8.5'
     implementation "software.bernie.geckolib:geckolib-common-${minecraft_version}:${geckolib_version}"
     // mc-test server-truth SPI (McTestStateProvider). compileOnly: the matching server-* agent jar
-    // provides the class at runtime; bundling it would break ServiceLoader class identity. From mavenLocal.
-    compileOnly 'io.mctest:mc-test-agent-core:0.1.0'
+    // provides the class at runtime; bundling it would break ServiceLoader class identity. The interface
+    // is vendored in :mctest-spi so the build never needs a mavenLocal install of mc-test-agent-core.
+    compileOnly project(":mctest-spi")
     // JEI plugin API (optional integration; plugin class lives in common and is picked up by each
     // loader's JEI plugin discovery). API only — never on the runtime classpath here.
     compileOnly "mezz.jei:jei-${minecraft_version}-common-api:${jei_version}"
