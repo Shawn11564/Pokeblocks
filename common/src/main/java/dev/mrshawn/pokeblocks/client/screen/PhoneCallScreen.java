@@ -4,6 +4,7 @@ import dev.mrshawn.pokeblocks.PokeblocksCommon;
 import dev.mrshawn.pokeblocks.item.custom.PokedollItem;
 import dev.mrshawn.pokeblocks.phone.ClientDigSites;
 import dev.mrshawn.pokeblocks.phone.PhoneCalls;
+import dev.mrshawn.pokeblocks.phone.PhoneCalls.LostDollTarget;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.network.chat.Component;
@@ -37,6 +38,7 @@ public class PhoneCallScreen extends Screen {
 
 	private final ItemStack callerStack;
 	private final Component callerName;
+	private final Component callText;
 	private final DollSpin spin = new DollSpin();
 	private final FrameClock clock = new FrameClock();
 
@@ -44,12 +46,18 @@ public class PhoneCallScreen extends Screen {
 	private int panelTop;
 	private boolean responded;
 
-	public PhoneCallScreen(String callerKey) {
+	public PhoneCallScreen(String callerKey, LostDollTarget lost) {
 		super(Component.translatable("screen.pokeblocks.phone.title"));
 		this.callerStack = PhoneCalls.createDoll(callerKey == null ? "" : callerKey);
 		// The caller's name is the doll's display name without the trailing "Pokedoll" word, read
 		// from the same stack the portrait renders, so the name always matches the doll shown.
 		this.callerName = PokedollItem.displayName(callerStack, false);
+		// The plea names what the caller lost, tinted with that rarity's colour (a rarity tier, or a
+		// compact min–max rarity-percent window). The two percent numbers keep the line short.
+		Component descriptor = lost == null
+				? Component.translatable("screen.pokeblocks.phone.lost_unknown")
+				: PhoneCalls.describeLostDoll(lost);
+		this.callText = Component.translatable("screen.pokeblocks.phone.call_text", descriptor);
 	}
 
 	@Override
@@ -92,8 +100,7 @@ public class PhoneCallScreen extends Screen {
 		int textWidth = panelLeft + PANEL_W - 14 - textX;
 		guiGraphics.drawString(font, callerName, textX, panelTop + 26, CompendiumScreen.COL_TEXT, false);
 
-		List<FormattedCharSequence> lines = font.split(
-				Component.translatable("screen.pokeblocks.phone.call_text"), textWidth);
+		List<FormattedCharSequence> lines = font.split(callText, textWidth);
 		int lineY = panelTop + 40;
 		for (FormattedCharSequence line : lines) {
 			if (lineY > panelTop + PANEL_H - BUTTON_H - 24) break;

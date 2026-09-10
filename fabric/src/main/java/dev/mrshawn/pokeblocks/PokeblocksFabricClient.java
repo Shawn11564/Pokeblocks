@@ -8,6 +8,8 @@ import dev.mrshawn.pokeblocks.phone.ClientDigSites;
 import dev.mrshawn.pokeblocks.phone.PhonePayloads;
 import dev.mrshawn.pokeblocks.resourcepack.sync.ClientPackSync;
 import dev.mrshawn.pokeblocks.resourcepack.sync.PackSyncPayloads;
+import dev.mrshawn.pokeblocks.trapped.ClientTrappedDollTimers;
+import dev.mrshawn.pokeblocks.trapped.TrappedDollPayloads;
 import net.fabricmc.api.ClientModInitializer;
 import net.fabricmc.loader.api.FabricLoader;
 import net.fabricmc.fabric.api.client.networking.v1.ClientPlayNetworking;
@@ -47,6 +49,11 @@ public final class PokeblocksFabricClient implements ClientModInitializer {
                 ClientDigSites.handleDigSites(payload.data()));
         ClientDigSites.setResponseSender(data ->
                 ClientPlayNetworking.send(new PhonePayloads.CallResponsePayload(data)));
+
+        // Trapped dolls: timer snapshots drive the countdown above other players' heads. (The
+        // wearer's own HUD countdown is a common Gui mixin — no per-loader hook needed.)
+        ClientPlayNetworking.registerGlobalReceiver(TrappedDollPayloads.TimersPayload.TYPE, (payload, context) ->
+                ClientTrappedDollTimers.handleTimers(payload.data()));
 
         // Re-scan client assets on every resource (re)load. This fires on the initial client resource
         // load (replacing the former one-shot CLIENT_STARTED scan) and again whenever packs change

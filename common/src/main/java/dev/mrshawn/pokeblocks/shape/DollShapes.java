@@ -8,6 +8,7 @@ import dev.mrshawn.pokeblocks.block.entity.custom.FigurineBlockEntity;
 import dev.mrshawn.pokeblocks.block.entity.custom.PokedollBlockEntity;
 import dev.mrshawn.pokeblocks.client.model.PokeblocksAssetResolver;
 import dev.mrshawn.pokeblocks.constants.ModSettings;
+import dev.mrshawn.pokeblocks.pokemon.FigurineFlag;
 import dev.mrshawn.pokeblocks.pokemon.ModelFlag;
 import dev.mrshawn.pokeblocks.resourcepack.CustomPackManager;
 import net.minecraft.core.Direction;
@@ -19,6 +20,7 @@ import java.io.InputStream;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.EnumSet;
 import java.util.List;
 import java.util.Optional;
@@ -86,6 +88,8 @@ public final class DollShapes {
 	private static final ConcurrentHashMap<ShapeKey, VoxelShape> SHAPES = new ConcurrentHashMap<>();
 	/** Outer render bounds per (geo path, pose) (see {@link #modelBounds}). */
 	private static final ConcurrentHashMap<GeometryKey, double[]> MODEL_BOUNDS = new ConcurrentHashMap<>();
+	/** Figure-only outer bounds per geo path (see {@link #figurineFigureBounds}); empty = unusable. */
+	private static final ConcurrentHashMap<String, Optional<double[]>> FIGURE_BOUNDS = new ConcurrentHashMap<>();
 
 	/** Client-side resource-manager lookup, installed by {@code PokeblocksClient}; null on dedicated servers. */
 	private static volatile Function<String, byte[]> clientResourceLookup;
@@ -156,6 +160,47 @@ public final class DollShapes {
 		return shape(candidates, null, facingYawDegrees(facing), figurine.isGigantic());
 	}
 
+	/**
+	 * Shape for a BOXLESS figurine doll: a best-fit box of the <b>figure alone</b> (its display case
+	 * is gone), from the same figure-only bounds that size the walking entity's hitbox. The footprint
+	 * uses the figure's larger horizontal extent, so the box is square in plan view and the shape is
+	 * valid at every 16-segment placement rotation without per-yaw compilation. Falls back to the
+	 * legacy box when no model parses.
+	 */
+	public static VoxelShape figurineBoxless(FigurineBlockEntity figurine) {
+		double[] bounds = figurineFigureBounds(figurine.getFigurine(), figurine.getFigurineFlags());
+		if (bounds == null) {
+			return figurine.isGigantic() ? DEFAULT_SHAPE_GIGANTIC : DEFAULT_SHAPE;
+		}
+		double scale = figurine.isGigantic() ? ModSettings.GIGANTIC_SCALE : 1.0;
+		return BOXLESS_SHAPES.computeIfAbsent(new BoxlessKey(bounds, scale), key -> {
+			double[] b = key.bounds();
+			// Bounds origin is the model's bottom-center; the block-space box is centered at 0.5, 0.5.
+			double half = Math.max(Math.max(Math.abs(b[0]), Math.abs(b[3])), Math.max(Math.abs(b[2]), Math.abs(b[5])))
+					* key.scale();
+			double y0 = Math.max(0, b[1] * key.scale());
+			double y1 = Math.max(y0 + 0.05, b[4] * key.scale());
+			return Shapes.box(0.5 - half, y0, 0.5 - half, 0.5 + half, y1, 0.5 + half);
+		});
+	}
+
+	/** Compiled boxless-doll shapes; keyed by the (cached, shared) bounds array identity + scale. */
+	private static final ConcurrentHashMap<BoxlessKey, VoxelShape> BOXLESS_SHAPES = new ConcurrentHashMap<>();
+
+	private record BoxlessKey(double[] bounds, double scale) {
+		// The bounds arrays are cached singletons (see FIGURE_BOUNDS), so identity semantics are
+		// exactly right — and cheaper than Arrays-based equality.
+		@Override
+		public boolean equals(Object other) {
+			return other instanceof BoxlessKey key && key.bounds == this.bounds && key.scale == this.scale;
+		}
+
+		@Override
+		public int hashCode() {
+			return System.identityHashCode(this.bounds) * 31 + Double.hashCode(this.scale);
+		}
+	}
+
 	/** Shape for a data-driven custom decoration. Custom decorations never animate. */
 	public static VoxelShape customDecoration(CustomDecorationBlockEntity decoration, Direction facing) {
 		List<String> candidates = new ArrayList<>(2);
@@ -202,6 +247,51 @@ public final class DollShapes {
 		return MODEL_BOUNDS.computeIfAbsent(new GeometryKey(geoPath, poseKey), key -> geometry.outerBounds());
 	}
 
+	/**
+	 * The outer render-space bounds of a figurine's <b>figure alone</b> — its geo with the
+	 * {@link ModSettings#FIGURINE_BOX_BONE display box} subtree excluded — as
+	 * {@code [x0, y0, z0, x1, y1, z1]} (origin at the model's bottom-center, 1.0 = one block), or
+	 * {@code null} when no candidate model parses (or the figure has no cubes outside the box).
+	 * Sizes the walking figurine entity's hitbox, so it hugs the figure rather than the case the
+	 * entity never renders. Resolution mirrors {@link #figurine}: flag variant → base → default
+	 * figurine. Cached; the returned array is shared — callers must not mutate it.
+	 */
+	public static double @Nullable [] figurineFigureBounds(String figurine, Collection<FigurineFlag> flags) {
+		List<String> candidates = new ArrayList<>(3);
+		if (figurine != null && SAFE_ID.matcher(figurine).matches()) {
+			String suffix = PokeblocksAssetResolver.figurineModelSuffix(flags);
+			if (!suffix.isEmpty()) {
+				candidates.add("geo/block/" + figurine + suffix + "_figurine.geo.json");
+			}
+			candidates.add("geo/block/" + figurine + "_figurine.geo.json");
+		}
+		candidates.add("geo/block/" + ModSettings.DEFAULT_FIGURINE + "_figurine.geo.json");
+
+		for (String path : candidates) {
+			Optional<double[]> bounds = FIGURE_BOUNDS.computeIfAbsent(path, DollShapes::loadFigureBounds);
+			if (bounds.isPresent()) {
+				return bounds.get();
+			}
+		}
+		return null;
+	}
+
+	private static Optional<double[]> loadFigureBounds(String path) {
+		byte[] bytes = loadBytes(path);
+		if (bytes == null) {
+			return Optional.empty();
+		}
+		try {
+			GeoGeometry figure = GeoGeometry.parse(bytes, GeoPose.EMPTY, Set.of(ModSettings.FIGURINE_BOX_BONE));
+			return Optional.of(figure.outerBounds());
+		} catch (Exception e) {
+			// Cached as empty, so this logs once per (re)load rather than once per bounds query.
+			PokeblocksLog.LOGGER.warn("Could not derive figure bounds from '{}' ({}); using the default entity size.",
+					path, e.getMessage());
+			return Optional.empty();
+		}
+	}
+
 	// --- Lifecycle ----------------------------------------------------------------------------------
 
 	/**
@@ -214,6 +304,8 @@ public final class DollShapes {
 		POSES.clear();
 		SHAPES.clear();
 		MODEL_BOUNDS.clear();
+		FIGURE_BOUNDS.clear();
+		BOXLESS_SHAPES.clear();
 	}
 
 	/** Installed once from client init; gives the shape pipeline access to resource-pack geo files. */

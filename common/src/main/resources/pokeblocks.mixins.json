@@ -7,6 +7,7 @@
   "mixins": [
     "PlayerJoinMixin",
     "ServerTickMixin",
+    "TrappedDollItemEntityMixin",
     "UseItemOnDistanceMixin"
   ],
   "client": [
@@ -15,7 +16,9 @@
     "PackRepositoryMixin",
     "CreativePickBlockMixin",
     "PickBlockCloneDataMixin",
-    "PhoneClientTickMixin"
+    "PhoneClientTickMixin",
+    "TrappedDollHudMixin",
+    "TrappedDollNameTagMixin"
   ],
   "injectors": {
     "defaultRequire": 1

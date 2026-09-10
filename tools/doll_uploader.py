@@ -15,6 +15,13 @@ Drop in a received zip (or an already-extracted folder) whose root holds
 This is a dev-side tool that edits the repo's *source* assets under
 common/src/main/resources/assets/pokeblocks/ so the new dolls ship in a PR.
 
+Squeak textures (pokedoll_<name>[_flags]_squeak[_<n>].png) are recognized too: they
+replace a doll's regular texture while it is being squeaked, and numbered files cycle
+one frame per squeak. They re-skin a variant that must already exist, so they never
+create a doll, a variant or a rarity entry -- the tool only places and validates them.
+The _squeak marker is also accepted before the flag suffixes (..._squeak_1_shiny.png) and
+moved to the end on copy, which is the only spelling the game looks for.
+
 See tools/README.md for usage. The flag tables are read live from ModelFlag.java
 and FigurineFlag.java at startup (so they can't drift), and the parsing mirrors
 PokemonRegistry.parseSuffixes / FigurineRegistry.parseSuffixes.
@@ -245,6 +252,13 @@ def rarity_key(name: str, flags: set[Flag]) -> str:
 # --------------------------------------------------------------------------- #
 RE_DOLL_MODEL = re.compile(r"^pokedoll_(.+)\.geo\.json$", re.IGNORECASE)
 RE_DOLL_TEX = re.compile(r"^pokedoll_(.+)\.png$", re.IGNORECASE)
+# A squeak texture replaces the regular one while the doll is being squeaked. The game wants the
+# marker AFTER the flag suffixes (pokedoll_<name>[_flags]_squeak[_<n>]_texture.png), but artists
+# routinely write it right after the name instead (..._squeak_1_shiny_texture.png), so the marker is
+# matched wherever it sits in the body and moved to the end on copy. The lookahead keeps names that
+# merely start with "squeak" (e.g. _squeaky) out of it, and the last occurrence wins so a doll
+# actually called "squeak" still parses.
+RE_DOLL_SQUEAK_MARKER = re.compile(r"_squeak(?:_(\d+))?(?=_|$)", re.IGNORECASE)
 RE_DOLL_ANIM = re.compile(r"^pokedoll_(.+)\.animation\.json$", re.IGNORECASE)
 RE_FIG_MODEL = re.compile(r"^(.+)_figurine\.geo\.json$", re.IGNORECASE)
 RE_FIG_TEX = re.compile(r"^(.+)_figurine(?:_texture)?\.png$", re.IGNORECASE)
@@ -254,12 +268,14 @@ RE_DEX_FOLDER = re.compile(r"^\d+[_\- ]+(.+)$")
 @dataclass
 class Asset:
     src: Path
-    kind: str          # doll-model | doll-tex | doll-anim | fig-model | fig-tex
+    kind: str          # doll-model | doll-tex | doll-squeak-tex | doll-anim | fig-model | fig-tex
     name: str          # base pokemon / figurine id (lowercase)
     flags: set[Flag]
     dest_name: str     # normalized destination filename
     dest_dir: Path
     folder_hint: str | None = None
+    squeak_frame: int | None = None   # doll-squeak-tex only: numbered frame, None = unnumbered
+    squeak_marker_moved: bool = False  # doll-squeak-tex only: _squeak sat before the flags in the source name
 
 
 def classify(src: Path) -> Asset | None:
@@ -290,11 +306,26 @@ def classify(src: Path) -> Asset | None:
         return Asset(src, "doll-anim", name, flags, fn.lower(), ANIM_DIR)
     m = RE_DOLL_TEX.match(fn)
     if m:
-        name, flags = parse_suffixes(m.group(1))
-        # Normalize to the _texture.png convention.
-        body = m.group(1)
-        dest = fn.lower() if body.lower().endswith("_texture") else f"pokedoll_{body.lower()}_texture.png"
-        return Asset(src, "doll-tex", name, flags, dest, TEX_DIR)
+        # Normalize to the _texture.png convention; work on the body without that suffix so a
+        # squeak marker at the very end is still visible.
+        body = m.group(1).lower()
+        if body.endswith("_texture"):
+            body = body[: -len("_texture")]
+        squeaks = list(RE_DOLL_SQUEAK_MARKER.finditer(body))
+        if squeaks:
+            sq = squeaks[-1]
+            frame = int(sq.group(1)) if sq.group(1) else None
+            flag_body = body[: sq.start()] + body[sq.end():]
+            name, flags = parse_suffixes(flag_body)
+            marker = "_squeak" + (f"_{frame}" if frame else "")
+            # Flag order inside the body is preserved (the resolver probes every ordering); only the
+            # marker is moved, since the resolver appends it after the whole flag suffix.
+            return Asset(src, "doll-squeak-tex", name, flags,
+                         f"pokedoll_{flag_body}{marker}_texture.png", TEX_DIR,
+                         squeak_frame=frame,
+                         squeak_marker_moved=sq.end() != len(body))
+        name, flags = parse_suffixes(body)
+        return Asset(src, "doll-tex", name, flags, f"pokedoll_{body}_texture.png", TEX_DIR)
     return None
 
 
@@ -384,6 +415,8 @@ class Plan:
     unknown: list[Path] = field(default_factory=list)
     warnings: list[str] = field(default_factory=list)
     doll_names: set[str] = field(default_factory=set)
+    # "<name> [flags] -> frames" lines describing the squeak textures in this batch.
+    squeak_variants: list[str] = field(default_factory=list)
     figurine_ids: set[str] = field(default_factory=set)
     # name -> sorted variant flag tags, for dolls registered without a flagless base model.
     no_base_dolls: dict[str, list[str]] = field(default_factory=dict)
@@ -448,6 +481,62 @@ def repo_has_base_model(name: str) -> bool:
 
 def repo_has_base_texture(name: str) -> bool:
     return (TEX_DIR / f"pokedoll_{name}_texture.png").exists() or (TEX_DIR / f"pokedoll_{name}.png").exists()
+
+
+def repo_has_texture(name: str, flags: set[Flag]) -> bool:
+    """Whether the repo already ships the regular texture for this exact flag combination."""
+    suffix = "".join(f.texture_suffix for f in sorted_flags(flags))
+    return ((TEX_DIR / f"pokedoll_{name}{suffix}_texture.png").exists()
+            or (TEX_DIR / f"pokedoll_{name}{suffix}.png").exists())
+
+
+def check_squeak_textures(squeaks: list[Asset], regular: list[Asset], plan: Plan) -> None:
+    """Validates squeak textures and records them for the summary.
+
+    A squeak texture re-skins a variant that must already exist (the game matches it with the same
+    flag ladder as the regular texture), and numbered frames must run contiguously from 1 — the mod
+    stops probing at the first gap.
+    """
+    by_variant: dict[tuple[str, frozenset[Flag]], list[Asset]] = {}
+    for a in squeaks:
+        by_variant.setdefault((a.name, frozenset(a.flags)), []).append(a)
+
+    for (name, flagset), group in sorted(by_variant.items(), key=lambda kv: (kv[0][0], len(kv[0][1]))):
+        flags = set(flagset)
+        label = " ".join([name] + [f.tag for f in sorted_flags(flags)])
+        frames = sorted(a.squeak_frame for a in group if a.squeak_frame is not None)
+        unnumbered = [a for a in group if a.squeak_frame is None]
+
+        if frames:
+            desc = f"{len(frames)} numbered frame(s): {', '.join(str(n) for n in frames)}"
+        else:
+            desc = "1 unnumbered frame (used for every squeak)"
+        if any(a.squeak_marker_moved for a in group):
+            desc += "  [_squeak marker moved after the flags]"
+        plan.squeak_variants.append(f"{label} -> {desc}")
+
+        # The variant this re-skins has to exist, or the game falls back to a less specific
+        # squeak texture (or none) and the file is dead weight.
+        has_regular = (any(a.name == name and set(a.flags) == flags for a in regular)
+                       or repo_has_texture(name, flags))
+        if not has_regular:
+            plan.warnings.append(
+                f"Squeak texture for '{label}': no regular texture for that exact flag combination "
+                f"in this batch or the repo — the game only shows a squeak texture for a variant it "
+                f"can already render.")
+
+        if frames and unnumbered:
+            plan.warnings.append(
+                f"Squeak textures for '{label}': both numbered and unnumbered files present — the "
+                f"numbered sequence wins and the plain _squeak file is ignored.")
+        if frames and frames != list(range(1, len(frames) + 1)):
+            plan.warnings.append(
+                f"Squeak frames for '{label}' are not contiguous from 1 ({frames}) — the game stops "
+                f"at the first gap, so later frames will never show.")
+        if len(set(frames)) != len(frames):
+            plan.warnings.append(f"Squeak frames for '{label}' contain a duplicate number: {frames}.")
+        if len(unnumbered) > 1:
+            plan.warnings.append(f"Squeak textures for '{label}': more than one unnumbered file.")
 
 
 def build_plan(src_root: Path, dry_run: bool) -> Plan:
@@ -531,7 +620,9 @@ def build_plan(src_root: Path, dry_run: bool) -> Plan:
     for name in sorted(plan.doll_names):
         combos: set[frozenset[Flag]] = set()
         for a in doll_assets:
-            if a.name == name:
+            # Squeak textures are alternate skins of a variant, never a variant of their own —
+            # the mod's registry skips them too, so they must not spawn a rarity entry.
+            if a.name == name and a.kind != "doll-squeak-tex":
                 combos.add(frozenset(a.flags))
         # A flagless base variant exists for normal dolls, but NOT for variant-only
         # dolls (e.g. sinistea) — don't invent a base rarity entry the game never sees.
@@ -552,6 +643,12 @@ def build_plan(src_root: Path, dry_run: bool) -> Plan:
             else:
                 r = ask_rarity(label, default="common")
                 plan.rarity_entries.append(f"{key} {r}")
+
+    # --- squeak textures ---------------------------------------------------- #
+    check_squeak_textures(
+        [a for a in doll_assets if a.kind == "doll-squeak-tex"],
+        [a for a in doll_assets if a.kind == "doll-tex"],
+        plan)
 
     # --- figurine_names.json / figurine_tags.json -------------------------- #
     fig_ids = sorted({a.name for a in fig_assets})
@@ -617,6 +714,11 @@ def print_summary(plan: Plan) -> None:
         print("\nVariant-only dolls (no flagless base — registered as a base doll with flag variants):")
         for name, tags in sorted(plan.no_base_dolls.items()):
             print(f"  {name}: {', '.join(tags)}")
+
+    if plan.squeak_variants:
+        print("\nSqueak textures (shown while the doll is squeaked; numbered frames cycle one per squeak):")
+        for line in plan.squeak_variants:
+            print(f"  {line}")
 
     print(f"\nFiles to place ({len(plan.copies)}):")
     for src, dest in plan.copies:
@@ -873,6 +975,37 @@ def self_test() -> int:
         and fig_v.dest_name == "amongsans1015_devoured_figurine.geo.json", "figurine variant classify"
     tex = classify(Path("pokedoll_pikachu_shiny.png"))
     assert tex and tex.dest_name == "pokedoll_pikachu_shiny_texture.png", "texture normalization"
+    # Squeak textures: the marker sits after the flag suffixes and must not become part of the name.
+    sq = classify(Path("pokedoll_pikachu_squeak.png"))
+    assert (sq and sq.kind == "doll-squeak-tex" and sq.name == "pikachu" and not sq.flags
+            and sq.squeak_frame is None
+            and sq.dest_name == "pokedoll_pikachu_squeak_texture.png"), "squeak texture classify"
+    sq_n = classify(Path("pokedoll_pikachu_shiny_squeak_2_texture.png"))
+    assert (sq_n and sq_n.kind == "doll-squeak-tex" and sq_n.name == "pikachu"
+            and {f.tag for f in sq_n.flags} == {"shiny"} and sq_n.squeak_frame == 2
+            and sq_n.dest_name == "pokedoll_pikachu_shiny_squeak_2_texture.png"), "numbered squeak classify"
+    # The marker is also accepted before the flags and moved to the end (the only spelling the
+    # game probes for), keeping the artist's flag ordering intact.
+    sq_pre = classify(Path("pokedoll_bellibolt_squeak_1_shiny_texture.png"))
+    assert (sq_pre and sq_pre.kind == "doll-squeak-tex" and sq_pre.name == "bellibolt"
+            and {f.tag for f in sq_pre.flags} == {"shiny"} and sq_pre.squeak_frame == 1
+            and sq_pre.squeak_marker_moved
+            and sq_pre.dest_name == "pokedoll_bellibolt_shiny_squeak_1_texture.png"), "pre-flag squeak classify"
+    sq_pre_u = classify(Path("pokedoll_snorunt_squeak_shiny_family_animated.png"))
+    assert (sq_pre_u and sq_pre_u.kind == "doll-squeak-tex" and sq_pre_u.name == "snorunt"
+            and {f.tag for f in sq_pre_u.flags} == {"shiny", "family", "animated"}
+            and sq_pre_u.squeak_frame is None
+            and sq_pre_u.dest_name == "pokedoll_snorunt_shiny_family_animated_squeak_texture.png"),         "pre-flag unnumbered squeak classify"
+    assert not classify(Path("pokedoll_pikachu_shiny_squeak_2_texture.png")).squeak_marker_moved,         "canonical squeak name must not be reported as moved"
+    # A doll whose own name ends in 'squeak' is still a plain texture, and one actually called
+    # 'squeak' can still ship a squeak texture (the last marker wins).
+    plain = classify(Path("pokedoll_squeak_texture.png"))
+    assert plain and plain.kind == "doll-tex" and plain.name == "squeak", "squeak-named doll classify"
+    sq_self = classify(Path("pokedoll_squeak_squeak_1_texture.png"))
+    assert (sq_self and sq_self.kind == "doll-squeak-tex" and sq_self.name == "squeak"
+            and sq_self.squeak_frame == 1), "squeak-named doll squeak classify"
+    squeaky = classify(Path("pokedoll_squeaky_texture.png"))
+    assert squeaky and squeaky.kind == "doll-tex" and squeaky.name == "squeaky", "'squeaky' is not a marker"
     print("  [ok ] classification smoke checks")
     print("\nSELF-TEST PASSED" if ok else "\nSELF-TEST FAILED")
     return 0 if ok else 1

@@ -29,3 +29,12 @@ mandatory = true
 versionRange = "${geckolib_version_range}"
 ordering = "NONE"
 side = "BOTH"
+
+# Optional: when JEI is present, the Pokeblocks JEI plugin (found by @JeiPlugin annotation scanning) lists
+# every doll variant and renders the mod's custom crafting recipes. Absent → nothing changes.
+[[dependencies.${mod_id}]]
+modId = "jei"
+mandatory = false
+versionRange = "[19,)"
+ordering = "NONE"
+side = "CLIENT"

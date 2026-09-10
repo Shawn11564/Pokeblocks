@@ -36,6 +36,13 @@ public class PokeblocksConfig {
 	private static int phoneDigSites = 6;
 	private static int phoneSiteRadius = 32;
 	private static int phoneGuaranteedAttempts = 3;
+	private static int phoneDurability = 4;
+	private static int phoneDigSitesPerRarity = 1;
+	private static int phoneGuaranteedAttemptsPerRarity = 1;
+	private static float phoneLootDropChance = 0.03f;
+
+	// [figurine] — the walking figurine companion.
+	private static int figurineMemorialWanderRadius = 16;
 
 	// [loot]
 	private static float lootDropChance = 0.33f;
@@ -140,6 +147,49 @@ public class PokeblocksConfig {
 		return phoneGuaranteedAttempts;
 	}
 
+	/**
+	 * How many calls a Pokedoll Phone can answer before it wears out: each accepted call costs one
+	 * durability point and the phone breaks when it hits zero. Applied to phones as they are crafted;
+	 * a value of 1 or more (defaults to 4).
+	 */
+	public static int getPhoneDurability() {
+		return phoneDurability;
+	}
+
+	/**
+	 * Chance (0.0–1.0) that an unattuned Pokedoll Phone shows up in a configured loot chest (the same
+	 * tables as the {@code [loot] loot_tables} list). 0 removes the phone from loot entirely.
+	 */
+	public static float getPhoneLootDropChance() {
+		return phoneLootDropChance;
+	}
+
+	/**
+	 * How far (blocks) a memorial-revived figurine wanders from its memorial doll. A figurine brought
+	 * back by placing its memorial doll stays tamed but no longer follows its owner — it roams around
+	 * the doll within this radius instead.
+	 */
+	public static int getFigurineMemorialWanderRadius() {
+		return figurineMemorialWanderRadius;
+	}
+
+	/**
+	 * Extra dig sites added per rarity tier of the phone's attuned doll (Common +0, Uncommon +1×, …
+	 * Gigantic +6×). 0 disables the scaling. Added on top of {@link #getPhoneDigSites()}.
+	 */
+	public static int getPhoneDigSitesPerRarity() {
+		return phoneDigSitesPerRarity;
+	}
+
+	/**
+	 * Extra guaranteed attempts added per rarity tier of the phone's attuned doll (same tier scale as
+	 * {@link #getPhoneDigSitesPerRarity()}). 0 disables the scaling. Added on top of
+	 * {@link #getPhoneGuaranteedAttempts()}.
+	 */
+	public static int getPhoneGuaranteedAttemptsPerRarity() {
+		return phoneGuaranteedAttemptsPerRarity;
+	}
+
 	public static float getLootDropChance() {
 		return lootDropChance;
 	}
@@ -229,6 +279,11 @@ public class PokeblocksConfig {
 		phoneDigSites = 6;
 		phoneSiteRadius = 32;
 		phoneGuaranteedAttempts = 3;
+		phoneDurability = 4;
+		phoneDigSitesPerRarity = 1;
+		phoneGuaranteedAttemptsPerRarity = 1;
+		phoneLootDropChance = 0.03f;
+		figurineMemorialWanderRadius = 16;
 		lootDropChance = 0.33f;
 		lootTables.clear();
 		lootTableWildcards.clear();
@@ -294,14 +349,23 @@ public class PokeblocksConfig {
 							case "self_host_address" -> selfHostAddress = unquote(value);
 						}
 					}
+					case "figurine" -> {
+						if (key.equals("memorial_wander_radius")) {
+							figurineMemorialWanderRadius = parsePositiveInt(value, 16);
+						}
+					}
 					case "phone" -> {
 						switch (key) {
 							case "enabled" -> phoneEnabled = parseBoolean(value, true);
 							case "average_call_interval_minutes" -> phoneAverageCallIntervalMinutes = parsePositiveInt(value, 15);
 							case "ring_seconds" -> phoneRingSeconds = parsePositiveInt(value, 30);
 							case "dig_sites" -> phoneDigSites = parsePositiveInt(value, 6);
-							case "site_radius" -> phoneSiteRadius = parsePositiveInt(value, 64);
-							case "guaranteed_attempts" -> phoneGuaranteedAttempts = parsePositiveInt(value, 5);
+							case "site_radius" -> phoneSiteRadius = parsePositiveInt(value, 32);
+							case "guaranteed_attempts" -> phoneGuaranteedAttempts = parsePositiveInt(value, 3);
+							case "durability" -> phoneDurability = parsePositiveInt(value, 4);
+							case "dig_sites_per_rarity" -> phoneDigSitesPerRarity = parseNonNegativeInt(value, 1);
+							case "guaranteed_attempts_per_rarity" -> phoneGuaranteedAttemptsPerRarity = parseNonNegativeInt(value, 1);
+							case "loot_drop_chance" -> phoneLootDropChance = parseFloat(value, 0.03f);
 						}
 					}
 					case "loot" -> {
@@ -429,6 +493,38 @@ public class PokeblocksConfig {
 					# The buried doll is guaranteed to turn up within this many fully-dug sites (the winning
 					# site index is rolled when the quest starts). The other sites yield junk.""",
 					"3"),
+			new KeyDef("phone", "durability",
+					"""
+					# How many calls a Pokedoll Phone can answer before it wears out. Each accepted call
+					# costs one durability point and the phone breaks when it runs out. Applied as phones
+					# are crafted (existing phones keep the durability they were made with).""",
+					"4"),
+			new KeyDef("phone", "dig_sites_per_rarity",
+					"""
+					# Extra dig sites added per rarity tier of the phone's attuned doll (Common +0,
+					# Uncommon +1, Rare +2, Epic +3, Legendary +4, Shiny +5, Gigantic +6, times this
+					# number), on top of dig_sites. So a Rare phone with the default scatters 6 + 2 = 8
+					# sites. Set to 0 to disable rarity scaling of dig sites.""",
+					"1"),
+			new KeyDef("phone", "guaranteed_attempts_per_rarity",
+					"""
+					# Extra guaranteed attempts added per rarity tier of the phone's attuned doll (same
+					# tier scale as dig_sites_per_rarity, times this number), on top of guaranteed_attempts.
+					# So a Rare phone with the default guarantees the doll within 3 + 2 = 5 digs. Set to 0
+					# to disable rarity scaling of the guarantee.""",
+					"1"),
+			new KeyDef("phone", "loot_drop_chance",
+					"""
+					# Chance (0.0 to 1.0) that an unattuned Pokedoll Phone appears in a configured loot chest
+					# (the same tables as [loot] loot_tables). Unattuned phones ring with random doll callers.
+					# Set to 0 to keep phones out of loot entirely.""",
+					"0.03"),
+			new KeyDef("figurine", "memorial_wander_radius",
+					"""
+					# How far (in blocks) a figurine revived by placing its memorial doll wanders from the
+					# doll. Memorial figurines stay tamed (sit/stand on right-click) but no longer follow
+					# their owner — they roam around the memorial spot within this radius instead.""",
+					"16"),
 			new KeyDef("resourcepack", "kick_on_decline",
 					"# Whether to kick players who decline the custom Pokeblocks resource pack.",
 					"true"),
@@ -927,6 +1023,16 @@ public class PokeblocksConfig {
 		try {
 			int parsed = Integer.parseInt(value.trim());
 			return parsed > 0 ? parsed : defaultValue;
+		} catch (NumberFormatException e) {
+			return defaultValue;
+		}
+	}
+
+	/** Parses a non-negative int (0 allowed, e.g. to disable scaling), else the default. */
+	private static int parseNonNegativeInt(String value, int defaultValue) {
+		try {
+			int parsed = Integer.parseInt(value.trim());
+			return parsed >= 0 ? parsed : defaultValue;
 		} catch (NumberFormatException e) {
 			return defaultValue;
 		}

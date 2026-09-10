@@ -1,6 +1,7 @@
 package dev.mrshawn.pokeblocks.pokemon;
 
 import java.util.Arrays;
+import java.util.EnumSet;
 import java.util.HashSet;
 import java.util.Set;
 import java.util.stream.Collectors;
@@ -90,6 +91,32 @@ public enum FigurineFlag {
 			}
 		}
 		return false;
+	}
+
+	/**
+	 * Serializes a flag set to a comma-separated list of tag names (enum order, so the output is
+	 * stable for equality checks). The empty set encodes as {@code ""}. Inverse of {@link #decodeSet}.
+	 * Used for the walking figurine entity's synched data, where flags travel as one string.
+	 */
+	public static String encodeSet(Set<FigurineFlag> flags) {
+		if (flags == null || flags.isEmpty()) return "";
+		StringBuilder sb = new StringBuilder();
+		for (FigurineFlag flag : EnumSet.copyOf(flags)) {
+			if (sb.length() > 0) sb.append(',');
+			sb.append(flag.getTagName());
+		}
+		return sb.toString();
+	}
+
+	/** Parses {@link #encodeSet}'s format back to a flag set; unknown or empty tokens are ignored. */
+	public static Set<FigurineFlag> decodeSet(String encoded) {
+		Set<FigurineFlag> flags = EnumSet.noneOf(FigurineFlag.class);
+		if (encoded == null || encoded.isEmpty()) return flags;
+		for (String token : encoded.split(",")) {
+			FigurineFlag flag = fromTagName(token.trim());
+			if (flag != null) flags.add(flag);
+		}
+		return flags;
 	}
 
 	/** Looks up a {@link FigurineFlag} by its tag name (case-insensitive), or null if no match. */

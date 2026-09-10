@@ -128,6 +128,40 @@ dolls/textures/orange_shiny.png       -> pokedoll_orange_shiny_texture.png
 A texture bare name tolerates an already-present `_texture` suffix — both `orange.png` and
 `orange_texture.png` resolve to the same internal name.
 
+#### Squeak textures
+
+A doll can ship an optional **squeak texture** that replaces its regular one for the moment the
+doll is squeaked (right-clicked). The marker is `_squeak`, and it goes **after** any flag
+suffixes — so it attaches to one specific variant:
+
+```
+dolls/textures/orange_squeak.png        -> pokedoll_orange_squeak_texture.png
+dolls/textures/orange_shiny_squeak.png  -> pokedoll_orange_shiny_squeak_texture.png
+```
+
+Add a number to supply several and they are shown **in order, one per squeak**, looping back to
+the first after the last:
+
+```
+dolls/textures/orange_squeak_1.png  <- shown on the 1st squeak
+dolls/textures/orange_squeak_2.png  <- 2nd
+dolls/textures/orange_squeak_3.png  <- 3rd, then back to _squeak_1
+```
+
+Notes:
+
+- Numbers must run from `1` upwards with no gaps — the game stops looking at the first missing
+  number, so `_squeak_1` + `_squeak_3` gives you a one-frame sequence.
+- If numbered files exist, an unnumbered `_squeak` file for the same variant is ignored.
+- Squeak textures are matched with the same flag rules as regular textures: the most specific
+  match wins, and a doll falls back to a less specific one. So a single `orange_squeak.png`
+  covers *every* variant of `orange`, while `orange_shiny_squeak.png` overrides it for the
+  shiny one only. Frames are never mixed between variants.
+- A squeak texture is a re-skin of a variant that must already exist. It never creates a doll,
+  a variant or a rarity entry of its own — a `_squeak` file for a flag combination that has no
+  regular texture simply does nothing.
+- Every doll keeps working without one; dolls with no squeak texture just squish as before.
+
 ### Flat / legacy layout (fallback)
 
 ```
@@ -339,7 +373,8 @@ It writes:
 
 - typed-layout assets:
   - `dolls/` — `models/exampledoll.geo.json`, `textures/exampledoll.png`,
-    `textures/exampledoll_shiny.png`, `animations/exampledoll.animation.json`
+    `textures/exampledoll_shiny.png`, `animations/exampledoll.animation.json`,
+    `textures/exampledoll_squeak_1.png` / `_squeak_2.png` (optional squeak textures)
   - `figurines/` — `models/examplefig.geo.json`, `textures/examplefig.png`
   - `decorations/` — `models/exampledeco.geo.json`, `textures/exampledeco.png`
 - six per-id override files under `pokeblocks/config/` (`doll_rarity`,

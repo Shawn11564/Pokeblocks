@@ -32,6 +32,8 @@ public final class PokeblocksCommon {
 
 	private static Map<String, List<LootTableItemMap.LootEntry>> groupedEntries;
 	private static final Map<String, LootPool> cachedLootPools = new HashMap<>();
+	private static LootPool cachedPhoneLootPool;
+	private static boolean phoneLootPoolBuilt;
 
 	/**
 	 * Returns the loot entries for every group, keyed by group name. The default global pool
@@ -102,12 +104,27 @@ public final class PokeblocksCommon {
 	}
 
 	/**
+	 * The cached rare unattuned-phone pool for the standard configured tables, or {@code null} when
+	 * {@code [phone] loot_drop_chance} is 0. Cached (and invalidated) alongside the doll pools.
+	 */
+	public static LootPool getPhoneLootPool() {
+		if (!phoneLootPoolBuilt) {
+			cachedPhoneLootPool = LootInjector.buildPhonePool(
+					PokeblocksConfig.getPhoneLootDropChance(), PokeblocksConfig.getPhoneDurability());
+			phoneLootPoolBuilt = true;
+		}
+		return cachedPhoneLootPool;
+	}
+
+	/**
 	 * Call this when config reloads to force the loot map to rebuild
 	 * with updated settings.
 	 */
 	public static void invalidateLootMap() {
 		groupedEntries = null;
 		cachedLootPools.clear();
+		cachedPhoneLootPool = null;
+		phoneLootPoolBuilt = false;
 		RarityScoreCalculator.invalidateTotalWeightCache();
 	}
 

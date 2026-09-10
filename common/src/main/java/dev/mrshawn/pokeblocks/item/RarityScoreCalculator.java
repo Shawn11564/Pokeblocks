@@ -197,6 +197,20 @@ public class RarityScoreCalculator {
     }
 
     /**
+     * The summed effective weight of every valid variant (no flag exclusions) — the denominator
+     * behind {@link #computeChance}. Warmed lazily and cached; call {@link #invalidateTotalWeightCache()}
+     * on registry/config changes. Exposed so callers with a {@link DollVariant} in hand can derive its
+     * rarity percent as {@code variant.weight() / totalVariantWeight() * 100} without re-resolving it.
+     */
+    public static double totalVariantWeight() {
+        if (cachedTotalWeight < 0) {
+            List<DollVariant> allVariants = computeAllVariants(EnumSet.noneOf(ModelFlag.class));
+            cachedTotalWeight = allVariants.stream().mapToDouble(DollVariant::weight).sum();
+        }
+        return cachedTotalWeight;
+    }
+
+    /**
      * Computes the percentage chance of rolling a specific variant
      * out of all possible variants (no flag exclusions).
      */
@@ -204,19 +218,21 @@ public class RarityScoreCalculator {
         DollRarity targetRarity = resolveRarity(pokemon, activeFlags);
         double targetWeight = getEffectiveWeight(pokemon, activeFlags, targetRarity);
 
-        // Reuse the cached total weight to avoid re-enumerating all variants on every tooltip render.
-        if (cachedTotalWeight < 0) {
-            List<DollVariant> allVariants = computeAllVariants(EnumSet.noneOf(ModelFlag.class));
-            cachedTotalWeight = allVariants.stream().mapToDouble(DollVariant::weight).sum();
-        }
-
-        if (cachedTotalWeight <= 0) return 0.0;
-        return (targetWeight / cachedTotalWeight) * 100.0;
+        double total = totalVariantWeight();
+        if (total <= 0) return 0.0;
+        return (targetWeight / total) * 100.0;
     }
 
     public static String getDisplayString(String pokemon, Set<ModelFlag> activeFlags) {
-        double chance = computeChance(pokemon, activeFlags);
+        return formatChance(computeChance(pokemon, activeFlags));
+    }
 
+    /**
+     * Formats a raw rarity percent (0–100) the way tooltips do: one decimal for values ≥1%, otherwise
+     * enough decimal places to show the first significant figure of a very small chance. Shared with the
+     * phone's lost-doll percent range so both read consistently.
+     */
+    public static String formatChance(double chance) {
         if (chance <= 0) return "0.0%";
 
         if (chance >= MIN_PERCENTAGE_FOR_INTEGER_DISPLAY) {

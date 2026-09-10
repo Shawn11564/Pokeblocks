@@ -20,6 +20,7 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.function.Predicate;
 
 /**
  * Single source of truth for resolving pokedoll, figurine and decorative asset files
@@ -40,6 +41,9 @@ import java.util.Set;
  *       {@code textures/block/<id>_figurine_texture.png}.</li>
  *   <li><b>Every texture</b> accepts both the canonical {@code <base>_texture.png} and the bare
  *       {@code <base>.png} (see {@link #textureFromBase}).</li>
+ *   <li><b>Squeak textures</b> — an optional alternate skin shown while a doll is being squeaked:
+ *       the doll's own texture base plus {@code _squeak}, optionally numbered {@code _squeak_1},
+ *       {@code _squeak_2}, ... to cycle one frame per squeak (see {@link #pokedollSqueakTextures}).</li>
  * </ul>
  */
 public final class PokeblocksAssetResolver {
@@ -47,6 +51,11 @@ public final class PokeblocksAssetResolver {
 	private static final String GEO = "geo/block/";
 	private static final String TEX = "textures/block/";
 	private static final String ANIM = "animations/block/";
+
+	/** File marker for a doll's "being squeaked" texture, appended after the flag suffixes. */
+	public static final String SQUEAK_MARKER = "_squeak";
+	/** Upper bound on the numbered squeak frames probed for, so a stray file can't start a runaway scan. */
+	private static final int MAX_SQUEAK_FRAMES = 64;
 
 	/** Pokemon/figurine/decoration ids whose base model has been confirmed present, so we skip the lookup next time. */
 	private static final Set<String> VALIDATED_POKEMON = new HashSet<>();
@@ -59,6 +68,13 @@ public final class PokeblocksAssetResolver {
 	 * on resource reload. A stored {@code null} value records "no texture matched" so we don't re-probe either.
 	 */
 	private static final Map<TextureKey, ResourceLocation> RESOLVED_TEXTURES = new HashMap<>();
+	/**
+	 * Resolved squeak-texture frames keyed the same way as {@link #RESOLVED_TEXTURES}. Resolving them costs
+	 * even more disk probes than the regular texture (the numbered frames are discovered by probing), and a
+	 * doll asks for them on every frame it is mid-squeak, so the whole ordered list is memoized — an empty
+	 * list recording "this variant has no squeak texture".
+	 */
+	private static final Map<TextureKey, List<ResourceLocation>> RESOLVED_SQUEAK_TEXTURES = new HashMap<>();
 
 	/**
 	 * Resolved paths for the remaining render-thread lookups that previously hit
@@ -156,6 +172,7 @@ public final class PokeblocksAssetResolver {
 		VALIDATED_POKEMON.clear();
 		VALIDATED_POKEMON.add(ModSettings.DEFAULT_POKEMON);
 		RESOLVED_TEXTURES.clear();
+		RESOLVED_SQUEAK_TEXTURES.clear();
 		RESOLVED_POKEDOLL_MODELS.clear();
 		RESOLVED_POKEDOLL_ANIMATIONS.clear();
 	}
@@ -260,6 +277,87 @@ public final class PokeblocksAssetResolver {
 			}
 		}
 		return null;
+	}
+
+	// --- Pokedoll squeak textures -------------------------------------------
+
+	/**
+	 * The ordered squeak-texture frames for {@code (pokemon, activeFlags)}, or an empty list when the
+	 * variant ships none (the common case — squeak textures are entirely optional).
+	 * <p>
+	 * A squeak texture is the doll's regular texture name with {@code _squeak} appended <em>after</em> the
+	 * flag suffixes, so it is matched with exactly the same order-independent, most-specific-first ladder
+	 * {@link #pokedollTexture} uses: a shiny zenith doll prefers
+	 * {@code pokedoll_x_shiny_zenith_squeak_texture.png} but happily falls back to a single
+	 * {@code pokedoll_x_squeak_texture.png} shared by every variant. Whichever flag subset matches first
+	 * supplies the whole sequence — frames are never mixed across variants.
+	 * <p>
+	 * Numbering: if {@code <base>_squeak_1} exists, the frames are that plus every contiguous
+	 * {@code _2, _3, ...} that follows, and the doll advances one frame per squeak (see
+	 * {@link #pokedollSqueakTexture}). Otherwise a lone unnumbered {@code <base>_squeak} is used for
+	 * every squeak. Both forms accept {@code _texture.png} or the bare {@code .png}.
+	 */
+	public static List<ResourceLocation> pokedollSqueakTextures(ResourceManager rm, String pokemon, Set<ModelFlag> activeFlags) {
+		TextureKey key = new TextureKey(pokemon, activeFlags);
+		List<ResourceLocation> cached = RESOLVED_SQUEAK_TEXTURES.get(key);
+		if (cached != null) return cached;
+
+		List<ResourceLocation> resolved = new ArrayList<>();
+		for (String path : resolveSqueakFramePaths(pokemon, activeFlags, p -> exists(rm, p))) {
+			resolved.add(loc(path));
+		}
+		List<ResourceLocation> frames = List.copyOf(resolved);
+		RESOLVED_SQUEAK_TEXTURES.put(key, frames);
+		return frames;
+	}
+
+	/**
+	 * The squeak texture to show for squeak number {@code squeakIndex} (0-based, cycling), or {@code null}
+	 * when this variant has no squeak texture and the regular one should stay on screen.
+	 */
+	public static ResourceLocation pokedollSqueakTexture(ResourceManager rm, String pokemon,
+														 Set<ModelFlag> activeFlags, int squeakIndex) {
+		List<ResourceLocation> frames = pokedollSqueakTextures(rm, pokemon, activeFlags);
+		if (frames.isEmpty()) return null;
+		return frames.get(Math.floorMod(squeakIndex, frames.size()));
+	}
+
+	/**
+	 * The naming half of {@link #pokedollSqueakTextures}, split out so it can be exercised (and its flag
+	 * matching pinned down) without a {@link ResourceManager}: {@code exists} answers whether a given
+	 * asset path is present. Returns the ordered frame paths, empty when nothing matches.
+	 */
+	public static List<String> resolveSqueakFramePaths(String pokemon, Set<ModelFlag> activeFlags, Predicate<String> exists) {
+		List<ModelFlag> textureFlags = new ArrayList<>();
+		for (ModelFlag flag : activeFlags) {
+			if (!flag.getTextureSuffix().isEmpty()) textureFlags.add(flag);
+		}
+
+		for (List<ModelFlag> subset : subsetsLargestFirst(textureFlags)) {
+			for (String suffix : permutedSuffixes(subset)) {
+				String base = TEX + "pokedoll_" + pokemon + suffix + SQUEAK_MARKER;
+
+				List<String> numbered = new ArrayList<>();
+				for (int frame = 1; frame <= MAX_SQUEAK_FRAMES; frame++) {
+					String path = firstExistingPath(exists, base + "_" + frame);
+					if (path == null) break; // frames must run contiguously from 1
+					numbered.add(path);
+				}
+				if (!numbered.isEmpty()) return List.copyOf(numbered);
+
+				String single = firstExistingPath(exists, base);
+				if (single != null) return List.of(single);
+			}
+		}
+		return List.of();
+	}
+
+	/** {@code <base>_texture.png} then the bare {@code <base>.png}, or {@code null} if neither exists. */
+	private static String firstExistingPath(Predicate<String> exists, String base) {
+		String canonical = base + "_texture.png";
+		if (exists.test(canonical)) return canonical;
+		String bare = base + ".png";
+		return exists.test(bare) ? bare : null;
 	}
 
 	/**

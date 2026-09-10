@@ -7,7 +7,12 @@ plugins {
 }
 
 base {
-    archivesName = "geckolib-examples-ml-forge-${minecraft_version}"
+    archivesName = "pokeblocks-forge"
+}
+
+// Jars are named pokeblocks-<loader>-<version>-<minecraft_version>[-classifier].jar
+tasks.withType(AbstractArchiveTask).configureEach {
+    archiveVersion = "${version}-${minecraft_version}"
 }
 mixin {
     config("${mod_id}.mixins.json")
@@ -65,6 +70,14 @@ sourceSets.main.resources.srcDir 'src/generated/resources'
 dependencies {
     minecraft "net.minecraftforge:forge:${minecraft_version}-${forge_version}"
     implementation fg.deobf("software.bernie.geckolib:geckolib-forge-${minecraft_version}:${geckolib_version}")
+    // JEI: API at compile time only (the @JeiPlugin class is found by annotation scanning, so nothing
+    // links against JEI unless it is installed); the full jar is dev-runtime only. No fg.deobf: Forge
+    // 1.21 runs on Mojang names and JEI publishes Mojang-named jars, so deobf would only add a build-time
+    // dependency on the Parchment maven.
+    compileOnly "mezz.jei:jei-${minecraft_version}-common-api:${jei_version}"
+    compileOnly "mezz.jei:jei-${minecraft_version}-forge-api:${jei_version}"
+    runtimeOnly "mezz.jei:jei-${minecraft_version}-forge:${jei_version}"
+    testCompileOnly "mezz.jei:jei-${minecraft_version}-common-api:${jei_version}"
     compileOnly project(":common")
     // mc-test server-truth SPI — this module recompiles common's sources (incl. PokeblocksStateProvider),
     // so it needs the interface on its compile classpath. Provided by the agent at runtime; never bundled.

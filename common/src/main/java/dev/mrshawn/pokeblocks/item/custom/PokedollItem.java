@@ -11,6 +11,7 @@ import dev.mrshawn.pokeblocks.item.DollRarity;
 import dev.mrshawn.pokeblocks.item.PokeblocksItemData;
 import dev.mrshawn.pokeblocks.item.RarityScoreCalculator;
 import dev.mrshawn.pokeblocks.item.ThrowableDolls;
+import dev.mrshawn.pokeblocks.item.TrappedDolls;
 import dev.mrshawn.pokeblocks.pokemon.ModelFlag;
 import dev.mrshawn.pokeblocks.pokemon.PokemonData;
 import dev.mrshawn.pokeblocks.registry.ItemRegistry;
@@ -114,6 +115,7 @@ public class PokedollItem extends BlockItem implements GeoItem, Equipable, Proje
 		Set<ModelFlag> flags = getFlagsFromStack(stack);
 		String name = buildDisplayName(pokemon, flags);
 		if (ThrowableDolls.isThrowable(stack)) name = "Throwable " + name;
+		if (TrappedDolls.isTrapped(stack)) name = "Trapped " + name;
 		return Component.literal(name).withStyle(ChatFormatting.WHITE);
 	}
 
@@ -124,6 +126,10 @@ public class PokedollItem extends BlockItem implements GeoItem, Equipable, Proje
 
 		if (ThrowableDolls.isThrowable(stack)) {
 			tooltip.add(Component.literal("Right-click to throw").withStyle(ChatFormatting.AQUA));
+		}
+
+		if (TrappedDolls.isTrapped(stack)) {
+			tooltip.add(Component.literal("Pops with a bang").withStyle(ChatFormatting.RED));
 		}
 
 		DollRarity rarity = DollRarity.getRarity(stack);
@@ -146,9 +152,13 @@ public class PokedollItem extends BlockItem implements GeoItem, Equipable, Proje
 	/**
 	 * A throwable doll (see {@link ThrowableDolls}) never places by clicking a block — returning
 	 * PASS lets the interaction pipeline fall through to {@link #use}, which throws it instead.
+	 * A doll whose detonation countdown is running (see {@link TrappedDolls}) can't be placed at
+	 * all: placement consumes the stack and with it the countdown, which would make "quickly set
+	 * it down" a one-click defuse. Dropping it (still ticking) is the only way to get rid of it.
 	 */
 	@Override
 	public InteractionResult useOn(UseOnContext context) {
+		if (TrappedDolls.isTicking(context.getItemInHand())) return InteractionResult.FAIL;
 		if (ThrowableDolls.isThrowable(context.getItemInHand())) return InteractionResult.PASS;
 		return super.useOn(context);
 	}

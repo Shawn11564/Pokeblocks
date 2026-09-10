@@ -14,6 +14,8 @@ import net.minecraft.world.item.crafting.RecipeSerializer;
 import net.minecraft.world.level.Level;
 
 import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collections;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
@@ -86,6 +88,31 @@ public class PokeblocksShapedRecipe implements CraftingRecipe {
 				grid[col + row * width] = ingredient;
 			}
 		}
+	}
+
+	// --- Display accessors (recipe viewers such as JEI render the trimmed shape) -----------------
+
+	/** Width of the trimmed pattern (0 for an all-blank pattern). */
+	public int getWidth() {
+		return width;
+	}
+
+	/** Height of the trimmed pattern (0 for an all-blank pattern). */
+	public int getHeight() {
+		return height;
+	}
+
+	/**
+	 * The trimmed {@code width × height} grid in row-major order; {@code null} entries are empty slots.
+	 * Read-only.
+	 */
+	public List<PokeblocksIngredient> getGrid() {
+		return Collections.unmodifiableList(Arrays.asList(grid));
+	}
+
+	/** The recipe's output definition (build a stack with {@link PokeblocksRecipeResult#toStack()}). */
+	public PokeblocksRecipeResult getResult() {
+		return result;
 	}
 
 	@Override

@@ -5,15 +5,20 @@ import dev.mrshawn.pokeblocks.compendium.ClientCompendiumSync;
 import dev.mrshawn.pokeblocks.compendium.CompendiumProgressTracker;
 import dev.mrshawn.pokeblocks.compendium.CompendiumSyncPayloads;
 import dev.mrshawn.pokeblocks.config.PokeblocksConfig;
+import dev.mrshawn.pokeblocks.entity.custom.FigurineEntity;
 import dev.mrshawn.pokeblocks.interaction.PokeblocksDispenseBehaviors;
 import dev.mrshawn.pokeblocks.item.loot.LootInjector;
 import dev.mrshawn.pokeblocks.phone.ClientDigSites;
 import dev.mrshawn.pokeblocks.phone.PhoneCalls;
 import dev.mrshawn.pokeblocks.phone.PhonePayloads;
+import dev.mrshawn.pokeblocks.registry.EntityRegistry;
 import dev.mrshawn.pokeblocks.resourcepack.CustomPackManager;
 import dev.mrshawn.pokeblocks.resourcepack.sync.ClientPackSync;
 import dev.mrshawn.pokeblocks.resourcepack.sync.PackSyncPayloads;
 import dev.mrshawn.pokeblocks.resourcepack.sync.ServerPackSync;
+import dev.mrshawn.pokeblocks.trapped.ClientTrappedDollTimers;
+import dev.mrshawn.pokeblocks.trapped.TrappedDollCountdown;
+import dev.mrshawn.pokeblocks.trapped.TrappedDollPayloads;
 import net.minecraft.core.registries.Registries;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.sounds.SoundEvent;
@@ -32,6 +37,7 @@ import net.neoforged.fml.loading.FMLPaths;
 import net.neoforged.neoforge.common.NeoForge;
 import net.neoforged.neoforge.event.LootTableLoadEvent;
 import net.neoforged.neoforge.event.RegisterCommandsEvent;
+import net.neoforged.neoforge.event.entity.EntityAttributeCreationEvent;
 import net.neoforged.neoforge.event.server.ServerAboutToStartEvent;
 import net.neoforged.neoforge.event.server.ServerStartedEvent;
 import net.neoforged.neoforge.network.PacketDistributor;
@@ -68,6 +74,10 @@ public final class PokeblocksNeoForge {
 		modEventBus.addListener((FMLCommonSetupEvent event) ->
 				event.enqueueWork(PokeblocksDispenseBehaviors::register));
 
+		// Living entities need an attribute map before they can be constructed.
+		modEventBus.addListener((EntityAttributeCreationEvent event) ->
+				event.put(EntityRegistry.FIGURINE_ENTITY.get(), FigurineEntity.createAttributes().build()));
+
 		modEventBus.addListener(this::registerPayloads);
 		// Delta-pack handshake bridges. The payloads are optional, so a remote side without them
 		// (older Pokeblocks) still connects; hasChannel() gates the manifest send per player.
@@ -84,6 +94,9 @@ public final class PokeblocksNeoForge {
 				(player, data) -> PacketDistributor.sendToPlayer(player, new PhonePayloads.DigSitesPayload(data)));
 		ClientDigSites.setResponseSender(data ->
 				PacketDistributor.sendToServer(new PhonePayloads.CallResponsePayload(data)));
+		TrappedDollCountdown.setNetworkBridge(
+				player -> player.connection.hasChannel(TrappedDollPayloads.TimersPayload.TYPE),
+				(player, data) -> PacketDistributor.sendToPlayer(player, new TrappedDollPayloads.TimersPayload(data)));
 
 		NeoForge.EVENT_BUS.register(this);
 	}
@@ -109,6 +122,9 @@ public final class PokeblocksNeoForge {
 						PhoneCalls.handleCallResponse(player.getServer(), player, payload.data());
 					}
 				});
+		// Trapped-doll countdown broadcast (S2C only), driving the overhead timers.
+		registrar.playToClient(TrappedDollPayloads.TimersPayload.TYPE, TrappedDollPayloads.TimersPayload.CODEC,
+				(payload, context) -> ClientTrappedDollTimers.handleTimers(payload.data()));
 	}
 
 	@SubscribeEvent

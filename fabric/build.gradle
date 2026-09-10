@@ -6,7 +6,12 @@ plugins {
 }
 
 base {
-    archivesName = "geckolib-examples-ml-fabric-${minecraft_version}"
+    archivesName = "pokeblocks-fabric"
+}
+
+// Jars are named pokeblocks-<loader>-<version>-<minecraft_version>[-classifier].jar
+tasks.withType(AbstractArchiveTask).configureEach {
+    archiveVersion = "${version}-${minecraft_version}"
 }
 
 jar {
@@ -35,6 +40,12 @@ dependencies {
     // and declared optional in fabric.mod.json. The integration code is guarded by an isModLoaded check.
     modCompileOnly "dev.emi:trinkets:${trinkets_version}"
     modLocalRuntime "dev.emi:trinkets:${trinkets_version}"
+    // JEI: compile against the API only (the plugin is declared via the jei_mod_plugin entrypoint in
+    // fabric.mod.json, so it is only ever loaded when JEI is present); the full jar is dev-runtime only.
+    modCompileOnly "mezz.jei:jei-${minecraft_version}-common-api:${jei_version}"
+    modCompileOnly "mezz.jei:jei-${minecraft_version}-fabric-api:${jei_version}"
+    modLocalRuntime "mezz.jei:jei-${minecraft_version}-fabric:${jei_version}"
+    testCompileOnly "mezz.jei:jei-${minecraft_version}-common-api:${jei_version}"
     annotationProcessor "org.spongepowered:mixin:0.8.5:processor"
     compileOnly project(":common")
     // mc-test server-truth SPI — this module recompiles common's sources (incl. PokeblocksStateProvider),

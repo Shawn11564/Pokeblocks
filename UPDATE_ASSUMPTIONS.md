@@ -436,3 +436,416 @@ call dolls "... Pokedoll".
 
 - `./gradlew :common:compileJava :fabric:compileJava :forge:compileJava :neoforge:compileJava
   :common:test` → **exit 0**, tests green (only pre-existing warnings). **NOT play-tested yet.**
+
+## Pokedoll Phone — attunement / lost-doll rarity / durability (2026-07-09)
+
+Spec: the recipe should attune the phone to the centre doll (only that doll calls it); a call should
+announce the **rarity** (or a rarity **percent range**) of the doll the caller lost, coloured by that
+rarity — picked as same-rarity / one-below / a scaling percent window / rarely one-above; and phones
+should have configurable durability (default 8) spent per accepted call.
+
+### Assumption — attunement rides the recipe, unattuned phones fall back to random
+
+- **Location:** `PokedollPhoneRecipe` (new serializer `pokeblocks:pokedoll_phone`), custom_data key
+  `phone_attuned`; `PokedollPhoneItem.inventoryTick` uses it, else `PhoneCalls.pickCallerKey`.
+- **Reasoning:** a vanilla shaped recipe can't copy the doll variant onto the result, so the recipe is
+  code-driven like `GiganticDollRecipe` (fixed 3×3 indices; `CraftingInput` trims to bounding box).
+  Creative/`/give` phones have no attunement, so keeping the random-caller fallback leaves them usable.
+- **Confidence:** high (compiles all loaders). **Needs human:** confirm a phone should attune to the
+  doll's *exact* variant incl. flags (assumed yes) rather than the base species.
+
+### Assumption — lost-doll rarity option weights + percent-window scaling
+
+- **Location:** `PhoneCalls.pickLostDoll` / `percentRange` / `stepRarity`; constants
+  `LOST_WEIGHT_SAME=45`, `LOST_WEIGHT_BELOW=30`, `LOST_WEIGHT_PERCENT=30`, `LOST_WEIGHT_ABOVE=6`,
+  `LOST_PERCENT_RANGE_FRACTION=0.35`.
+- **Reasoning:** spec ordered the four possibilities with "above" explicitly rare, so above gets a
+  small weight and the other three are comparable. The percent window is **proportional** to the
+  caller's own rarity percent (`callerPercent × (1 ± 0.35)`), which is the simplest reading of "scaling
+  such that rarer dolls have a smaller range" — a rarer caller (smaller %) gets a narrower absolute
+  window. Only options with a non-empty MATCHING pool are kept, so the announcement is always
+  fulfillable; the buried doll (`pickBuriedDollKey`) is then drawn to match the descriptor, falling
+  back to the full pool if somehow empty. The window shows as a compact `min% – max%` pair (two numbers)
+  on the call page, tinted with the caller's rarity colour.
+- **Confidence:** medium (weights + 0.35 are taste values, easy to retune; the pure math is unit-tested).
+  **Needs human:** whether the split "feels" right in play, and whether the percent-window colour should
+  be the caller's rarity (chosen) vs. a tier derived from the midpoint.
+
+### Assumption — "the book" = the incoming-call popup page (not the compendium)
+
+- **Location:** `PhoneCallScreen` (`screen.pokeblocks.phone.call_text` now takes the coloured
+  descriptor); the same descriptor also appears in the incoming chat line and `quest_started`.
+- **Reasoning:** the percent range is a per-call property, so it belongs on the call popup (which
+  reuses the compendium's parchment "book" panel), not the doll-centric compendium. The two numbers
+  keep the line short as requested.
+- **Confidence:** medium-high (wording is unambiguous in context). **Needs human:** confirm placement.
+
+### Assumption — durability spent only when an accepted call starts a dig
+
+- **Location:** `PokedollPhoneItem.createAttuned` (MAX_DAMAGE from `[phone] durability`, default 8;
+  item baseline `.durability(DEFAULT_DURABILITY=8)`), `spendDurability` = `ItemStack.hurtAndBreak(1,…)`
+  charged in `PhoneCalls.handleCallResponse` after `startQuest` succeeds.
+- **Reasoning:** spec says "each time a phone call is accepted"; charging only when a quest actually
+  starts means hanging up, a call that already ended, or a fizzle for want of digging ground costs
+  nothing — the fairer reading. `hurtAndBreak` handles the break (shrink + `ITEM_BREAK` sound +
+  `message…broke`) and no-ops in creative. Durability set at CRAFT time so admins can retune without a
+  restart affecting existing phones.
+- **Confidence:** high mechanically. **Needs human:** confirm charge-on-quest-start vs. charge on any
+  Accept press.
+
+### Verification performed (this pass)
+
+- `./gradlew :common:test` → green (12 phone tests, incl. new `stepRarity` / `percentRange` /
+  `formatChance` coverage); `:fabric:compileJava :forge:compileJava :neoforge:compileJava` → **exit 0**.
+- **NOT play-tested in-game.**
+
+### Assumption — phone rarity scales dig sites & guarantee, +1 per tier by default (2026-07-09)
+
+- **Location:** `DigQuestManager.startQuest` (scales `getPhoneDigSites()` / `getPhoneGuaranteedAttempts()`
+  by `PhoneCalls.rarityTierBonusSteps(callerRarity) ×` the new `[phone] dig_sites_per_rarity` /
+  `guaranteed_attempts_per_rarity`, both default 1); `PhoneCalls.rarityTierBonusSteps` (Common=0 …
+  Gigantic=6, 0 off-ladder).
+- **Reasoning:** spec = "each rarity tier of the crafted phone adds 1 to the dig sites and 1 to the
+  guaranteed count, configurable." The phone's rarity IS its attuned doll = the caller, so the bonus is
+  derived from the caller's resolved rarity in `startQuest` (no new plumbing). Common is the baseline
+  (+0); each step up the COMMON..GIGANTIC ladder adds the per-tier amount. `0` disables scaling
+  (parsed with a new `parseNonNegativeInt` since 0 is meaningful here, unlike the strictly-positive
+  base counts).
+- **Confidence:** high mechanically (compiles, tier math unit-tested). **Assumption flagged:** Common
+  adds +0 (tiers *above* Common), not +1; and for an admin `/pokeblocks phonering` with a forced caller
+  the bonus follows that caller, not the phone's attunement (matches attuned phones in normal play).
+  **Needs human:** confirm the +0-at-Common reading and that a bigger hunt for rarer phones feels right.
+
+### Fix — unattuned phones no longer ring with a random caller (2026-07-09)
+
+- **Symptom:** a phone "attuned to furret" rang with random dolls. Diagnosed by scanning the running
+  NeoForge dev world's `playerdata/*.dat` (gzipped NBT): the player's phones had **no** `phone_attuned`
+  / `custom_data` / `max_damage` — i.e. plain phones from the pre-attunement shaped recipe, which were
+  hitting the random-caller fallback I'd added for unattuned phones.
+- **Location:** `PokedollPhoneItem.inventoryTick` — removed the `pickCallerKey` fallback; a phone with
+  no `phone_attuned` now simply never starts a call. Unattuned tooltip line (`...unattuned`, red) added.
+  `PhoneRingCMD` no-arg now prefers the phone's attunement before random. `pickCallerKey` retained
+  (only the force-ring command uses it).
+- **Reasoning:** the feature is "get called ONLY by the attuned doll"; a random fallback contradicts
+  that and is what surprised the user. Freshly-crafted phones on the current build ARE attuned (verified
+  the recipe/`createAttuned` write both `phone_attuned` and `max_damage`), so they ring only their doll;
+  legacy/creative phones stay silent until (re)crafted.
+- **Confidence:** high (root cause confirmed from live save NBT; compiles + tests green). **Needs human:**
+  re-craft a phone on the current build and confirm it now only ever rings its own doll.
+- **⚠ Superseded 2026-07-09 (same day, later pass):** the loot-drop request below makes unattuned phones
+  obtainable as chest loot, and a phone that can never ring is a dead drop — the random-caller fallback is
+  **deliberately reinstated**, now clearly labelled ("Not attuned — strange dolls may call…", grey not red).
+  The original symptom (a phone *believed* attuned ringing randomly) can't recur for newly-crafted phones —
+  the recipe attunes them — but pre-attunement legacy phones will start ringing randomly again. Judged
+  acceptable: the tooltip now says so, and re-crafting fixes it.
+
+---
+
+## Phone rebalance + loot drop + figurine entity expansion (2026-07-09, second pass)
+
+Spec (Shawn): lower the phone's rarity payout to roughly ONE same-or-higher-rarity doll per phone with
+durability lowered to 4; add the unattuned phone to loot tables as a rare drop (with config); review the
+dig-sites-per-rarity scaling; phrase the percent window as "<range> rarity". Figurines: memorial revivals
+wander a configurable radius instead of following; honeycomb turns a figurine entity into a placeable,
+poseable boxless "figurine doll"; tamed figurines visibly hold their taming doll; owners can equip them
+with weapons/armor (real stats, weapon-only strike animation, doll moves to the off-hand side).
+
+### Assumption — "likely 1 same-or-higher doll per phone" ⇒ P(same-or-higher) ≈ 25% per call
+
+- **Location:** `PhoneCalls` — `LOST_WEIGHT_SAME=12`, `LOST_WEIGHT_BELOW=75`, `LOST_WEIGHT_PERCENT=10`,
+  `LOST_WEIGHT_ABOVE=3` (was 45/30/30/6); `PokedollPhoneItem.DEFAULT_DURABILITY=4`; config
+  `[phone] durability` default/reset/fallback all 8→4.
+- **Reasoning:** the percent window centres on the caller's own percent, so it counts as "same-ish";
+  SAME+PERCENT+ABOVE = 25/100 ⇒ expected same-or-higher payouts over a 4-call phone = **1.0** exactly
+  (P(at least one) ≈ 68%). "Below" becomes the everyday outcome, which is the requested "lower the rarity
+  capabilities". Old configs with an explicit `durability = 8` keep 8 (only the default changed).
+- **Confidence:** medium (weights are taste); the arithmetic is deliberate. **Needs human:** payout feel.
+
+### Assumption — phone loot drop = its own pool at `[phone] loot_drop_chance` (default 0.03)
+
+- **Location:** `LootInjector.buildPhonePool` (+ `poolsFor` adds it beside the default doll pool),
+  `PokeblocksCommon.getPhoneLootPool` (cached, invalidated with the loot map), new config key
+  `[phone] loot_drop_chance` (0 disables). The pool sets `MAX_DAMAGE` from `[phone] durability` so loot
+  phones match crafted ones even if the config changed after registration.
+- **Reasoning:** a separate single-entry pool (not an entry inside the doll pool) makes "rare drop"
+  directly tunable as chest-chance, targets the same `[loot] loot_tables` list, and rolls independently
+  of the 33% doll pool. 3% ≈ one phone per ~33 opened chests — "rare" without being mythical.
+- **Confidence:** high mechanically. **Needs human:** drop-rate taste; see the reinstated-fallback note above.
+
+### Review — dig-sites-per-rarity scaling verified correct; placement attempts now scale
+
+- **Findings:** the tier math (`rarityTierBonusSteps`, Common=0 … Gigantic=6 × `dig_sites_per_rarity` /
+  `guaranteed_attempts_per_rarity`) is correct and unit-tested; the ladder matches `DollRarity` sort
+  order. Two real defects fixed: (1) `generateSites` capped at a fixed 250 placement attempts, so a
+  high-tier phone's larger site count could silently under-place on rough terrain — now
+  `max(250, 40×count)`; (2) config parse fallbacks disagreed with the reload defaults
+  (`site_radius` 64→32, `guaranteed_attempts` 5→3) — aligned.
+- **Confidence:** high.
+
+### Percent window now reads "<min>%–<max>% rarity" (doll-lore phrasing)
+
+- **Location:** `PhoneCalls.describeLostDoll` PERCENT branch (+ 2 unit tests). Flows into the call
+  popup, the incoming chat line and `quest_started` unchanged (they all take the descriptor arg).
+
+### Assumption — memorial figurines wander via vanilla home restriction
+
+- **Location:** `FigurineEntity.setMemorialAnchor` (`restrictTo(pos, [figurine] memorial_wander_radius)`,
+  default 16, saved as `memorial_anchor` and re-applied on load so config changes take effect);
+  `FollowOwnerGoal` subclass gated on `!isMemorial()`; new `MoveTowardsRestrictionGoal` walks strays
+  back; anchor set in `PokedollBlock.setPlacedBy` for memorial placements.
+- **Reasoning:** vanilla stroll goals already honour `restrictTo` (`GoalUtils.isRestricted`), so the
+  radius needs no custom AI; the sit toggle is untouched (still tamed/owned). The restriction is
+  re-derived from the anchor on load because vanilla never persists `restrictTo`.
+- **Confidence:** high mechanically. **Needs human:** whether combat should also be leashed to the
+  radius (currently a fight can drag it out; it walks back after).
+
+### Assumption — honeycomb ⇒ boxless figurine doll reuses the EXISTING figurine block/item
+
+- **Location:** `FigurineEntity.convertToBoxlessDoll` (returns gear + gifted doll first, keeps the
+  custom name, WAX_ON sound/particles); `PokeblocksItemData.KEY_BOXLESS` (+`figurineTag` overload);
+  `FigurineBlockEntity` gains `boxless` / `pose` / `rotation16` (synced, canonical-minimal NBT;
+  boxless survives break→place, pose deliberately resets); `FigurineBlock.setPlacedBy` stores the
+  placer-yaw 16-segment; `useWithoutItem` sneak-cycles `FigurinePose` (STANDING→SITTING→WALKING→
+  STRIKING), plain click squeaks; `DollShapes.figurineBoxless` (figure-only square-footprint box, so
+  one shape serves all 16 rotations); renderers skip the `box` bone and apply the pose — cube-level in
+  `FigurineBlockRenderer` (rigid figures, via the extracted `FigureSwingPlans`), bone-level in
+  `FigurineModel` (real limb bones), item-side skip in `FigurineItemRenderer`.
+- **Reasoning:** a NEW block/BE/item would need per-loader renderer registration, datafixer surface and
+  registry churn; storing the fine rotation on the BE (not a blockstate property) leaves existing
+  worlds' FACING untouched. Pose cycling on sneak+empty-hand is the only reachable sneak-use path
+  (vanilla skips block interaction when sneaking WITH an item). Shears still free the figure —
+  honeycomb↔shears mirrors vanilla wax-on/wax-off. Poses mirror the entity's four procedural states
+  since figurines ship no animation files ("any of its animation states" = these).
+- **Confidence:** medium-high (compiles everywhere; render-transform signs are the usual play-test
+  risk). **Needs human:** pose look per model family, hitbox feel, shears-frees-it confirmation.
+
+### Assumption — held doll rendered anchored to the hitbox, not bones
+
+- **Location:** `FigurineEntity`: synced `DATA_GIFTED_DOLL`; `FigurineEntityRenderer.renderHeldDoll`
+  draws it cradled at a hitbox-derived hand anchor (front-right edge, ~38% height), rolled 55° across
+  the chest + leaned back 20° so it sits IN the grip instead of standing upright beside the figure.
+- **Reasoning:** hitbox anchors are the only universal attachment on rigid one-bone figures; the
+  rotations pivot at the anchor so the doll's base stays in the "hand" while its top lies across the
+  arm. Anchor fractions / angles / 0.4 scale are declared play-test knobs at the top of the renderer.
+- **Confidence:** medium on the exact angles (signs reasoned, not seen). **Needs human:** in-game look.
+
+### ⚠ Removed after play-test — owner-given weapons/armor (2026-07-09, same day)
+
+- **What was removed:** the entire equip-on-right-click feature from the pass above (armor to slots,
+  damage-items to main hand, stat attributes, weapon-only swing, helmet/chest/legs/boots trinket
+  rendering). Shawn's verdict after seeing it: "it looks wrong."
+- **Location:** `FigurineEntity` (equip branch + `equipSlotFor`/`addsAttackDamage`/`equipFromOwner`/
+  `isArmed` deleted; `convertToBoxlessDoll` no longer strips gear), `FigurineEntityModel` /
+  `FigurineEntityRenderer` (armed gating reverted, weapon+armor rendering deleted). The strike
+  animation is back to the always-on whole-body pose.
+- **Note:** figurines never had a way to acquire equipment besides this feature, so no live-world
+  cleanup path is needed; a dev-world figurine equipped during testing would still hold NBT equipment
+  but nothing renders or drops it beyond vanilla Mob behavior.
+
+### Verification performed (this pass)
+
+- `./gradlew :common:compileJava :common:test :fabric:compileJava :forge:compileJava
+  :neoforge:compileJava` → **exit 0**, tests green (incl. 2 new descriptor tests).
+- **NOT play-tested in-game.**
+
+---
+
+## Trapped (explosive) dolls + strawberr1shake gag (2026-07-10)
+
+Spec (Shawn): doll + TNT ⇒ "trapped" doll — places normally but explodes (TNT-sized, WITH block
+damage) when *popped*; throwable dolls craftable with TNT too; a thrown explosive doll that hits a
+player replaces their helmet (helmet must fit an open inventory slot, else the doll falls to the
+ground) and starts a 10-second countdown; the wearer sees a rapid red shaking on-screen timer;
+other players see the countdown above the carrier's head (inventory or head); walking over a
+counting-down ground doll re-attempts the helmet swap; at zero → entities-only TNT-sized blast, and
+if it was in a player's inventory it kills them with a custom death message. Separately: shearing
+the strawberry figurine free shows it for 3 s, then it explodes (damaging nothing) and dies.
+
+### Assumption — "popped" = the spam-click break; waxing disarms; mining returns the armed doll
+
+- **Location:** `PokedollBlock.useWithoutItem` (the existing `recordClick()` break path branches to
+  `TrappedDolls.detonateBlock` — `destroyBlock(pos, false)` + `explode(…, 4.0f, TNT)`);
+  `PokedollBlockEntity.trapped` (saved, server-only); `PokedollBlock.setPlacedBy/getDrops/
+  getCloneItemStack` (marker → BE on place, BE → marker on drop/pick).
+- **Value set:** power `4.0f` = one vanilla TNT; `ExplosionInteraction.TNT` (block damage, tnt drop
+  decay); popping is the ONLY block-side trigger. Mining drops the doll still trapped; a **waxed**
+  trapped doll can never pop (recordClick refuses) so honeycomb effectively disarms the block.
+- **Reasoning:** "popped" is this codebase's established term for the 9-rapid-clicks break
+  (`BREAK_CLICK_THRESHOLD`, `SUBSTITUTE_POP_CHANCE` "pop" naming, `[dolls] popping` config). The
+  wax interaction falls out of the existing guard and reads as a sensible counter-play rather than
+  a bug. Explosions do NOT chain-detonate other placed trapped dolls (they just drop, armed).
+- **Confidence:** high on the trigger reading. **Needs human:** whether wax-disarm + no chain
+  reaction match the intent.
+
+### Assumption — trapped marker mirrors ThrowableDolls (custom_data), explicitly bridged through the BE
+
+- **Location:** `item/TrappedDolls` (`pokeblocks_trapped` bool + `pokeblocks_detonate_at` long in
+  `minecraft:custom_data`); `recipe/TrappedDollRecipe` (+ serializer registration + recipe json);
+  name prefix "Trapped", red tooltip "Pops with a bang" (`PokedollItem`).
+- **Reasoning:** exact parity with the throwable marker keeps doll identity (species/flags/rarity/
+  compendium key) untouched and the two recipes compose in either order (both `copyWithCount`
+  everything). Because the BE round trip never copies custom_data (the memorial-doll precedent),
+  `setPlacedBy` hands the flag to the BE and `getDrops` hands it back. The BE flag is deliberately
+  absent from `getUpdateTag`/`saveToItem`, so clients can't sniff placed traps and ctrl+pick copies
+  are unarmed. The "Trapped" name/tooltip DOES reveal a trapped item in hand — consistent with
+  "Throwable", and judged better than enabling scam trades.
+- **Confidence:** high (mirrors two shipped markers). **Needs human:** whether trapped dolls should
+  be visually indistinguishable in inventory instead.
+
+### Assumption — countdown state lives on the stack; server scan + ItemEntity mixin cover every home
+
+- **Location:** `TrappedDolls.hitPlayer/equipOnHead` (called from `ThrownPokedollEntity.onHitEntity`
+  for players — force-replaces the helmet via `Inventory.getFreeSlot()`, else drops the doll ticking);
+  `trapped/TrappedDollCountdown.serverTick` (from the existing `ServerTickMixin`: scans items/armor/
+  offhand of every online player per tick — component-presence check per stack, ~free when idle);
+  `mixin/TrappedDollItemEntityMixin` (ground tick + walk-over forced head-equip; vanilla pickup of a
+  ticking doll is always cancelled); `PokedollItem.useOn` FAIL for ticking stacks (placing would
+  consume the countdown = one-click defuse).
+- **Value set:** deadline = absolute game time (`gameTime + 200`); at zero → `explode(…, 4.0f,
+  NONE)` at the carrier's chest with the custom damage source, then — inventory case only — a
+  `Float.MAX_VALUE` finisher with the same source (blast first so death drops aren't vaporized;
+  finisher because armor/protection could otherwise survive the blast). Ground detonation = blast
+  only, per spec. Totems can still save the wearer (left as legit counter-play).
+- **Known escape hatches (accepted, documented):** stashing the ticking doll in a container/ender
+  chest or holding it on the inventory cursor pauses the scan — but the deadline is absolute, so it
+  detonates the instant it re-enters a scanned slot or the ground; hoppers can swallow the ground
+  ItemEntity (frozen until extracted); Curios/Trinkets accessory slots are not scanned.
+- **Confidence:** high mechanically. **Needs human:** whether the stash-pause loopholes need
+  closing (e.g. also scanning open containers), and the kill-through-totem question.
+
+### Assumption — timer UX: HUD from the synced head stack, overhead via a broadcast payload
+
+- **Location:** `client/trapped/TrappedDollHudRenderer` (red `%.2f`s at ~28% screen height, scale 3,
+  sine-alias shake ramping 1→7 px, white flash under 3 s) hooked by `mixin/TrappedDollHudMixin` at
+  the TAIL of `Gui#render`; `TrappedDollOverheadRenderer` (vanilla-parity nametag billboard +0.35
+  above the name, see-through + normal passes, 64-block gate) hooked by `TrappedDollNameTagMixin`
+  at the TAIL of `PlayerRenderer#render`; `trapped/TrappedDollPayloads.TimersPayload`
+  ("trapped_doll_timers", byte-blob NBT via `TrappedDollTimersCodec`, full snapshot every 10 ticks
+  + one clearing empty, 3 s client staleness) handled by the server-safe `ClientTrappedDollTimers`.
+- **Reasoning:** the wearer's HUD needs no networking (armor syncs to the wearer); the overhead case
+  DOES (inventory contents never sync to other clients), hence the broadcast — optional-channel on
+  all three loaders like the phone/compendium payloads (Forge gets its own `trapped_sync` channel;
+  member lists of shipped channels must not change). The HUD hook is a **common Gui mixin instead of
+  per-loader events** because Forge 52/1.21.1 ships NO gui-render event and no `ForgeGui` any more
+  (verified against forge-1.21.1-52.0.24: `net.minecraftforge.client.event` has no RenderGuiEvent;
+  vanilla `Gui.class` is used directly) — one TAIL injection fires exactly once on all loaders.
+  Overhead rendering hooks `render`, not `renderNameTag`, so a hidden name tag can't hide a bomb;
+  it also ignores sneaking for the same reason.
+- **Confidence:** high for Fabric/NeoForge, medium-high for the Forge Gui-mixin claim (grounded in
+  the jar listing, not a run). **Needs human:** HUD position/scale taste; shake feel; whether the
+  own-player overhead in F5 should be hidden.
+
+### Assumption — custom death message via a datapack damage type; blast itself uses the same source
+
+- **Location:** `data/pokeblocks/damage_type/trapped_doll.json` (`message_id
+  pokeblocks.trapped_doll`, scaling `always`, exhaustion 0.1); lang
+  `death.attack.pokeblocks.trapped_doll` = "%1$s hugged a trapped Pokedoll a moment too long";
+  `TrappedDolls.damageSource` (falls back to the plain explosion source if the datapack entry is
+  missing, so detonation can never crash).
+- **Reasoning:** damage types are data-driven in 1.21.1 — no code registration needed on any loader.
+  Passing the same source INTO the explosion means bystanders killed by the blast get the doll
+  death message too (judged a feature); no attacker credit is tracked (the thrower is not carried
+  on the stack), so the base message key always applies.
+- **Confidence:** high. **Needs human:** message wording.
+
+### Assumption — strawberr1shake gag: cosmetic-only bang, normal death (item DROPS back)
+
+- **Location:** `FigurineBlock.useItemOn` shear path (`figurine.startExplosionFuse(60)` when the
+  freed id equals `ModSettings.EXPLODING_FIGURINE = "strawberr1shake"`); `FigurineEntity`
+  (`explosionFuse` int, TNT_PRIMED on ignite, smoke every 5 ticks, at zero EXPLOSION_EMITTER
+  particle + GENERIC_EXPLODE sound and `kill()`; fuse persisted as `explosion_fuse`).
+- **Reasoning:** "the strawberry figurine" resolves to `strawberr1shake` (the only strawberry-named
+  figurine in `figurine_names.json`). "Shouldn't damage any blocks or any other entities" ⇒ NO real
+  `Explosion` at all — sound + particle only. "Die" is read as the entity's normal death, and for
+  this mod a figurine's death *returns its figurine item* (`dropCustomDeathLoot`) — chosen over
+  silently destroying an epic-rarity item on an unannounced first shear; the gag is the jump-scare,
+  not the loss. Applies to every shear-release (boxed or boxless), but not to command/memorial
+  spawns.
+- **Confidence:** high on the id; medium on drop-vs-destroy. **Needs human:** confirm the item
+  should survive the gag (deleting it instead is a one-line change: `discard()` for `kill()`).
+
+### Verification performed (this pass)
+
+- `./gradlew :common:test :fabric:compileJava :forge:compileJava :neoforge:compileJava` →
+  **BUILD SUCCESSFUL**, tests green (incl. new `TrappedDollTimersCodecTest`).
+- **NOT play-tested in-game** (HUD shake, overhead placement, explosion feel, Forge Gui mixin, and
+  the full throw→helmet→boom loop all need a live pass).
+
+---
+
+## Squeak textures for dolls  ✅ added
+
+Request: *"add support for uploading 'squeak' textures for dolls which will replace the regular
+texture when the doll is being squeaked ... keep all flag matching in mind ... also allow adding a
+numeric order to textures, ie squeak_1, squeak_2, squeak_3 ... replaced in that order each time
+they get squeaked."*
+
+### Assumption 1 — the `_squeak` marker goes AFTER the flag suffixes
+
+- **Location:** `PokeblocksAssetResolver.resolveSqueakFramePaths` /
+  `pokedollSqueakTextures`; `PokemonRegistry.SQUEAK_TEXTURE_PATTERN`.
+- **Value set:** `pokedoll_<name><flagSuffixes>_squeak[_<n>][_texture].png`, e.g.
+  `pokedoll_eiscue_noice_shiny_squeak_2_texture.png`.
+- **Reasoning:** the flag suffixes are what the existing texture ladder strips off the end, so
+  putting the marker last keeps a squeak file attached to exactly one variant and lets the same
+  subset/permutation ladder (`subsetsLargestFirst` + `permutedSuffixes`) match it — the request's
+  "keep all flag matching in mind". A marker placed *before* the flags would need a second,
+  divergent parser. Consequence: a squeak texture inherits the regular texture's fallback
+  behavior, so a single `pokedoll_<name>_squeak_texture.png` covers every variant while a
+  flagged one overrides it for that variant only.
+- **Confidence:** high. **Needs human:** none.
+
+### Assumption 2 — numbered frames run from 1, contiguously, and win over the unnumbered file
+
+- **Location:** `PokeblocksAssetResolver.resolveSqueakFramePaths` (`MAX_SQUEAK_FRAMES = 64`).
+- **Value set:** probe `_squeak_1`, `_squeak_2`, ... and stop at the first miss; use that list if
+  non-empty, else a lone `_squeak`. Cycle with `floorMod(squeakIndex, frames.size())`.
+- **Reasoning:** the request names `squeak_1, squeak_2, squeak_3`, so 1-based. A directory listing
+  isn't available through `ResourceManager` for an arbitrary name, so the count has to be probed;
+  stopping at the first gap keeps that bounded and deterministic. Mixing a numbered sequence with
+  an unnumbered file is ambiguous, so the explicit (numbered) one wins. The uploader warns about
+  gaps, duplicates and mixed forms so a mistake is caught before it ships.
+- **Confidence:** high on 1-based/contiguous; medium on numbered-beats-unnumbered (an author who
+  ships both probably meant the sequence). **Needs human:** none unless that preference differs.
+
+### Assumption 3 — the swap lasts the whole squish, one frame per squeak
+
+- **Location:** `PokedollBlockEntity.isSqueaking()` / `getSqueakIndex()` (counter incremented in
+  `triggerSquish`, wrapped at 2^16, persisted and included in `getUpdateTag`);
+  `PokedollModel.getTextureResource`.
+- **Value set:** the squeak texture is shown for the `SQUISH_DURATION_TICKS = 8` the squish
+  animation already runs for, and the frame advances once per squeak (not per tick).
+- **Reasoning:** "when the doll is being squeaked" is the squish window the mod already models, so
+  it reuses `squishStartTick` rather than inventing a second timer. "Replaced in that order each
+  time they get squeaked" reads as one frame per squeak, not an animation within one squeak. The
+  index is synced (like `squishStartTick`) so every player watching a doll sees the same frame.
+- **Confidence:** high. **Needs human:** whether a multi-frame sequence should instead animate
+  *within* a single squeak — that would be a small change in `getSqueakIndex`'s caller.
+
+### Assumption 4 — squeak textures are invisible to the registry
+
+- **Location:** `PokemonRegistry.parseTextureCombos` → `isSqueakTexture`.
+- **Value set:** squeak textures are skipped by the doll scan entirely.
+- **Reasoning:** a squeak texture re-skins a variant that already exists. Letting it through would
+  invent a pokemon (`pikachu_squeak_2`) or mark a flag combination as having a valid texture, which
+  would offer a creative-tab/compendium variant the game can't actually render. Also keeps them out
+  of `doll_rarity.json` prompts in the uploader. They are still shipped in the served resource pack
+  (the pack builder copies textures by name and does not consult the registry).
+- **Confidence:** high. **Needs human:** none.
+
+### Scope
+
+Pokedoll **blocks** only. Held/inventory/head-worn/thrown dolls and figurines
+(`FigurineBlock`/`FigurineEntity`, which also play the squeak sound) keep their regular texture —
+they have no squish window to key the swap off.
+
+### Verification performed (this pass)
+
+- `./gradlew :common:test` → **161 tests green**, incl. the new `registry.SqueakTextureTest`
+  (12 cases covering numbering, gaps, flag specificity, permuted flag order, shared fallback and
+  registry exclusion).
+- `./gradlew :fabric:build :forge:build :neoforge:build` → **BUILD SUCCESSFUL** on all three.
+- `python tools/doll_uploader.py --self-test` → passes, incl. new squeak classification cases.
+- **NOT play-tested in-game** — no built-in doll ships a squeak texture yet, so the visual swap
+  needs a live pass with a custom pack (`/pokeblocks resourcepack saveexample` now writes
+  `exampledoll_squeak_1/_2` for exactly this).

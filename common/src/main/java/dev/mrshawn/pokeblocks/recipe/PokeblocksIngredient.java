@@ -73,6 +73,18 @@ public final class PokeblocksIngredient {
 		return dollPokemon != null;
 	}
 
+	/**
+	 * Every stack this ingredient accepts, for display in recipe viewers (JEI cycles through them).
+	 * A doll ingredient yields exactly one stack — the species with its exact flag set, i.e. the same
+	 * stack {@link #test} matches; a vanilla ingredient yields its {@link Ingredient#getItems()}.
+	 */
+	public List<ItemStack> displayStacks() {
+		if (isDoll()) {
+			return List.of(PokedollItem.createPokedoll(dollPokemon, dollFlags.toArray(new ModelFlag[0])));
+		}
+		return List.of(vanilla.getItems());
+	}
+
 	/** Tests whether the given stack satisfies this ingredient. */
 	public boolean test(ItemStack stack) {
 		if (isDoll()) {

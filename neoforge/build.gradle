@@ -6,7 +6,12 @@ plugins {
 }
 
 base {
-    archivesName = "geckolib-examples-ml-neoforge-${minecraft_version}"
+    archivesName = "pokeblocks-neoforge"
+}
+
+// Jars are named pokeblocks-<loader>-<version>-<minecraft_version>[-classifier].jar
+tasks.withType(AbstractArchiveTask).configureEach {
+    archiveVersion = "${version}-${minecraft_version}"
 }
 
 subsystems {
@@ -46,6 +51,12 @@ dependencies {
     // mod is declared an optional dependency in neoforge.mods.toml).
     compileOnly "top.theillusivec4.curios:curios-neoforge:${curios_version}:api"
     runtimeOnly "top.theillusivec4.curios:curios-neoforge:${curios_version}"
+    // JEI: API at compile time only (the @JeiPlugin class is found by annotation scanning, so nothing
+    // links against JEI unless it is installed); the full jar is dev-runtime only.
+    compileOnly "mezz.jei:jei-${minecraft_version}-common-api:${jei_version}"
+    compileOnly "mezz.jei:jei-${minecraft_version}-neoforge-api:${jei_version}"
+    runtimeOnly "mezz.jei:jei-${minecraft_version}-neoforge:${jei_version}"
+    testCompileOnly "mezz.jei:jei-${minecraft_version}-common-api:${jei_version}"
     // mc-test server-truth SPI — this module recompiles common's sources (incl. PokeblocksStateProvider),
     // so it needs the interface on its compile classpath. Provided by the agent at runtime; never bundled.
     // testCompileOnly too: the `source(project(":common")…allSource)` rule below feeds common's main

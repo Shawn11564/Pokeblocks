@@ -1,6 +1,7 @@
 package dev.mrshawn.pokeblocks.client.phone;
 
 import dev.mrshawn.pokeblocks.client.screen.PhoneCallScreen;
+import dev.mrshawn.pokeblocks.phone.PhoneCalls.LostDollTarget;
 import net.minecraft.client.Minecraft;
 
 /**
@@ -12,8 +13,8 @@ public final class PhoneClientHooks {
 
 	private PhoneClientHooks() {}
 
-	/** Opens the incoming-call screen for the doll behind {@code callerKey}. */
-	public static void openCallScreen(String callerKey) {
-		Minecraft.getInstance().setScreen(new PhoneCallScreen(callerKey));
+	/** Opens the incoming-call screen for the doll behind {@code callerKey} and the doll it says it lost. */
+	public static void openCallScreen(String callerKey, LostDollTarget lost) {
+		Minecraft.getInstance().setScreen(new PhoneCallScreen(callerKey, lost));
 	}
 }

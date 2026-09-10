@@ -14,6 +14,9 @@
         ],
         "client": [
           "dev.mrshawn.pokeblocks.PokeblocksFabricClient"
+        ],
+        "jei_mod_plugin": [
+          "dev.mrshawn.pokeblocks.integration.jei.PokeblocksJeiPlugin"
         ]
     },
     "mixins": [
@@ -28,6 +31,7 @@
         "geckolib": ">=${geckolib_version}"
     },
     "suggests": {
-        "trinkets": "*"
+        "trinkets": "*",
+        "jei": "*"
     }
 }

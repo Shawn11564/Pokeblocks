@@ -7,6 +7,8 @@
   "item.pokeblocks.figurine": "Figurine",
   "item.pokeblocks.custom_decoration": "Decoration",
 
+  "entity.pokeblocks.figurine": "Figurine",
+
   "itemgroup.pokeblocks.regular": "Pokeblocks - Regular",
   "itemgroup.pokeblocks.gigantics": "Pokeblocks - Gigantics",
   "itemgroup.pokeblocks.misc": "Pokeblocks - Misc",
@@ -34,21 +36,29 @@
 
   "block.pokeblocks.dig_site": "Dig Site",
 
-  "tooltip.pokeblocks.pokedoll_phone": "Sometimes a doll calls with a favor...",
+  "tooltip.pokeblocks.figurine_doll": "A figurine set free of its case — soft as a doll now.",
+  "tooltip.pokeblocks.figurine_doll.pose": "Place it, then sneak-right-click with an empty hand to change its pose.",
+
+  "tooltip.pokeblocks.pokedoll_phone": "Sometimes its doll calls with a favor...",
+  "tooltip.pokeblocks.pokedoll_phone.attuned": "Attuned to %s",
+  "tooltip.pokeblocks.pokedoll_phone.unattuned": "Not attuned — strange dolls may call; craft with a Pokedoll to attune it",
   "tooltip.pokeblocks.pokedoll_phone.detail": "Right-click while it buzzes to pick up.",
 
   "screen.pokeblocks.phone.title": "Incoming Call",
-  "screen.pokeblocks.phone.call_text": "I buried my favorite doll somewhere near you... but I forgot where! Could you dig it up for me?",
+  "screen.pokeblocks.phone.call_text": "I lost my %s doll somewhere near you... but I forgot where! Please dig it up?",
+  "screen.pokeblocks.phone.lost_unknown": "favorite",
   "screen.pokeblocks.phone.accept": "Accept",
   "screen.pokeblocks.phone.hangup": "Hang Up",
 
   "message.pokeblocks.phone.ringing": "Your Pokedoll Phone is buzzing!",
+  "message.pokeblocks.phone.incoming": "%s is calling — they lost their %s doll!",
   "message.pokeblocks.phone.missed_call": "Missed call...",
   "message.pokeblocks.phone.no_calls": "No new calls.",
   "message.pokeblocks.phone.call_ended": "The call already ended.",
   "message.pokeblocks.phone.hung_up": "You hung up.",
   "message.pokeblocks.phone.no_sites": "There's no good digging ground nearby — the call fizzled out.",
-  "message.pokeblocks.phone.quest_started": "%s buried a doll nearby! %s dig sites appeared — follow the sparkles and right-click to dig.",
+  "message.pokeblocks.phone.broke": "Your Pokedoll Phone ran out of charge and broke!",
+  "message.pokeblocks.phone.quest_started": "%s lost their %s doll nearby! %s dig sites appeared — follow the sparkles and right-click to dig.",
   "message.pokeblocks.phone.dug_junk": "Just junk... %s dig site(s) left.",
   "message.pokeblocks.phone.dug_doll": "You dug up %s! %s is overjoyed.",
   "message.pokeblocks.phone.quest_failed": "All the dig sites were destroyed — the buried doll is lost...",
@@ -78,5 +88,13 @@
   "screen.pokeblocks.compendium.description.figurine": "A collectible figurine.",
 
   "subtitles.pokeblocks.pokedoll_squeak": "Pokedoll squeaks",
-  "subtitles.pokeblocks.phone_buzz": "Pokedoll Phone buzzes"
+  "subtitles.pokeblocks.phone_buzz": "Pokedoll Phone buzzes",
+
+  "death.attack.pokeblocks.trapped_doll": "%1$s hugged a trapped Pokedoll a moment too long",
+
+  "jei.pokeblocks.throwable_doll": "Keeps the doll's species and variant. Right-click to throw.",
+  "jei.pokeblocks.trapped_doll": "Keeps the doll's species and variant. Pops with a bang.",
+  "jei.pokeblocks.gigantic_doll": "All four dolls must be the same species and variant. Any wool colour works.",
+  "jei.pokeblocks.pokedoll_phone": "Attunes to the doll in the centre and only ever rings from it.",
+  "jei.pokeblocks.laser_pointer_dye": "Recolours the beam with any dye."
 }

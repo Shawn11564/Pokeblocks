@@ -14,9 +14,9 @@ subprojects {
             attributes([
                 'Specification-Title'     : mod_name,
                 'Specification-Vendor'    : mod_author,
-                'Specification-Version'   : project.jar.archiveVersion,
+                'Specification-Version'   : project.version,
                 'Implementation-Title'    : project.name,
-                'Implementation-Version'  : project.jar.archiveVersion,
+                'Implementation-Version'  : project.version,
                 'Implementation-Vendor'   : mod_author,
                 'Implementation-Timestamp': new Date().format("yyyy-MM-dd'T'HH:mm:ssZ"),
                 'Timestamp'               : System.currentTimeMillis(),
@@ -40,6 +40,20 @@ subprojects {
         maven {
             name = 'Parchment'
             url = 'https://maven.parchmentmc.org'
+            // Only Parchment's own groups (mappings zip, librarian plugin, feather) live here. Scoping
+            // it keeps an outage of this host from failing lookups of unrelated artifacts.
+            content { includeGroupAndSubgroups 'org.parchmentmc' }
+        }
+        // JEI. Scoped to its group so Gradle resolves it here directly instead of probing every
+        // earlier repository first (a slow/unreachable mirror would otherwise fail the build).
+        exclusiveContent {
+            forRepository {
+                maven {
+                    name = 'JEI (BlameJared)'
+                    url = 'https://maven.blamejared.com'
+                }
+            }
+            filter { includeGroup 'mezz.jei' }
         }
     }
 

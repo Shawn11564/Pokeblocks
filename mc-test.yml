@@ -35,7 +35,7 @@ targets:
       level-type: "minecraft:flat"  # fast, deterministic superflat world (no terrain needed for truth tests)
     mods:
       # The System Under Test: the built Pokeblocks Fabric jar (deps are NOT bundled).
-      - { path: ./fabric/build/libs/geckolib-examples-ml-fabric-1.21.1-1.0.0.jar, as: pokeblocks.jar }
+      - { path: ./fabric/build/libs/pokeblocks-fabric-2.0.0-1.21.1.jar, as: pokeblocks.jar }
       # Required runtime deps (fabric.mod.json `depends`): GeckoLib + Fabric API. Version ids are
       # pinned for a reproducible run (resolved + logged by a prior run); drop `version` to float to
       # the newest matching 1.21.1/fabric.

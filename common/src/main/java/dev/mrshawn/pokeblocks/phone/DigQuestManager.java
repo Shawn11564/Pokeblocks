@@ -57,7 +57,13 @@ public final class DigQuestManager {
 	/** Minimum spacing between two sites (blocks). */
 	private static final double MIN_SITE_SPACING_SQR = 5 * 5;
 
-	private static final int PLACEMENT_ATTEMPTS = 250;
+	/**
+	 * Placement attempts per REQUESTED site (with a generous floor). Scaled rather than fixed so a
+	 * high-rarity phone's bigger site count (dig_sites + tier × dig_sites_per_rarity) doesn't silently
+	 * under-place on rough terrain — the whole point of the rarity scaling is more sites.
+	 */
+	private static final int PLACEMENT_ATTEMPTS_PER_SITE = 40;
+	private static final int MIN_PLACEMENT_ATTEMPTS = 250;
 
 	// True while the manager itself is placing/removing site blocks, so the block's onRemove
 	// hook only reacts to EXTERNAL removals (/setblock, creative pistons, support loss, ...).
@@ -79,27 +85,41 @@ public final class DigQuestManager {
 
 	/**
 	 * Starts the dig quest for an accepted call: finds up to the configured number of valid spots,
-	 * buries a rarity-weighted doll at a pre-rolled attempt index, places the mounds and syncs the
-	 * site markers. False when no valid ground exists nearby (the caller apologises instead).
+	 * buries a rarity-weighted doll (drawn to MATCH the caller's announced lost-doll descriptor) at a
+	 * pre-rolled attempt index, places the mounds and syncs the site markers. False when no valid ground
+	 * exists nearby (the caller apologises instead).
+	 * <p>
+	 * Both the dig-site count and the guarantee scale with the phone's rarity: each tier of the caller
+	 * (its attuned doll) adds {@code dig_sites_per_rarity} sites and {@code guaranteed_attempts_per_rarity}
+	 * guaranteed attempts, so a rarer phone runs a bigger hunt.
+	 *
+	 * @param lost the descriptor announced when the phone rang; a defensive null re-rolls one from the caller.
 	 */
-	public static boolean startQuest(ServerPlayer player, String callerKey) {
+	public static boolean startQuest(ServerPlayer player, String callerKey, PhoneCalls.LostDollTarget lost) {
 		MinecraftServer server = player.getServer();
 		if (server == null) return false;
 		ServerLevel level = player.serverLevel();
 		RandomSource random = level.getRandom();
 
-		List<BlockPos> sites = generateSites(level, player.blockPosition(),
-				PokeblocksConfig.getPhoneDigSites(), PokeblocksConfig.getPhoneSiteRadius(), random);
-		if (sites.isEmpty()) return false;
-
-		// The caller's rarity sets the floor for the buried doll — the rarer the doll on the line, the
-		// rarer (potentially even rarer) the doll it had you dig for.
+		// The phone's rarity = its attuned doll = the caller. Each tier above Common adds the configured
+		// per-rarity bonus to both the site count and the guarantee.
 		PhoneCalls.Variant callerVariant = PhoneCalls.parseVariantKey(callerKey);
 		DollRarity callerRarity = RarityScoreCalculator.resolvedRarity(callerVariant.species(), callerVariant.flags());
-		String buriedKey = PhoneCalls.pickBuriedDollKey(random, callerRarity);
+		int tierSteps = PhoneCalls.rarityTierBonusSteps(callerRarity);
+		int digSites = PokeblocksConfig.getPhoneDigSites() + tierSteps * PokeblocksConfig.getPhoneDigSitesPerRarity();
+		int guaranteedAttempts = PokeblocksConfig.getPhoneGuaranteedAttempts() + tierSteps * PokeblocksConfig.getPhoneGuaranteedAttemptsPerRarity();
+
+		List<BlockPos> sites = generateSites(level, player.blockPosition(),
+				digSites, PokeblocksConfig.getPhoneSiteRadius(), random);
+		if (sites.isEmpty()) return false;
+
+		// Bury a doll that MATCHES what the caller announced they lost (its rarity tier or percent
+		// window). A null descriptor (a call predating this data) is re-rolled from the caller.
+		PhoneCalls.LostDollTarget target = lost != null ? lost : PhoneCalls.pickLostDoll(callerKey, random);
+		String buriedKey = PhoneCalls.pickBuriedDollKey(random, target);
 		if (buriedKey == null) return false;
 
-		int cap = Math.min(PokeblocksConfig.getPhoneGuaranteedAttempts(), sites.size());
+		int cap = Math.min(guaranteedAttempts, sites.size());
 		int targetAttempt = 1 + random.nextInt(Math.max(1, cap));
 
 		internalMutation = true;
@@ -117,7 +137,7 @@ public final class DigQuestManager {
 
 		level.playSound(null, player.blockPosition(), SoundEvents.EXPERIENCE_ORB_PICKUP, SoundSource.PLAYERS, 0.7f, 1.3f);
 		player.displayClientMessage(Component.translatable("message.pokeblocks.phone.quest_started",
-				PhoneCalls.dollName(callerKey), sites.size()), false);
+				PhoneCalls.dollName(callerKey), PhoneCalls.describeLostDoll(target), sites.size()), false);
 		return true;
 	}
 
@@ -262,8 +282,9 @@ public final class DigQuestManager {
 												RandomSource random) {
 		List<BlockPos> chosen = new ArrayList<>();
 		int minRadius = Math.min(8, Math.max(1, radius - 1));
+		int maxAttempts = Math.max(MIN_PLACEMENT_ATTEMPTS, count * PLACEMENT_ATTEMPTS_PER_SITE);
 
-		for (int attempt = 0; attempt < PLACEMENT_ATTEMPTS && chosen.size() < count; attempt++) {
+		for (int attempt = 0; attempt < maxAttempts && chosen.size() < count; attempt++) {
 			double angle = random.nextDouble() * Math.PI * 2;
 			double dist = minRadius + random.nextDouble() * Math.max(1, radius - minRadius);
 			int x = center.getX() + (int) Math.round(Math.cos(angle) * dist);

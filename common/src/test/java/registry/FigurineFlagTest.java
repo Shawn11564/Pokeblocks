@@ -30,6 +30,25 @@ class FigurineFlagTest {
 	}
 
 	@Test
+	void flagSetCodecRoundTrips() {
+		// The walking figurine entity ships its flag set through synched data in this form.
+		assertEquals("", FigurineFlag.encodeSet(Set.of()));
+		assertEquals("", FigurineFlag.encodeSet(null));
+		assertEquals("devoured", FigurineFlag.encodeSet(EnumSet.of(FigurineFlag.DEVOURED)));
+
+		assertEquals(EnumSet.noneOf(FigurineFlag.class), FigurineFlag.decodeSet(""));
+		assertEquals(EnumSet.noneOf(FigurineFlag.class), FigurineFlag.decodeSet(null));
+		assertEquals(EnumSet.of(FigurineFlag.DEVOURED), FigurineFlag.decodeSet("devoured"));
+		// Unknown tokens are ignored rather than failing — synched strings should never crash a client.
+		assertEquals(EnumSet.of(FigurineFlag.DEVOURED), FigurineFlag.decodeSet("devoured,not_a_flag"));
+
+		for (FigurineFlag flag : FigurineFlag.values()) {
+			Set<FigurineFlag> single = EnumSet.of(flag);
+			assertEquals(single, FigurineFlag.decodeSet(FigurineFlag.encodeSet(single)));
+		}
+	}
+
+	@Test
 	void modelSuffixIsSortedAndEmptyForNoFlags() {
 		assertEquals("", PokeblocksAssetResolver.figurineModelSuffix(Set.of()));
 		assertEquals("_devoured", PokeblocksAssetResolver.figurineModelSuffix(EnumSet.of(FigurineFlag.DEVOURED)));

@@ -1,0 +1,128 @@
+# Builds the Fabric, Forge and NeoForge jars on every push and posts them to a Discord channel,
+# together with the topmost section of CHANGELOG.md as the release notes.
+#
+# One-time setup (see README → "Discord build notifications"):
+#   1. In Discord: channel settings → Integrations → Webhooks → New Webhook → Copy Webhook URL.
+#   2. In GitHub: repo Settings → Secrets and variables → Actions → New repository secret
+#      named DISCORD_WEBHOOK_URL with that URL. The channel the webhook belongs to is where
+#      builds land; change channels by pointing the secret at a different webhook.
+#
+# Before pushing, put the notes for the build under the FIRST "## " heading in CHANGELOG.md.
+# The jars are also kept as a workflow artifact for 30 days as a backup.
+name: discord-build
+
+on:
+  push:
+    branches: [master, 'multiloader/**']
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: discord-build-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  build-and-post:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: '21'
+
+      - uses: gradle/actions/setup-gradle@v4
+
+      - name: Build all loaders
+        run: |
+          chmod +x gradlew
+          ./gradlew build --no-daemon --console=plain
+
+      - name: Collect loader jars
+        id: jars
+        run: |
+          set -euo pipefail
+          mkdir -p dist
+          for loader in fabric forge neoforge; do
+            # The shipped jar is the one without a classifier (sources / javadoc / dev are excluded).
+            jar=$(ls "$loader"/build/libs/*-"$loader"-*.jar | grep -v -E -- '-(sources|javadoc|dev)\.jar$' | head -n 1 || true)
+            if [ -z "$jar" ]; then
+              echo "::error::No $loader jar found in $loader/build/libs"
+              exit 1
+            fi
+            cp "$jar" dist/
+            echo "$loader -> $(basename "$jar") ($(du -h "$jar" | cut -f1))"
+          done
+          ls -la dist
+
+      - name: Keep jars as a workflow artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: pokeblocks-jars-${{ github.sha }}
+          path: dist/*.jar
+          retention-days: 30
+
+      - name: Post to Discord
+        env:
+          DISCORD_WEBHOOK_URL: ${{ secrets.DISCORD_WEBHOOK_URL }}
+          COMMIT_MESSAGE: ${{ github.event.head_commit.message }}
+          BRANCH: ${{ github.ref_name }}
+          RUN_URL: ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}
+          COMMIT_URL: ${{ github.server_url }}/${{ github.repository }}/commit/${{ github.sha }}
+        run: |
+          set -euo pipefail
+          if [ -z "${DISCORD_WEBHOOK_URL:-}" ]; then
+            echo "::error::The DISCORD_WEBHOOK_URL repository secret is not set (see the header of this workflow)."
+            exit 1
+          fi
+
+          version=$(grep -E '^version=' gradle.properties | cut -d= -f2- | tr -d '\r')
+          mc_version=$(grep -E '^minecraft_version=' gradle.properties | cut -d= -f2- | tr -d '\r')
+          short_sha=$(printf '%s' "$GITHUB_SHA" | cut -c1-7)
+          commit_title=$(printf '%s' "${COMMIT_MESSAGE:-manual run}" | head -n 1 | cut -c1-200)
+
+          # Release notes = the first "## " section of CHANGELOG.md (whole file if it has no
+          # "## " headings). Discord caps an embed description at 4096 characters.
+          if [ -f CHANGELOG.md ]; then
+            notes=$(awk '/^## /{ if (started) exit; started=1 } started { print }' CHANGELOG.md)
+            if [ -z "$notes" ]; then notes=$(cat CHANGELOG.md); fi
+          else
+            notes="_No CHANGELOG.md in this commit._"
+          fi
+          if [ "${#notes}" -gt 3900 ]; then
+            notes="$(printf '%s' "$notes" | head -c 3900)"$'\n'"…_(truncated — see CHANGELOG.md)_"
+          fi
+
+          jq -n \
+            --arg title "Pokeblocks $version for Minecraft $mc_version" \
+            --arg notes "$notes" \
+            --arg commit "[\`$short_sha\`]($COMMIT_URL) on \`$BRANCH\` — $commit_title" \
+            --arg run "[Workflow run]($RUN_URL)" \
+            --arg ts "$(date -u +%Y-%m-%dT%H:%M:%SZ)" \
+            '{
+              embeds: [{
+                title: $title,
+                description: $notes,
+                color: 15158332,
+                fields: [
+                  { name: "Commit", value: $commit, inline: false },
+                  { name: "Jars", value: "Fabric, Forge and NeoForge are attached below.", inline: false },
+                  { name: "Build", value: $run, inline: false }
+                ],
+                timestamp: $ts
+              }]
+            }' > payload.json
+
+          args=(-F "payload_json=@payload.json;type=application/json")
+          i=0
+          for jar in dist/*.jar; do
+            args+=(-F "files[$i]=@$jar")
+            i=$((i + 1))
+          done
+
+          # Discord returns 2xx on success; -f makes any 4xx/5xx fail the job with the body shown.
+          curl -sS --fail-with-body -X POST "$DISCORD_WEBHOOK_URL" "${args[@]}" -o response.json
+          echo "Posted $i jars to Discord."

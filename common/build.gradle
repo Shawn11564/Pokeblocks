@@ -6,7 +6,12 @@ plugins {
 }
 
 base {
-    archivesName = "geckolib-examples-ml-common-${minecraft_version}"
+    archivesName = "pokeblocks-common"
+}
+
+// Jars are named pokeblocks-<loader>-<version>-<minecraft_version>[-classifier].jar
+tasks.withType(AbstractArchiveTask).configureEach {
+    archiveVersion = "${version}-${minecraft_version}"
 }
 
 minecraft {
@@ -22,6 +27,9 @@ dependencies {
     // mc-test server-truth SPI (McTestStateProvider). compileOnly: the matching server-* agent jar
     // provides the class at runtime; bundling it would break ServiceLoader class identity. From mavenLocal.
     compileOnly 'io.mctest:mc-test-agent-core:0.1.0'
+    // JEI plugin API (optional integration; plugin class lives in common and is picked up by each
+    // loader's JEI plugin discovery). API only — never on the runtime classpath here.
+    compileOnly "mezz.jei:jei-${minecraft_version}-common-api:${jei_version}"
     testImplementation 'org.junit.jupiter:junit-jupiter:5.10.5'
 }
 

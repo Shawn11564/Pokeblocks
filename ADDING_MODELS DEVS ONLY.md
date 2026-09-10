@@ -37,6 +37,7 @@ there. Edit the source copies here so changes ship with the mod.
 | Base model | `geo/block/pokedoll_<name>.geo.json` | **Yes** — a doll is skipped without it |
 | Base texture | `textures/block/pokedoll_<name>_texture.png` | **Yes** |
 | Shiny texture | `textures/block/pokedoll_<name>_shiny_texture.png` | Optional |
+| Squeak texture | `textures/block/pokedoll_<name>_squeak_texture.png` (numbered: `_squeak_1`, `_squeak_2`, ...) | Optional |
 | Base animation | `animations/block/pokedoll_<name>.animation.json` | Optional |
 | Variant model/texture/animation | add the flag suffix (see table) | Optional |
 
@@ -92,6 +93,32 @@ registry treats `family + animated` as a *required combination* — both flags m
 together. Provide the standalone single-flag models if you want them to be independently
 selectable.
 
+### Squeak textures
+
+An optional alternate skin worn only while the doll is being squeaked (right-clicked), for the
+8 ticks the squish lasts. The marker goes **after** the flag suffixes, so it belongs to one
+variant:
+
+```
+pokedoll_<name><flagSuffixes>_squeak_texture.png        one skin, used for every squeak
+pokedoll_<name><flagSuffixes>_squeak_<n>_texture.png    frame n, cycled one per squeak
+```
+
+Rules (see `PokeblocksAssetResolver.pokedollSqueakTextures`):
+
+- Numbered frames must run from `1` upwards with no gaps; the probe stops at the first miss.
+  If any numbered frame exists, an unnumbered `_squeak` file for the same variant is ignored.
+- Matching uses the **same** subset/permutation ladder as `pokedollTexture` — most specific
+  flag combination first, falling back to less specific ones. So one
+  `pokedoll_<name>_squeak_texture.png` covers every variant, and
+  `pokedoll_<name>_shiny_squeak_texture.png` overrides it for the shiny one. The first
+  matching variant supplies the whole sequence; frames are never mixed across variants.
+- `PokemonRegistry` deliberately **skips** squeak textures when scanning
+  (`isSqueakTexture`) — they must not invent a pokemon, register a flag or mark a flag
+  combination as having a valid texture, so they need no `doll_rarity.json` entry either.
+- Which frame shows is driven by `PokedollBlockEntity`'s squeak counter, which is synced to
+  clients so everyone watching the doll sees the same frame.
+
 ### Animations
 
 - Base: `pokedoll_<name>.animation.json`
@@ -118,6 +145,8 @@ geo/block/pokedoll_pikachu_posed.geo.json
 textures/block/pokedoll_pikachu_texture.png
 textures/block/pokedoll_pikachu_shiny_texture.png
 textures/block/pokedoll_pikachu_posed_texture.png
+textures/block/pokedoll_pikachu_squeak_1_texture.png   # optional squeak frames
+textures/block/pokedoll_pikachu_squeak_2_texture.png
 animations/block/pokedoll_pikachu.animation.json
 animations/block/pokedoll_pikachu_posed.animation.json
 ```

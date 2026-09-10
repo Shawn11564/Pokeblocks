@@ -5,15 +5,20 @@ import dev.mrshawn.pokeblocks.compendium.ClientCompendiumSync;
 import dev.mrshawn.pokeblocks.compendium.CompendiumProgressTracker;
 import dev.mrshawn.pokeblocks.compendium.CompendiumSyncPayloads;
 import dev.mrshawn.pokeblocks.config.PokeblocksConfig;
+import dev.mrshawn.pokeblocks.entity.custom.FigurineEntity;
 import dev.mrshawn.pokeblocks.interaction.PokeblocksDispenseBehaviors;
 import dev.mrshawn.pokeblocks.item.loot.LootInjector;
 import dev.mrshawn.pokeblocks.phone.ClientDigSites;
 import dev.mrshawn.pokeblocks.phone.PhoneCalls;
 import dev.mrshawn.pokeblocks.phone.PhonePayloads;
+import dev.mrshawn.pokeblocks.registry.EntityRegistry;
 import dev.mrshawn.pokeblocks.resourcepack.CustomPackManager;
 import dev.mrshawn.pokeblocks.resourcepack.sync.ClientPackSync;
 import dev.mrshawn.pokeblocks.resourcepack.sync.PackSyncPayloads;
 import dev.mrshawn.pokeblocks.resourcepack.sync.ServerPackSync;
+import dev.mrshawn.pokeblocks.trapped.ClientTrappedDollTimers;
+import dev.mrshawn.pokeblocks.trapped.TrappedDollCountdown;
+import dev.mrshawn.pokeblocks.trapped.TrappedDollPayloads;
 import net.minecraft.core.registries.Registries;
 import net.minecraft.network.RegistryFriendlyByteBuf;
 import net.minecraft.network.protocol.common.custom.CustomPacketPayload;
@@ -30,6 +35,7 @@ import net.minecraft.world.level.storage.loot.LootPool;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.event.LootTableLoadEvent;
 import net.minecraftforge.event.RegisterCommandsEvent;
+import net.minecraftforge.event.entity.EntityAttributeCreationEvent;
 import net.minecraftforge.event.server.ServerAboutToStartEvent;
 import net.minecraftforge.event.server.ServerStartedEvent;
 import net.minecraftforge.eventbus.api.IEventBus;
@@ -86,6 +92,16 @@ public final class PokeblocksForge {
 					.play();
 	public static Channel<CustomPacketPayload> PHONE_SYNC_CHANNEL;
 
+	// Trapped-doll countdown broadcast (clientbound only) — again its own optional channel so the
+	// member lists of the already-shipped channels stay untouched for older clients.
+	private static final PayloadProtocol<RegistryFriendlyByteBuf, CustomPacketPayload> TRAPPED_SYNC_BUILDER =
+			ChannelBuilder.named(ResourceLocation.fromNamespaceAndPath(PokeblocksCommon.MOD_ID, "trapped_sync"))
+					.networkProtocolVersion(1)
+					.optional()
+					.payloadChannel()
+					.play();
+	public static Channel<CustomPacketPayload> TRAPPED_SYNC_CHANNEL;
+
 	/**
 	 * Adapts a payload codec written against {@link net.minecraft.network.FriendlyByteBuf} to the
 	 * {@link RegistryFriendlyByteBuf} the Forge payload channel is parameterized with. Safe because
@@ -115,6 +131,10 @@ public final class PokeblocksForge {
 		// supplier only resolves after the registry events; enqueueWork puts us on the main thread.
 		modEventBus.addListener((FMLCommonSetupEvent event) ->
 				event.enqueueWork(PokeblocksDispenseBehaviors::register));
+
+		// Living entities need an attribute map before they can be constructed.
+		modEventBus.addListener((EntityAttributeCreationEvent event) ->
+				event.put(EntityRegistry.FIGURINE_ENTITY.get(), FigurineEntity.createAttributes().build()));
 
 		PokeblocksConfig.initialize(FMLPaths.GAMEDIR.get());
 		CustomPackManager.registerCustomAssets(FMLPaths.GAMEDIR.get());
@@ -174,6 +194,18 @@ public final class PokeblocksForge {
 				(player, data) -> PHONE_SYNC_CHANNEL.send(new PhonePayloads.DigSitesPayload(data), PacketDistributor.PLAYER.with(player)));
 		ClientDigSites.setResponseSender(data ->
 				PHONE_SYNC_CHANNEL.send(new PhonePayloads.CallResponsePayload(data), PacketDistributor.SERVER.noArg()));
+
+		TRAPPED_SYNC_BUILDER.clientbound().addMain(TrappedDollPayloads.TimersPayload.TYPE,
+				regCodec(TrappedDollPayloads.TimersPayload.CODEC),
+				(payload, context) -> {
+					ClientTrappedDollTimers.handleTimers(payload.data());
+					context.setPacketHandled(true);
+				});
+		TRAPPED_SYNC_CHANNEL = TRAPPED_SYNC_BUILDER.bidirectional().build();
+
+		TrappedDollCountdown.setNetworkBridge(
+				player -> TRAPPED_SYNC_CHANNEL.isRemotePresent(player.connection.getConnection()),
+				(player, data) -> TRAPPED_SYNC_CHANNEL.send(new TrappedDollPayloads.TimersPayload(data), PacketDistributor.PLAYER.with(player)));
 
 		MinecraftForge.EVENT_BUS.register(this);
 	}

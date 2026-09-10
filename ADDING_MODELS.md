@@ -41,6 +41,7 @@ config/Pokeblocks/resourcepack/custom/
 | Base model `pokedoll_<name>.geo.json` | `assets/models/` | **Yes** |
 | Base texture `pokedoll_<name>_texture.png` | `assets/textures/` | **Yes** |
 | Shiny texture `pokedoll_<name>_shiny_texture.png` | `assets/textures/` | Optional |
+| Squeak texture `pokedoll_<name>_squeak_texture.png` | `assets/textures/` | Optional |
 | Animation `pokedoll_<name>.animation.json` | `assets/animations/` | Optional |
 | Variant files (add a flag suffix) | matching folder | Optional |
 
@@ -73,6 +74,33 @@ Flags are detected from filename suffixes and can be combined:
 | **MALE / FEMALE** | `_male` / `_female` | *(none)* | mutually exclusive gender variants |
 
 Suffixes stack: `pokedoll_pikachu_posed.geo.json` + `pokedoll_pikachu_posed_texture.png`.
+
+## Squeak Textures
+
+A doll can ship an alternate texture shown only while it is being squeaked (right-clicked).
+Take the doll's regular texture name and append `_squeak` **after** the flag suffixes:
+
+| File | Shown |
+|------|-------|
+| `pokedoll_pikachu_squeak_texture.png` | every squeak of any pikachu variant |
+| `pokedoll_pikachu_shiny_squeak_texture.png` | every squeak of a *shiny* pikachu |
+
+Add a number to cycle through several, one frame per squeak, looping after the last:
+
+```
+pokedoll_pikachu_squeak_1_texture.png   1st squeak
+pokedoll_pikachu_squeak_2_texture.png   2nd squeak
+pokedoll_pikachu_squeak_3_texture.png   3rd squeak, then back to _squeak_1
+```
+
+- Number from `1` with no gaps — the game stops at the first missing number.
+- Numbered files win over an unnumbered `_squeak` file for the same variant.
+- Flag matching is the same as for regular textures: most specific first, falling back to a
+  less specific squeak texture (so one `_squeak` file can cover every variant). A sequence is
+  always taken whole from one variant — frames are never mixed.
+- A squeak texture only re-skins a variant that already exists. It never creates a doll, a
+  variant or a rarity entry, so it needs no `doll_rarity.json` entry.
+- A bare `pokedoll_<name>_squeak.png` (no `_texture`) works too, as with any texture.
 
 ### Required flag combinations
 If you provide `pokedoll_snorunt_family_animated.geo.json` without the individual

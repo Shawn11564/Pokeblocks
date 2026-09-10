@@ -48,6 +48,8 @@ public final class PokeblocksItemData {
 	public static final String KEY_POKEMON = "pokemon";
 	public static final String KEY_FIGURINE = "figurine";
 	public static final String KEY_DECORATION = "decoration";
+	/** Marks a figurine stack/block-entity as a BOXLESS figurine doll (no display case; poseable). */
+	public static final String KEY_BOXLESS = "boxless";
 
 	private PokeblocksItemData() {}
 
@@ -78,11 +80,29 @@ public final class PokeblocksItemData {
 	 */
 	public static CompoundTag figurineTag(String figurine, Collection<ModelFlag> activeFlags,
 										  Collection<FigurineFlag> figurineFlags) {
+		return figurineTag(figurine, activeFlags, figurineFlags, false);
+	}
+
+	/**
+	 * Builds the canonical figurine tag, optionally marking the stack as a {@link #KEY_BOXLESS boxless
+	 * figurine doll}. Canonical-minimal like every flag: the key is only written when {@code true}.
+	 */
+	public static CompoundTag figurineTag(String figurine, Collection<ModelFlag> activeFlags,
+										  Collection<FigurineFlag> figurineFlags, boolean boxless) {
 		CompoundTag tag = base(blockEntityId(ModSettings.FIGURINE_ID));
 		tag.putString(KEY_FIGURINE, figurine == null || figurine.isEmpty() ? ModSettings.DEFAULT_FIGURINE : figurine);
 		writeFlags(tag, activeFlags);
 		writeFigurineFlags(tag, figurineFlags);
+		if (boxless) {
+			tag.putBoolean(KEY_BOXLESS, true);
+		}
 		return tag;
+	}
+
+	/** Whether the stack carries the {@link #KEY_BOXLESS boxless figurine doll} marker. */
+	public static boolean isBoxless(ItemStack stack) {
+		CustomData data = stack.get(DataComponents.BLOCK_ENTITY_DATA);
+		return data != null && data.copyTag().getBoolean(KEY_BOXLESS);
 	}
 
 	/**

@@ -35,6 +35,13 @@ public final class PokemonRegistry {
 	static final Pattern ANIMATION_PATTERN = Pattern.compile(
 			"^pokedoll_(.+)\\.animation\\.json$", Pattern.CASE_INSENSITIVE
 	);
+	/**
+	 * Trailing {@code _squeak} / {@code _squeak_<n>} marker (with or without the {@code _texture}
+	 * suffix) on a squeak texture — the alternate skin shown while a doll is being squeaked.
+	 */
+	static final Pattern SQUEAK_TEXTURE_PATTERN = Pattern.compile(
+			"_squeak(_\\d+)?(_texture)?$", Pattern.CASE_INSENSITIVE
+	);
 
 	static {
 		scanBuiltInAssets();
@@ -169,6 +176,9 @@ public final class PokemonRegistry {
 		for (String filename : textureFiles) {
 			Matcher m = TEXTURE_PATTERN.matcher(filename);
 			if (!m.matches()) continue; // silently skip non-pokedoll files
+			// A squeak texture re-skins a variant that already exists; it is never a variant of its own,
+			// so it must neither invent a pokemon nor mark a flag combination as having a valid texture.
+			if (isSqueakTexture(m.group(1))) continue;
 
 			ParseResult result = parseSuffixes(m.group(1));
 			if (result.name().isEmpty()) continue;
@@ -187,6 +197,14 @@ public final class PokemonRegistry {
 			}
 		}
 		return validTexCombos;
+	}
+
+	/**
+	 * Whether {@code body} (a pokedoll texture file name minus the {@code pokedoll_} prefix and the
+	 * {@code .png} extension) names a squeak texture, e.g. {@code pikachu_shiny_squeak_2_texture}.
+	 */
+	public static boolean isSqueakTexture(String body) {
+		return SQUEAK_TEXTURE_PATTERN.matcher(body).find();
 	}
 
 	/**

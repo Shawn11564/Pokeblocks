@@ -66,7 +66,17 @@ public class PokedollModel extends DefaultedBlockGeoModel<PokedollBlockEntity> {
 	public ResourceLocation getTextureResource(PokedollBlockEntity animatable) {
 		ResourceManager rm = Minecraft.getInstance().getResourceManager();
 		String pokemon = PokeblocksAssetResolver.validatedPokemon(rm, animatable.getPokemon());
-		return PokeblocksAssetResolver.pokedollTexture(rm, pokemon, activeFlags(animatable));
+		Set<ModelFlag> flags = activeFlags(animatable);
+
+		// While the doll is mid-squeak, an optional _squeak texture (cycling through the numbered
+		// frames, one per squeak) replaces the regular one. Falls through when the doll ships none.
+		if (animatable.isSqueaking()) {
+			ResourceLocation squeak = PokeblocksAssetResolver.pokedollSqueakTexture(
+					rm, pokemon, flags, animatable.getSqueakIndex());
+			if (squeak != null) return squeak;
+		}
+
+		return PokeblocksAssetResolver.pokedollTexture(rm, pokemon, flags);
 	}
 
 	@Override

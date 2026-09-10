@@ -8,6 +8,8 @@ public class ModSettings {
 
 	public static final String FIGURINE_ID = "figurine";
 	public static final String DEFAULT_FIGURINE = "doncheadle";
+	/** Every figurine geo names its display case this; renderers hide it and hitboxes exclude it. */
+	public static final String FIGURINE_BOX_BONE = "box";
 
 	/**
 	 * Registry id of the single, generic data-driven custom-decoration block/item/block-entity.
@@ -20,5 +22,14 @@ public class ModSettings {
 
 	/** 1-in-N chance that popping a doll yields a substitute doll instead of wool. */
 	public static final int SUBSTITUTE_POP_CHANCE = 12;
+
+	/**
+	 * The one figurine that detonates when shears set it free ({@code FigurineBlock#useItemOn}):
+	 * it walks for {@link #EXPLODING_FIGURINE_FUSE_TICKS}, then goes off in a harmless flash —
+	 * no block or entity damage — and dies (dropping its figurine item back, like any death).
+	 */
+	public static final String EXPLODING_FIGURINE = "strawberr1shake";
+	/** How long the freed exploding figurine gets to live: 3 seconds. */
+	public static final int EXPLODING_FIGURINE_FUSE_TICKS = 60;
 
 }

@@ -20,6 +20,9 @@ pluginManagement {
         maven {
             name = 'Parchment'
             url = 'https://maven.parchmentmc.org'
+            // Only Parchment's own groups live here. Scoping it keeps an outage of this host from
+            // failing lookups of every other plugin (Gradle probes repositories in order).
+            content { includeGroupAndSubgroups 'org.parchmentmc' }
         }
     }
 }

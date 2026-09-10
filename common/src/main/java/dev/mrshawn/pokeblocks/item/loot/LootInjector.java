@@ -2,6 +2,7 @@ package dev.mrshawn.pokeblocks.item.loot;
 
 import dev.mrshawn.pokeblocks.PokeblocksCommon;
 import dev.mrshawn.pokeblocks.config.PokeblocksConfig;
+import dev.mrshawn.pokeblocks.registry.ItemRegistry;
 import net.minecraft.core.component.DataComponents;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.level.storage.loot.LootPool;
@@ -44,10 +45,26 @@ public class LootInjector {
 	}
 
 	/**
+	 * The rare unattuned Pokedoll Phone drop: its own single-entry pool (rolled independently of the
+	 * doll pool) added to the same standard configured tables. The phone gets the CONFIGURED durability
+	 * (not the item's baked-in default) so loot finds match freshly-crafted phones; it carries no
+	 * attunement data, so it rings with random callers. Null when {@code [phone] loot_drop_chance} is 0.
+	 */
+	public static LootPool buildPhonePool(float dropChance, int durability) {
+		if (dropChance <= 0) return null;
+		return LootPool.lootPool()
+				.setRolls(ConstantValue.exactly(1))
+				.when(LootItemRandomChanceCondition.randomChance(dropChance))
+				.add(LootItem.lootTableItem(ItemRegistry.POKEDOLL_PHONE_ITEM.get())
+						.apply(SetComponentsFunction.setComponent(DataComponents.MAX_DAMAGE, Math.max(1, durability))))
+				.build();
+	}
+
+	/**
 	 * Returns every pool that should be added to the given loot table: the default global pool
-	 * if the table is one of the standard configured tables, plus the pool of any named
-	 * {@link LootGroup} (from {@code loot_groups.json}) whose tables match. Each returned pool
-	 * rolls independently against its own drop chance.
+	 * if the table is one of the standard configured tables (plus the rare unattuned-phone pool),
+	 * and the pool of any named {@link LootGroup} (from {@code loot_groups.json}) whose tables
+	 * match. Each returned pool rolls independently against its own drop chance.
 	 */
 	public static List<LootPool> poolsFor(ResourceLocation tableId) {
 		List<LootPool> pools = new ArrayList<>();
@@ -55,6 +72,8 @@ public class LootInjector {
 		if (matchesDefaultTables(tableId)) {
 			LootPool pool = PokeblocksCommon.getLootPool(LootTableItemMap.DEFAULT_GROUP);
 			if (pool != null) pools.add(pool);
+			LootPool phonePool = PokeblocksCommon.getPhoneLootPool();
+			if (phonePool != null) pools.add(phonePool);
 		}
 
 		for (LootGroup group : LootGroupConfig.getGroups()) {

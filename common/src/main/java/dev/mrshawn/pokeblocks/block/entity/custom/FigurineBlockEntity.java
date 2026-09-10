@@ -1,5 +1,6 @@
 package dev.mrshawn.pokeblocks.block.entity.custom;
 
+import dev.mrshawn.pokeblocks.block.FigurinePose;
 import dev.mrshawn.pokeblocks.constants.ModSettings;
 import dev.mrshawn.pokeblocks.item.PokeblocksItemData;
 import dev.mrshawn.pokeblocks.pokemon.FigurineFlag;
@@ -27,6 +28,24 @@ public class FigurineBlockEntity extends BlockEntity implements GeoBlockEntity {
 	private String figurine = ModSettings.DEFAULT_FIGURINE;
 	private Set<FigurineFlag> figurineFlags = EnumSet.noneOf(FigurineFlag.class);
 	private boolean gigantic = false;
+
+	// --- Boxless figurine doll state (see FigurinePose). A boxless doll renders without its display
+	// case, uses the fine 16-segment rotation below instead of the block's 4-way FACING (set from the
+	// placer's yaw in FigurineBlock#setPlacedBy, like a pokedoll), and can be posed by sneak-right-click.
+	private boolean boxless = false;
+	private FigurinePose pose = FigurinePose.STANDING;
+	/** Sign-style rotation segment 0-15; only meaningful while {@link #boxless}. */
+	private int rotation16 = 0;
+
+	/**
+	 * Honeycomb seals the display box shut (see {@code FigurineBlock#useItemOn}): a waxed box can't be
+	 * sheared open to free its figurine. Deliberately block-only — it is persisted in world NBT and
+	 * synced to clients, but never written to the dropped/picked item ({@link #saveToItem}), so breaking
+	 * the box wipes the wax (a re-placed figurine starts un-waxed).
+	 */
+	private boolean waxed = false;
+	/** BE-only NBT key for {@link #waxed}; never appears on an item stack, unlike {@link PokeblocksItemData#KEY_BOXLESS}. */
+	private static final String TAG_WAXED = "waxed";
 
 	public FigurineBlockEntity(BlockPos pos, BlockState state) {
 		super(BlockEntityRegistry.FIGURINE_BLOCK_ENTITY.get(), pos, state);
@@ -78,6 +97,51 @@ public class FigurineBlockEntity extends BlockEntity implements GeoBlockEntity {
 		return this.gigantic;
 	}
 
+	public boolean isBoxless() {
+		return this.boxless;
+	}
+
+	public void setBoxless(boolean boxless) {
+		this.boxless = boxless;
+		sync();
+	}
+
+	/** Whether honeycomb has sealed this box shut so shears can't free the figurine. */
+	public boolean isWaxed() {
+		return this.waxed;
+	}
+
+	public void setWaxed(boolean waxed) {
+		this.waxed = waxed;
+		sync();
+	}
+
+	public FigurinePose getPose() {
+		return this.pose;
+	}
+
+	public void setPose(FigurinePose pose) {
+		this.pose = pose == null ? FigurinePose.STANDING : pose;
+		sync();
+	}
+
+	/** The sign-style 0-15 rotation segment a boxless doll renders at (mirrors PokedollBlock's ROTATION). */
+	public int getRotation16() {
+		return this.rotation16;
+	}
+
+	public void setRotation16(int segment) {
+		this.rotation16 = Math.floorMod(segment, 16);
+		sync();
+	}
+
+	private void sync() {
+		setChanged();
+		if (this.level != null && !this.level.isClientSide()) {
+			this.level.sendBlockUpdated(this.worldPosition, this.getBlockState(), this.getBlockState(), 3);
+		}
+	}
+
 	/**
 	 * Writes the canonical minimal item tag on pick-block: just the figurine id (plus the gigantic
 	 * flag only when set), matching {@link dev.mrshawn.pokeblocks.item.custom.FigurineItem#createFigurine}
@@ -88,7 +152,10 @@ public class FigurineBlockEntity extends BlockEntity implements GeoBlockEntity {
 	public void saveToItem(ItemStack stack, HolderLookup.Provider registries) {
 		Set<ModelFlag> activeFlags = EnumSet.noneOf(ModelFlag.class);
 		if (this.gigantic) activeFlags.add(ModelFlag.GIGANTIC);
-		PokeblocksItemData.apply(stack, PokeblocksItemData.figurineTag(this.figurine, activeFlags, this.figurineFlags));
+		// Boxless-ness survives the break→place round trip (a freed doll never regains its case);
+		// the pose deliberately doesn't — a re-placed doll stands, like the canonical-minimal rule.
+		// The wax (see #waxed) deliberately isn't written either: breaking the box wipes the honeycomb.
+		PokeblocksItemData.apply(stack, PokeblocksItemData.figurineTag(this.figurine, activeFlags, this.figurineFlags, this.boxless));
 	}
 
 	@Override
@@ -97,6 +164,8 @@ public class FigurineBlockEntity extends BlockEntity implements GeoBlockEntity {
 		tag.putString("figurine", this.figurine);
 		tag.putBoolean("gigantic", this.gigantic);
 		writeFigurineFlags(tag);
+		writeBoxlessState(tag);
+		writeWaxState(tag);
 	}
 
 	@Override
@@ -112,6 +181,10 @@ public class FigurineBlockEntity extends BlockEntity implements GeoBlockEntity {
 			this.gigantic = tag.getBoolean("gigantic");
 		}
 		readFigurineFlags(tag);
+		this.boxless = tag.getBoolean(PokeblocksItemData.KEY_BOXLESS);
+		this.pose = FigurinePose.byId(tag.getInt("pose"));
+		this.rotation16 = Math.floorMod(tag.getInt("rotation16"), 16);
+		this.waxed = tag.getBoolean(TAG_WAXED);
 	}
 
 	@Override
@@ -120,7 +193,29 @@ public class FigurineBlockEntity extends BlockEntity implements GeoBlockEntity {
 		tag.putString("figurine", this.figurine);
 		tag.putBoolean("gigantic", this.gigantic);
 		writeFigurineFlags(tag);
+		writeBoxlessState(tag);
+		writeWaxState(tag);
 		return tag;
+	}
+
+	/** Wax state, synced to clients so shears/honeycomb interactions predict correctly (canonical-minimal). */
+	private void writeWaxState(CompoundTag tag) {
+		if (this.waxed) {
+			tag.putBoolean(TAG_WAXED, true);
+		}
+	}
+
+	/** Boxless doll state, written only when it deviates from the boxed default (canonical-minimal). */
+	private void writeBoxlessState(CompoundTag tag) {
+		if (this.boxless) {
+			tag.putBoolean(PokeblocksItemData.KEY_BOXLESS, true);
+		}
+		if (this.pose != FigurinePose.STANDING) {
+			tag.putInt("pose", this.pose.ordinal());
+		}
+		if (this.rotation16 != 0) {
+			tag.putInt("rotation16", this.rotation16);
+		}
 	}
 
 	/**

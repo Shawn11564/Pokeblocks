@@ -49,9 +49,10 @@ public final class ItemGroupRegistry {
 
 	/**
 	 * Collects every doll variant across all registered pokemon, keeps only those whose GIGANTIC
-	 * state matches {@code gigantic}, and sorts the result by rarity.
+	 * state matches {@code gigantic}, and sorts the result by rarity. This is the mod's single
+	 * definition of "every valid doll variant": the creative tabs and the JEI plugin both use it.
 	 */
-	private static List<ItemStack> sortedDolls(boolean gigantic) {
+	public static List<ItemStack> sortedDolls(boolean gigantic) {
 		List<ItemStack> dolls = new ArrayList<>();
 		for (Map.Entry<String, PokemonData> pokemon : PokemonRegistry.ALL_POKEMON.entrySet()) {
 			for (ItemStack stack : PokedollItem.getAllMutations(pokemon.getKey(), pokemon.getValue())) {
@@ -61,6 +62,13 @@ public final class ItemGroupRegistry {
 			}
 		}
 		dolls.sort(BY_RARITY);
+		return dolls;
+	}
+
+	/** Every valid doll variant: the regular dolls (rarity-sorted) followed by the gigantic ones. */
+	public static List<ItemStack> allDolls() {
+		List<ItemStack> dolls = new ArrayList<>(sortedDolls(false));
+		dolls.addAll(sortedDolls(true));
 		return dolls;
 	}
 

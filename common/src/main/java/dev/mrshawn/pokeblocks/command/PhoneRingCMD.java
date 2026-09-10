@@ -157,7 +157,10 @@ public class PhoneRingCMD {
 				caller = resolveSpecificCaller(context, source, flagArgNames);
 				if (caller == null) return 0; // resolveSpecificCaller already reported the reason
 			} else {
-				caller = PhoneCalls.pickCallerKey(player.level().getRandom());
+				// Default to the phone's own attuned doll (what it would naturally ring with); only an
+				// unattuned phone falls back to a random caller for the forced ring.
+				caller = PokedollPhoneItem.getAttunedCaller(phone);
+				if (caller == null) caller = PhoneCalls.pickCallerKey(player.level().getRandom());
 				if (caller == null) {
 					source.sendFailure(Component.literal("No pokedolls are registered to place a call."));
 					return 0;

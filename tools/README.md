@@ -18,6 +18,8 @@ batch.zip
 │   ├── pokedoll_pikachu_texture.png
 │   ├── pokedoll_pikachu_shiny_texture.png
 │   ├── pokedoll_pikachu_posed.geo.json
+│   ├── pokedoll_pikachu_squeak_1_texture.png
+│   ├── pokedoll_pikachu_squeak_2_texture.png
 │   └── pokedoll_pikachu.animation.json
 └── 0133_eevee/
     └── ...
@@ -47,11 +49,34 @@ It will:
    usual answer, when each variant has its own model) or to skip and handle it manually.
 3. **Prompt** for the rarity of each new doll and each non-auto variant. Shiny and gigantic
    variants are skipped — they resolve automatically and need no entry.
+   Squeak textures are skipped too — see below.
 4. Prompt for figurine display names (and optional tags like `cobblemon_team`). Figurine flag
    variants (e.g. `amongsans1015_devoured`) are attached to the base figurine automatically.
 5. Print a full plan; on confirmation, copy files and append entries to
    `doll_rarity.json` / `figurine_names.json` / `figurine_tags.json`.
 6. Run the configured PR step.
+
+### Squeak textures
+
+`pokedoll_<name>[_flags]_squeak[_<n>][_texture].png` is a **squeak texture** — the skin a doll
+wears for the moment it is squeaked, with numbered files cycling one frame per squeak. The
+uploader places them like any other texture and lists them under *Squeak textures* in the plan,
+but it never derives a doll, a variant or a rarity entry from one: a squeak texture only re-skins
+a variant that already exists.
+
+The game only looks for the marker **after** the flag suffixes
+(`pokedoll_bellibolt_shiny_squeak_1_texture.png`), but files often arrive with it right after the
+name (`pokedoll_bellibolt_squeak_1_shiny_texture.png`). Both are accepted: the marker is moved to
+the end on copy (the flag ordering is left alone — the game probes every ordering) and the plan
+notes the move next to that variant's frame list.
+
+It warns when
+
+- the variant a squeak texture names has **no regular texture** in the batch or the repo (the
+  game only shows a squeak texture for a variant it can already render),
+- the numbers **skip or repeat** (they must run from `1` upwards — the game stops at the first
+  gap), or
+- numbered and unnumbered files are mixed for one variant (the numbered sequence wins).
 
 ### Configuration — `uploader_config.json`
 

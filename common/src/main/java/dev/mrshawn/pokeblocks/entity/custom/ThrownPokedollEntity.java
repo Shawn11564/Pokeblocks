@@ -1,9 +1,11 @@
 package dev.mrshawn.pokeblocks.entity.custom;
 
 import dev.mrshawn.pokeblocks.item.ThrowableDolls;
+import dev.mrshawn.pokeblocks.item.TrappedDolls;
 import dev.mrshawn.pokeblocks.registry.EntityRegistry;
 import dev.mrshawn.pokeblocks.registry.ItemRegistry;
 import net.minecraft.core.particles.ParticleTypes;
+import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.util.Mth;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.entity.EntityType;
@@ -37,8 +39,14 @@ import org.jetbrains.annotations.Nullable;
  *   <li>anything else (occupied head, other entity, obstructed or protected placement) →
  *       the doll drops as an item where it landed.</li>
  * </ul>
+ * A <b>trapped</b> doll ({@link TrappedDolls}) that hits a player overrides the first rule: it
+ * force-replaces their helmet and arms the detonation countdown ({@link TrappedDolls#hitPlayer}).
+ * Every other landing keeps the trapped marker on the doll — placed, it becomes an armed block;
+ * dropped or stand-worn, it stays an armed item (no timer: only a player hit starts one).
+ * <p>
  * The carried stack keeps its throwable marker while in flight (pick-block honesty); every landing
- * outcome re-mints the plain doll via {@link ThrowableDolls#strip} — one snowball, one throw.
+ * outcome re-mints the (possibly still trapped) plain doll via {@link ThrowableDolls#strip} — one
+ * snowball, one throw.
  */
 public class ThrownPokedollEntity extends ThrowableItemProjectile {
 
@@ -72,6 +80,10 @@ public class ThrownPokedollEntity extends ThrowableItemProjectile {
 
 		// setItemSlot -> onEquipItem plays the doll's equip sound and emits the EQUIP game event.
 		ItemStack doll = landedDoll();
+		if (result.getEntity() instanceof ServerPlayer target && TrappedDolls.isTrapped(doll)) {
+			TrappedDolls.hitPlayer(target, doll);
+			return;
+		}
 		if (result.getEntity() instanceof Player target && target.getItemBySlot(EquipmentSlot.HEAD).isEmpty()) {
 			target.setItemSlot(EquipmentSlot.HEAD, doll);
 			return;

@@ -21,6 +21,8 @@ public final class PokeblocksRecipeSerializers {
 	public static Supplier<GiganticDollRecipe.Serializer> GIGANTIC_DOLL;
 	public static Supplier<LaserPointerDyeRecipe.Serializer> LASER_DYE;
 	public static Supplier<ThrowableDollRecipe.Serializer> THROWABLE_DOLL;
+	public static Supplier<TrappedDollRecipe.Serializer> TRAPPED_DOLL;
+	public static Supplier<PokedollPhoneRecipe.Serializer> POKEDOLL_PHONE;
 
 	public static void init() {
 		SHAPED = PokeblocksCommon.COMMON_PLATFORM.registerRecipeSerializer(
@@ -31,5 +33,9 @@ public final class PokeblocksRecipeSerializers {
 				"laser_dye", LaserPointerDyeRecipe.Serializer::new);
 		THROWABLE_DOLL = PokeblocksCommon.COMMON_PLATFORM.registerRecipeSerializer(
 				"throwable_doll", ThrowableDollRecipe.Serializer::new);
+		TRAPPED_DOLL = PokeblocksCommon.COMMON_PLATFORM.registerRecipeSerializer(
+				"trapped_doll", TrappedDollRecipe.Serializer::new);
+		POKEDOLL_PHONE = PokeblocksCommon.COMMON_PLATFORM.registerRecipeSerializer(
+				"pokedoll_phone", PokedollPhoneRecipe.Serializer::new);
 	}
 }

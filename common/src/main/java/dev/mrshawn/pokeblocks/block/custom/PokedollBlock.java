@@ -6,10 +6,14 @@ import dev.mrshawn.pokeblocks.block.ParticleSourceBlock;
 import dev.mrshawn.pokeblocks.block.entity.custom.PokedollBlockEntity;
 import dev.mrshawn.pokeblocks.client.model.PokeblocksAssetResolver;
 import dev.mrshawn.pokeblocks.constants.ModSettings;
+import dev.mrshawn.pokeblocks.entity.custom.FigurineEntity;
 import dev.mrshawn.pokeblocks.interaction.DollInteractionRegistry;
+import dev.mrshawn.pokeblocks.item.MemorialDolls;
+import dev.mrshawn.pokeblocks.item.TrappedDolls;
 import dev.mrshawn.pokeblocks.item.custom.PokedollItem;
 import dev.mrshawn.pokeblocks.pokemon.ModelFlag;
 import dev.mrshawn.pokeblocks.registry.BlockEntityRegistry;
+import dev.mrshawn.pokeblocks.registry.EntityRegistry;
 import dev.mrshawn.pokeblocks.registry.SoundRegistry;
 import dev.mrshawn.pokeblocks.shape.DollShapes;
 import dev.mrshawn.pokeblocks.utils.ColorFactory;
@@ -17,15 +21,19 @@ import net.minecraft.client.Minecraft;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.core.particles.DustParticleOptions;
+import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
+import net.minecraft.server.level.ServerLevel;
 import net.minecraft.sounds.SoundEvents;
 import net.minecraft.sounds.SoundSource;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResult;
 import net.minecraft.world.ItemInteractionResult;
+import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
+import net.minecraft.world.phys.Vec3;
 import net.minecraft.world.item.context.BlockPlaceContext;
 import net.minecraft.world.level.BlockGetter;
 import net.minecraft.world.level.Level;
@@ -106,6 +114,66 @@ public class PokedollBlock extends BaseEntityBlock implements EntityBlock, Simpl
 				.setValue(WATERLOGGED, fluidState.getType() == Fluids.WATER);
 	}
 
+	/**
+	 * Placing a memorial doll (see {@link MemorialDolls} — the doll a fallen tamed figurine gave
+	 * back) brings that figurine back: it spawns beside the doll, already tamed to the placer,
+	 * sitting and facing its favorite doll. The marker rides {@code custom_data}, which the
+	 * block-entity round trip never copies, so breaking the placed doll returns a plain one —
+	 * one memorial, one revival.
+	 */
+	@Override
+	public void setPlacedBy(Level level, BlockPos pos, BlockState state, @Nullable LivingEntity placer, ItemStack stack) {
+		super.setPlacedBy(level, pos, state, placer, stack);
+		// A trapped doll (see TrappedDolls) stays armed when placed. Like the memorial marker, the
+		// trapped marker rides custom_data, which the block-entity data transfer never copies — so
+		// it is handed over explicitly here and handed back in getDrops/getCloneItemStack.
+		if (!level.isClientSide() && level.getBlockEntity(pos) instanceof PokedollBlockEntity pokedoll
+				&& TrappedDolls.isTrapped(stack)) {
+			pokedoll.setTrapped(true);
+		}
+		if (!(level instanceof ServerLevel serverLevel) || !MemorialDolls.isMemorial(stack)) {
+			return;
+		}
+
+		FigurineEntity figurine = EntityRegistry.FIGURINE_ENTITY.get().create(serverLevel);
+		if (figurine == null) {
+			return;
+		}
+		figurine.setFigurine(MemorialDolls.figurineOf(stack), MemorialDolls.flagsOf(stack));
+		String name = MemorialDolls.nameOf(stack);
+		if (!name.isEmpty()) {
+			figurine.setCustomName(Component.literal(name));
+		}
+		if (placer instanceof Player player) {
+			// setTame instead of tame(): rejoining a memorial shouldn't re-fire the tame-an-animal
+			// advancement. Sitting only sticks on tamed mobs (SitWhenOrderedToGoal), so the sit
+			// order is tied to having an owner; a placer-less placement spawns it standing.
+			figurine.setTame(true, true);
+			figurine.setOwnerUUID(player.getUUID());
+			figurine.setOrderedToSit(true);
+			figurine.setInSittingPose(true);
+		}
+		// A revived figurine is bound to its memorial: it stays tamed (sit toggle and all) but never
+		// follows its owner again — it wanders around the doll within the configured radius instead.
+		figurine.setMemorialAnchor(pos);
+
+		// First free side wins, the figurine facing back toward its doll; on top as a last resort.
+		boolean placed = false;
+		for (Direction side : Direction.Plane.HORIZONTAL) {
+			Vec3 spot = Vec3.atBottomCenterOf(pos.relative(side));
+			figurine.moveTo(spot.x, spot.y, spot.z, side.getOpposite().toYRot(), 0.0f);
+			if (serverLevel.noCollision(figurine)) {
+				placed = true;
+				break;
+			}
+		}
+		if (!placed) {
+			Vec3 top = Vec3.atBottomCenterOf(pos.above());
+			figurine.moveTo(top.x, top.y, top.z, state.getValue(ROTATION) * 22.5f, 0.0f);
+		}
+		serverLevel.addFreshEntity(figurine);
+	}
+
 	@Override
 	protected BlockState rotate(BlockState state, Rotation rotation) {
 		return state.setValue(ROTATION, rotation.rotate(state.getValue(ROTATION), 16));
@@ -149,7 +217,10 @@ public class PokedollBlock extends BaseEntityBlock implements EntityBlock, Simpl
 			for (ModelFlag flag : ModelFlag.values()) {
 				flagMap.put(flag, pokedoll.getFlag(flag));
 			}
-			return PokedollItem.createPokedoll(pokedoll.getPokemon(), flagMap);
+			ItemStack copy = PokedollItem.createPokedoll(pokedoll.getPokemon(), flagMap);
+			// isTrapped is only known server-side (integrated server / dedicated pick path);
+			// a client-side pick of someone else's trap yields the plain doll, which is the point.
+			return pokedoll.isTrapped() ? TrappedDolls.makeTrapped(copy) : copy;
 		}
 		return super.getCloneItemStack(level, pos, state);
 	}
@@ -169,7 +240,9 @@ public class PokedollBlock extends BaseEntityBlock implements EntityBlock, Simpl
 			for (ModelFlag flag : ModelFlag.values()) {
 				flagMap.put(flag, pokedoll.getFlag(flag));
 			}
-			return java.util.List.of(PokedollItem.createPokedoll(pokedoll.getPokemon(), flagMap));
+			ItemStack drop = PokedollItem.createPokedoll(pokedoll.getPokemon(), flagMap);
+			// Mining a trapped doll returns it still armed — popping is the only way it goes off.
+			return java.util.List.of(pokedoll.isTrapped() ? TrappedDolls.makeTrapped(drop) : drop);
 		}
 		return super.getDrops(state, params);
 	}
@@ -217,7 +290,12 @@ public class PokedollBlock extends BaseEntityBlock implements EntityBlock, Simpl
 		if (be instanceof PokedollBlockEntity pokedoll) {
 			// Check for break (only non-waxed dolls)
 			if (pokedoll.recordClick()) {
-				breakDoll(level, pos, pokedoll);
+				if (pokedoll.isTrapped()) {
+					// The trap springs: no wool, no substitute — a single-TNT blast with block damage.
+					TrappedDolls.detonateBlock(level, pos);
+				} else {
+					breakDoll(level, pos, pokedoll);
+				}
 				return InteractionResult.SUCCESS;
 			}
 

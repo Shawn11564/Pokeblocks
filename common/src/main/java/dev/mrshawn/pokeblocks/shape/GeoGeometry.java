@@ -102,8 +102,18 @@ public final class GeoGeometry {
 
 	/** Parses raw {@code .geo.json} bytes with {@code pose} baked into the bone chains. */
 	public static GeoGeometry parse(byte[] bytes, GeoPose pose) throws IOException {
+		return parse(bytes, pose, Set.of());
+	}
+
+	/**
+	 * Parses raw {@code .geo.json} bytes with {@code pose} baked in and every bone in
+	 * {@code excludedBones} dropped — a bone whose name (or any ancestor's name) is in the set
+	 * contributes no cubes. Used to size the walking figurine entity from the figure alone,
+	 * without its display box. A model whose every cube is excluded throws like a cube-less one.
+	 */
+	public static GeoGeometry parse(byte[] bytes, GeoPose pose, Set<String> excludedBones) throws IOException {
 		try {
-			return parseInternal(new String(bytes, StandardCharsets.UTF_8), pose);
+			return parseInternal(new String(bytes, StandardCharsets.UTF_8), pose, excludedBones);
 		} catch (IOException e) {
 			throw e;
 		} catch (Exception e) {
@@ -111,7 +121,7 @@ public final class GeoGeometry {
 		}
 	}
 
-	private static GeoGeometry parseInternal(String json, GeoPose pose) throws IOException {
+	private static GeoGeometry parseInternal(String json, GeoPose pose, Set<String> excludedBones) throws IOException {
 		JsonObject root = JsonParser.parseString(json).getAsJsonObject();
 		JsonArray geometries = root.getAsJsonArray("minecraft:geometry");
 		if (geometries == null || geometries.isEmpty()) {
@@ -141,6 +151,7 @@ public final class GeoGeometry {
 			JsonObject bone = element.getAsJsonObject();
 			JsonArray boneCubes = bone.getAsJsonArray("cubes");
 			if (boneCubes == null || boneCubes.isEmpty()) continue;
+			if (!excludedBones.isEmpty() && isExcluded(bone, bonesByName, excludedBones)) continue;
 
 			Affine3 chain = chainFor(bone, bonesByName, chains, new HashSet<>(), pose);
 			// A chain collapsed by pose scale renders as nothing — cull its cubes (also keeps the
@@ -160,6 +171,27 @@ public final class GeoGeometry {
 			throw new IOException("geometry has no cubes");
 		}
 		return new GeoGeometry(cubes);
+	}
+
+	/**
+	 * Whether a bone sits inside an excluded subtree: its own name, or any ancestor's, is in
+	 * {@code excludedBones}. Walks the parent chain with the same tolerance as {@link #chainFor}
+	 * (a missing parent or a cycle just ends the walk).
+	 */
+	private static boolean isExcluded(JsonObject bone, Map<String, JsonObject> bonesByName, Set<String> excludedBones) {
+		Set<String> visited = new HashSet<>();
+		JsonObject current = bone;
+		while (current != null) {
+			String name = current.has("name") ? current.get("name").getAsString() : null;
+			if (name != null) {
+				if (excludedBones.contains(name)) return true;
+				if (!visited.add(name)) return false;
+			}
+			String parentName = current.has("parent") ? current.get("parent").getAsString() : null;
+			JsonObject parent = parentName != null ? bonesByName.get(parentName) : null;
+			current = parent == current ? null : parent;
+		}
+		return false;
 	}
 
 	/**

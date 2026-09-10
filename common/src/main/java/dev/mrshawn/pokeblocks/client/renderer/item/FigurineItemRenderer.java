@@ -34,6 +34,9 @@ public class FigurineItemRenderer extends GeoItemRenderer<FigurineItem> {
 
 	private final FigurineItemModel model;
 
+	/** Whether the stack being rendered is a boxless figurine DOLL (renders caseless everywhere). */
+	private boolean currentBoxless = false;
+
 	public FigurineItemRenderer() {
 		super(new FigurineItemModel());
 		this.model = (FigurineItemModel) this.getGeoModel();
@@ -50,6 +53,7 @@ public class FigurineItemRenderer extends GeoItemRenderer<FigurineItem> {
 	public void renderByItem(ItemStack stack, ItemDisplayContext transformType, PoseStack poseStack,
 							 MultiBufferSource bufferSource, int packedLight, int packedOverlay) {
 		this.model.setCurrentItemStack(stack);
+		this.currentBoxless = FigurineItem.isBoxless(stack);
 		super.renderByItem(stack, transformType, poseStack, bufferSource, packedLight, packedOverlay);
 	}
 
@@ -58,8 +62,9 @@ public class FigurineItemRenderer extends GeoItemRenderer<FigurineItem> {
 								  MultiBufferSource bufferSource, VertexConsumer buffer, boolean isReRender,
 								  float partialTick, int packedLight, int packedOverlay, int colour) {
 		// Skipping the bone here (rather than mutating its hidden state) keeps the toggle
-		// stateless — no cleanup needed and no leakage into other render paths.
-		if (HIDE_BOX && BOX_BONE.equals(bone.getName())) {
+		// stateless — no cleanup needed and no leakage into other render paths. A boxless
+		// figurine DOLL stack never draws its case, in any display context.
+		if ((HIDE_BOX || this.currentBoxless) && BOX_BONE.equals(bone.getName())) {
 			return;
 		}
 		super.renderRecursively(poseStack, animatable, bone, renderType, bufferSource, buffer, isReRender,

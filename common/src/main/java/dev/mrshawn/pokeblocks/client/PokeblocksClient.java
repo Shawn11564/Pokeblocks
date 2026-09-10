@@ -10,6 +10,7 @@ import dev.mrshawn.pokeblocks.client.renderer.block.DecorativeBlockRenderer;
 import dev.mrshawn.pokeblocks.client.renderer.block.DigSiteBlockRenderer;
 import dev.mrshawn.pokeblocks.client.renderer.block.FigurineBlockRenderer;
 import dev.mrshawn.pokeblocks.client.renderer.block.PokedollBlockRenderer;
+import dev.mrshawn.pokeblocks.client.renderer.entity.FigurineEntityRenderer;
 import dev.mrshawn.pokeblocks.client.renderer.entity.LaserDotRenderer;
 import dev.mrshawn.pokeblocks.registry.*;
 import dev.mrshawn.pokeblocks.shape.DollShapes;
@@ -69,6 +70,7 @@ public final class PokeblocksClient {
 		// Vanilla snowball-style renderer: draws the entity's synched item stack, which routes through
 		// the pokedoll's GeckoLib item renderer — so the actual 3D doll model tumbles through the air.
 		entityRenderers.accept(EntityRegistry.THROWN_POKEDOLL_ENTITY.get(), ThrownItemRenderer::new);
+		entityRenderers.accept(EntityRegistry.FIGURINE_ENTITY.get(), FigurineEntityRenderer::new);
 	}
 
 	/**

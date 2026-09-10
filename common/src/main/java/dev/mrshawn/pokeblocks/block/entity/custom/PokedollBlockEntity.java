@@ -38,6 +38,16 @@ public class PokedollBlockEntity extends BlockEntity implements GeoBlockEntity {
 	private long squishStartTick = -1;
 	// Duration of the squish animation in ticks.
 	public static final int SQUISH_DURATION_TICKS = 8;
+	/**
+	 * How many times this doll has been squeaked, used to pick the squeak texture frame (see
+	 * {@code PokeblocksAssetResolver.pokedollSqueakTextures}). Starts at -1 so the first squeak lands on
+	 * frame 0 ({@code _squeak_1}). Synced to clients — the texture swap is purely visual, but every
+	 * player watching the doll must land on the same frame. Wraps at {@link #SQUEAK_INDEX_WRAP} rather
+	 * than overflowing; the one repeated frame at the wrap is not worth persisting a long for.
+	 */
+	private int squeakIndex = -1;
+	/** Wrap point for {@link #squeakIndex}; a power of two so power-of-two frame counts keep cycling cleanly. */
+	private static final int SQUEAK_INDEX_WRAP = 1 << 16;
 	// Number of rapid clicks required to break the doll.
 	public static final int BREAK_CLICK_THRESHOLD = 9;
 	// Time window in ticks within which clicks count as "rapid" (1.5 seconds).
@@ -49,6 +59,16 @@ public class PokedollBlockEntity extends BlockEntity implements GeoBlockEntity {
 
 	/** Whether this doll has been waxed with honeycomb. */
 	private boolean waxed = false;
+
+	/**
+	 * Whether this doll was placed from a trapped stack (see
+	 * {@link dev.mrshawn.pokeblocks.item.TrappedDolls}): popping it explodes instead of dropping
+	 * wool, and mining it returns the trapped doll. Server-side only — deliberately absent from
+	 * {@link #getUpdateTag} and {@link #saveToItem}'s canonical identity tag, so clients (and
+	 * client-side mods) can't sniff a placed trap and the armed state rides drops/pick-block as
+	 * the {@code custom_data} marker instead ({@code PokedollBlock#getDrops}).
+	 */
+	private boolean trapped = false;
 
 	public PokedollBlockEntity(BlockPos pos, BlockState state) {
 		super(BlockEntityRegistry.POKEDOLL_BLOCK_ENTITY.get(), pos, state);
@@ -119,13 +139,40 @@ public class PokedollBlockEntity extends BlockEntity implements GeoBlockEntity {
 		syncToClient();
 	}
 
+	// --- Trapped ---
+
+	public boolean isTrapped() {
+		return trapped;
+	}
+
+	public void setTrapped(boolean trapped) {
+		this.trapped = trapped;
+		setChanged();
+	}
+
 	// --- Squish animation ---
 
 	public void triggerSquish() {
 		if (this.level != null) {
 			this.squishStartTick = this.level.getGameTime();
+			this.squeakIndex = (this.squeakIndex + 1) % SQUEAK_INDEX_WRAP;
 			syncToClient();
 		}
+	}
+
+	/**
+	 * Whether the doll is mid-squeak right now, i.e. within {@link #SQUISH_DURATION_TICKS} of the last
+	 * squish. Drives the swap to the doll's squeak texture while the squish plays out.
+	 */
+	public boolean isSqueaking() {
+		if (squishStartTick < 0 || level == null) return false;
+		long elapsed = level.getGameTime() - squishStartTick;
+		return elapsed >= 0 && elapsed <= SQUISH_DURATION_TICKS;
+	}
+
+	/** 0-based count of squeaks so far, picking which numbered squeak texture this squeak shows. */
+	public int getSqueakIndex() {
+		return Math.max(squeakIndex, 0);
 	}
 
 	public float getSquishScale(float partialTick) {
@@ -239,7 +286,11 @@ public class PokedollBlockEntity extends BlockEntity implements GeoBlockEntity {
 			tag.putBoolean(flag.getTagName(), getFlag(flag));
 		}
 		tag.putLong("squishStartTick", this.squishStartTick);
+		tag.putInt("squeakIndex", this.squeakIndex);
 		tag.putBoolean("waxed", this.waxed);
+		if (this.trapped) {
+			tag.putBoolean("trapped", true);
+		}
 	}
 
 	@Override
@@ -259,8 +310,14 @@ public class PokedollBlockEntity extends BlockEntity implements GeoBlockEntity {
 		if (tag.contains("squishStartTick")) {
 			this.squishStartTick = tag.getLong("squishStartTick");
 		}
+		if (tag.contains("squeakIndex")) {
+			this.squeakIndex = tag.getInt("squeakIndex");
+		}
 		if (tag.contains("waxed")) {
 			this.waxed = tag.getBoolean("waxed");
+		}
+		if (tag.contains("trapped")) {
+			this.trapped = tag.getBoolean("trapped");
 		}
 	}
 
@@ -272,6 +329,7 @@ public class PokedollBlockEntity extends BlockEntity implements GeoBlockEntity {
 			tag.putBoolean(flag.getTagName(), getFlag(flag));
 		}
 		tag.putLong("squishStartTick", this.squishStartTick);
+		tag.putInt("squeakIndex", this.squeakIndex);
 		tag.putBoolean("waxed", this.waxed);
 		return tag;
 	}

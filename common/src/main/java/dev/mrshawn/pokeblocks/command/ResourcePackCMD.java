@@ -104,6 +104,10 @@ public class ResourcePackCMD {
 			copied += copyAsset("textures/block/pokedoll_applin_texture.png",       pack.resolve("assets/dolls/textures/exampledoll.png"));
 			copied += copyAsset("textures/block/pokedoll_applin_shiny_texture.png", pack.resolve("assets/dolls/textures/exampledoll_shiny.png"));
 			copied += copyAsset("animations/block/pokedoll_applin.animation.json",  pack.resolve("assets/dolls/animations/exampledoll.animation.json"));
+			// Squeak textures — shown instead of the regular texture while the doll is squeaked, cycling
+			// one numbered frame per squeak. (Frame 2 is the normal skin, so the doll flashes and settles.)
+			copied += copyAsset("textures/block/pokedoll_applin_shiny_texture.png", pack.resolve("assets/dolls/textures/exampledoll_squeak_1.png"));
+			copied += copyAsset("textures/block/pokedoll_applin_texture.png",       pack.resolve("assets/dolls/textures/exampledoll_squeak_2.png"));
 			// Figurine — model + texture.
 			copied += copyAsset("geo/block/doncheadle_figurine.geo.json",           pack.resolve("assets/figurines/models/examplefig.geo.json"));
 			copied += copyAsset("textures/block/doncheadle_figurine_texture.png",   pack.resolve("assets/figurines/textures/examplefig.png"));
@@ -173,7 +177,11 @@ public class ResourcePackCMD {
 			fallback, but the typed layout above is preferred.
 
 			WHAT THIS PACK ADDS (all copied from existing assets so they render — replace with your own):
-			  dolls/exampledoll       : a doll with model + texture + shiny texture + animation
+			  dolls/exampledoll       : a doll with model + texture + shiny texture + animation,
+			                            plus squeak textures (exampledoll_squeak_1/_2) that replace the
+			                            regular texture while the doll is squeaked, one frame per squeak.
+			                            Drop the _1/_2 for a single squeak texture used every time; the
+			                            marker goes AFTER any flag suffix (exampledoll_shiny_squeak.png).
 			  figurines/examplefig    : a figurine with model + texture
 			  decorations/exampledeco : a generic data-driven decoration with model + texture
 

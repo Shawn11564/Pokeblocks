@@ -1,6 +1,7 @@
 package dev.mrshawn.pokeblocks.registry;
 
 import dev.mrshawn.pokeblocks.PokeblocksCommon;
+import dev.mrshawn.pokeblocks.entity.custom.FigurineEntity;
 import dev.mrshawn.pokeblocks.entity.custom.LaserDotEntity;
 import dev.mrshawn.pokeblocks.entity.custom.SeatEntity;
 import dev.mrshawn.pokeblocks.entity.custom.ThrownPokedollEntity;
@@ -17,6 +18,7 @@ public final class EntityRegistry {
     private static final String SEAT_ID = "seat";
     private static final String LASER_DOT_ID = "laser_dot";
     private static final String THROWN_POKEDOLL_ID = "thrown_pokedoll";
+    private static final String FIGURINE_ID = "figurine";
 
     public static final Supplier<EntityType<SeatEntity>> SEAT_ENTITY = PokeblocksCommon.COMMON_PLATFORM.registerEntity(
             SEAT_ID,
@@ -56,5 +58,18 @@ public final class EntityRegistry {
                     .clientTrackingRange(4)
                     .updateInterval(10)
                     .build(THROWN_POKEDOLL_ID)
+    );
+
+    /**
+     * A living, walking figurine (see {@link FigurineEntity}). The registered size is only the
+     * fallback: each spawned entity refreshes to a hitbox compiled from its own figure's geo.
+     * Never spawns naturally — created by {@code /pokeblocks figurinespawn} (or {@code /summon}).
+     */
+    public static final Supplier<EntityType<FigurineEntity>> FIGURINE_ENTITY = PokeblocksCommon.COMMON_PLATFORM.registerEntity(
+            FIGURINE_ID,
+            () -> EntityType.Builder.<FigurineEntity>of(FigurineEntity::new, MobCategory.CREATURE)
+                    .sized(FigurineEntity.DEFAULT_WIDTH, FigurineEntity.DEFAULT_HEIGHT)
+                    .clientTrackingRange(10)
+                    .build(FIGURINE_ID)
     );
 }
