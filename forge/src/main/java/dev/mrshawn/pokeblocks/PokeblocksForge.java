@@ -1,5 +1,7 @@
 package dev.mrshawn.pokeblocks;
 
+import dev.mrshawn.pokeblocks.addon.PokeblocksAddons;
+import dev.mrshawn.pokeblocks.addon.PokeblocksForgeAddon;
 import dev.mrshawn.pokeblocks.command.ModCommands;
 import dev.mrshawn.pokeblocks.compendium.ClientCompendiumSync;
 import dev.mrshawn.pokeblocks.compendium.CompendiumProgressTracker;
@@ -109,7 +111,7 @@ public final class PokeblocksForge {
 	 * (same unchecked adaptation GeckoLib's Forge networking uses).
 	 */
 	@SuppressWarnings("unchecked")
-	private static <T extends CustomPacketPayload> net.minecraft.network.codec.StreamCodec<RegistryFriendlyByteBuf, T> regCodec(
+	public static <T extends CustomPacketPayload> net.minecraft.network.codec.StreamCodec<RegistryFriendlyByteBuf, T> regCodec(
 			net.minecraft.network.codec.StreamCodec<net.minecraft.network.FriendlyByteBuf, T> codec) {
 		return (net.minecraft.network.codec.StreamCodec<RegistryFriendlyByteBuf, T>) (net.minecraft.network.codec.StreamCodec<?, ?>) codec;
 	}
@@ -206,6 +208,10 @@ public final class PokeblocksForge {
 		TrappedDollCountdown.setNetworkBridge(
 				player -> TRAPPED_SYNC_CHANNEL.isRemotePresent(player.connection.getConnection()),
 				(player, data) -> TRAPPED_SYNC_CHANNEL.send(new TrappedDollPayloads.TimersPayload(data), PacketDistributor.PLAYER.with(player)));
+
+		for (PokeblocksForgeAddon addon : PokeblocksAddons.load(PokeblocksForgeAddon.class)) {
+			addon.onConstruct(modEventBus);
+		}
 
 		MinecraftForge.EVENT_BUS.register(this);
 	}

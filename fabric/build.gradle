@@ -90,5 +90,7 @@ tasks.named("sourcesJar", Jar) {
 }
 
 processResources {
-    from(project(":common").sourceSets.main.resources.srcDirs)
+    from(project(":common").sourceSets.main.resources)
 }
+
+apply from: rootProject.file("gradle/addons.gradle")

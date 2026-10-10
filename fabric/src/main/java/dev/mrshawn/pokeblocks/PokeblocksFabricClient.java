@@ -1,5 +1,7 @@
 package dev.mrshawn.pokeblocks;
 
+import dev.mrshawn.pokeblocks.addon.PokeblocksAddons;
+import dev.mrshawn.pokeblocks.addon.PokeblocksFabricAddon;
 import dev.mrshawn.pokeblocks.client.PokeblocksClient;
 import dev.mrshawn.pokeblocks.client.renderer.atlas.DollRenderBatch;
 import dev.mrshawn.pokeblocks.client.renderer.atlas.DollTextureAtlas;
@@ -63,6 +65,10 @@ public final class PokeblocksFabricClient implements ClientModInitializer {
         // wearer's own HUD countdown is a common Gui mixin — no per-loader hook needed.)
         ClientPlayNetworking.registerGlobalReceiver(TrappedDollPayloads.TimersPayload.TYPE, (payload, context) ->
                 ClientTrappedDollTimers.handleTimers(payload.data()));
+
+        for (PokeblocksFabricAddon addon : PokeblocksAddons.load(PokeblocksFabricAddon.class)) {
+            addon.onInitializeClient();
+        }
 
         // Re-scan client assets on every resource (re)load. This fires on the initial client resource
         // load (replacing the former one-shot CLIENT_STARTED scan) and again whenever packs change

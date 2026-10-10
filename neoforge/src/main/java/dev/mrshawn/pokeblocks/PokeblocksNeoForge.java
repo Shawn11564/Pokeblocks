@@ -1,5 +1,7 @@
 package dev.mrshawn.pokeblocks;
 
+import dev.mrshawn.pokeblocks.addon.PokeblocksAddons;
+import dev.mrshawn.pokeblocks.addon.PokeblocksNeoForgeAddon;
 import dev.mrshawn.pokeblocks.command.ModCommands;
 import dev.mrshawn.pokeblocks.compendium.ClientCompendiumSync;
 import dev.mrshawn.pokeblocks.compendium.CompendiumProgressTracker;
@@ -97,6 +99,9 @@ public final class PokeblocksNeoForge {
 		TrappedDollCountdown.setNetworkBridge(
 				player -> player.connection.hasChannel(TrappedDollPayloads.TimersPayload.TYPE),
 				(player, data) -> PacketDistributor.sendToPlayer(player, new TrappedDollPayloads.TimersPayload(data)));
+		for (PokeblocksNeoForgeAddon addon : PokeblocksAddons.load(PokeblocksNeoForgeAddon.class)) {
+			addon.onConstruct(modEventBus);
+		}
 
 		NeoForge.EVENT_BUS.register(this);
 	}

@@ -1,0 +1,69 @@
+package dev.mrshawn.pokeblocks.addon;
+
+import dev.mrshawn.pokeblocks.block.entity.custom.PokedollBlockEntity;
+import dev.mrshawn.pokeblocks.config.ConfigSection;
+import net.minecraft.core.BlockPos;
+import net.minecraft.network.chat.Component;
+import net.minecraft.server.MinecraftServer;
+import net.minecraft.server.level.ServerLevel;
+import net.minecraft.server.level.ServerPlayer;
+import net.minecraft.world.InteractionResult;
+import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.level.block.state.BlockState;
+import org.jetbrains.annotations.Nullable;
+
+import java.util.List;
+
+/**
+ * A feature compiled into the mod from a local add-on folder (see {@code gradle/addons.gradle}) instead
+ * of from this repository. Add-ons are found with {@link java.util.ServiceLoader}: list the class in
+ * {@code META-INF/services/dev.mrshawn.pokeblocks.addon.PokeblocksAddon}.
+ * <p>
+ * Every hook is a no-op by default, so a build without add-ons behaves exactly as if these hooks did
+ * not exist. Client-only hooks live in {@link dev.mrshawn.pokeblocks.client.addon.PokeblocksClientAddon};
+ * loader-specific ones (networking) in each loader's own add-on interface.
+ */
+public interface PokeblocksAddon {
+
+	/**
+	 * Called at the end of {@code PokeblocksCommon.doRegistrations()}: register entity types, sounds
+	 * and the like through {@code PokeblocksCommon.COMMON_PLATFORM} here.
+	 */
+	default void register() {}
+
+	/** Extra {@code config.toml} sections, written after the mod's own and reloaded with them. */
+	default List<ConfigSection> configSections() {
+		return List.of();
+	}
+
+	/**
+	 * Server side: a player right-clicked a placed pokedoll with an empty hand. Runs before the
+	 * squeak / pop handling; return a result to consume the click, or {@code null} to let it through.
+	 */
+	@Nullable
+	default InteractionResult useDoll(ServerLevel level, BlockPos pos, BlockState state, PokedollBlockEntity doll, Player player) {
+		return null;
+	}
+
+	/** Extra tooltip lines for a pokedoll item, added after its throwable/trapped lines and before its rarity. */
+	default void appendDollTooltip(String pokemon, ItemStack stack, List<Component> tooltip) {}
+
+	/**
+	 * How a species' name is spelled in doll item names, or {@code null} to derive it from the id
+	 * ({@code mr_mime} becomes "Mr Mime").
+	 */
+	@Nullable
+	default String dollSpeciesName(String pokemon) {
+		return null;
+	}
+
+	/** A server is about to start, before its config is (re)loaded. */
+	default void onServerAboutToStart(MinecraftServer server) {}
+
+	/** A player finished joining a server (after the mod's own join-time syncs). */
+	default void onPlayerJoin(ServerPlayer player) {}
+
+	/** End of every server tick. */
+	default void onServerTick(MinecraftServer server) {}
+}

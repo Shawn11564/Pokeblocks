@@ -1,5 +1,7 @@
 package dev.mrshawn.pokeblocks.mixin;
 
+import dev.mrshawn.pokeblocks.addon.PokeblocksAddon;
+import dev.mrshawn.pokeblocks.addon.PokeblocksAddons;
 import dev.mrshawn.pokeblocks.compendium.CompendiumProgressTracker;
 import dev.mrshawn.pokeblocks.phone.DigQuestManager;
 import dev.mrshawn.pokeblocks.resourcepack.sync.ServerPackSync;
@@ -31,5 +33,8 @@ public abstract class PlayerJoinMixin {
 		// Sends the player's active phone dig sites (or an explicit clear, so a stale set from a
 		// previous world never lingers); no-op for clients without the payload.
 		DigQuestManager.syncTo(player);
+		for (PokeblocksAddon addon : PokeblocksAddons.all()) {
+			addon.onPlayerJoin(player);
+		}
 	}
 }

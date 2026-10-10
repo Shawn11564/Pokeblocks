@@ -4,6 +4,8 @@ import com.mojang.serialization.MapCodec;
 import dev.mrshawn.pokeblocks.PokeblocksCommon;
 import dev.mrshawn.pokeblocks.block.ParticleSourceBlock;
 import dev.mrshawn.pokeblocks.block.entity.custom.PokedollBlockEntity;
+import dev.mrshawn.pokeblocks.addon.PokeblocksAddon;
+import dev.mrshawn.pokeblocks.addon.PokeblocksAddons;
 import dev.mrshawn.pokeblocks.client.model.PokeblocksAssetResolver;
 import dev.mrshawn.pokeblocks.constants.ModSettings;
 import dev.mrshawn.pokeblocks.entity.custom.FigurineEntity;
@@ -288,6 +290,13 @@ public class PokedollBlock extends BaseEntityBlock implements EntityBlock, Simpl
 
 		BlockEntity be = level.getBlockEntity(pos);
 		if (be instanceof PokedollBlockEntity pokedoll) {
+			if (level instanceof ServerLevel serverLevel) {
+				for (PokeblocksAddon addon : PokeblocksAddons.all()) {
+					InteractionResult result = addon.useDoll(serverLevel, pos, state, pokedoll, player);
+					if (result != null) return result;
+				}
+			}
+
 			// Check for break (only non-waxed dolls)
 			if (pokedoll.recordClick()) {
 				if (pokedoll.isTrapped()) {

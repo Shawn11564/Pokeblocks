@@ -2,6 +2,8 @@ package dev.mrshawn.pokeblocks.client;
 
 import dev.mrshawn.pokeblocks.PokeblocksCommon;
 import dev.mrshawn.pokeblocks.PokeblocksLog;
+import dev.mrshawn.pokeblocks.client.addon.PokeblocksClientAddon;
+import dev.mrshawn.pokeblocks.client.addon.PokeblocksClientAddons;
 import dev.mrshawn.pokeblocks.client.model.PokeblocksAssetResolver;
 import dev.mrshawn.pokeblocks.client.renderer.block.BakedBoneMesh;
 import dev.mrshawn.pokeblocks.client.renderer.block.CullAwareGeoBlockRenderer;
@@ -73,6 +75,9 @@ public final class PokeblocksClient {
 		// the pokedoll's GeckoLib item renderer — so the actual 3D doll model tumbles through the air.
 		entityRenderers.accept(EntityRegistry.THROWN_POKEDOLL_ENTITY.get(), ThrownItemRenderer::new);
 		entityRenderers.accept(EntityRegistry.FIGURINE_ENTITY.get(), FigurineEntityRenderer::new);
+		for (PokeblocksClientAddon addon : PokeblocksClientAddons.all()) {
+			addon.registerEntityRenderers(entityRenderers);
+		}
 	}
 
 	/**
@@ -98,6 +103,9 @@ public final class PokeblocksClient {
 		// Texture-derived color samples (wool drops + particle tints) can go stale when a resource pack
 		// swaps textures under the same id.
 		ColorFactory.clearCaches();
+		for (PokeblocksClientAddon addon : PokeblocksClientAddons.all()) {
+			addon.onResourceReload();
+		}
 		PokemonRegistry.scanAndRegisterFromResources();
 		FigurineRegistry.scanAndRegisterFromResources();
 		CustomDecorationRegistry.scanAndRegisterFromResources();

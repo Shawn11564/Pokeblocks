@@ -1,5 +1,7 @@
 package dev.mrshawn.pokeblocks;
 
+import dev.mrshawn.pokeblocks.addon.PokeblocksAddon;
+import dev.mrshawn.pokeblocks.addon.PokeblocksAddons;
 import dev.mrshawn.pokeblocks.config.PokeblocksConfig;
 import dev.mrshawn.pokeblocks.item.RarityScoreCalculator;
 import dev.mrshawn.pokeblocks.item.loot.LootGroup;
@@ -142,5 +144,8 @@ public final class PokeblocksCommon {
 		SoundRegistry.init();
 		PokeblocksRecipeSerializers.init();
 		DollInteractions.init();
+		for (PokeblocksAddon addon : PokeblocksAddons.all()) {
+			addon.register();
+		}
 	}
 }

@@ -1,5 +1,7 @@
 package dev.mrshawn.pokeblocks;
 
+import dev.mrshawn.pokeblocks.addon.PokeblocksAddon;
+import dev.mrshawn.pokeblocks.addon.PokeblocksAddons;
 import dev.mrshawn.pokeblocks.config.ConfigSync;
 import dev.mrshawn.pokeblocks.config.PokeblocksConfig;
 import dev.mrshawn.pokeblocks.item.DollRarityAcquisitionDivisors;
@@ -25,6 +27,9 @@ public final class PokeblocksServerLifecycle {
             // Clear any loot pool cached from a previous server session so it
             // gets rebuilt fresh below with the correct set of pokemon.
             PokeblocksCommon.invalidateLootMap();
+            for (PokeblocksAddon addon : PokeblocksAddons.all()) {
+                addon.onServerAboutToStart(server);
+            }
 
             PokeblocksConfig.initialize(serverDir);
 

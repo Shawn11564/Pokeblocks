@@ -56,3 +56,9 @@ mc-test-report/
 auxiliary_tools/
 .claude
 graphify-out
+
+# Local add-ons (see gradle/addons.gradle): each one is its own repository
+/addons/
+
+# Personal Claude Code instructions
+CLAUDE.local.md

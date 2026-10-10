@@ -1,6 +1,7 @@
 package dev.mrshawn.pokeblocks.config;
 
 import dev.mrshawn.pokeblocks.PokeblocksLog;
+import dev.mrshawn.pokeblocks.addon.PokeblocksAddons;
 import dev.mrshawn.pokeblocks.item.DollRarityOverrides;
 import dev.mrshawn.pokeblocks.pokemon.ModelFlag;
 import net.minecraft.resources.ResourceLocation;
@@ -295,6 +296,10 @@ public class PokeblocksConfig {
 		frozenConfigFiles.clear();
 		shownConfigFiles.clear();
 		hiddenConfigFiles.clear();
+		List<ConfigSection> addonSections = PokeblocksAddons.configSections();
+		for (ConfigSection section : addonSections) {
+			section.reset();
+		}
 
 		if (configPath == null || !Files.exists(configPath)) return;
 
@@ -392,6 +397,13 @@ public class PokeblocksConfig {
 							case "frozen_files" -> i = parseStringFileList(lines, i, value, frozenConfigFiles);
 							case "show_files" -> i = parseStringFileList(lines, i, value, shownConfigFiles);
 							case "hide_files" -> i = parseStringFileList(lines, i, value, hiddenConfigFiles);
+						}
+					}
+					default -> {
+						for (ConfigSection section : addonSections) {
+							if (section.category().equals(currentCategory)) {
+								section.set(key, value);
+							}
 						}
 					}
 				}
@@ -637,6 +649,19 @@ public class PokeblocksConfig {
 					]""")
 	);
 
+	/** {@link #ALL_KEYS} followed by every add-on's sections (see {@link ConfigSection}). */
+	private static List<KeyDef> allKeys() {
+		List<ConfigSection> sections = PokeblocksAddons.configSections();
+		if (sections.isEmpty()) return ALL_KEYS;
+		List<KeyDef> keys = new ArrayList<>(ALL_KEYS);
+		for (ConfigSection section : sections) {
+			for (ConfigSection.Key key : section.keys()) {
+				keys.add(new KeyDef(section.category(), key.key(), key.comment(), key.defaultValue()));
+			}
+		}
+		return keys;
+	}
+
 	/**
 	 * Reads the existing config, detects missing keys and categories,
 	 * and appends them with their default values and comments.
@@ -665,7 +690,7 @@ public class PokeblocksConfig {
 
 			boolean modified = false;
 
-			for (KeyDef def : ALL_KEYS) {
+			for (KeyDef def : allKeys()) {
 				Set<String> keys = existingKeys.get(def.category());
 				if (keys != null && keys.contains(def.key())) continue;
 
@@ -975,7 +1000,7 @@ public class PokeblocksConfig {
 		sb.append("# Pokeblocks Configuration\n");
 
 		String lastCategory = "";
-		for (KeyDef def : ALL_KEYS) {
+		for (KeyDef def : allKeys()) {
 			if (!def.category().equals(lastCategory)) {
 				sb.append("\n[").append(def.category()).append("]\n");
 				lastCategory = def.category();
@@ -1003,14 +1028,14 @@ public class PokeblocksConfig {
 		return v;
 	}
 
-	private static boolean parseBoolean(String value, boolean defaultValue) {
+	public static boolean parseBoolean(String value, boolean defaultValue) {
 		value = value.toLowerCase();
 		if (value.equals("true")) return true;
 		if (value.equals("false")) return false;
 		return defaultValue;
 	}
 
-	private static float parseFloat(String value, float defaultValue) {
+	public static float parseFloat(String value, float defaultValue) {
 		try {
 			return Float.parseFloat(value);
 		} catch (NumberFormatException e) {
@@ -1018,8 +1043,18 @@ public class PokeblocksConfig {
 		}
 	}
 
+	/** Parses a strictly-positive finite float, falling back to the default for junk or non-positive values. */
+	public static float parsePositiveFloat(String value, float defaultValue) {
+		try {
+			float parsed = Float.parseFloat(value.trim());
+			return Float.isFinite(parsed) && parsed > 0f ? parsed : defaultValue;
+		} catch (NumberFormatException e) {
+			return defaultValue;
+		}
+	}
+
 	/** Parses a strictly-positive int, falling back to the default for junk or non-positive values. */
-	private static int parsePositiveInt(String value, int defaultValue) {
+	public static int parsePositiveInt(String value, int defaultValue) {
 		try {
 			int parsed = Integer.parseInt(value.trim());
 			return parsed > 0 ? parsed : defaultValue;
@@ -1029,7 +1064,7 @@ public class PokeblocksConfig {
 	}
 
 	/** Parses a non-negative int (0 allowed, e.g. to disable scaling), else the default. */
-	private static int parseNonNegativeInt(String value, int defaultValue) {
+	public static int parseNonNegativeInt(String value, int defaultValue) {
 		try {
 			int parsed = Integer.parseInt(value.trim());
 			return parsed >= 0 ? parsed : defaultValue;

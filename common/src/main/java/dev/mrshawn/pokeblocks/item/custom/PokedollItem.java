@@ -1,5 +1,7 @@
 package dev.mrshawn.pokeblocks.item.custom;
 
+import dev.mrshawn.pokeblocks.addon.PokeblocksAddon;
+import dev.mrshawn.pokeblocks.addon.PokeblocksAddons;
 import dev.mrshawn.pokeblocks.client.renderer.animation.AnimationResolver;
 import dev.mrshawn.pokeblocks.client.renderer.item.PokedollItemRenderer;
 import dev.mrshawn.pokeblocks.compendium.CompendiumKind;
@@ -130,6 +132,10 @@ public class PokedollItem extends BlockItem implements GeoItem, Equipable, Proje
 
 		if (TrappedDolls.isTrapped(stack)) {
 			tooltip.add(Component.literal("Pops with a bang").withStyle(ChatFormatting.RED));
+		}
+
+		for (PokeblocksAddon addon : PokeblocksAddons.all()) {
+			addon.appendDollTooltip(pokemon, stack, tooltip);
 		}
 
 		DollRarity rarity = DollRarity.getRarity(stack);
@@ -302,6 +308,15 @@ public class PokedollItem extends BlockItem implements GeoItem, Equipable, Proje
 		return buildDisplayName(pokemon, flags, true);
 	}
 
+	/** A species' display spelling: an add-on's own, else derived from the id ({@code mr_mime} -> "Mr Mime"). */
+	private static String speciesName(String pokemon) {
+		for (PokeblocksAddon addon : PokeblocksAddons.all()) {
+			String name = addon.dollSpeciesName(pokemon);
+			if (name != null) return name;
+		}
+		return capitalize(pokemon.replace("_", " "));
+	}
+
 	/**
 	 * Builds display name in format: [Shiny] [Gigantic] [Pokemon] [other flags] [Pokedoll].
 	 *
@@ -320,9 +335,8 @@ public class PokedollItem extends BlockItem implements GeoItem, Equipable, Proje
 			}
 		}
 
-		// Pokemon name
-		pokemon = pokemon.replace("_", " ");
-		sb.append(capitalize(pokemon)).append(" ");
+		// Pokemon name (an add-on may spell its own species differently from the id)
+		sb.append(speciesName(pokemon)).append(" ");
 
 		// Trailing flags: everything else in sort order
 		for (ModelFlag f : sorted) {

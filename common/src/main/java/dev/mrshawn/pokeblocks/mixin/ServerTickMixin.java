@@ -1,5 +1,7 @@
 package dev.mrshawn.pokeblocks.mixin;
 
+import dev.mrshawn.pokeblocks.addon.PokeblocksAddon;
+import dev.mrshawn.pokeblocks.addon.PokeblocksAddons;
 import dev.mrshawn.pokeblocks.resourcepack.sync.ServerPackSync;
 import dev.mrshawn.pokeblocks.trapped.TrappedDollCountdown;
 import net.minecraft.server.MinecraftServer;
@@ -18,6 +20,7 @@ import java.util.function.BooleanSupplier;
  *       map is almost always empty, making this a single map-size check per tick.</li>
  *   <li>Runs the trapped-doll detonation countdowns over online players' inventories (see
  *       {@link TrappedDollCountdown#serverTick}) — a component-presence check per stack.</li>
+ *   <li>Runs each add-on's {@link PokeblocksAddon#onServerTick} (none in a plain build).</li>
  * </ul>
  */
 @Mixin(MinecraftServer.class)
@@ -27,5 +30,8 @@ public abstract class ServerTickMixin {
 	private void pokeblocks$serverTick(BooleanSupplier hasTimeLeft, CallbackInfo ci) {
 		ServerPackSync.tickTimeouts((MinecraftServer) (Object) this);
 		TrappedDollCountdown.serverTick((MinecraftServer) (Object) this);
+		for (PokeblocksAddon addon : PokeblocksAddons.all()) {
+			addon.onServerTick((MinecraftServer) (Object) this);
+		}
 	}
 }

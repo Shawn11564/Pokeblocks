@@ -113,3 +113,5 @@ sourceSets.each {
     it.output.resourcesDir = dir
     it.java.destinationDirectory = dir
 }
+
+apply from: rootProject.file("gradle/addons.gradle")

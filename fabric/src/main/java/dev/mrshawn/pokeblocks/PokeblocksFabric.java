@@ -1,5 +1,7 @@
 package dev.mrshawn.pokeblocks;
 
+import dev.mrshawn.pokeblocks.addon.PokeblocksAddons;
+import dev.mrshawn.pokeblocks.addon.PokeblocksFabricAddon;
 import dev.mrshawn.pokeblocks.command.ModCommands;
 import dev.mrshawn.pokeblocks.compendium.CompendiumProgressTracker;
 import dev.mrshawn.pokeblocks.compendium.CompendiumSyncPayloads;
@@ -71,6 +73,10 @@ public final class PokeblocksFabric implements ModInitializer {
 		TrappedDollCountdown.setNetworkBridge(
 				player -> ServerPlayNetworking.canSend(player, TrappedDollPayloads.TimersPayload.TYPE),
 				(player, data) -> ServerPlayNetworking.send(player, new TrappedDollPayloads.TimersPayload(data)));
+
+		for (PokeblocksFabricAddon addon : PokeblocksAddons.load(PokeblocksFabricAddon.class)) {
+			addon.onInitialize();
+		}
 
 		PokeblocksConfig.initialize(FabricLoader.getInstance().getGameDir());
 		CustomPackManager.registerCustomAssets(FabricLoader.getInstance().getGameDir());

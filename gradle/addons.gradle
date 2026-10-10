@@ -1,0 +1,137 @@
+// Local add-ons
+//
+// Every folder under <root>/addons is an add-on: an extension versioned on its own (the folder is
+// git-ignored here) and compiled into the mod when present. An add-on mirrors this project's layout,
+//
+//   addons/<name>/<common|fabric|forge|neoforge>/src/<main|test>/<java|resources>
+//
+// and plugs into the mod through the interfaces in dev.mrshawn.pokeblocks.addon (found with
+// ServiceLoader). Without an addons folder this script changes nothing.
+//
+// A JSON file that the mod and an add-on both ship at the same path (lang files, sounds.json,
+// doll_rarity.json, the mixin config) is merged instead of one hiding the other: objects merge key by
+// key and arrays are appended; a key both set to different values fails the build. META-INF/services
+// files are merged line by line. Any other clash is left to Gradle's duplicate check.
+//
+// Add-on sources stay out of the -sources and -javadoc jars.
+//
+// Two optional Gradle properties, best set machine-wide in ~/.gradle/gradle.properties (never in this
+// repository):
+//   pokeblocks.addonsDir       an addons folder to use when this checkout has none of its own, so git
+//                              worktrees and second clones on the same machine still build with add-ons
+//   pokeblocks.requiredAddons  comma-separated add-on names; the build fails if any is missing instead
+//                              of quietly producing a jar without it
+//
+// Apply this from each module's build.gradle after its source sets are set up; common first (Gradle
+// configures it before the loaders). Call mergeAddonResourcesInto(tasks.named('<task>')) for any
+// ProcessResources task other than processResources that copies common's main resources.
+
+import groovy.json.JsonOutput
+import groovy.json.JsonSlurper
+
+def listAddons = { File root -> (root?.listFiles() ?: []).findAll { it.isDirectory() && !it.name.startsWith('.') }.sort { it.name } }
+def addonsRoot = rootProject.file('addons')
+if (listAddons(addonsRoot).isEmpty() && findProperty('pokeblocks.addonsDir')) {
+    addonsRoot = file(findProperty('pokeblocks.addonsDir'))
+}
+def addons = listAddons(addonsRoot)
+
+def required = (findProperty('pokeblocks.requiredAddons') ?: '').toString().split(',')*.trim().findAll { it }
+def missing = required - addons*.name
+if (missing) {
+    throw new GradleException("Required add-on(s) ${missing.join(', ')} not found in ${addonsRoot} " +
+            "(pokeblocks.requiredAddons). Clone each into <checkout>/addons/<name>, or point " +
+            "pokeblocks.addonsDir at an addons folder that has them.")
+}
+
+ext.mergeAddonResourcesInto = { taskProvider -> }
+if (addons.isEmpty()) return
+
+logger.lifecycle("[${project.name}] building with add-ons: ${addons*.name.join(', ')} (from ${addonsRoot})")
+
+addons.each { addon ->
+    def module = new File(addon, project.name)
+    sourceSets.main.java.srcDir(new File(module, 'src/main/java'))
+    sourceSets.main.resources.srcDir(new File(module, 'src/main/resources'))
+    sourceSets.test.java.srcDir(new File(module, 'src/test/java'))
+    sourceSets.test.resources.srcDir(new File(module, 'src/test/resources'))
+}
+
+def isAddonFile = { File file -> file.toPath().startsWith(addonsRoot.toPath()) }
+
+tasks.withType(Javadoc).configureEach {
+    exclude { isAddonFile(it.file) }
+}
+tasks.matching { it.name == 'sourcesJar' }.configureEach {
+    eachFile { if (isAddonFile(it.file)) it.exclude() }
+    // Otherwise the add-on's package folders would still show up, empty.
+    includeEmptyDirs = false
+}
+
+// --- Merged resources --------------------------------------------------------------------------
+//
+// Each module merges the clashes among its own resource roots (its base folder and its add-on folders)
+// into build/generated/addonMergedResources and excludes those paths from its resource source set. A
+// loader copies common's (filtered) resources plus common's merged folder, so a clash between a common
+// file and a loader file is not merged; Gradle's duplicate check reports it instead.
+
+def mergeablePatterns = ['**/*.json', 'META-INF/services/*']
+def ownRoots = sourceSets.main.resources.srcDirs.findAll { it.isDirectory() }
+
+def mergedPaths = {
+    def count = [:].withDefault { 0 }
+    ownRoots.each { root ->
+        fileTree(root) { include mergeablePatterns }.visit { d -> if (!d.directory) count[d.relativePath.pathString]++ }
+    }
+    count.findAll { it.value > 1 }.keySet().sort()
+}()
+sourceSets.main.resources.exclude(mergedPaths)
+
+def mergeJson
+mergeJson = { a, b, String where ->
+    if (a instanceof Map && b instanceof Map) {
+        def out = new LinkedHashMap(a)
+        b.each { k, v -> out[k] = out.containsKey(k) ? mergeJson(out[k], v, "$where > $k") : v }
+        return out
+    }
+    if (a instanceof List && b instanceof List) return a + b.findAll { !a.contains(it) }
+    if (a == b) return a
+    throw new GradleException("Add-on resource clash in $where: ${JsonOutput.toJson(a)} vs ${JsonOutput.toJson(b)}")
+}
+
+def mergedDir = layout.buildDirectory.dir('generated/addonMergedResources').get().asFile
+
+def mergeTask = tasks.register('mergeAddonResources') {
+    description = 'Merges the JSON and service files that the mod and its add-ons both ship.'
+    inputs.files(mergedPaths.collectMany { path -> ownRoots.collect { new File(it, path) }.findAll { it.isFile() } })
+    outputs.dir(mergedDir)
+    doLast {
+        project.delete(mergedDir)
+        mergedPaths.each { path ->
+            def files = ownRoots.collect { new File(it, path) }.findAll { it.isFile() }
+            def out = new File(mergedDir, path)
+            out.parentFile.mkdirs()
+            if (path.startsWith('META-INF/services/')) {
+                def lines = new LinkedHashSet<String>()
+                files.each { f -> f.readLines('UTF-8')*.trim().findAll { it && !it.startsWith('#') }.each { lines << it } }
+                out.setText(lines.join('\n') + '\n', 'UTF-8')
+            } else {
+                def merged = files.collect { new JsonSlurper().parse(it, 'UTF-8') }.inject { a, b -> mergeJson(a, b, path) }
+                out.setText(JsonOutput.prettyPrint(JsonOutput.toJson(merged)) + '\n', 'UTF-8')
+            }
+        }
+    }
+}
+
+// Adds the merged files (this module's, and common's for a loader) to a resource copy.
+ext.mergeAddonResourcesInto = { taskProvider ->
+    taskProvider.configure { task ->
+        task.dependsOn(mergeTask)
+        task.from(mergedDir)
+        if (project.path != ':common') {
+            task.dependsOn(':common:mergeAddonResources')
+            task.from(project(':common').layout.buildDirectory.dir('generated/addonMergedResources'))
+        }
+    }
+}
+mergeAddonResourcesInto(tasks.named('processResources'))

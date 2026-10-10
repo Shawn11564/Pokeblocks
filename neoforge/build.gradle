@@ -85,3 +85,7 @@ tasks.named("sourcesJar", Jar) {
 tasks.withType(ProcessResources).matching(notNeoTask).configureEach {
     from project(":common").sourceSets.main.resources
 }
+
+apply from: rootProject.file("gradle/addons.gradle")
+// The test resources copy common's main resources too (see the ProcessResources rule above).
+mergeAddonResourcesInto(tasks.named("processTestResources"))
