@@ -1,6 +1,7 @@
 package dev.mrshawn.pokeblocks.client.renderer.item;
 
 import com.mojang.blaze3d.vertex.PoseStack;
+import dev.mrshawn.pokeblocks.client.compat.RenderProbe;
 import dev.mrshawn.pokeblocks.client.model.item.PokedollItemModel;
 import dev.mrshawn.pokeblocks.item.custom.PokedollItem;
 import dev.mrshawn.pokeblocks.pokemon.ModelFlag;
@@ -57,6 +58,7 @@ public class PokedollItemRenderer extends GeoItemRenderer<PokedollItem> {
 							 MultiBufferSource bufferSource, int packedLight, int packedOverlay) {
         this.model.setCurrentItemStack(stack);
         this.currentTransformType = transformType;
+        RenderProbe.dollItems++;
         super.renderByItem(stack, transformType, poseStack, bufferSource, packedLight, packedOverlay);
     }
 

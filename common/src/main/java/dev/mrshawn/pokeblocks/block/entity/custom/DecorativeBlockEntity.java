@@ -1,5 +1,6 @@
 package dev.mrshawn.pokeblocks.block.entity.custom;
 
+import dev.mrshawn.pokeblocks.block.entity.DollBlockEntity;
 import dev.mrshawn.pokeblocks.block.custom.decorative.DecorativeDefinition;
 import dev.mrshawn.pokeblocks.item.PokeblocksItemData;
 import dev.mrshawn.pokeblocks.pokemon.ModelFlag;
@@ -19,7 +20,10 @@ import software.bernie.geckolib.util.GeckoLibUtil;
 import java.util.*;
 import java.util.function.Function;
 
-public class DecorativeBlockEntity extends BlockEntity implements GeoBlockEntity {
+public class DecorativeBlockEntity extends BlockEntity implements GeoBlockEntity, DollBlockEntity {
+    /** See {@link DollBlockEntity#renderDataVersion()}; bumped on every NBT (re)load, i.e. every client sync. */
+    private int renderDataVersion;
+
     private final AnimatableInstanceCache cache = GeckoLibUtil.createInstanceCache(this);
     private final DecorativeDefinition definition;
     private final Map<ModelFlag, Boolean> flags = new EnumMap<>(ModelFlag.class);
@@ -135,6 +139,7 @@ public class DecorativeBlockEntity extends BlockEntity implements GeoBlockEntity
     @Override
     protected void loadAdditional(CompoundTag tag, HolderLookup.Provider registries) {
         super.loadAdditional(tag, registries);
+        this.renderDataVersion++;
         for (ModelFlag flag : definition.supportedFlags()) {
             if (tag.contains(flag.getTagName())) {
                 flags.put(flag, tag.getBoolean(flag.getTagName()));
@@ -162,5 +167,10 @@ public class DecorativeBlockEntity extends BlockEntity implements GeoBlockEntity
     @Override
     public ClientboundBlockEntityDataPacket getUpdatePacket() {
         return ClientboundBlockEntityDataPacket.create(this);
+    }
+
+    @Override
+    public int renderDataVersion() {
+        return this.renderDataVersion;
     }
 }

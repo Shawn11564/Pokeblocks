@@ -1,5 +1,6 @@
 package dev.mrshawn.pokeblocks.block.entity.custom;
 
+import dev.mrshawn.pokeblocks.block.entity.DollBlockEntity;
 import dev.mrshawn.pokeblocks.constants.ModSettings;
 import dev.mrshawn.pokeblocks.item.PokeblocksItemData;
 import dev.mrshawn.pokeblocks.pokemon.ModelFlag;
@@ -26,7 +27,10 @@ import java.util.Set;
  * Mirrors {@link FigurineBlockEntity}: the specific decoration is a string id stored in NBT (default
  * {@link ModSettings#DEFAULT_DECORATION}) and resolved to model/texture/animation by id at render time.
  */
-public class CustomDecorationBlockEntity extends BlockEntity implements GeoBlockEntity {
+public class CustomDecorationBlockEntity extends BlockEntity implements GeoBlockEntity, DollBlockEntity {
+	/** See {@link DollBlockEntity#renderDataVersion()}; bumped on every NBT (re)load, i.e. every client sync. */
+	private int renderDataVersion;
+
 	private final AnimatableInstanceCache cache = GeckoLibUtil.createInstanceCache(this);
 	private String decoration = ModSettings.DEFAULT_DECORATION;
 	private boolean gigantic = false;
@@ -92,6 +96,7 @@ public class CustomDecorationBlockEntity extends BlockEntity implements GeoBlock
 	@Override
 	protected void loadAdditional(CompoundTag tag, HolderLookup.Provider registries) {
 		super.loadAdditional(tag, registries);
+		this.renderDataVersion++;
 		if (tag.contains("decoration")) {
 			this.decoration = tag.getString("decoration");
 			if (this.decoration.isEmpty()) {
@@ -114,5 +119,10 @@ public class CustomDecorationBlockEntity extends BlockEntity implements GeoBlock
 	@Override
 	public ClientboundBlockEntityDataPacket getUpdatePacket() {
 		return ClientboundBlockEntityDataPacket.create(this);
+	}
+
+	@Override
+	public int renderDataVersion() {
+		return this.renderDataVersion;
 	}
 }

@@ -1,5 +1,6 @@
 package dev.mrshawn.pokeblocks.block.entity.custom;
 
+import dev.mrshawn.pokeblocks.block.entity.DollBlockEntity;
 import dev.mrshawn.pokeblocks.client.renderer.animation.AnimationResolver;
 import dev.mrshawn.pokeblocks.config.PokeblocksConfig;
 import dev.mrshawn.pokeblocks.constants.ModSettings;
@@ -25,7 +26,10 @@ import java.util.EnumSet;
 import java.util.Map;
 import java.util.Set;
 
-public class PokedollBlockEntity extends BlockEntity implements GeoBlockEntity {
+public class PokedollBlockEntity extends BlockEntity implements GeoBlockEntity, DollBlockEntity {
+	/** See {@link DollBlockEntity#renderDataVersion()}; bumped on every NBT (re)load, i.e. every client sync. */
+	private int renderDataVersion;
+
 	private final AnimatableInstanceCache cache = GeckoLibUtil.createInstanceCache(this);
 	private String pokemon = ModSettings.DEFAULT_POKEMON;
 	private final Map<ModelFlag, Boolean> flags = new EnumMap<>(ModelFlag.class);
@@ -296,6 +300,7 @@ public class PokedollBlockEntity extends BlockEntity implements GeoBlockEntity {
 	@Override
 	protected void loadAdditional(CompoundTag tag, HolderLookup.Provider registries) {
 		super.loadAdditional(tag, registries);
+		this.renderDataVersion++;
 		if (tag.contains("pokemon")) {
 			this.pokemon = tag.getString("pokemon");
 			if (this.pokemon.isEmpty()) {
@@ -337,5 +342,10 @@ public class PokedollBlockEntity extends BlockEntity implements GeoBlockEntity {
 	@Override
 	public ClientboundBlockEntityDataPacket getUpdatePacket() {
 		return ClientboundBlockEntityDataPacket.create(this);
+	}
+
+	@Override
+	public int renderDataVersion() {
+		return this.renderDataVersion;
 	}
 }

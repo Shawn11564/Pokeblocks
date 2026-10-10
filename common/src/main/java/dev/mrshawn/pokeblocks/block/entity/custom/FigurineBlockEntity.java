@@ -1,5 +1,6 @@
 package dev.mrshawn.pokeblocks.block.entity.custom;
 
+import dev.mrshawn.pokeblocks.block.entity.DollBlockEntity;
 import dev.mrshawn.pokeblocks.block.FigurinePose;
 import dev.mrshawn.pokeblocks.constants.ModSettings;
 import dev.mrshawn.pokeblocks.item.PokeblocksItemData;
@@ -23,7 +24,10 @@ import software.bernie.geckolib.util.GeckoLibUtil;
 import java.util.EnumSet;
 import java.util.Set;
 
-public class FigurineBlockEntity extends BlockEntity implements GeoBlockEntity {
+public class FigurineBlockEntity extends BlockEntity implements GeoBlockEntity, DollBlockEntity {
+	/** See {@link DollBlockEntity#renderDataVersion()}; bumped on every NBT (re)load, i.e. every client sync. */
+	private int renderDataVersion;
+
 	private final AnimatableInstanceCache cache = GeckoLibUtil.createInstanceCache(this);
 	private String figurine = ModSettings.DEFAULT_FIGURINE;
 	private Set<FigurineFlag> figurineFlags = EnumSet.noneOf(FigurineFlag.class);
@@ -171,6 +175,7 @@ public class FigurineBlockEntity extends BlockEntity implements GeoBlockEntity {
 	@Override
 	protected void loadAdditional(CompoundTag tag, HolderLookup.Provider registries) {
 		super.loadAdditional(tag, registries);
+		this.renderDataVersion++;
 		if (tag.contains("figurine")) {
 			this.figurine = tag.getString("figurine");
 			if (this.figurine.isEmpty()) {
@@ -241,5 +246,10 @@ public class FigurineBlockEntity extends BlockEntity implements GeoBlockEntity {
 	@Override
 	public ClientboundBlockEntityDataPacket getUpdatePacket() {
 		return ClientboundBlockEntityDataPacket.create(this);
+	}
+
+	@Override
+	public int renderDataVersion() {
+		return this.renderDataVersion;
 	}
 }

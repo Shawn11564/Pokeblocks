@@ -3,6 +3,8 @@ package dev.mrshawn.pokeblocks.client;
 import dev.mrshawn.pokeblocks.PokeblocksCommon;
 import dev.mrshawn.pokeblocks.PokeblocksLog;
 import dev.mrshawn.pokeblocks.client.model.PokeblocksAssetResolver;
+import dev.mrshawn.pokeblocks.client.renderer.block.BakedBoneMesh;
+import dev.mrshawn.pokeblocks.client.renderer.block.CullAwareGeoBlockRenderer;
 import dev.mrshawn.pokeblocks.item.ServerOverrides;
 import dev.mrshawn.pokeblocks.utils.ColorFactory;
 import dev.mrshawn.pokeblocks.client.renderer.block.CustomDecorationBlockRenderer;
@@ -89,6 +91,10 @@ public final class PokeblocksClient {
 		// Geo-derived hitboxes: recompute from the new resources (a doll queried before the server
 		// pack applied would otherwise keep its fallback box).
 		DollShapes.clearCaches();
+		// GeckoLib re-bakes its models on reload, so the per-bone meshes baked from the old ones are dead;
+		// culling boxes may have been derived from fallback shapes before the geo was available.
+		BakedBoneMesh.clearCache();
+		CullAwareGeoBlockRenderer.invalidateRenderBoxes();
 		// Texture-derived color samples (wool drops + particle tints) can go stale when a resource pack
 		// swaps textures under the same id.
 		ColorFactory.clearCaches();

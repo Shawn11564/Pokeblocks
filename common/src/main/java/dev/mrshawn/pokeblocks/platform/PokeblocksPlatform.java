@@ -30,6 +30,9 @@ public interface PokeblocksPlatform {
 
     CreativeModeTab.Builder newCreativeTabBuilder();
 
+    /** Whether a mod with this id is loaded (the loader's own mod list). */
+    boolean isModLoaded(String modId);
+
     // Optional registration helpers used by some platform implementations (default to throwing so platforms that don't implement them will fail fast if used)
 
     default <T extends ArmorMaterial> Holder<T> registerArmorMaterial(String id, Supplier<T> armorMaterial) {

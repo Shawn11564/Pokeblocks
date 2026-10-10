@@ -3,6 +3,7 @@ package dev.mrshawn.pokeblocks.client.renderer.entity;
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.blaze3d.vertex.VertexConsumer;
 import com.mojang.math.Axis;
+import dev.mrshawn.pokeblocks.client.compat.RenderProbe;
 import dev.mrshawn.pokeblocks.client.model.entity.FigureCubeClassifier;
 import dev.mrshawn.pokeblocks.client.model.entity.FigureSwingPlans;
 import dev.mrshawn.pokeblocks.client.model.entity.FigureSwingPlans.CubeSwingPlan;
@@ -76,6 +77,7 @@ public class FigurineEntityRenderer extends GeoEntityRenderer<FigurineEntity> {
 					   MultiBufferSource bufferSource, int packedLight) {
 		// Shadow sized to the geo-derived hitbox, so big and small figurines both look grounded.
 		this.shadowRadius = entity.getBbWidth() * 0.4f;
+		RenderProbe.figurineEntities++;
 		super.render(entity, entityYaw, partialTick, poseStack, bufferSource, packedLight);
 		renderHeldDoll(entity, partialTick, poseStack, bufferSource, packedLight);
 	}

@@ -32,6 +32,14 @@ subprojects {
         maven {
             name = 'Sponge / Mixin'
             url = 'https://repo.spongepowered.org/repository/maven-public/'
+            // Mixin is the only thing we want from here. This Nexus also *proxies* other mavens, and
+            // its cached copies can disagree with the origin: for fabric-loot-api-v2:3.0.15+3f89f5a519
+            // it serves a POM demanding fabric-resource-loader-v0 2.0.0 (which dropped
+            // ResourceReloadListenerKeys.TAGS) where fabricmc.net asks for 1.3.1 (which still has it).
+            // Because Gradle probes repositories in order and takes the highest version it is offered,
+            // an unscoped repo here silently replaced a Fabric API module with one Fabric API never
+            // ships, crashing Trinkets on every server-data reload. Keep it pinned to its own groups.
+            content { includeGroupAndSubgroups 'org.spongepowered' }
         }
         maven {
 			name = 'GeckoLib'
@@ -54,6 +62,17 @@ subprojects {
                 }
             }
             filter { includeGroup 'mezz.jei' }
+        }
+        // Spark profiler (dev runtime only). Modrinth's maven hosts every loader's jar under the
+        // `maven.modrinth` group; scoped so only that group resolves here.
+        exclusiveContent {
+            forRepository {
+                maven {
+                    name = 'Modrinth'
+                    url = 'https://api.modrinth.com/maven'
+                }
+            }
+            filter { includeGroup 'maven.modrinth' }
         }
     }
 

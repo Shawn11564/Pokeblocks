@@ -53,4 +53,9 @@ public class PokeblocksNeoForgePlatform implements PokeblocksPlatform {
     public CreativeModeTab.Builder newCreativeTabBuilder() {
         return CreativeModeTab.builder();
     }
+
+    @Override
+    public boolean isModLoaded(String modId) {
+        return net.neoforged.fml.ModList.get().isLoaded(modId);
+    }
 }

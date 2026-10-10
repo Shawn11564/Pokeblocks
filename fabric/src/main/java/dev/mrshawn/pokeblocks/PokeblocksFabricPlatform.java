@@ -59,6 +59,11 @@ public class PokeblocksFabricPlatform implements PokeblocksPlatform {
         return FabricItemGroup.builder();
     }
 
+    @Override
+    public boolean isModLoaded(String modId) {
+        return net.fabricmc.loader.api.FabricLoader.getInstance().isModLoaded(modId);
+    }
+
     /**
      * Quick wrapper to make the individual registration lines cleaner but still return the multiloader-compatible supplier
      */

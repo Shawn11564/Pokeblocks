@@ -1,6 +1,8 @@
 package dev.mrshawn.pokeblocks;
 
 import dev.mrshawn.pokeblocks.client.PokeblocksClient;
+import dev.mrshawn.pokeblocks.client.renderer.atlas.DollRenderBatch;
+import dev.mrshawn.pokeblocks.client.renderer.atlas.DollTextureAtlas;
 import dev.mrshawn.pokeblocks.compendium.ClientCompendiumSync;
 import dev.mrshawn.pokeblocks.compendium.CompendiumSyncPayloads;
 import dev.mrshawn.pokeblocks.integration.trinkets.TrinketsIntegration;
@@ -14,12 +16,19 @@ import net.fabricmc.api.ClientModInitializer;
 import net.fabricmc.loader.api.FabricLoader;
 import net.fabricmc.fabric.api.client.networking.v1.ClientPlayNetworking;
 import net.fabricmc.fabric.api.client.rendering.v1.EntityRendererRegistry;
+import net.fabricmc.fabric.api.client.rendering.v1.WorldRenderEvents;
+import net.fabricmc.fabric.api.resource.IdentifiableResourceReloadListener;
 import net.fabricmc.fabric.api.resource.ResourceManagerHelper;
 import net.fabricmc.fabric.api.resource.SimpleSynchronousResourceReloadListener;
 import net.minecraft.client.renderer.blockentity.BlockEntityRenderers;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.packs.PackType;
+import net.minecraft.server.packs.resources.PreparableReloadListener;
 import net.minecraft.server.packs.resources.ResourceManager;
+import net.minecraft.util.profiling.ProfilerFiller;
+
+import java.util.concurrent.CompletableFuture;
+import java.util.concurrent.Executor;
 
 public final class PokeblocksFabricClient implements ClientModInitializer {
     @Override
@@ -67,6 +76,31 @@ public final class PokeblocksFabricClient implements ClientModInitializer {
             @Override
             public void onResourceManagerReload(ResourceManager resourceManager) {
                 PokeblocksClient.reloadPokeblocksAssets();
+            }
+        });
+
+        // Draw the dolls' own vertex batch once per frame, right after vanilla's block-entity pass. Fabric's
+        // AFTER_ENTITIES fires BEFORE block entities; BEFORE_BLOCK_OUTLINE is the first hook after them and
+        // fires whether or not an outline is drawn (the return value only gates the outline itself).
+        WorldRenderEvents.BEFORE_BLOCK_OUTLINE.register((context, hitResult) -> {
+            DollRenderBatch.flush();
+            return true;
+        });
+
+        // The shared doll texture atlas (one render type for every placed doll). Stitched on every
+        // resource (re)load like vanilla's own atlases; Fabric needs the listener to carry an id.
+        ResourceManagerHelper.get(PackType.CLIENT_RESOURCES).registerReloadListener(new IdentifiableResourceReloadListener() {
+            @Override
+            public ResourceLocation getFabricId() {
+                return ResourceLocation.fromNamespaceAndPath(PokeblocksCommon.MOD_ID, "doll_atlas");
+            }
+
+            @Override
+            public CompletableFuture<Void> reload(PreparableReloadListener.PreparationBarrier barrier, ResourceManager resourceManager,
+                                                  ProfilerFiller preparationsProfiler, ProfilerFiller reloadProfiler,
+                                                  Executor backgroundExecutor, Executor gameExecutor) {
+                return DollTextureAtlas.get().reload(barrier, resourceManager, preparationsProfiler, reloadProfiler,
+                        backgroundExecutor, gameExecutor);
             }
         });
     }

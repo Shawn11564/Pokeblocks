@@ -62,6 +62,16 @@ public final class PokeblocksAssetResolver {
 	private static final Set<String> VALIDATED_FIGURINES = new HashSet<>();
 	private static final Set<String> VALIDATED_DECORATIONS = new HashSet<>();
 	/**
+	 * Ids whose model has been confirmed ABSENT, so the default substitutes without re-probing. Without these a
+	 * placed doll whose id has no model on disk (a renamed/removed model, a pack not yet applied) hit the
+	 * filesystem on every frame from every renderer hook that validates the id — a profiled 2.4% of the render
+	 * thread in a doll-heavy scene. Cleared with the positive sets on resource reload, so a model that arrives
+	 * later (server pack, added pack) is picked up.
+	 */
+	private static final Set<String> MISSING_POKEMON = new HashSet<>();
+	private static final Set<String> MISSING_FIGURINES = new HashSet<>();
+	private static final Set<String> MISSING_DECORATIONS = new HashSet<>();
+	/**
 	 * Resolved pokedoll textures keyed by {@code (pokemon, activeFlags)}. The lookup is otherwise a per-frame
 	 * subset/permutation enumeration over the flags plus several {@link ResourceManager#getResource} disk probes
 	 * (each a filesystem {@code exists} syscall on the render thread), so we memoize the result — it only changes
@@ -147,10 +157,12 @@ public final class PokeblocksAssetResolver {
 	public static String validatedPokemon(ResourceManager rm, String pokemon) {
 		if (pokemon == null || pokemon.isEmpty()) return ModSettings.DEFAULT_POKEMON;
 		if (VALIDATED_POKEMON.contains(pokemon)) return pokemon;
+		if (MISSING_POKEMON.contains(pokemon)) return ModSettings.DEFAULT_POKEMON;
 		if (exists(rm, GEO + "pokedoll_" + pokemon + ".geo.json") || hasVariantModel(rm, pokemon)) {
 			VALIDATED_POKEMON.add(pokemon);
 			return pokemon;
 		}
+		MISSING_POKEMON.add(pokemon);
 		return ModSettings.DEFAULT_POKEMON;
 	}
 
@@ -171,6 +183,7 @@ public final class PokeblocksAssetResolver {
 	public static void clearPokemonCache() {
 		VALIDATED_POKEMON.clear();
 		VALIDATED_POKEMON.add(ModSettings.DEFAULT_POKEMON);
+		MISSING_POKEMON.clear();
 		RESOLVED_TEXTURES.clear();
 		RESOLVED_SQUEAK_TEXTURES.clear();
 		RESOLVED_POKEDOLL_MODELS.clear();
@@ -181,6 +194,7 @@ public final class PokeblocksAssetResolver {
 	public static void clearFigurineCache() {
 		VALIDATED_FIGURINES.clear();
 		VALIDATED_FIGURINES.add(ModSettings.DEFAULT_FIGURINE);
+		MISSING_FIGURINES.clear();
 		RESOLVED_FIGURINE_MODELS.clear();
 		RESOLVED_FIGURINE_TEXTURES.clear();
 	}
@@ -189,6 +203,7 @@ public final class PokeblocksAssetResolver {
 	public static void clearDecorationCache() {
 		VALIDATED_DECORATIONS.clear();
 		VALIDATED_DECORATIONS.add(ModSettings.DEFAULT_DECORATION);
+		MISSING_DECORATIONS.clear();
 		RESOLVED_DECORATION_TEXTURES.clear();
 		RESOLVED_DECORATION_ANIMATIONS.clear();
 		RESOLVED_DECORATIVE_TEXTURES.clear();
@@ -390,10 +405,12 @@ public final class PokeblocksAssetResolver {
 	public static String validatedFigurine(ResourceManager rm, String figurine) {
 		if (figurine == null || figurine.isEmpty()) return ModSettings.DEFAULT_FIGURINE;
 		if (VALIDATED_FIGURINES.contains(figurine)) return figurine;
+		if (MISSING_FIGURINES.contains(figurine)) return ModSettings.DEFAULT_FIGURINE;
 		if (exists(rm, GEO + figurine + "_figurine.geo.json")) {
 			VALIDATED_FIGURINES.add(figurine);
 			return figurine;
 		}
+		MISSING_FIGURINES.add(figurine);
 		return ModSettings.DEFAULT_FIGURINE;
 	}
 
@@ -470,10 +487,12 @@ public final class PokeblocksAssetResolver {
 	public static String validatedDecoration(ResourceManager rm, String decoration) {
 		if (decoration == null || decoration.isEmpty()) return ModSettings.DEFAULT_DECORATION;
 		if (VALIDATED_DECORATIONS.contains(decoration)) return decoration;
+		if (MISSING_DECORATIONS.contains(decoration)) return ModSettings.DEFAULT_DECORATION;
 		if (exists(rm, GEO + decoration + "_decoration.geo.json")) {
 			VALIDATED_DECORATIONS.add(decoration);
 			return decoration;
 		}
+		MISSING_DECORATIONS.add(decoration);
 		return ModSettings.DEFAULT_DECORATION;
 	}
 
