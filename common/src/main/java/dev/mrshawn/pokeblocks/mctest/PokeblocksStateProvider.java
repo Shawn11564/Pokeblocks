@@ -64,7 +64,8 @@ import java.util.zip.ZipFile;
  * (post-init, effectively read-only) static registries here are safe. This provider only READS state —
  * it never mutates the world or game — keeping the agent "dumb" per the mc-test Prime Directives —
  * except the {@code trapped.activation}/{@code trapped.detonate} probes, which set off one explosive
- * in the empty sky above spawn and clean up after themselves (see {@link TrappedExplosiveProbes}).
+ * in the empty sky above spawn and clean up after themselves (see {@link TrappedExplosiveProbes}), and
+ * {@code doll.pop}, which pops one doll there the same way (see {@link DollPopProbes}).
  *
  * <p><b>Pure values.</b> Every query returns a primitive (boolean / int / String); the agent applies the
  * {@code expect} predicate and the runner owns the verdict.
@@ -229,6 +230,10 @@ public final class PokeblocksStateProvider implements McTestStateProvider {
             case "trapped.activation" -> TrappedExplosiveProbes.activation(requireStr(args, "block"));
             // Pops a placed doll trapped with "explosive" and returns how it went off (CLASSIC/ACTIVATED/FALLBACK).
             case "trapped.detonate" -> TrappedExplosiveProbes.detonate(requireStr(args, "explosive"));
+
+            // ── Plain doll pop on a dedicated server (DollPopProbes) ──
+            // Pops a doll in the sky through PokedollBlock#breakDoll; returns the dropped item ids.
+            case "doll.pop" -> DollPopProbes.pop();
 
             default -> throw new IllegalArgumentException("unknown Pokeblocks state query: '" + query + "'");
         };

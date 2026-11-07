@@ -2,6 +2,7 @@ package dev.mrshawn.pokeblocks.client;
 
 import dev.mrshawn.pokeblocks.PokeblocksCommon;
 import dev.mrshawn.pokeblocks.PokeblocksLog;
+import dev.mrshawn.pokeblocks.block.custom.PokedollBlock;
 import dev.mrshawn.pokeblocks.client.addon.PokeblocksClientAddon;
 import dev.mrshawn.pokeblocks.client.addon.PokeblocksClientAddons;
 import dev.mrshawn.pokeblocks.client.model.PokeblocksAssetResolver;
@@ -16,6 +17,7 @@ import dev.mrshawn.pokeblocks.client.renderer.block.FigurineBlockRenderer;
 import dev.mrshawn.pokeblocks.client.renderer.block.PokedollBlockRenderer;
 import dev.mrshawn.pokeblocks.client.renderer.entity.FigurineEntityRenderer;
 import dev.mrshawn.pokeblocks.client.renderer.entity.LaserDotRenderer;
+import dev.mrshawn.pokeblocks.pokemon.ModelFlag;
 import dev.mrshawn.pokeblocks.registry.*;
 import dev.mrshawn.pokeblocks.shape.DollShapes;
 import net.minecraft.client.Minecraft;
@@ -26,14 +28,42 @@ import net.minecraft.client.renderer.entity.ThrownItemRenderer;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.EntityType;
+import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.entity.BlockEntityType;
+import org.jetbrains.annotations.Nullable;
 
 import java.nio.charset.StandardCharsets;
+import java.util.List;
+import java.util.Set;
 import java.util.function.BiConsumer;
 
 public final class PokeblocksClient {
 	private static final boolean DEBUG_SKIP_RENDERING = Boolean.getBoolean("pokedoll.debug.skip_rendering");
+
+	static {
+		// Install the wool-drop color sampler on the client ONLY. PokedollBlock's break logic runs on the
+		// logical server and must never touch client-only classes (Minecraft / NativeImage); a dedicated
+		// server never loads this client class, so the sampler stays null there and dolls drop fallback
+		// wool. This class is initialized during client renderer setup — long before any doll can be broken.
+		PokedollBlock.setClientWoolSampler(PokeblocksClient::sampleDollWools);
+	}
+
+	/**
+	 * Client-side {@link PokedollBlock.WoolSampler}: resolves the doll's texture from the client resource
+	 * manager (the same lookup the renderer uses) and returns its saturation-weighted dominant wool colors,
+	 * or {@code null} if the texture can't be resolved or has no sampleable pixels.
+	 */
+	@Nullable
+	private static List<Block> sampleDollWools(String pokemon, Set<ModelFlag> activeFlags) {
+		ResourceLocation textureLoc = PokeblocksAssetResolver.pokedollTextureOrNull(
+				Minecraft.getInstance().getResourceManager(), pokemon, activeFlags);
+		if (textureLoc == null) return null;
+		// Empty fallback here so an unsampleable texture returns empty and PokedollBlock applies its own
+		// FALLBACK_WOOLS — the fallback definition stays in one place.
+		List<Block> sampled = ColorFactory.sampleDominantWools(textureLoc, 2, List.of());
+		return sampled.isEmpty() ? null : sampled;
+	}
 
 	public static void registerRenderers(BiConsumer<BlockEntityType<? extends BlockEntity>, BlockEntityRendererProvider> blockEntityRenderers) {
 		// Give the geo-derived hitbox pipeline access to resource-pack geo files (server-pushed custom

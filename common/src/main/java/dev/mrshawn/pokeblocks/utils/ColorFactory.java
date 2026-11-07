@@ -17,6 +17,18 @@ import java.util.Map;
 import java.util.Optional;
 import java.util.concurrent.ConcurrentHashMap;
 
+/**
+ * Texture-derived color helpers for doll drops and particle tints.
+ * <p>
+ * <b>Texture sampling is CLIENT-ONLY.</b> Every method that reads a texture ({@link #sampleAverageColor},
+ * {@link #sampleAverageColorCached}, {@link #sampleDominantWools}) resolves it through the client
+ * {@link net.minecraft.client.Minecraft} resource manager and decodes it with blaze3d's {@link NativeImage} —
+ * neither class exists on a dedicated server, so calling them there throws {@link NoClassDefFoundError} (an
+ * {@link Error}, NOT caught by {@code catch (Exception)}). Do not call them from a server-reachable path; the
+ * doll-break drop reaches sampling only via the client-installed hook in
+ * {@link dev.mrshawn.pokeblocks.block.custom.PokedollBlock}. Only {@link #getFormattingFor} and
+ * {@link #clearCaches} are pure logic and safe on any side.
+ */
 public class ColorFactory {
 
 	private ColorFactory() {}

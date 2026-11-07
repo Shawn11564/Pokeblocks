@@ -6,7 +6,6 @@ import dev.mrshawn.pokeblocks.block.ParticleSourceBlock;
 import dev.mrshawn.pokeblocks.block.entity.custom.PokedollBlockEntity;
 import dev.mrshawn.pokeblocks.addon.PokeblocksAddon;
 import dev.mrshawn.pokeblocks.addon.PokeblocksAddons;
-import dev.mrshawn.pokeblocks.client.model.PokeblocksAssetResolver;
 import dev.mrshawn.pokeblocks.constants.ModSettings;
 import dev.mrshawn.pokeblocks.entity.custom.FigurineEntity;
 import dev.mrshawn.pokeblocks.interaction.DollInteractionRegistry;
@@ -18,13 +17,10 @@ import dev.mrshawn.pokeblocks.registry.BlockEntityRegistry;
 import dev.mrshawn.pokeblocks.registry.EntityRegistry;
 import dev.mrshawn.pokeblocks.registry.SoundRegistry;
 import dev.mrshawn.pokeblocks.shape.DollShapes;
-import dev.mrshawn.pokeblocks.utils.ColorFactory;
-import net.minecraft.client.Minecraft;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.core.particles.DustParticleOptions;
 import net.minecraft.network.chat.Component;
-import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.sounds.SoundEvents;
 import net.minecraft.sounds.SoundSource;
@@ -441,39 +437,61 @@ public class PokedollBlock extends BaseEntityBlock implements EntityBlock, Simpl
 
 	// --- Texture color sampling for wool drops ---
 
-	/** Wool dropped when a doll's texture can't be sampled. */
+	/** Wool dropped when a doll's texture can't be sampled — always the case on a dedicated server. */
 	private static final List<Block> FALLBACK_WOOLS = List.of(Blocks.WHITE_WOOL, Blocks.LIGHT_GRAY_WOOL);
 
-	private List<Block> getWoolColorsForDoll(PokedollBlockEntity pokedoll) {
-		try {
-			ResourceLocation textureLoc = getTextureForDoll(pokedoll);
-			if (textureLoc != null) {
-				// Saturation-weighted dominant colors of the texture (cached per texture), so the drops
-				// reflect the doll's signature colors rather than the muddy average of all its pixels.
-				return ColorFactory.sampleDominantWools(textureLoc, 2, FALLBACK_WOOLS);
-			}
-		} catch (Exception ignored) {
-		}
-		return FALLBACK_WOOLS;
+	/**
+	 * Samples a doll's dominant wool-drop colors from its texture. Reading the texture PNG needs the client
+	 * resource manager and blaze3d's {@code NativeImage} — classes that DO NOT EXIST on a dedicated server —
+	 * so the implementation lives on the client and is installed via {@link #setClientWoolSampler}. Returns
+	 * {@code null} when the texture can't be resolved or sampled.
+	 */
+	@FunctionalInterface
+	public interface WoolSampler {
+		@Nullable List<Block> sample(String pokemon, Set<ModelFlag> activeFlags);
 	}
 
+	/**
+	 * Client-installed texture sampler, or {@code null} on a dedicated server.
+	 * <p>
+	 * The break path ({@link #breakDoll}) runs on the logical server. Sampling touches
+	 * {@code net.minecraft.client.Minecraft} and {@code com.mojang.blaze3d.platform.NativeImage}, which are
+	 * absent on a dedicated server, so calling it directly threw {@link NoClassDefFoundError} — an
+	 * {@link Error} that slips past {@code catch (Exception)} and could crash the server on the first doll pop.
+	 * Routing through this hook keeps those classes off the server-reachable path: a dedicated server never
+	 * installs it and drops {@link #FALLBACK_WOOLS}, while an integrated server (singleplayer/LAN) shares the
+	 * client's resource manager and keeps drops color-matched.
+	 * <p>
+	 * Regression test: {@code mctests/pokeblocks.serverpop.mctest.yml} pops a doll on a real dedicated server
+	 * ({@code DollPopProbes}).
+	 */
 	@Nullable
-	private ResourceLocation getTextureForDoll(PokedollBlockEntity pokedoll) {
-		String pokemon = pokedoll.getPokemon();
-		if (pokemon == null || pokemon.isEmpty()) pokemon = ModSettings.DEFAULT_POKEMON;
+	private static volatile WoolSampler clientWoolSampler = null;
 
-		Set<ModelFlag> activeFlags = EnumSet.noneOf(ModelFlag.class);
-		for (ModelFlag flag : ModelFlag.values()) {
-			if (pokedoll.getFlag(flag)) activeFlags.add(flag);
-		}
+	/** Installs the client-side wool sampler. Called once from the client bootstrap; never on a dedicated server. */
+	public static void setClientWoolSampler(@Nullable WoolSampler sampler) {
+		clientWoolSampler = sampler;
+	}
 
-		try {
-			// Order-independent lookup shared with the render models (see PokeblocksAssetResolver), so the
-			// wool colors sampled on break come from the same texture the doll actually renders with.
-			return PokeblocksAssetResolver.pokedollTextureOrNull(Minecraft.getInstance().getResourceManager(), pokemon, activeFlags);
-		} catch (Exception ignored) {
-			return null;
+	private List<Block> getWoolColorsForDoll(PokedollBlockEntity pokedoll) {
+		WoolSampler sampler = clientWoolSampler;
+		if (sampler != null) {
+			// Throwable, not Exception: a cosmetic wool sample must never break the drop or the server tick.
+			try {
+				String pokemon = pokedoll.getPokemon();
+				if (pokemon == null || pokemon.isEmpty()) pokemon = ModSettings.DEFAULT_POKEMON;
+
+				Set<ModelFlag> activeFlags = EnumSet.noneOf(ModelFlag.class);
+				for (ModelFlag flag : ModelFlag.values()) {
+					if (pokedoll.getFlag(flag)) activeFlags.add(flag);
+				}
+
+				List<Block> sampled = sampler.sample(pokemon, activeFlags);
+				if (sampled != null && !sampled.isEmpty()) return sampled;
+			} catch (Throwable ignored) {
+			}
 		}
+		return FALLBACK_WOOLS;
 	}
 
 	/**

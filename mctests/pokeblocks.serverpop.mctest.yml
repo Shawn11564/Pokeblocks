@@ -1,0 +1,11 @@
+# yaml-language-server: $schema=https://mc-test.dev/schema/mctest-stepfile.schema.json
+name: pokeblocks-serverpop
+# Popping a doll on a real DEDICATED server (DollPopProbes). The pop used to sample the doll's texture
+# through client-only classes (Minecraft, NativeImage), which don't exist on a dedicated server, so the
+# first pop threw NoClassDefFoundError. A dedicated server has no texture sampler, so a wool pop drops
+# string plus the fallback wools (white + light gray). The probe pops a doll in the sky and cleans up.
+requires:
+  pluginState: true
+target: ${matrix}
+steps:
+  - assertPluginState: { requires: { pluginState: true }, query: "doll.pop", args: {}, expect: "minecraft:light_gray_wool,minecraft:string,minecraft:white_wool" }
