@@ -1,6 +1,7 @@
 package dev.mrshawn.pokeblocks.config;
 
 import dev.mrshawn.pokeblocks.PokeblocksLog;
+import dev.mrshawn.pokeblocks.addon.PokeblocksAddon;
 import dev.mrshawn.pokeblocks.addon.PokeblocksAddons;
 import dev.mrshawn.pokeblocks.item.DollRarityOverrides;
 import dev.mrshawn.pokeblocks.pokemon.ModelFlag;
@@ -972,13 +973,18 @@ public class PokeblocksConfig {
 	 * Returns true if this doll variant should be excluded from loot tables.
 	 * A bare pokemon name (e.g. "substitute") matches all variants of that pokemon;
 	 * a name with flags (e.g. "substitute shiny") matches only that exact variant.
+	 * Add-ons can keep further dolls out (see {@link PokeblocksAddon#excludesFromLoot}).
 	 */
 	public static boolean isDollExcludedFromLoot(String pokemon, Set<ModelFlag> flags) {
 		// Bare pokemon name in the set means all variants of that pokemon are excluded.
 		// Lowercase to match the canonical keys (buildKey lowercases) and LootGroup.containsDoll.
 		if (excludedLootDolls.contains(pokemon.toLowerCase())) return true;
 		// Check for an exact variant match using the canonical key
-		return excludedLootDolls.contains(DollRarityOverrides.buildKey(pokemon, flags));
+		if (excludedLootDolls.contains(DollRarityOverrides.buildKey(pokemon, flags))) return true;
+		for (PokeblocksAddon addon : PokeblocksAddons.all()) {
+			if (addon.excludesFromLoot(pokemon, flags)) return true;
+		}
+		return false;
 	}
 
 	public static Pattern globToPattern(String glob) {

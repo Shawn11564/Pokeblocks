@@ -1,6 +1,9 @@
 package dev.mrshawn.pokeblocks.client.screen;
 
 import dev.mrshawn.pokeblocks.PokeblocksCommon;
+import dev.mrshawn.pokeblocks.client.addon.CompendiumSection;
+import dev.mrshawn.pokeblocks.client.addon.PokeblocksClientAddon;
+import dev.mrshawn.pokeblocks.client.addon.PokeblocksClientAddons;
 import net.minecraft.ChatFormatting;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiGraphics;
@@ -27,6 +30,8 @@ import org.lwjgl.glfw.GLFW;
  * drawn on a wood-framed parchment panel. Entries the player has collected render in full colour;
  * the rest are dark 3D silhouettes (shape only, name hidden). Supports searching collected entries,
  * page-turn arrows, mouse-wheel and arrow-key paging, and clicking an entry for its detail page.
+ * Add-on {@link CompendiumSection}s the player has unlocked hang off the panel's right edge as
+ * bookmark tabs.
  */
 public class CompendiumScreen extends Screen {
 
@@ -41,6 +46,8 @@ public class CompendiumScreen extends Screen {
 			sprite("compendium/page_backward"), sprite("compendium/page_backward_highlighted"));
 	private static final WidgetSprites SPRITES_PAGE_FORWARD = new WidgetSprites(
 			sprite("compendium/page_forward"), sprite("compendium/page_forward_highlighted"));
+	private static final ResourceLocation SPRITE_TAB = sprite("compendium/tab");
+	private static final ResourceLocation SPRITE_TAB_HIGHLIGHTED = sprite("compendium/tab_highlighted");
 	static final WidgetSprites SPRITES_CLOSE = new WidgetSprites(
 			sprite("compendium/close"), sprite("compendium/close_highlighted"));
 
@@ -48,6 +55,14 @@ public class CompendiumScreen extends Screen {
 	private static final int ARROW_H = 11;
 	private static final int SEARCH_W = 84;
 	private static final int FILTER_W = 54;
+
+	// Section bookmark tabs: the leftmost TAB_TUCK px hide under the panel frame; a hovered tab
+	// slides out a little further. The icon sits in the tab's parchment window at (8, 4).
+	private static final int TAB_W = 30;
+	private static final int TAB_H = 24;
+	private static final int TAB_TUCK = 6;
+	private static final int TAB_GAP = 3;
+	private static final int TAB_HOVER_SHIFT = 2;
 
 	// Parchment-ink palette, shared with the detail screen.
 	static final int COL_TEXT = 0xFF4A3620;
@@ -65,6 +80,9 @@ public class CompendiumScreen extends Screen {
 
 	/** Base stacks, one per entry, in stable display order; built once. */
 	private final List<ItemStack> entries;
+	/** Every add-on section of this book, and the ones the player has unlocked (one tab each). */
+	private final List<CompendiumSection> sections;
+	private List<CompendiumSection> unlockedSections = List.of();
 	/** Spin state, parallel to {@link #entries}. */
 	private final List<DollSpin> spins = new ArrayList<>();
 	private final FrameClock clock = new FrameClock();
@@ -104,10 +122,25 @@ public class CompendiumScreen extends Screen {
 	public CompendiumScreen(CompendiumType type) {
 		super(type.title());
 		this.type = type;
-		this.entries = type.entries();
+		this.entries = visibleEntries(type);
+		List<CompendiumSection> sections = new ArrayList<>();
+		for (PokeblocksClientAddon addon : PokeblocksClientAddons.all()) {
+			sections.addAll(addon.compendiumSections(type.kind()));
+		}
+		this.sections = List.copyOf(sections);
 		for (int i = 0; i < entries.size(); i++) {
 			spins.add(new DollSpin());
 		}
+	}
+
+	/** The type's entries minus any an add-on presents elsewhere (they don't count toward progress either). */
+	private static List<ItemStack> visibleEntries(CompendiumType type) {
+		List<ItemStack> entries = new ArrayList<>(type.entries());
+		List<PokeblocksClientAddon> addons = PokeblocksClientAddons.all();
+		if (!addons.isEmpty()) {
+			entries.removeIf(stack -> addons.stream().anyMatch(addon -> addon.hidesCompendiumEntry(type.kind(), type.idOf(stack))));
+		}
+		return entries;
 	}
 
 	private static ResourceLocation sprite(String path) {
@@ -117,6 +150,7 @@ public class CompendiumScreen extends Screen {
 	@Override
 	protected void init() {
 		collected = type.collectedIds(this.minecraft != null ? this.minecraft.player : null);
+		refreshSections();
 		refreshTimer = 0f;
 
 		// The grid adapts to the window so the panel never overflows small GUI-scale setups:
@@ -224,8 +258,19 @@ public class CompendiumScreen extends Screen {
 		}
 	}
 
+	/** Re-checks which add-on sections the player has unlocked. */
+	private void refreshSections() {
+		if (sections.isEmpty() || this.minecraft == null || this.minecraft.player == null) return;
+		List<CompendiumSection> unlocked = new ArrayList<>();
+		for (CompendiumSection section : sections) {
+			if (section.isUnlocked(this.minecraft.player)) unlocked.add(section);
+		}
+		unlockedSections = unlocked;
+	}
+
 	/** Re-reads the collected set once a second so pickups and sync updates fill in live. */
 	private void refreshCollected() {
+		refreshSections();
 		Set<String> now = type.collectedIds(this.minecraft != null ? this.minecraft.player : null);
 		if (!now.equals(collected)) {
 			collected = now;
@@ -238,6 +283,12 @@ public class CompendiumScreen extends Screen {
 	@Override
 	public void renderBackground(GuiGraphics guiGraphics, int mouseX, int mouseY, float partialTick) {
 		super.renderBackground(guiGraphics, mouseX, mouseY, partialTick);
+		// Section tabs first, so the panel frame covers their tucked-in ends.
+		int hoveredTab = tabIndexAt(mouseX, mouseY);
+		for (int i = 0; i < unlockedSections.size(); i++) {
+			guiGraphics.blitSprite(i == hoveredTab ? SPRITE_TAB_HIGHLIGHTED : SPRITE_TAB,
+					tabX(i == hoveredTab), tabY(i), TAB_W, TAB_H);
+		}
 		// Panel + static chrome go under the widgets (search text, arrows) drawn by super.render.
 		guiGraphics.blitSprite(SPRITE_PANEL, panelLeft, panelTop, panelWidth, panelHeight);
 		guiGraphics.blitSprite(SPRITE_SEARCH, panelLeft + panelWidth - 8 - SEARCH_W, panelTop + 21, SEARCH_W, 14);
@@ -299,12 +350,40 @@ public class CompendiumScreen extends Screen {
 			}
 		}
 
+		int hoveredTab = tabIndexAt(mouseX, mouseY);
+		for (int i = 0; i < unlockedSections.size(); i++) {
+			guiGraphics.renderItem(unlockedSections.get(i).icon(), tabX(i == hoveredTab) + 8, tabY(i) + 4);
+		}
+
 		if (hovered != null) {
 			Component name = hoveredCollected
 					? hovered.getHoverName()
 					: Component.translatable("screen.pokeblocks.compendium.unknown").withStyle(ChatFormatting.DARK_GRAY);
 			guiGraphics.renderTooltip(this.font, name, mouseX, mouseY);
+		} else if (hoveredTab >= 0) {
+			guiGraphics.renderTooltip(this.font, unlockedSections.get(hoveredTab).title(), mouseX, mouseY);
 		}
+	}
+
+	/** Left edge of a section tab; kept on screen when the panel leaves no room beside it. */
+	private int tabX(boolean hovered) {
+		int x = panelLeft + panelWidth - TAB_TUCK + (hovered ? TAB_HOVER_SHIFT : 0);
+		return Math.min(x, this.width - TAB_W);
+	}
+
+	private int tabY(int index) {
+		return gridOriginY + index * (TAB_H + TAB_GAP);
+	}
+
+	/** Index into {@link #unlockedSections} of the tab under the cursor (its visible part), or -1. */
+	private int tabIndexAt(double mouseX, double mouseY) {
+		int x0 = Math.min(panelLeft + panelWidth, tabX(false) + TAB_TUCK);
+		int x1 = tabX(true) + TAB_W;
+		for (int i = 0; i < unlockedSections.size(); i++) {
+			int y = tabY(i);
+			if (mouseX >= x0 && mouseX < x1 && mouseY >= y && mouseY < y + TAB_H) return i;
+		}
+		return -1;
 	}
 
 	private void drawProgressBar(GuiGraphics guiGraphics, int x, int y, int width, int height) {
@@ -335,6 +414,12 @@ public class CompendiumScreen extends Screen {
 	public boolean mouseClicked(double mouseX, double mouseY, int button) {
 		if (super.mouseClicked(mouseX, mouseY, button)) return true;
 		if (button == 0) {
+			int tab = tabIndexAt(mouseX, mouseY);
+			if (tab >= 0 && this.minecraft != null) {
+				playPageSound();
+				this.minecraft.setScreen(unlockedSections.get(tab).open(this));
+				return true;
+			}
 			int i = cellIndexAt(mouseX, mouseY);
 			if (i >= 0 && this.minecraft != null) {
 				List<ItemStack> order = new ArrayList<>(visible.size());

@@ -145,6 +145,15 @@ public class PokedollItem extends BlockItem implements GeoItem, Equipable, Proje
 			addon.appendDollTooltip(pokemon, stack, tooltip);
 		}
 
+		for (PokeblocksAddon addon : PokeblocksAddons.all()) {
+			List<Component> rarityLines = addon.dollRarityLines(pokemon, stack);
+			if (rarityLines != null) {
+				tooltip.add(Component.empty());
+				tooltip.addAll(rarityLines);
+				return;
+			}
+		}
+
 		DollRarity rarity = DollRarity.getRarity(stack);
 		if (rarity != null && rarity != DollRarity.NONE) {
 			tooltip.add(Component.empty());

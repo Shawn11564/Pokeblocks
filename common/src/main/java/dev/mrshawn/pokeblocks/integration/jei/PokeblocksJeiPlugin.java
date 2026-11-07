@@ -3,6 +3,7 @@ package dev.mrshawn.pokeblocks.integration.jei;
 import dev.mrshawn.pokeblocks.PokeblocksCommon;
 import dev.mrshawn.pokeblocks.config.PokeblocksConfig;
 import dev.mrshawn.pokeblocks.recipe.GiganticDollRecipe;
+import dev.mrshawn.pokeblocks.recipe.HiddenFromRecipeViewers;
 import dev.mrshawn.pokeblocks.recipe.LaserPointerDyeRecipe;
 import dev.mrshawn.pokeblocks.recipe.PokeblocksShapedRecipe;
 import dev.mrshawn.pokeblocks.recipe.PokedollPhoneRecipe;
@@ -17,6 +18,7 @@ import mezz.jei.api.recipe.category.extensions.vanilla.crafting.IExtendableCraft
 import mezz.jei.api.registration.IRecipeRegistration;
 import mezz.jei.api.registration.ISubtypeRegistration;
 import mezz.jei.api.registration.IVanillaCategoryExtensionRegistration;
+import mezz.jei.api.runtime.IJeiRuntime;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.multiplayer.ClientLevel;
 import net.minecraft.resources.ResourceLocation;
@@ -45,6 +47,8 @@ import java.util.List;
  *       recipe out in the vanilla crafting category; the dynamic "any doll → transformed doll" recipes
  *       show every valid input doll with its exact output, cycling in lock-step.</li>
  * </ol>
+ * Recipes marked {@link HiddenFromRecipeViewers} stay out of JEI entirely, even ones its vanilla
+ * plugin would list by itself.
  */
 @JeiPlugin
 public final class PokeblocksJeiPlugin implements IModPlugin {
@@ -96,7 +100,7 @@ public final class PokeblocksJeiPlugin implements IModPlugin {
 		List<RecipeHolder<CraftingRecipe>> recipes = new ArrayList<>();
 		for (RecipeHolder<CraftingRecipe> holder : level.getRecipeManager().getAllRecipesFor(RecipeType.CRAFTING)) {
 			CraftingRecipe recipe = holder.value();
-			if (!isPokeblocksRecipe(recipe)) continue;
+			if (!isPokeblocksRecipe(recipe) || recipe instanceof HiddenFromRecipeViewers) continue;
 			// The laser pointer is an incomplete feature hidden from the creative tabs unless opted in;
 			// keep its recipe hidden under the same switch.
 			if (recipe instanceof LaserPointerDyeRecipe && !showIncomplete) continue;
@@ -104,6 +108,21 @@ public final class PokeblocksJeiPlugin implements IModPlugin {
 		}
 		registration.addRecipes(RecipeTypes.CRAFTING, recipes);
 		PokeblocksCommon.LOGGER.info("[JEI] Registered {} Pokeblocks crafting recipes", recipes.size());
+	}
+
+	@Override
+	public void onRuntimeAvailable(IJeiRuntime jeiRuntime) {
+		// JEI's vanilla plugin adds any crafting recipe with ordinary ingredients on its own; only
+		// hiding them once the runtime exists keeps the ones meant to be discovered in game out.
+		ClientLevel level = Minecraft.getInstance().level;
+		if (level == null) return;
+		List<RecipeHolder<CraftingRecipe>> hidden = new ArrayList<>();
+		for (RecipeHolder<CraftingRecipe> holder : level.getRecipeManager().getAllRecipesFor(RecipeType.CRAFTING)) {
+			if (holder.value() instanceof HiddenFromRecipeViewers) hidden.add(holder);
+		}
+		if (!hidden.isEmpty()) {
+			jeiRuntime.getRecipeManager().hideRecipes(RecipeTypes.CRAFTING, hidden);
+		}
 	}
 
 	/** True for the recipe classes this plugin renders (see {@link #registerVanillaCategoryExtensions}). */

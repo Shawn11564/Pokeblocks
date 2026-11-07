@@ -2,18 +2,21 @@ package dev.mrshawn.pokeblocks.addon;
 
 import dev.mrshawn.pokeblocks.block.entity.custom.PokedollBlockEntity;
 import dev.mrshawn.pokeblocks.config.ConfigSection;
+import dev.mrshawn.pokeblocks.pokemon.ModelFlag;
 import net.minecraft.core.BlockPos;
 import net.minecraft.network.chat.Component;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.InteractionResult;
+import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.block.state.BlockState;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.List;
+import java.util.Set;
 
 /**
  * A feature compiled into the mod from a local add-on folder (see {@code gradle/addons.gradle}) instead
@@ -46,8 +49,37 @@ public interface PokeblocksAddon {
 		return null;
 	}
 
+	/**
+	 * Server side: a player popped a placed pokedoll by spam-clicking it. Runs after the pop's own drops
+	 * (or a trapped doll's blast), so anything dropped here survives; the block is already gone.
+	 */
+	default void onDollPopped(ServerLevel level, BlockPos pos, String pokemon, Player player) {}
+
+	/**
+	 * Server side: a pokedoll was placed from {@code stack}, its block entity already filled in.
+	 * {@code placer} is {@code null} for placements nobody made (e.g. a thrown doll landing).
+	 */
+	default void onDollPlaced(ServerLevel level, BlockPos pos, PokedollBlockEntity doll, @Nullable LivingEntity placer, ItemStack stack) {}
+
+	/**
+	 * Whether a doll variant must never come from a random source (loot tables, the phone's buried
+	 * dolls), on top of the config's own exclusions.
+	 */
+	default boolean excludesFromLoot(String pokemon, Set<ModelFlag> flags) {
+		return false;
+	}
+
 	/** Extra tooltip lines for a pokedoll item, added after its throwable/trapped lines and before its rarity. */
 	default void appendDollTooltip(String pokemon, ItemStack stack, List<Component> tooltip) {}
+
+	/**
+	 * Lines that replace a pokedoll tooltip's rarity tier and rarity score (the blank line before them
+	 * stays), or {@code null} to keep the usual ones. Client side, rebuilt every frame the tooltip shows.
+	 */
+	@Nullable
+	default List<Component> dollRarityLines(String pokemon, ItemStack stack) {
+		return null;
+	}
 
 	/**
 	 * How a species' name is spelled in doll item names, or {@code null} to derive it from the id

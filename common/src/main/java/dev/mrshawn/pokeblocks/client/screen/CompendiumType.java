@@ -181,6 +181,11 @@ public enum CompendiumType {
 		this.kind = kind;
 	}
 
+	/** The collection this book browses, as the progress store and add-ons know it. */
+	public CompendiumKind kind() {
+		return kind;
+	}
+
 	public abstract Component title();
 
 	/** One representative stack per registered entry, in stable display order. */

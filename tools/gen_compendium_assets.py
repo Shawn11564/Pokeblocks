@@ -12,6 +12,7 @@ Outputs (relative to common/src/main/resources/assets/pokeblocks/):
   textures/gui/sprites/compendium/slot.png(+meta)   24x24 nine-slice inset entry slot
   textures/gui/sprites/compendium/search_field.png(+meta) 16x14 nine-slice search inset
   textures/gui/sprites/compendium/page_{backward,forward}[_highlighted].png 18x11 arrows
+  textures/gui/sprites/compendium/tab[_highlighted].png  30x24 section bookmark tab
   textures/gui/compendium/book_spread.png           256x180 open-book detail background
 """
 
@@ -311,6 +312,38 @@ def gen_arrow(forward, highlighted):
     save(image, f"textures/gui/sprites/compendium/{name}.png")
 
 
+def gen_tab(highlighted):
+    """30x24 bookmark tab for an extra compendium section, poking out of the panel's right edge.
+
+    The left 6px tuck under the panel frame (the panel is drawn over them), so the visible part is
+    a wood tab with an open left side and a parchment window for the section's 16x16 icon at (8, 4).
+    """
+    w, h = 30, 24
+    base = WOOD_LIGHT2 if highlighted else WOOD_BASE
+    light = (184, 140, 84, 255) if highlighted else WOOD_LIGHT
+    light2 = (170, 126, 72, 255) if highlighted else WOOD_LIGHT2
+    dark = WOOD_DARK2 if highlighted else WOOD_DARK
+    field = (246, 234, 202, 255) if highlighted else PARCHMENT
+    image = img(w, h)
+    rect(image, 0, 0, w - 2, 0, WOOD_OUTLINE)
+    rect(image, 0, h - 1, w - 2, h - 1, WOOD_OUTLINE)
+    rect(image, w - 1, 1, w - 1, h - 2, WOOD_OUTLINE)
+    rect(image, 0, 1, w - 2, h - 2, base)
+    rect(image, 0, 1, w - 3, 1, light)
+    rect(image, 0, 2, w - 4, 2, light2)
+    rect(image, 0, h - 2, w - 2, h - 2, dark)
+    rect(image, w - 2, 1, w - 2, h - 2, dark)
+    rect(image, 0, h - 3, w - 3, h - 3, WOOD_DARK2)
+    rect(image, w - 3, 2, w - 3, h - 3, WOOD_DARK2)
+    # Parchment window with the panel's seam ring around it.
+    rect(image, 7, 3, 25, 20, WOOD_SEAM)
+    rect(image, 8, 4, 24, 19, field)
+    rect(image, 8, 4, 24, 4, PARCHMENT_EDGE2)
+    rect(image, 8, 4, 8, 19, PARCHMENT_EDGE2)
+    name = "tab_highlighted" if highlighted else "tab"
+    save(image, f"textures/gui/sprites/compendium/{name}.png")
+
+
 # ---------------------------------------------------------------------------- book spread
 
 def gen_book_spread():
@@ -418,6 +451,7 @@ if __name__ == "__main__":
     for hl in (True, False):
         gen_chip(hl)
         gen_close(hl)
+        gen_tab(hl)
     for fwd in (True, False):
         for hl in (True, False):
             gen_arrow(fwd, hl)

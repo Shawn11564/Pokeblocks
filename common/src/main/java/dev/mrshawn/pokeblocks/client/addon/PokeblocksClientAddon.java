@@ -1,8 +1,10 @@
 package dev.mrshawn.pokeblocks.client.addon;
 
+import dev.mrshawn.pokeblocks.compendium.CompendiumKind;
 import net.minecraft.client.renderer.entity.EntityRendererProvider;
 import net.minecraft.world.entity.EntityType;
 
+import java.util.List;
 import java.util.function.BiConsumer;
 
 /**
@@ -17,4 +19,17 @@ public interface PokeblocksClientAddon {
 
 	/** Client resources were (re)loaded; drop anything built from the old ones. */
 	default void onResourceReload() {}
+
+	/** Extra sections of a compendium book, offered as bookmark tabs on its index page while unlocked. */
+	default List<CompendiumSection> compendiumSections(CompendiumKind kind) {
+		return List.of();
+	}
+
+	/**
+	 * Whether an entry (a doll species or figurine id, lower case) is left out of a compendium book's
+	 * index and its progress count, e.g. because a section of its own presents it.
+	 */
+	default boolean hidesCompendiumEntry(CompendiumKind kind, String id) {
+		return false;
+	}
 }

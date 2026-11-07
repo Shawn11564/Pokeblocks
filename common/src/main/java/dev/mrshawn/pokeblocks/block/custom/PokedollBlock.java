@@ -133,6 +133,11 @@ public class PokedollBlock extends BaseEntityBlock implements EntityBlock, Simpl
 				&& TrappedDolls.isTrapped(stack)) {
 			pokedoll.setTrapped(true, TrappedDolls.explosiveOf(stack));
 		}
+		if (level instanceof ServerLevel serverLevel && level.getBlockEntity(pos) instanceof PokedollBlockEntity pokedoll) {
+			for (PokeblocksAddon addon : PokeblocksAddons.all()) {
+				addon.onDollPlaced(serverLevel, pos, pokedoll, placer, stack);
+			}
+		}
 		if (!(level instanceof ServerLevel serverLevel) || !MemorialDolls.isMemorial(stack)) {
 			return;
 		}
@@ -299,12 +304,18 @@ public class PokedollBlock extends BaseEntityBlock implements EntityBlock, Simpl
 
 			// Check for break (only non-waxed dolls)
 			if (pokedoll.recordClick()) {
+				String pokemon = pokedoll.getPokemon();
 				if (pokedoll.isTrapped() && level instanceof ServerLevel trapLevel) {
 					// The trap springs: no wool, no substitute — the packed explosive goes off
 					// (vanilla TNT: a single-TNT blast with block damage).
 					TrappedDolls.detonateBlock(trapLevel, pos, pokedoll.getTrappedExplosive());
 				} else {
 					breakDoll(level, pos, pokedoll);
+				}
+				if (level instanceof ServerLevel serverLevel) {
+					for (PokeblocksAddon addon : PokeblocksAddons.all()) {
+						addon.onDollPopped(serverLevel, pos, pokemon, player);
+					}
 				}
 				return InteractionResult.SUCCESS;
 			}
