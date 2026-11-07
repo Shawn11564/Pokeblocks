@@ -33,6 +33,16 @@ public interface PokeblocksPlatform {
     /** Whether a mod with this id is loaded (the loader's own mod list). */
     boolean isModLoaded(String modId);
 
+    /**
+     * Lights {@code state}'s block at {@code pos} with the loader's ignition hook, the one flint and
+     * steel calls (Forge/NeoForge {@code onCaughtFire}), for blocks that ignite there rather than in
+     * the vanilla chain-reaction hook. Vanilla (Fabric) has no such hook, so the default does nothing.
+     * Used by {@code TrappedExplosives}; server side only.
+     */
+    default void igniteBlock(net.minecraft.world.level.block.state.BlockState state,
+                             net.minecraft.world.level.Level level, net.minecraft.core.BlockPos pos) {
+    }
+
     // Optional registration helpers used by some platform implementations (default to throwing so platforms that don't implement them will fail fast if used)
 
     default <T extends ArmorMaterial> Holder<T> registerArmorMaterial(String id, Supplier<T> armorMaterial) {

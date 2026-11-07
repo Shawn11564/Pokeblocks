@@ -93,7 +93,7 @@
   "death.attack.pokeblocks.trapped_doll": "%1$s hugged a trapped Pokedoll a moment too long",
 
   "jei.pokeblocks.throwable_doll": "Keeps the doll's species and variant. Right-click to throw.",
-  "jei.pokeblocks.trapped_doll": "Keeps the doll's species and variant. Pops with a bang.",
+  "jei.pokeblocks.trapped_doll": "Keeps the doll's species and variant. Pops with a bang: any other explosive goes off as itself.",
   "jei.pokeblocks.gigantic_doll": "All four dolls must be the same species and variant. Any wool colour works.",
   "jei.pokeblocks.pokedoll_phone": "Attunes to the doll in the centre and only ever rings from it.",
   "jei.pokeblocks.laser_pointer_dye": "Recolours the beam with any dye."

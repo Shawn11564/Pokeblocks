@@ -131,7 +131,7 @@ public class PokedollBlock extends BaseEntityBlock implements EntityBlock, Simpl
 		// it is handed over explicitly here and handed back in getDrops/getCloneItemStack.
 		if (!level.isClientSide() && level.getBlockEntity(pos) instanceof PokedollBlockEntity pokedoll
 				&& TrappedDolls.isTrapped(stack)) {
-			pokedoll.setTrapped(true);
+			pokedoll.setTrapped(true, TrappedDolls.explosiveOf(stack));
 		}
 		if (!(level instanceof ServerLevel serverLevel) || !MemorialDolls.isMemorial(stack)) {
 			return;
@@ -222,7 +222,7 @@ public class PokedollBlock extends BaseEntityBlock implements EntityBlock, Simpl
 			ItemStack copy = PokedollItem.createPokedoll(pokedoll.getPokemon(), flagMap);
 			// isTrapped is only known server-side (integrated server / dedicated pick path);
 			// a client-side pick of someone else's trap yields the plain doll, which is the point.
-			return pokedoll.isTrapped() ? TrappedDolls.makeTrapped(copy) : copy;
+			return pokedoll.isTrapped() ? TrappedDolls.makeTrapped(copy, pokedoll.getTrappedExplosive()) : copy;
 		}
 		return super.getCloneItemStack(level, pos, state);
 	}
@@ -244,7 +244,7 @@ public class PokedollBlock extends BaseEntityBlock implements EntityBlock, Simpl
 			}
 			ItemStack drop = PokedollItem.createPokedoll(pokedoll.getPokemon(), flagMap);
 			// Mining a trapped doll returns it still armed — popping is the only way it goes off.
-			return java.util.List.of(pokedoll.isTrapped() ? TrappedDolls.makeTrapped(drop) : drop);
+			return java.util.List.of(pokedoll.isTrapped() ? TrappedDolls.makeTrapped(drop, pokedoll.getTrappedExplosive()) : drop);
 		}
 		return super.getDrops(state, params);
 	}
@@ -299,9 +299,10 @@ public class PokedollBlock extends BaseEntityBlock implements EntityBlock, Simpl
 
 			// Check for break (only non-waxed dolls)
 			if (pokedoll.recordClick()) {
-				if (pokedoll.isTrapped()) {
-					// The trap springs: no wool, no substitute — a single-TNT blast with block damage.
-					TrappedDolls.detonateBlock(level, pos);
+				if (pokedoll.isTrapped() && level instanceof ServerLevel trapLevel) {
+					// The trap springs: no wool, no substitute — the packed explosive goes off
+					// (vanilla TNT: a single-TNT blast with block damage).
+					TrappedDolls.detonateBlock(trapLevel, pos, pokedoll.getTrappedExplosive());
 				} else {
 					breakDoll(level, pos, pokedoll);
 				}

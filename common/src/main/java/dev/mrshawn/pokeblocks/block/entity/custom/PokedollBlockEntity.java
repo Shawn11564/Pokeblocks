@@ -74,6 +74,13 @@ public class PokedollBlockEntity extends BlockEntity implements GeoBlockEntity, 
 	 */
 	private boolean trapped = false;
 
+	/**
+	 * Item id of the explosive this trapped doll was packed with ({@code TrappedDolls#KEY_EXPLOSIVE}),
+	 * or null for vanilla TNT. Server-side only, like {@link #trapped}.
+	 */
+	@org.jetbrains.annotations.Nullable
+	private net.minecraft.resources.ResourceLocation trappedExplosive = null;
+
 	public PokedollBlockEntity(BlockPos pos, BlockState state) {
 		super(BlockEntityRegistry.POKEDOLL_BLOCK_ENTITY.get(), pos, state);
 		for (ModelFlag flag : ModelFlag.values()) {
@@ -150,8 +157,20 @@ public class PokedollBlockEntity extends BlockEntity implements GeoBlockEntity, 
 	}
 
 	public void setTrapped(boolean trapped) {
+		setTrapped(trapped, null);
+	}
+
+	/** Arms (or disarms) the doll, remembering the explosive it was packed with (null = vanilla TNT). */
+	public void setTrapped(boolean trapped, @org.jetbrains.annotations.Nullable net.minecraft.resources.ResourceLocation explosive) {
 		this.trapped = trapped;
+		this.trappedExplosive = trapped ? explosive : null;
 		setChanged();
+	}
+
+	/** The explosive this trapped doll was packed with, or null for vanilla TNT. */
+	@org.jetbrains.annotations.Nullable
+	public net.minecraft.resources.ResourceLocation getTrappedExplosive() {
+		return trappedExplosive;
 	}
 
 	// --- Squish animation ---
@@ -294,6 +313,9 @@ public class PokedollBlockEntity extends BlockEntity implements GeoBlockEntity, 
 		tag.putBoolean("waxed", this.waxed);
 		if (this.trapped) {
 			tag.putBoolean("trapped", true);
+			if (this.trappedExplosive != null) {
+				tag.putString("trappedWith", this.trappedExplosive.toString());
+			}
 		}
 	}
 
@@ -323,6 +345,9 @@ public class PokedollBlockEntity extends BlockEntity implements GeoBlockEntity, 
 		}
 		if (tag.contains("trapped")) {
 			this.trapped = tag.getBoolean("trapped");
+			this.trappedExplosive = this.trapped && tag.contains("trappedWith")
+					? net.minecraft.resources.ResourceLocation.tryParse(tag.getString("trappedWith"))
+					: null;
 		}
 	}
 

@@ -1,0 +1,43 @@
+# yaml-language-server: $schema=https://mc-test.dev/schema/mctest-stepfile.schema.json
+name: pokeblocks-trapped
+# Trapped dolls with other mods' explosives (trapped/TrappedExplosives): which items can trap a doll,
+# the explosive id surviving the craft and the placed block entity, and the real detonation engine on a
+# live server — the block's own wasExploded hook spawning its entity (seen through the
+# ExplosiveActivity mixins), duds falling back to the classic blast, vanilla TNT staying classic.
+# The detonate/activation probes set off one explosive in the empty sky above spawn and clean up
+# (TrappedExplosiveProbes). No modded explosive is installed here, so "ACTIVATED" via a full pop can't
+# be asserted; trapped.activation runs the same engine directly on vanilla TNT instead.
+requires:
+  pluginState: true
+target: ${matrix}
+steps:
+  # ── Accepted explosives: the pokeblocks:trap_explosives tag + any TntBlock subclass ──
+  - assertPluginState: { requires: { pluginState: true }, query: "trapped.isExplosive", args: { id: "minecraft:tnt" }, expect: true }
+  - assertPluginState: { requires: { pluginState: true }, query: "trapped.isExplosive", args: { id: "minecraft:stone" }, expect: false }
+  - assertPluginState: { requires: { pluginState: true }, query: "trapped.isExplosive", args: { id: "minecraft:gunpowder" }, expect: false }
+  # A doll is never its own explosive.
+  - assertPluginState: { requires: { pluginState: true }, query: "trapped.isExplosive", args: { id: "pokeblocks:pokedoll" }, expect: false }
+
+  # ── The doll + explosive recipe ──
+  - assertPluginState: { requires: { pluginState: true }, query: "trapped.recipeMatches", args: { pokemon: "applin" }, expect: true }
+  - assertPluginState: { requires: { pluginState: true }, query: "trapped.recipeMatches", args: { pokemon: "applin", explosive: "minecraft:stone" }, expect: false }
+  - assertPluginState: { requires: { pluginState: true }, query: "trapped.recipeMatches", args: { pokemon: "applin", explosive: "none" }, expect: false }
+  # An already-trapped doll can't be trapped again.
+  - assertPluginState: { requires: { pluginState: true }, query: "trapped.recipeMatches", args: { pokemon: "applin", dollTrapped: true }, expect: false }
+  # Vanilla TNT stores no explosive id, so new TNT dolls stack with older trapped dolls.
+  - assertPluginState: { requires: { pluginState: true }, query: "trapped.assembledExplosive", args: { pokemon: "applin" }, expect: "" }
+
+  # ── A placed trapped doll remembers its explosive across a save/load ──
+  - assertPluginState: { requires: { pluginState: true }, query: "trapped.blockEntityRoundTrip", args: { explosive: "examplemod:nuke" }, expect: "examplemod:nuke" }
+
+  # ── The activation engine on a real server ──
+  # TNT's own wasExploded spawns primed TNT, and the addFreshEntity mixin sees it (else "dud:").
+  - assertPluginState: { requires: { pluginState: true }, query: "trapped.activation", args: { block: "minecraft:tnt" }, expect: "minecraft:tnt" }
+  # A block with no explosion behaviour is reported as a dud.
+  - assertPluginState: { requires: { pluginState: true }, query: "trapped.activation", args: { block: "minecraft:stone" }, expect: "dud:none" }
+
+  # ── Popping a placed trapped doll ──
+  - assertPluginState: { requires: { pluginState: true }, query: "trapped.detonate", args: { explosive: "minecraft:tnt" }, expect: "CLASSIC" }
+  # A dud explosive, and one whose mod is no longer installed, still go bang (classic blast).
+  - assertPluginState: { requires: { pluginState: true }, query: "trapped.detonate", args: { explosive: "minecraft:stone" }, expect: "FALLBACK" }
+  - assertPluginState: { requires: { pluginState: true }, query: "trapped.detonate", args: { explosive: "examplemod:missing_nuke" }, expect: "FALLBACK" }

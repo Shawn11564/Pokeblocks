@@ -132,6 +132,13 @@ public class PokedollItem extends BlockItem implements GeoItem, Equipable, Proje
 
 		if (TrappedDolls.isTrapped(stack)) {
 			tooltip.add(Component.literal("Pops with a bang").withStyle(ChatFormatting.RED));
+			net.minecraft.resources.ResourceLocation explosive = TrappedDolls.explosiveOf(stack);
+			if (explosive != null) {
+				Component explosiveName = dev.mrshawn.pokeblocks.trapped.TrappedExplosives.itemFor(explosive)
+						.<Component>map(item -> item.getDescription())
+						.orElseGet(() -> Component.literal(explosive.toString()));
+				tooltip.add(Component.literal("Packed with ").append(explosiveName).withStyle(ChatFormatting.DARK_RED));
+			}
 		}
 
 		for (PokeblocksAddon addon : PokeblocksAddons.all()) {

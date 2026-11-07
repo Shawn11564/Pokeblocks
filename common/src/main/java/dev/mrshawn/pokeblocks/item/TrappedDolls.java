@@ -6,6 +6,7 @@ import net.minecraft.core.component.DataComponents;
 import net.minecraft.core.registries.Registries;
 import net.minecraft.resources.ResourceKey;
 import net.minecraft.resources.ResourceLocation;
+import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.sounds.SoundEvents;
 import net.minecraft.sounds.SoundSource;
@@ -17,9 +18,11 @@ import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.component.CustomData;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.phys.Vec3;
+import dev.mrshawn.pokeblocks.trapped.TrappedExplosives;
+import org.jetbrains.annotations.Nullable;
 
 /**
- * The "trapped" marker a pokedoll gains from the doll + TNT recipe
+ * The "trapped" marker a pokedoll gains from the doll + explosive recipe
  * ({@link dev.mrshawn.pokeblocks.recipe.TrappedDollRecipe}), plus everything that makes such a doll
  * go off. Like {@link ThrowableDolls}, the marker is a boolean inside the vanilla
  * {@code minecraft:custom_data} component — never part of the canonical {@code BLOCK_ENTITY_DATA}
@@ -28,10 +31,15 @@ import net.minecraft.world.phys.Vec3;
  * a trapped doll stays armed through placement (the block entity remembers it, see
  * {@code PokedollBlockEntity#isTrapped}) and back through {@code getDrops}/pick-block.
  * <p>
+ * Any explosive from {@link TrappedExplosives#isExplosive} can trap a doll. Anything other than
+ * vanilla TNT is remembered by item id ({@link #KEY_EXPLOSIVE}) so the popped doll can set it off
+ * as itself; vanilla TNT stores no id and keeps the classic blast.
+ * <p>
  * A trapped doll detonates two ways:
  * <ul>
  *   <li><b>Placed and popped</b> (the spam-click break, {@code PokedollBlock#useWithoutItem}) —
- *       a TNT-parity explosion <i>with</i> block damage ({@link #detonateBlock}).</li>
+ *       the packed explosive goes off at the doll's spot ({@link #detonateBlock}; vanilla TNT is a
+ *       TNT-parity explosion <i>with</i> block damage).</li>
  *   <li><b>Thrown at a player</b> (throwable + trapped, {@code ThrownPokedollEntity#onHitEntity}) —
  *       the doll replaces the victim's helmet ({@link #hitPlayer}; the old helmet moves to a free
  *       inventory slot, or the doll falls to the ground ticking when there is none) and a
@@ -50,6 +58,11 @@ public final class TrappedDolls {
 
 	/** Boolean key inside {@code minecraft:custom_data} marking a doll as trapped. */
 	public static final String KEY_TRAPPED = "pokeblocks_trapped";
+	/**
+	 * String key inside {@code minecraft:custom_data}: item id of the explosive the doll was trapped
+	 * with. Absent for vanilla TNT (and for dolls trapped before this existed).
+	 */
+	public static final String KEY_EXPLOSIVE = "pokeblocks_trapped_with";
 	/** Long key inside {@code minecraft:custom_data}: absolute game time the doll detonates at. */
 	public static final String KEY_DETONATE_AT = "pokeblocks_detonate_at";
 
@@ -76,11 +89,34 @@ public final class TrappedDolls {
 		return data != null && data.copyTag().getBoolean(KEY_TRAPPED);
 	}
 
-	/** A copy of the doll (count 1) with the trapped marker set. */
+	/** A copy of the doll (count 1) trapped with vanilla TNT. */
 	public static ItemStack makeTrapped(ItemStack doll) {
+		return makeTrapped(doll, null);
+	}
+
+	/**
+	 * A copy of the doll (count 1) with the trapped marker set, remembering {@code explosiveId}
+	 * (null = vanilla TNT, see {@link TrappedExplosives#idFor}).
+	 */
+	public static ItemStack makeTrapped(ItemStack doll, @Nullable ResourceLocation explosiveId) {
 		ItemStack result = doll.copyWithCount(1);
-		CustomData.update(DataComponents.CUSTOM_DATA, result, tag -> tag.putBoolean(KEY_TRAPPED, true));
+		CustomData.update(DataComponents.CUSTOM_DATA, result, tag -> {
+			tag.putBoolean(KEY_TRAPPED, true);
+			if (explosiveId != null) {
+				tag.putString(KEY_EXPLOSIVE, explosiveId.toString());
+			} else {
+				tag.remove(KEY_EXPLOSIVE);
+			}
+		});
 		return result;
+	}
+
+	/** The explosive a trapped doll was packed with, or null for vanilla TNT / an unreadable id. */
+	@Nullable
+	public static ResourceLocation explosiveOf(ItemStack stack) {
+		CustomData data = stack.get(DataComponents.CUSTOM_DATA);
+		if (data == null || !data.contains(KEY_EXPLOSIVE)) return null;
+		return ResourceLocation.tryParse(data.copyTag().getString(KEY_EXPLOSIVE));
 	}
 
 	/** True when the stack's detonation countdown is running. */
@@ -159,11 +195,17 @@ public final class TrappedDolls {
 	}
 
 	/**
-	 * A popped trapped doll block: the doll vanishes (no wool, no drop — it exploded) and a
-	 * single-TNT explosion <i>with</i> block damage goes off in its place.
+	 * A popped trapped doll block: the doll vanishes (no wool, no drop — it exploded) and the
+	 * explosive it was packed with goes off in its place ({@link TrappedExplosives#detonate}; vanilla
+	 * TNT, or a dud explosive, is the {@link #classicBlast}). Server side only.
 	 */
-	public static void detonateBlock(Level level, BlockPos pos) {
+	public static TrappedExplosives.Outcome detonateBlock(ServerLevel level, BlockPos pos, @Nullable ResourceLocation explosiveId) {
 		level.destroyBlock(pos, false);
+		return TrappedExplosives.detonate(level, pos, explosiveId);
+	}
+
+	/** The single-TNT explosion <i>with</i> block damage, centred on the block at {@code pos}. */
+	public static void classicBlast(Level level, BlockPos pos) {
 		level.explode(null, damageSource(level), null, pos.getX() + 0.5, pos.getY() + 0.5, pos.getZ() + 0.5,
 				EXPLOSION_POWER, false, Level.ExplosionInteraction.TNT);
 	}

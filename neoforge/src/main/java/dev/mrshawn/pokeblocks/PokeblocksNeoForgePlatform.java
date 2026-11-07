@@ -58,4 +58,11 @@ public class PokeblocksNeoForgePlatform implements PokeblocksPlatform {
     public boolean isModLoaded(String modId) {
         return net.neoforged.fml.ModList.get().isLoaded(modId);
     }
+
+    /** Forge-family ignition hook (what flint and steel and fire call); see the interface docs. */
+    @Override
+    public void igniteBlock(net.minecraft.world.level.block.state.BlockState state,
+                            net.minecraft.world.level.Level level, net.minecraft.core.BlockPos pos) {
+        state.onCaughtFire(level, pos, null, null);
+    }
 }

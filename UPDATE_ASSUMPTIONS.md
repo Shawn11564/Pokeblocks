@@ -849,3 +849,41 @@ they have no squish window to key the swap off.
 - **NOT play-tested in-game** — no built-in doll ships a squeak texture yet, so the visual swap
   needs a live pass with a custom pack (`/pokeblocks resourcepack saveexample` now writes
   `exampledoll_squeak_1/_2` for exactly this).
+
+## Trapped dolls with other mods' explosives (2026-11-05)
+
+Spec (Shawn): trapped dolls should accept other mods' explosive blocks, several mods at once, and a
+popped doll should go off with that explosive's real effect, falling back to a regular explosion.
+
+### Assumption — which items count as explosives
+
+- **Location:** `trapped/TrappedExplosives#isExplosive`; tag `data/pokeblocks/tags/item/trap_explosives.json`.
+- **Value set:** the `pokeblocks:trap_explosives` item tag (ships with just `minecraft:tnt`; add other
+  mods' items as `{"id": "mod:item", "required": false}`) **plus** every block item whose block extends
+  vanilla `TntBlock`. There is no shared `c:` tag for TNT on 1.21.1 (checked in the NeoForge 21.1.150 jar).
+- **Needs human:** whether auto-detecting `TntBlock` subclasses is wanted (no opt-out tag yet).
+
+### Assumption — how the explosive is set off
+
+- **Location:** `TrappedExplosives#detonate/activate`, `ExplosiveActivity` + 3 mixins
+  (`ServerLevel#addFreshEntity`, `Explosion#explode`, `Level#setBlock`), `PokeblocksPlatform#igniteBlock`.
+- **Behaviour:** the block is NOT placed. Its `wasExploded` hook (what a TNT-like block does when
+  caught in a blast: the cross-loader chain-reaction path) runs at the popped doll's position, so it
+  spawns its own primed entity, short fuse like a chain reaction. If that did nothing, Forge/NeoForge
+  also try `onCaughtFire` (the flint-and-steel hook). A modded `TntBlock` whose `wasExploded` only
+  spawned plain vanilla primed TNT (inherited hook) gets its `onCaughtFire` preferred when that does
+  something else. "Did something" = spawned an entity, started an explosion or placed a block. Nothing
+  → the classic 4.0 blast (`FALLBACK`), so a trap always goes bang (also for a removed mod's id).
+- **Vanilla TNT** stays the instant classic blast with the trapped-doll death message, and stores no
+  id, so new TNT dolls stack with older ones.
+- **Not changed:** the thrown/countdown path (head-worn doll, dropped ticking doll) keeps the
+  entities-only TNT-sized blast for every explosive. A real modded blast there would break blocks
+  around players and, since the victim is killed first, blow up their dropped inventory.
+- **Needs human:** whether the countdown path should also use the real explosive (could be a config toggle).
+
+### Verification performed (this pass)
+
+- `./gradlew build` green on Fabric, Forge, NeoForge (with the add-on), unit tests green.
+- `mctests/pokeblocks.trapped.mctest.yml` (14 assertions) green on a real Fabric 1.21.1 server, full
+  suite 9/9 green. Forge/NeoForge mixins + `onCaughtFire` are compile-verified only. No modded
+  explosive was tested in-game: NOT play-tested.

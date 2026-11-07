@@ -20,6 +20,14 @@ import java.nio.file.Path;
 
 public final class PokeblocksServerLifecycle {
 
+    /** The running server once started (for server-truth test probes), else null. */
+    private static volatile MinecraftServer currentServer;
+
+    /** The running server, or null before the first server has started. */
+    public static MinecraftServer currentServer() {
+        return currentServer;
+    }
+
     public static void onServerAboutToStart(MinecraftServer server) {
         try {
             Path serverDir = server.getServerDirectory();
@@ -71,5 +79,6 @@ public final class PokeblocksServerLifecycle {
     }
 
     public static void onServerStarted(MinecraftServer server) {
+        currentServer = server;
     }
 }

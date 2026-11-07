@@ -11,6 +11,7 @@ import dev.mrshawn.pokeblocks.item.FigurineNameOverrides;
 import dev.mrshawn.pokeblocks.item.FigurineTagOverrides;
 import dev.mrshawn.pokeblocks.item.RarityScoreCalculator;
 import dev.mrshawn.pokeblocks.item.ThrowableDolls;
+import dev.mrshawn.pokeblocks.item.TrappedDolls;
 import dev.mrshawn.pokeblocks.item.custom.PokedollItem;
 import dev.mrshawn.pokeblocks.item.loot.LootGroup;
 import dev.mrshawn.pokeblocks.item.loot.LootGroupConfig;
@@ -22,6 +23,7 @@ import dev.mrshawn.pokeblocks.registry.ItemRegistry;
 import dev.mrshawn.pokeblocks.registry.PokemonRegistry;
 import dev.mrshawn.pokeblocks.resourcepack.CustomPackManager;
 import dev.mrshawn.pokeblocks.shape.DollShapes;
+import dev.mrshawn.pokeblocks.trapped.TrappedExplosives;
 import io.mctest.agent.core.McTestStateProvider;
 import net.minecraft.core.Direction;
 import net.minecraft.core.Registry;
@@ -60,7 +62,9 @@ import java.util.zip.ZipFile;
  *
  * <p><b>Threading.</b> The agent invokes {@link #query} on the server thread, so reads of the
  * (post-init, effectively read-only) static registries here are safe. This provider only READS state —
- * it never mutates the world or game — keeping the agent "dumb" per the mc-test Prime Directives.
+ * it never mutates the world or game — keeping the agent "dumb" per the mc-test Prime Directives —
+ * except the {@code trapped.activation}/{@code trapped.detonate} probes, which set off one explosive
+ * in the empty sky above spawn and clean up after themselves (see {@link TrappedExplosiveProbes}).
  *
  * <p><b>Pure values.</b> Every query returns a primitive (boolean / int / String); the agent applies the
  * {@code expect} predicate and the runner owns the verdict.
@@ -211,6 +215,21 @@ public final class PokeblocksStateProvider implements McTestStateProvider {
             }
             case "figurine.hasTag" -> FigurineTagOverrides.hasTag(requireStr(args, "id"), requireStr(args, "tag"));
 
+            // ── Trapped dolls + other mods' explosives (TrappedExplosiveProbes) ──
+            // Whether an item can trap a doll (pokeblocks:trap_explosives tag or a TntBlock subclass).
+            case "trapped.isExplosive" -> TrappedExplosives.isExplosive(
+                    new ItemStack(BuiltInRegistries.ITEM.get(requireRl(args, "id"))));
+            // Whether the doll + explosive grid matches ("explosive" defaults to minecraft:tnt; "none" = empty slot).
+            case "trapped.recipeMatches" -> TrappedExplosiveProbes.recipeMatches(trappedInputDoll(args), explosiveArg(args));
+            // The explosive id the crafted doll remembers ("" for vanilla TNT).
+            case "trapped.assembledExplosive" -> TrappedExplosiveProbes.assembledExplosive(trappedInputDoll(args), explosiveArg(args));
+            // The explosive id a placed trapped doll still remembers after a save/load.
+            case "trapped.blockEntityRoundTrip" -> TrappedExplosiveProbes.blockEntityRoundTrip(requireStr(args, "explosive"));
+            // What the activation engine spawns for a block ("none"; prefixed "dud:" when it reports no activity).
+            case "trapped.activation" -> TrappedExplosiveProbes.activation(requireStr(args, "block"));
+            // Pops a placed doll trapped with "explosive" and returns how it went off (CLASSIC/ACTIVATED/FALLBACK).
+            case "trapped.detonate" -> TrappedExplosiveProbes.detonate(requireStr(args, "explosive"));
+
             default -> throw new IllegalArgumentException("unknown Pokeblocks state query: '" + query + "'");
         };
     }
@@ -219,6 +238,17 @@ public final class PokeblocksStateProvider implements McTestStateProvider {
     private static boolean registryContains(Registry<?> registry, String id) {
         ResourceLocation rl = ResourceLocation.tryParse(id);
         return rl != null && registry.containsKey(rl);
+    }
+
+    /** The doll for the {@code trapped.*} recipe queries, pre-trapped when {@code dollTrapped} is true. */
+    private static ItemStack trappedInputDoll(Map<String, Object> args) {
+        ItemStack doll = dollStack(args);
+        return optBool(args, "dollTrapped") ? TrappedDolls.makeTrapped(doll) : doll;
+    }
+
+    private static String explosiveArg(Map<String, Object> args) {
+        Object value = args == null ? null : args.get("explosive");
+        return value == null ? "minecraft:tnt" : value.toString();
     }
 
     /** Builds the doll stack described by the standard {@code pokemon} + {@code flags} args. */

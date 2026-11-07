@@ -9,7 +9,8 @@ import net.minecraft.core.HolderLookup;
 import net.minecraft.network.RegistryFriendlyByteBuf;
 import net.minecraft.network.codec.StreamCodec;
 import net.minecraft.world.item.ItemStack;
-import net.minecraft.world.item.Items;
+import dev.mrshawn.pokeblocks.trapped.TrappedExplosives;
+import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.item.crafting.CraftingBookCategory;
 import net.minecraft.world.item.crafting.CraftingInput;
 import net.minecraft.world.item.crafting.CraftingRecipe;
@@ -17,8 +18,10 @@ import net.minecraft.world.item.crafting.RecipeSerializer;
 import net.minecraft.world.level.Level;
 
 /**
- * Shapeless recipe that combines any pokedoll with a single TNT into the trapped version of that
- * exact doll: the same species and flags, plus the {@link TrappedDolls} marker. A trapped doll
+ * Shapeless recipe that combines any pokedoll with a single explosive (vanilla TNT, anything in
+ * the {@code pokeblocks:trap_explosives} tag, or any modded TNT block — see
+ * {@link TrappedExplosives#isExplosive}) into the trapped version of that exact doll: the same
+ * species and flags, plus the {@link TrappedDolls} marker and the explosive's id. A trapped doll
  * placed and popped explodes with block damage; thrown (craft it with a snowball too — the two
  * markers stack in either crafting order) it arms a detonation countdown on whoever it hits. See
  * {@link TrappedDolls} for the full behaviour. Already-trapped dolls don't match again, so TNT
@@ -41,8 +44,8 @@ public class TrappedDollRecipe implements CraftingRecipe {
 			if (stack.is(ItemRegistry.POKEDOLL_ITEM.get())) {
 				if (!doll.isEmpty()) return false; // at most one doll
 				doll = stack;
-			} else if (stack.is(Items.TNT)) {
-				if (!tnt.isEmpty()) return false; // at most one tnt
+			} else if (TrappedExplosives.isExplosive(stack)) {
+				if (!tnt.isEmpty()) return false; // at most one explosive
 				tnt = stack;
 			} else {
 				return false; // anything else disqualifies the recipe
@@ -54,13 +57,17 @@ public class TrappedDollRecipe implements CraftingRecipe {
 
 	@Override
 	public ItemStack assemble(CraftingInput input, HolderLookup.Provider registries) {
+		ItemStack doll = ItemStack.EMPTY;
+		ResourceLocation explosive = null;
 		for (int i = 0; i < input.size(); i++) {
 			ItemStack stack = input.getItem(i);
 			if (stack.is(ItemRegistry.POKEDOLL_ITEM.get())) {
-				return TrappedDolls.makeTrapped(stack);
+				doll = stack;
+			} else if (TrappedExplosives.isExplosive(stack)) {
+				explosive = TrappedExplosives.idFor(stack);
 			}
 		}
-		return ItemStack.EMPTY;
+		return doll.isEmpty() ? ItemStack.EMPTY : TrappedDolls.makeTrapped(doll, explosive);
 	}
 
 	@Override
