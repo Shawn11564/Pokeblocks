@@ -1,6 +1,7 @@
 package dev.mrshawn.pokeblocks.mixin;
 
 import dev.mrshawn.pokeblocks.client.phone.DigSiteParticles;
+import dev.mrshawn.pokeblocks.client.trapped.DollSurgeryHarness;
 import net.minecraft.client.Minecraft;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.injection.At;
@@ -18,5 +19,7 @@ public abstract class PhoneClientTickMixin {
 	@Inject(method = "tick", at = @At("TAIL"))
 	private void pokeblocks$tickDigSiteParticles(CallbackInfo ci) {
 		DigSiteParticles.tick((Minecraft) (Object) this);
+		// Dormant unless tools/surgery_check.py armed it (pokeblocks-surgery-check.json).
+		DollSurgeryHarness.tick((Minecraft) (Object) this);
 	}
 }

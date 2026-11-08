@@ -8,6 +8,13 @@ notifications"). Write the notes for the build you are about to push at the top,
 ## 2.0.0. — JEI integration
 
 - Added JEI support
+- Trapping a doll is now an operation! Taking a doll + explosive out of the crafting grid opens a
+  Doll Surgery minigame: snip the stitches, tweezer out the stuffing, slide the explosive in (slowly!),
+  pack the stuffing back and sew it shut, all without touching the sides. Every bump pulls at the
+  stitches; if they rip, the explosive really goes off right where you stand (its own explosion,
+  breaking blocks) and the doll is lost. You can back out safely until the explosive is inside.
+  Server owners can turn it off (`[trapped] surgery_minigame`); the redstone Crafter can no longer
+  trap dolls while it's on.
 - Fixed a dedicated-server crash when a doll was popped (it tried to read the doll's texture, which
   only the client has). On a dedicated server popped dolls now drop white and light gray wool.
 - Trapped dolls can now be made with other mods' explosives, not just TNT: any modded TNT block works

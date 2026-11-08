@@ -887,3 +887,72 @@ popped doll should go off with that explosive's real effect, falling back to a r
 - `mctests/pokeblocks.trapped.mctest.yml` (14 assertions) green on a real Fabric 1.21.1 server, full
   suite 9/9 green. Forge/NeoForge mixins + `onCaughtFire` are compile-verified only. No modded
   explosive was tested in-game: NOT play-tested.
+
+## Doll surgery minigame for trapped dolls (2026-11-06)
+
+Spec (Shawn): crafting a doll with an explosive should drop the player into a fun, whimsical but
+stressful Operation-style minigame: carefully unstuff the doll, put the explosive in, restuff it,
+without ripping the stitches. A rip sets the explosive off and the doll is lost.
+
+### Assumption — how the craft turns into a minigame
+
+- **Location:** `trapped/surgery/DollSurgery`, `mixin/DollSurgeryClickMixin` (server-side
+  `AbstractContainerMenu#clicked` HEAD), `mixin/ResultSlotAccessor`.
+- **Behaviour:** the recipe and the result-slot preview are unchanged. ANY click on a `ResultSlot`
+  showing a trapped doll whose grid holds exactly one plain doll + one explosive (pickup, shift-click,
+  drop, number key) is cancelled on the server and starts a session; the client opens the screen over
+  the crafting table, whose menu stays open. Nothing leaves the grid until the client reports:
+  success → 1 doll + 1 explosive consumed, trapped doll into the inventory; rip → both consumed + blast;
+  cancel / disconnect / table closed → nothing changes. Works for the 2x2 inventory grid and modded
+  crafting menus that use `ResultSlot`.
+- **Players without the payload** (or `[trapped] surgery_minigame = false`) craft instantly as before.
+- **Needs human:** whether non-player crafting should be blocked. The redstone **Crafter** is blocked
+  (`CrafterSurgeryMixin`) while the minigame is on; modded autocrafters are NOT blocked.
+
+### Assumption — the rules and difficulty
+
+- **Location:** `trapped/surgery/SurgeryGame` (pure Java, unit-tested), `client/screen/DollSurgeryScreen`.
+- Five steps: snip 5 bobbing stitches; tweezer 4 stuffing tufts out of 3 side pockets + the chamber,
+  up a winding neck (random layout per surgery); carry the explosive down the neck (bigger, so tighter:
+  4.5 px clearance, and moving it faster than 160 GUI px/s "jostles" it); pack the 4 tufts back in;
+  trace the zig-zag seam hole to hole while holding the button.
+- Stitch integrity starts at 100%: a wall touch costs 12% plus 45%/s while it lasts, a poke 8%,
+  jostling 35%/s. A small hand tremor (bigger with the explosive and as integrity falls) moves the tool
+  tip; the OS cursor hides over the board so only the tip shows. A careful hand loses nothing (tested
+  over 300 layouts with tremor on).
+- **Leaving:** ESC/inventory key is free until the explosive is in; after that the first ESC warns and
+  a second within 2.5 s abandons = rip. **Needs human:** whether quitting should ever be free.
+- **Needs human:** all tuning numbers above are guesses; play it and adjust `SurgeryGame` constants.
+
+### What a rip does (changed 2026-11-07 at Shawn's request)
+
+- **Location:** `DollSurgery#ripBlast`.
+- The explosive really goes off at the player's feet through `TrappedExplosives#detonate`, the same
+  path a popped trapped doll uses: a modded explosive does its own thing, vanilla TNT (or a dud) is
+  the full block-breaking TNT blast with the trapped-doll damage type. It can kill the player.
+  Plus white wool particles and a squeak. No chat/action-bar line (Shawn: the explosion is enough).
+- The old `surgery_fail_blast_power` / `surgery_fail_breaks_blocks` keys are gone (they are ignored
+  if still in a config file).
+- Like vanilla TNT, the blast does no damage to players on Peaceful (damage type scales with
+  difficulty); blocks still break.
+
+### Assumption — trust
+
+- The client plays the game; the server trusts its outcome but refuses a "success" under 5 s
+  (`MIN_SUCCESS_TICKS`) and re-checks the grid still holds the exact doll + explosive. A hacked client
+  can skip the minigame; it can't conjure items.
+
+### Verification performed (this pass)
+
+- `SurgeryGameTest` (6 tests): every one of 2000 layouts fits inside the doll; a scripted careful hand
+  wins 300 layouts with and without tremor without a single touch; dragging through a wall hurts;
+  holding against it rips (warning first); rushing the explosive jostles; abandoning rips.
+- `./gradlew build` green on Fabric, Forge, NeoForge (with the add-on); all common unit tests green.
+- In-game: `tools/surgery_check.py` (dormant `client/trapped/DollSurgeryHarness`) drives a real Fabric
+  dev client through the real container-click path: cancel, a full autopilot operation, a rip, and the
+  Crafter check, with screenshots: RESULT PASS (26/26) on 2026-11-07, and again 26/26 after the
+  rip became a real explosion (checks: blocks under the player broken, player hurt on Normal, no
+  rip message in the action bar or chat). Its first run caught a real bug
+  (snipping the last stitch while the button was still held counted as a wall scrape, -17%), now fixed
+  and covered in `SurgeryGameTest`. Forge/NeoForge networking is
+  compile-verified only. NOT play-tested by a human.

@@ -43,6 +43,9 @@ public class PokeblocksConfig {
 	private static int phoneGuaranteedAttemptsPerRarity = 1;
 	private static float phoneLootDropChance = 0.03f;
 
+	// [trapped] — the doll-surgery minigame behind crafting trapped (explosive) dolls.
+	private static boolean surgeryMinigame = true;
+
 	// [figurine] — the walking figurine companion.
 	private static int figurineMemorialWanderRadius = 16;
 
@@ -192,6 +195,11 @@ public class PokeblocksConfig {
 		return phoneGuaranteedAttemptsPerRarity;
 	}
 
+	/** Whether crafting a trapped doll opens the doll-surgery minigame (else it crafts instantly). */
+	public static boolean isSurgeryMinigame() {
+		return surgeryMinigame;
+	}
+
 	public static float getLootDropChance() {
 		return lootDropChance;
 	}
@@ -286,6 +294,7 @@ public class PokeblocksConfig {
 		phoneGuaranteedAttemptsPerRarity = 1;
 		phoneLootDropChance = 0.03f;
 		figurineMemorialWanderRadius = 16;
+		surgeryMinigame = true;
 		lootDropChance = 0.33f;
 		lootTables.clear();
 		lootTableWildcards.clear();
@@ -358,6 +367,11 @@ public class PokeblocksConfig {
 					case "figurine" -> {
 						if (key.equals("memorial_wander_radius")) {
 							figurineMemorialWanderRadius = parsePositiveInt(value, 16);
+						}
+					}
+					case "trapped" -> {
+						if (key.equals("surgery_minigame")) {
+							surgeryMinigame = parseBoolean(value, true);
 						}
 					}
 					case "phone" -> {
@@ -532,6 +546,16 @@ public class PokeblocksConfig {
 					# (the same tables as [loot] loot_tables). Unattuned phones ring with random doll callers.
 					# Set to 0 to keep phones out of loot entirely.""",
 					"0.03"),
+			new KeyDef("trapped", "surgery_minigame",
+					"""
+					# Whether crafting a trapped (explosive) doll opens the doll-surgery minigame: unpick the
+					# stitches, tweezer the stuffing out, slide the explosive in, restuff and sew it shut -
+					# without touching the sides. Rip the stitches and the explosive really goes off at the
+					# player (its own explosion, breaking blocks, like a popped trapped doll) - doll lost.
+					# When false, trapped dolls craft instantly like a normal recipe. The redstone Crafter
+					# can't trap dolls while this is on. Players whose game lacks the minigame always
+					# craft instantly.""",
+					"true"),
 			new KeyDef("figurine", "memorial_wander_radius",
 					"""
 					# How far (in blocks) a figurine revived by placing its memorial doll wanders from the

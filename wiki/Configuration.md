@@ -298,6 +298,9 @@ These live in the same file and are documented in detail on their own pages:
   per-player pack holding only what their install is missing), `distribution` = `self_host | remote_url`
   (default `self_host`), `self_host_address`, `remote_url`, `remote_sha1`.
   See [Resource Packs](Resource-Packs).
+- **`[trapped]`** — `surgery_minigame` (default `true`; crafting a trapped doll opens the doll-surgery
+  minigame instead of crafting instantly, and the Crafter can't trap dolls; a ripped surgery sets the
+  explosive off at the player for real, breaking blocks).
 - **`[loot]`** — `drop_chance` (default `0.33`), `loot_tables`, `excluded_flags`
   (defaults `gigantic`, `noice`), `excluded_dolls` (default `substitute`).
 

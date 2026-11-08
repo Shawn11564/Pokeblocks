@@ -17,6 +17,8 @@ import dev.mrshawn.pokeblocks.client.renderer.block.FigurineBlockRenderer;
 import dev.mrshawn.pokeblocks.client.renderer.block.PokedollBlockRenderer;
 import dev.mrshawn.pokeblocks.client.renderer.entity.FigurineEntityRenderer;
 import dev.mrshawn.pokeblocks.client.renderer.entity.LaserDotRenderer;
+import dev.mrshawn.pokeblocks.client.screen.DollSurgeryScreen;
+import dev.mrshawn.pokeblocks.trapped.surgery.DollSurgery;
 import dev.mrshawn.pokeblocks.pokemon.ModelFlag;
 import dev.mrshawn.pokeblocks.registry.*;
 import dev.mrshawn.pokeblocks.shape.DollShapes;
@@ -47,6 +49,8 @@ public final class PokeblocksClient {
 		// server never loads this client class, so the sampler stays null there and dolls drop fallback
 		// wool. This class is initialized during client renderer setup — long before any doll can be broken.
 		PokedollBlock.setClientWoolSampler(PokeblocksClient::sampleDollWools);
+		// The trapped-doll crafting minigame: the server's "start surgery" payload opens the screen.
+		DollSurgery.setClientOpener(payload -> Minecraft.getInstance().execute(() -> DollSurgeryScreen.open(payload)));
 	}
 
 	/**

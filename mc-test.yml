@@ -1,4 +1,4 @@
-# mc-test.yml — the Pokeblocks (geckolib-examples) test matrix.
+# mc-test.yml — the Pokeblocks test matrix.
 #
 # Pokeblocks is a multiloader GeckoLib mod for MC 1.21.1 (common + fabric + forge + neoforge).
 # These rows test the SERVER-SIDE half of the mod on a real, modded DEDICATED SERVER using
@@ -55,7 +55,7 @@ targets:
     serverProps:
       level-type: "minecraft:flat"
     mods:
-      - { path: ./neoforge/build/libs/geckolib-examples-ml-neoforge-1.21.1-1.0.0.jar, as: pokeblocks.jar }
+      - { path: ./neoforge/build/libs/pokeblocks-neoforge-2.0.0-1.21.1.jar, as: pokeblocks.jar }
       # NeoForge bundles its own API; only GeckoLib is an external runtime dep here.
       - { modrinth: { project: geckolib, loader: neoforge, gameVersion: "1.21.1" }, as: geckolib.jar }
     agents: [ server-neoforge ]

@@ -14,6 +14,8 @@ import dev.mrshawn.pokeblocks.resourcepack.sync.ClientPackSync;
 import dev.mrshawn.pokeblocks.resourcepack.sync.PackSyncPayloads;
 import dev.mrshawn.pokeblocks.trapped.ClientTrappedDollTimers;
 import dev.mrshawn.pokeblocks.trapped.TrappedDollPayloads;
+import dev.mrshawn.pokeblocks.trapped.surgery.DollSurgery;
+import dev.mrshawn.pokeblocks.trapped.surgery.SurgeryPayloads;
 import net.fabricmc.api.ClientModInitializer;
 import net.fabricmc.loader.api.FabricLoader;
 import net.fabricmc.fabric.api.client.networking.v1.ClientPlayNetworking;
@@ -65,6 +67,11 @@ public final class PokeblocksFabricClient implements ClientModInitializer {
         // wearer's own HUD countdown is a common Gui mixin — no per-loader hook needed.)
         ClientPlayNetworking.registerGlobalReceiver(TrappedDollPayloads.TimersPayload.TYPE, (payload, context) ->
                 ClientTrappedDollTimers.handleTimers(payload.data()));
+
+        // Doll surgery: the server opens the minigame, we report how it went.
+        ClientPlayNetworking.registerGlobalReceiver(SurgeryPayloads.StartPayload.TYPE, (payload, context) ->
+                DollSurgery.handleStartOnClient(payload));
+        DollSurgery.setResultSender(ClientPlayNetworking::send);
 
         for (PokeblocksFabricAddon addon : PokeblocksAddons.load(PokeblocksFabricAddon.class)) {
             addon.onInitializeClient();

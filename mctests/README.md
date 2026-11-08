@@ -37,7 +37,7 @@ Prereqs: Node 18+, JDK 21, network (first run downloads the Fabric launcher + de
 then caches). The Pokeblocks Fabric jar must be built (`./gradlew :fabric:remapJar`).
 
 ```bash
-# from the geckolib-examples repo root, pointing at the mc-test runner CLI:
+# from the Pokeblocks repo root, pointing at the mc-test runner CLI:
 node <path-to>/mc-test/packages/runner/dist/cli.js \
   run mctests/pokeblocks.modloaded.mctest.yml mctests/pokeblocks.statetruth.mctest.yml \
   --target pokeblocks-fabric-server-1.21.1 --matrix ./mc-test.yml --out ./mc-test-report

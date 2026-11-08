@@ -4,6 +4,7 @@ import dev.mrshawn.pokeblocks.addon.PokeblocksAddon;
 import dev.mrshawn.pokeblocks.addon.PokeblocksAddons;
 import dev.mrshawn.pokeblocks.resourcepack.sync.ServerPackSync;
 import dev.mrshawn.pokeblocks.trapped.TrappedDollCountdown;
+import dev.mrshawn.pokeblocks.trapped.surgery.DollSurgery;
 import net.minecraft.server.MinecraftServer;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.injection.At;
@@ -30,6 +31,7 @@ public abstract class ServerTickMixin {
 	private void pokeblocks$serverTick(BooleanSupplier hasTimeLeft, CallbackInfo ci) {
 		ServerPackSync.tickTimeouts((MinecraftServer) (Object) this);
 		TrappedDollCountdown.serverTick((MinecraftServer) (Object) this);
+		DollSurgery.serverTick((MinecraftServer) (Object) this);
 		for (PokeblocksAddon addon : PokeblocksAddons.all()) {
 			addon.onServerTick((MinecraftServer) (Object) this);
 		}

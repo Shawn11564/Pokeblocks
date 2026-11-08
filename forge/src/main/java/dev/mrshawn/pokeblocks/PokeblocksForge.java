@@ -21,6 +21,8 @@ import dev.mrshawn.pokeblocks.resourcepack.sync.ServerPackSync;
 import dev.mrshawn.pokeblocks.trapped.ClientTrappedDollTimers;
 import dev.mrshawn.pokeblocks.trapped.TrappedDollCountdown;
 import dev.mrshawn.pokeblocks.trapped.TrappedDollPayloads;
+import dev.mrshawn.pokeblocks.trapped.surgery.DollSurgery;
+import dev.mrshawn.pokeblocks.trapped.surgery.SurgeryPayloads;
 import net.minecraft.core.registries.Registries;
 import net.minecraft.network.RegistryFriendlyByteBuf;
 import net.minecraft.network.protocol.common.custom.CustomPacketPayload;
@@ -103,6 +105,15 @@ public final class PokeblocksForge {
 					.payloadChannel()
 					.play();
 	public static Channel<CustomPacketPayload> TRAPPED_SYNC_CHANNEL;
+
+	// Doll surgery (the trapped-doll crafting minigame) — its own optional channel, same reasoning.
+	private static final PayloadProtocol<RegistryFriendlyByteBuf, CustomPacketPayload> SURGERY_SYNC_BUILDER =
+			ChannelBuilder.named(ResourceLocation.fromNamespaceAndPath(PokeblocksCommon.MOD_ID, "surgery_sync"))
+					.networkProtocolVersion(1)
+					.optional()
+					.payloadChannel()
+					.play();
+	public static Channel<CustomPacketPayload> SURGERY_SYNC_CHANNEL;
 
 	/**
 	 * Adapts a payload codec written against {@link net.minecraft.network.FriendlyByteBuf} to the
@@ -208,6 +219,28 @@ public final class PokeblocksForge {
 		TrappedDollCountdown.setNetworkBridge(
 				player -> TRAPPED_SYNC_CHANNEL.isRemotePresent(player.connection.getConnection()),
 				(player, data) -> TRAPPED_SYNC_CHANNEL.send(new TrappedDollPayloads.TimersPayload(data), PacketDistributor.PLAYER.with(player)));
+
+		SURGERY_SYNC_BUILDER.clientbound().addMain(SurgeryPayloads.StartPayload.TYPE,
+				SurgeryPayloads.StartPayload.CODEC,
+				(payload, context) -> {
+					DollSurgery.handleStartOnClient(payload);
+					context.setPacketHandled(true);
+				});
+		SURGERY_SYNC_BUILDER.serverbound().addMain(SurgeryPayloads.ResultPayload.TYPE,
+				regCodec(SurgeryPayloads.ResultPayload.CODEC),
+				(payload, context) -> {
+					ServerPlayer sender = context.getSender();
+					if (sender != null) {
+						DollSurgery.handleResult(sender, payload.token(), payload.outcome());
+					}
+					context.setPacketHandled(true);
+				});
+		SURGERY_SYNC_CHANNEL = SURGERY_SYNC_BUILDER.bidirectional().build();
+
+		DollSurgery.setNetworkBridge(
+				player -> SURGERY_SYNC_CHANNEL.isRemotePresent(player.connection.getConnection()),
+				(player, payload) -> SURGERY_SYNC_CHANNEL.send(payload, PacketDistributor.PLAYER.with(player)));
+		DollSurgery.setResultSender(payload -> SURGERY_SYNC_CHANNEL.send(payload, PacketDistributor.SERVER.noArg()));
 
 		for (PokeblocksForgeAddon addon : PokeblocksAddons.load(PokeblocksForgeAddon.class)) {
 			addon.onConstruct(modEventBus);

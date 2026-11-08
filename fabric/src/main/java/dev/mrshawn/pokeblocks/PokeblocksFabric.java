@@ -18,6 +18,8 @@ import dev.mrshawn.pokeblocks.resourcepack.sync.PackSyncPayloads;
 import dev.mrshawn.pokeblocks.resourcepack.sync.ServerPackSync;
 import dev.mrshawn.pokeblocks.trapped.TrappedDollCountdown;
 import dev.mrshawn.pokeblocks.trapped.TrappedDollPayloads;
+import dev.mrshawn.pokeblocks.trapped.surgery.DollSurgery;
+import dev.mrshawn.pokeblocks.trapped.surgery.SurgeryPayloads;
 import net.fabricmc.api.ModInitializer;
 import net.fabricmc.fabric.api.object.builder.v1.entity.FabricDefaultAttributeRegistry;
 import net.fabricmc.fabric.api.command.v2.CommandRegistrationCallback;
@@ -73,6 +75,16 @@ public final class PokeblocksFabric implements ModInitializer {
 		TrappedDollCountdown.setNetworkBridge(
 				player -> ServerPlayNetworking.canSend(player, TrappedDollPayloads.TimersPayload.TYPE),
 				(player, data) -> ServerPlayNetworking.send(player, new TrappedDollPayloads.TimersPayload(data)));
+
+		// Doll surgery (the trapped-doll crafting minigame): open the screen down, the outcome back up.
+		// Optional — players without it craft trapped dolls instantly.
+		PayloadTypeRegistry.playS2C().register(SurgeryPayloads.StartPayload.TYPE, SurgeryPayloads.StartPayload.CODEC);
+		PayloadTypeRegistry.playC2S().register(SurgeryPayloads.ResultPayload.TYPE, SurgeryPayloads.ResultPayload.CODEC);
+		ServerPlayNetworking.registerGlobalReceiver(SurgeryPayloads.ResultPayload.TYPE, (payload, context) ->
+				DollSurgery.handleResult(context.player(), payload.token(), payload.outcome()));
+		DollSurgery.setNetworkBridge(
+				player -> ServerPlayNetworking.canSend(player, SurgeryPayloads.StartPayload.TYPE),
+				ServerPlayNetworking::send);
 
 		for (PokeblocksFabricAddon addon : PokeblocksAddons.load(PokeblocksFabricAddon.class)) {
 			addon.onInitialize();

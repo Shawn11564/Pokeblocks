@@ -21,6 +21,8 @@ import dev.mrshawn.pokeblocks.resourcepack.sync.ServerPackSync;
 import dev.mrshawn.pokeblocks.trapped.ClientTrappedDollTimers;
 import dev.mrshawn.pokeblocks.trapped.TrappedDollCountdown;
 import dev.mrshawn.pokeblocks.trapped.TrappedDollPayloads;
+import dev.mrshawn.pokeblocks.trapped.surgery.DollSurgery;
+import dev.mrshawn.pokeblocks.trapped.surgery.SurgeryPayloads;
 import net.minecraft.core.registries.Registries;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.sounds.SoundEvent;
@@ -99,6 +101,10 @@ public final class PokeblocksNeoForge {
 		TrappedDollCountdown.setNetworkBridge(
 				player -> player.connection.hasChannel(TrappedDollPayloads.TimersPayload.TYPE),
 				(player, data) -> PacketDistributor.sendToPlayer(player, new TrappedDollPayloads.TimersPayload(data)));
+		DollSurgery.setNetworkBridge(
+				player -> player.connection.hasChannel(SurgeryPayloads.StartPayload.TYPE),
+				PacketDistributor::sendToPlayer);
+		DollSurgery.setResultSender(payload -> PacketDistributor.sendToServer(payload));
 		for (PokeblocksNeoForgeAddon addon : PokeblocksAddons.load(PokeblocksNeoForgeAddon.class)) {
 			addon.onConstruct(modEventBus);
 		}
@@ -130,6 +136,15 @@ public final class PokeblocksNeoForge {
 		// Trapped-doll countdown broadcast (S2C only), driving the overhead timers.
 		registrar.playToClient(TrappedDollPayloads.TimersPayload.TYPE, TrappedDollPayloads.TimersPayload.CODEC,
 				(payload, context) -> ClientTrappedDollTimers.handleTimers(payload.data()));
+		// Doll surgery (trapped-doll crafting minigame): open down, outcome up.
+		registrar.playToClient(SurgeryPayloads.StartPayload.TYPE, SurgeryPayloads.StartPayload.CODEC,
+				(payload, context) -> DollSurgery.handleStartOnClient(payload));
+		registrar.playToServer(SurgeryPayloads.ResultPayload.TYPE, SurgeryPayloads.ResultPayload.CODEC,
+				(payload, context) -> {
+					if (context.player() instanceof ServerPlayer player) {
+						DollSurgery.handleResult(player, payload.token(), payload.outcome());
+					}
+				});
 	}
 
 	@SubscribeEvent
